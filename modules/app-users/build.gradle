@@ -1,0 +1,52 @@
+plugins {
+    id 'java'
+    id 'maven'
+    id 'com.enonic.defaults' version '1.0.3'
+    id 'com.enonic.xp.app' version '1.0.10'
+    id "com.moowork.node" version "1.1.1"
+}
+
+repositories {
+    jcenter()
+    xp.enonicRepo()
+}
+
+app {
+    name = 'com.enonic.xp.app.users'
+    displayName = 'Users'
+    systemApp = true
+}
+
+dependencies {
+    include "${group}:portal-api:${version}"
+    include "${group}:lib-admin:${version}"
+    include "${group}:lib-mustache:${version}"
+    include "${group}:lib-portal:${version}"
+    include "${group}:lib-node:${version}"
+    include "${group}:lib-auth:${version}"
+    include "${group}:lib-io:${version}"
+    include "${group}:lib-value:${version}"
+    include "${group}:lib-i18n:${version}"
+    include "com.graphql-java:graphql-java:2.3.0"
+    include "com.enonic.lib:graphql:0.5.2"
+    include 'com.enonic.lib:lib-admin-ui:1.0.1'
+}
+
+node {
+    download = true
+    version = '6.9.2'
+}
+
+task webpack( type: NodeTask, dependsOn: npmInstall ) {
+    description = 'Build UI resources (ts, css, etc).'
+    inputs.dir 'src/main'
+    outputs.dir "${buildDir}/resources/main"
+    script = file( './node_modules/webpack/bin/webpack' )
+}
+
+task cleanNode( type: Delete ) {
+    delete 'node_modules'
+}
+
+jar.dependsOn += webpack
+jar.outputs.dir "${buildDir}/resources/main"

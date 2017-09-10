@@ -1,0 +1,8 @@
+<script>
+    var CONFIG = {
+        {{#redirectUrl}}redirectUrl: "{{{.}}}",{{/redirectUrl}}
+        userStoreKey: "{{userStoreKey}}",
+        appLoginServiceUrl: "{{appLoginServiceUrl}}",
+        messages: {{{messages}}}
+    };
+</script>

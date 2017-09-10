@@ -1,0 +1,46 @@
+plugins {
+    id 'java'
+    id 'maven'
+    id 'com.enonic.defaults' version '1.0.3'
+    id 'com.enonic.xp.app' version '1.0.10'
+    id "com.moowork.gulp" version "1.1.1"
+}
+
+repositories {
+    jcenter()
+    xp.enonicRepo()
+}
+
+dependencies {
+    compile "${group}:admin-api:${version}"
+    include "${group}:lib-admin:${version}"
+    include "${group}:lib-mustache:${version}"
+    include "${group}:lib-portal:${version}"
+    include "${group}:lib-auth:${version}"
+    include 'com.enonic.lib:lib-admin-ui:1.0.1'
+}
+
+app {
+    name = 'com.enonic.xp.app.main'
+    displayName = 'Admin Main App'
+    systemApp = true
+}
+
+node {
+    download = true
+    version = '6.9.2'
+}
+
+task gulpAll( type: GulpTask, dependsOn: npmInstall ) {
+    description = 'Build UI resources (css, etc).'
+    inputs.dir 'src/main/resources'
+    outputs.dir 'build/resources/main'
+    args = ['all']
+}
+
+task cleanNode( type: Delete ) {
+    delete 'node_modules'
+}
+
+jar.dependsOn += gulpAll
+jar.outputs.dir "${buildDir}/resources/main"
