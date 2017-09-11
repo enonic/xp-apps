@@ -6,10 +6,7 @@ plugins {
     id "com.moowork.node" version "1.1.1"
 }
 
-repositories {
-    jcenter()
-    xp.enonicRepo()
-}
+apply from: "$rootDir/gradle/defaults.gradle"
 
 app {
     name = 'com.enonic.xp.app.applications'

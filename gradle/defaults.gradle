@@ -1,0 +1,11 @@
+
+// Add more dev source paths for development
+app {
+    devSourcePaths += file("$rootDir/../lib-admin-ui/src/main/resources")
+}
+
+// Add repositories
+repositories {
+    jcenter()
+    xp.enonicRepo()
+}

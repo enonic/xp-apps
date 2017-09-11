@@ -5,10 +5,7 @@ plugins {
     id 'com.enonic.xp.app' version '1.0.10'
 }
 
-repositories {
-    jcenter()
-    xp.enonicRepo()
-}
+apply from: "$rootDir/gradle/defaults.gradle"
 
 dependencies {
     include "${group}:lib-admin:${version}"

@@ -6,10 +6,7 @@ plugins {
     id "com.moowork.gulp" version "1.1.1"
 }
 
-repositories {
-    jcenter()
-    xp.enonicRepo()
-}
+apply from: "$rootDir/gradle/defaults.gradle"
 
 dependencies {
     compile "${group}:admin-api:${version}"
