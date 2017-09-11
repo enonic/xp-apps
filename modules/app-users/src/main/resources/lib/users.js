@@ -3,7 +3,6 @@ var principals = require('./principals');
 var authLib = require('/lib/xp/auth');
 
 exports.create = function createUser(params) {
-    log.info('Create user with params: ' + JSON.stringify(params));
     var key = common.required(params, 'key');
     var userStoreKey = common.userStoreFromKey(key);
 
@@ -13,8 +12,6 @@ exports.create = function createUser(params) {
         displayName: common.required(params, 'displayName'),
         email: common.required(params, 'email')
     });
-
-    log.info('createdUser: ' + JSON.stringify(createdUser));
 
     var mms = params.memberships;
     if (mms && mms.length > 0) {
@@ -29,7 +26,6 @@ exports.create = function createUser(params) {
 };
 
 exports.update = function updateUser(params) {
-    log.info('Update user with params: ' + JSON.stringify(params));
     var key = common.required(params, 'key');
 
     var updatedUser = authLib.modifyUser({
@@ -42,8 +38,6 @@ exports.update = function updateUser(params) {
             return newUser;
         }
     });
-
-    log.info('updatedUser: ' + JSON.stringify(updatedUser));
 
     principals.updateMemberships(
         key,
@@ -62,7 +56,6 @@ exports.updatePwd = function(key, pwd) {
             userKey: key,
             password: pwd
         });
-        log.info('Updated password for [' + key + '] to "' + pwd + '"');
         return true;
     } catch (e) {
         log.error('Could not update password for [' + key + ']');

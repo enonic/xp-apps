@@ -14,8 +14,6 @@ exports.create = function createRole(params) {
         principalType: principals.Type.ROLE
     });
 
-    log.info('createdRole: ' + JSON.stringify(createdRole));
-
     var members = params.members;
     if (members && members.length > 0) {
         principals.addMembers(key, members);
@@ -27,7 +25,6 @@ exports.create = function createRole(params) {
 };
 
 exports.update = function updateRole(params) {
-    log.info('Update role with params: ' + JSON.stringify(params));
     var key = common.required(params, 'key');
 
     var updatedRole = common.update({
@@ -39,8 +36,6 @@ exports.update = function updateRole(params) {
             return newRole;
         }
     });
-
-    log.info('Updated role: ' + JSON.stringify(updatedRole));
 
     principals.updateMembers(key, params.addMembers, params.removeMembers);
 
