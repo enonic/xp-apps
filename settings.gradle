@@ -4,6 +4,9 @@ include ':app-applications'
 include ':app-contentstudio'
 include ':app-users'
 
+addBuild('../xp')
+addBuild('../lib-admin-ui')
+
 rootProject.name = 'xp-apps'
 
 configureProjects( rootProject )
@@ -20,4 +23,12 @@ def configureProject( p )
     String dirName = p.path.substring( 1 ).replace( ':', '/' )
     p.projectDir = new File( (File) settingsDir, "modules/${dirName}" )
     assert p.projectDir.isDirectory()
+}
+
+def addBuild( name )
+{
+    def dir = new File( (File) settingsDir, name )
+    if (dir.directory) {
+        includeBuild name
+    }
 }

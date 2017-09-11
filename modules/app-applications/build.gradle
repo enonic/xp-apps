@@ -21,7 +21,7 @@ dependencies {
     include "${group}:lib-admin:${version}"
     include "${group}:lib-mustache:${version}"
     include "${group}:lib-portal:${version}"
-    include 'com.enonic.lib:lib-admin-ui:1.0.1'
+    include 'com.enonic.lib:lib-admin-ui:1.0.2-SNAPSHOT'
 }
 
 node {
