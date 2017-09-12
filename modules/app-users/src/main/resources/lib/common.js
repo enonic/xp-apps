@@ -217,8 +217,6 @@ function queryAll(params) {
     var start = params.start || 0;
     var count = params.count || MAX_COUNT;
 
-    log.info('queryAll(): query="' + params.query + '"');
-
     var repoConn = newConnection();
     var queryResult = repoConn.query({
         start: start,

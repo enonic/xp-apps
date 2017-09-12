@@ -33,9 +33,6 @@ module.exports = {
             module.exports.addMembers(current, key);
             return current;
         });
-        log.info(
-            'Added memberships of [' + key + '] in: ' + JSON.stringify(addMms)
-        );
         return addMms;
     },
     removeMemberships: function(key, memberships) {
@@ -43,12 +40,6 @@ module.exports = {
             module.exports.removeMembers(current, key);
             return current;
         });
-        log.info(
-            'Removed memberships of [' +
-                key +
-                '] from: ' +
-                JSON.stringify(removeMms)
-        );
         return removeMms;
     },
     updateMemberships: function(key, addMms, removeMms) {
@@ -65,9 +56,6 @@ module.exports = {
     addMembers: function(key, members) {
         try {
             authLib.addMembers(key, members);
-            log.info(
-                'Added members to [' + key + ']: ' + JSON.stringify(members)
-            );
         } catch (e) {
             log.error(
                 'Could not add members ' +
@@ -83,9 +71,6 @@ module.exports = {
     removeMembers: function(key, members) {
         try {
             authLib.removeMembers(key, members);
-            log.info(
-                'Removed members from [' + key + ']: ' + JSON.stringify(members)
-            );
         } catch (e) {
             log.error(
                 'Could not remove members ' +
@@ -118,22 +103,10 @@ module.exports = {
         // convert keys to paths because userstores and roles
         // can't have custom ids and thus be deleted by keys
         var deletedIds = common.delete(common.keysToPaths(keys));
-        log.info(
-            'Delete result for keys ' +
-                JSON.stringify(keys) +
-                ': ' +
-                JSON.stringify(deletedIds)
-        );
 
         // TODO: find which keys could not be deleted with reasons instead of returning all
         keys.forEach(function(key) {
             var memberships = module.exports.getMemberships(key);
-            log.info(
-                'Got memberships for key ' +
-                    key +
-                    ': ' +
-                    JSON.stringify(memberships)
-            );
             module.exports.removeMemberships(
                 key,
                 memberships.map(function(membership) {

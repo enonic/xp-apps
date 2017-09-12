@@ -3,7 +3,6 @@ var principals = require('./principals');
 var authLib = require('/lib/xp/auth');
 
 exports.create = function createGroup(params) {
-    log.info('Create group with params: ' + JSON.stringify(params));
     var key = common.required(params, 'key');
     var userStoreKey = common.userStoreFromKey(key);
     var name = common.nameFromKey(key);
@@ -26,13 +25,10 @@ exports.create = function createGroup(params) {
 
     populateMemberships(createdGroup);
 
-    log.info('createdGroup: ' + JSON.stringify(createdGroup));
-
     return createdGroup;
 };
 
 exports.update = function updateGroup(params) {
-    log.info('Update group with params: ' + JSON.stringify(params));
     var key = common.required(params, 'key');
 
     var updatedGroup = authLib.modifyGroup({
@@ -56,8 +52,6 @@ exports.update = function updateGroup(params) {
     );
 
     populateMemberships(updatedGroup);
-
-    log.info('updatedGroup: ' + JSON.stringify(updatedGroup));
 
     return updatedGroup;
 };

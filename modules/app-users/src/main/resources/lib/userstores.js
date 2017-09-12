@@ -74,7 +74,6 @@ module.exports = {
         return result;
     },
     create: function(params) {
-        log.info('Create userStore with params: ' + JSON.stringify(params));
         var createdStore = common.create({
             _parentPath: '/identity',
             _name: common.prettifyName(params.key),
@@ -83,9 +82,6 @@ module.exports = {
             description: params.description,
             idProvider: calculateIdProvider(params.authConfig)
         });
-        log.info(
-            '\nCreated userStore:\n' + JSON.stringify(createdStore) + '\n'
-        );
 
         var createdUsers;
         var createdGroups;
@@ -102,14 +98,6 @@ module.exports = {
                 _permissions: calculateGroupsPermissions(params.permissions)
             });
 
-            log.info(
-                '\nCreated users and groups nodes:\n' +
-                    createdUsers._path +
-                    '\n' +
-                    createdGroups._path +
-                    '\n'
-            );
-
             createdStore.idProviderMode = calculateIdProviderMode(
                 params.authConfig
             );
@@ -120,9 +108,6 @@ module.exports = {
         return createdStore;
     },
     update: function(params) {
-        log.info(
-            '\nUpdate userStore with params:\n' + JSON.stringify(params) + '\n'
-        );
         var key = common.required(params, 'key');
 
         var updatedStore = common.update({
@@ -138,9 +123,6 @@ module.exports = {
                 return newStore;
             }
         });
-        log.info(
-            '\nUpdated userStore:\n' + JSON.stringify(updatedStore) + '\n'
-        );
 
         var updatedUsers = common.update({
             key: '/identity/' + key + '/users',
@@ -153,14 +135,6 @@ module.exports = {
             }
         });
 
-        log.info(
-            '\nUpdated permissions for: ' +
-                updatedUsers._path +
-                '\n' +
-                JSON.stringify(updatedUsers._permissions) +
-                '\n'
-        );
-
         var updatedGroups = common.update({
             key: '/identity/' + key + '/groups',
             editor: function(groups) {
@@ -172,14 +146,6 @@ module.exports = {
             }
         });
 
-        log.info(
-            '\nUpdated permissions for: ' +
-                updatedGroups._path +
-                '\n' +
-                JSON.stringify(updatedGroups._permissions) +
-                '\n'
-        );
-
         updatedStore.idProviderMode = calculateIdProviderMode(
             params.authConfig
         );
@@ -190,13 +156,7 @@ module.exports = {
     },
     delete: function(keys) {
         var deletedIds = common.delete(common.keysToPaths(keys));
-        log.info(
-            'Delete result for keys ' +
-                JSON.stringify(keys) +
-                ': ' +
-                JSON.stringify(deletedIds)
-        );
-
+        
         // TODO: find which keys could not be deleted with reasons instead of returning all
         return keys.map(function(key) {
             return {
@@ -240,13 +200,6 @@ function calculateUserStorePermissions(access) {
             });
         }
     });
-    log.info(
-        '\nCalculated userStore permissions from access: \n' +
-            JSON.stringify(access) +
-            '\npermissions: ' +
-            JSON.stringify(permissions) +
-            '\n'
-    );
     return permissions;
 }
 
@@ -269,13 +222,7 @@ function calculateGroupsPermissions(access) {
             default: // none
         }
     });
-    log.info(
-        '\nCalculated groups permissions from access: \n' +
-            JSON.stringify(access) +
-            '\npermissions: ' +
-            JSON.stringify(permissions) +
-            '\n'
-    );
+    
     return permissions;
 }
 
@@ -316,13 +263,6 @@ function calculateUsersPermissions(access) {
             default: // none
         }
     });
-    log.info(
-        '\nCalculated users permissions from access: \n' +
-            JSON.stringify(access) +
-            '\npermissions: ' +
-            JSON.stringify(permissions) +
-            '\n'
-    );
     return permissions;
 }
 
@@ -335,14 +275,6 @@ function createUserstoreQuery(path) {
 }
 
 function calculateAccess(userStore, userNode, groupNode) {
-    log.info(
-        'Calculate access for: ' +
-            JSON.stringify(userStore) +
-            '\nusers: ' +
-            JSON.stringify(userNode) +
-            'groups: ' +
-            JSON.stringify(groupNode)
-    );
     var isRole = !rolesFilter(userStore);
 
     if (!isRole) {
@@ -395,15 +327,6 @@ function calculateAccess(userStore, userNode, groupNode) {
                 });
             }
         });
-        log.info(
-            '\nCalculated access for [' +
-                userStore._name +
-                '] from permissions: \n' +
-                JSON.stringify(ps) +
-                '\npermissions: ' +
-                JSON.stringify(accesses) +
-                '\n'
-        );
         // eslint-disable-next-line no-param-reassign
         userStore.access = accesses;
     }
