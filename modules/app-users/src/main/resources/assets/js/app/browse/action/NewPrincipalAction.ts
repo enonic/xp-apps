@@ -14,7 +14,7 @@ export class NewPrincipalAction extends Action {
         this.setEnabled(false);
         this.onExecuted(() => {
             const principals: UserTreeGridItem[] = grid.getSelectedDataList();
-            if (principals.length > 0 && principals[0].getType() !== UserTreeGridItemType.USER_STORE) {
+            if (principals.length === 1 && principals[0].getType() !== UserTreeGridItemType.USER_STORE) {
                 new NewPrincipalEvent(principals).fire();
             } else {
                 new ShowNewPrincipalDialogEvent(principals).fire();
