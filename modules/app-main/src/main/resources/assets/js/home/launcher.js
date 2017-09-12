@@ -4,7 +4,6 @@ var autoOpenLauncher = window.CONFIG && window.CONFIG.autoOpenLauncher;
 var appId = window.CONFIG ? window.CONFIG.appId : '';
 
 var launcherPanel, launcherButton, launcherMainContainer;
-var oldLauncherPanel, oldLauncherButton;
 
 function appendLauncherButton() {
     launcherButton = document.createElement('button');
@@ -83,7 +82,7 @@ function isModalDialogActiveOnHomePage(element) {
            (document.body.classList.contains('modal-dialog') || (wemjq(element).closest('.xp-admin-common-modal-dialog').length > 0));
 }
 
-function createLauncherLink(container) {
+function loadLauncher(onload) {
     var link = document.createElement('link');
     var url = launcherUrl + '?t=' + Date.now();
 
@@ -91,8 +90,15 @@ function createLauncherLink(container) {
     link.setAttribute('href', url);
     link.setAttribute('async', '');
 
-    link.onload = function () {
-        removeOldLauncherPanel();
+    link.onload = onload;
+
+    return link;
+}
+
+function createLauncherLink(container) {
+    var link;
+
+    function onload() {
         launcherButton.hidden = false;
         launcherMainContainer = link.import.querySelector('.launcher-main-container');
         launcherMainContainer.setAttribute('hidden', 'true');
@@ -112,7 +118,9 @@ function createLauncherLink(container) {
             }
         }
         highlightActiveApp();
-    };
+    }
+
+    link = loadLauncher(onload);
 
     return link;
 }
@@ -234,37 +242,32 @@ function addApplicationsListeners() {
     }
 }
 
-function removeOldLauncherPanel() {
-    if (oldLauncherButton) {
-        oldLauncherButton.remove();
+var reloadLauncher = api.util.AppHelper.debounce(function () {
+    var link;
+
+    function onload() {
+        var oldLaucnherContent = launcherPanel.querySelector('.scrollable-content');
+        var newLaucnherContent = link.import.querySelector('.scrollable-content');
+        var parent = oldLaucnherContent.parentNode;
+        parent.replaceChild(newLaucnherContent, oldLaucnherContent);
+        link.remove();
+        highlightActiveApp();
     }
-    if (oldLauncherPanel) {
-        oldLauncherPanel.remove();
-    }
-}
 
-function initLauncher() {
-    appendLauncherButton();
-    appendLauncherPanel();
-}
+    link = loadLauncher(onload);
 
-function reloadLauncher() {
-    oldLauncherPanel = launcherPanel;
-    oldLauncherButton = launcherButton;
-    initLauncher();
-}
-
-var debouncedReload = api.util.AppHelper.debounce(reloadLauncher, 1000, false);
+    launcherPanel.appendChild(link);
+}, 1000, false);
 
 function initApplicationsListeners() {
     if (api.application.ApplicationEvent) {
         api.application.ApplicationEvent.on(function (event) {
-            switch (event.getEventType()) {
-            case api.application.ApplicationEventType.STARTED:
-            case api.application.ApplicationEventType.STOPPED:
-                debouncedReload();
-                break;
+            var statusChanged = api.application.ApplicationEventType.STARTED === event.getEventType() ||
+                                api.application.ApplicationEventType.STOPPED === event.getEventType();
+            if (statusChanged) {
+                reloadLauncher();
             }
+
         });
         return true;
     }
@@ -272,6 +275,7 @@ function initApplicationsListeners() {
 }
 
 exports.init = function () {
-    initLauncher();
+    appendLauncherButton();
+    appendLauncherPanel();
     addApplicationsListeners();
 };
