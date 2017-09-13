@@ -23,6 +23,9 @@
     "eslint-config-prettier": "^2.3.0",
     "eslint-plugin-import": "^2.2.0",
     "eslint-plugin-prettier": "^2.1.2",
+    "extract-text-webpack-plugin": "^2.1.2",
+    "less": "^2.7.2",
+    "less-loader": "^4.0.5",
     "lint-staged": "^4.0.2",
     "prettier": "^1.5.3"
   }
