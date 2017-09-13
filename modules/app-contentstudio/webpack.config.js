@@ -15,27 +15,27 @@ module.exports = {
         extensions: ['.ts', '.js', '.less', '.css']
     },
     module: {
-        loaders: [
+        rules: [
             {
                 test: /\.tsx?$/,
                 use: "ts-loader"
             },
             {
                 test: /\.less$/,
-                // use: ExtractTextPlugin.extract({
-                use: ['css-loader', 'less-loader']//,
-                //fallback: 'style-loader' // use style-loader in development
-                // })
+                use: ExtractTextPlugin.extract({
+                    fallback: 'style-loader',
+                    use: 'css-loader?importLoaders=1!less-loader'
+                })
             }
         ]
     },
     plugins: [
-        RelativeErrorsWebpackPlugin//,
-        /*        new ExtractTextPlugin({
-                    filename: "./page-editor/styles/page-editor_all.css",
-                    allChunks: true,
-                    disable: false //process.env.NODE_ENV === "development"
-                })*/
+        RelativeErrorsWebpackPlugin,
+        new ExtractTextPlugin({
+            filename: './page-editor/styles/page-editor_all.css',
+            allChunks: true,
+            disable: false
+        })
     ],
     devtool: 'source-map'
 };
