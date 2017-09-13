@@ -246,10 +246,10 @@ var reloadLauncher = api.util.AppHelper.debounce(function () {
     var link;
 
     function onload() {
-        var oldLaucnherContent = launcherPanel.querySelector('.scrollable-content');
-        var newLaucnherContent = link.import.querySelector('.scrollable-content');
-        var parent = oldLaucnherContent.parentNode;
-        parent.replaceChild(newLaucnherContent, oldLaucnherContent);
+        var oldLauncherContent = launcherPanel.querySelector('.scrollable-content');
+        var newLauncherContent = link.import.querySelector('.scrollable-content');
+        var parent = oldLauncherContent.parentNode;
+        parent.replaceChild(newLauncherContent, oldLauncherContent);
         link.remove();
         highlightActiveApp();
     }
