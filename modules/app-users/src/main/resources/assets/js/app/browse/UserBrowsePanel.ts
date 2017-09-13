@@ -43,14 +43,12 @@ export class UserBrowsePanel extends api.app.browse.BrowsePanel<UserTreeGridItem
         });
 
         const changeSelectionStatus = api.util.AppHelper.debounce((selection: TreeNode<UserTreeGridItem>[]) => {
-            const noSelection = selection.length === 0;
+            const singleSelection = selection.length === 1;
             const newAction = this.treeGrid.getTreeGridActions().NEW;
 
             let label;
 
-            if (noSelection || selection[0].getData().getType() === UserTreeGridItemType.USER_STORE) {
-                label = `${i18n('action.new')}…`;
-            } else {
+            if (singleSelection && selection[0].getData().getType() !== UserTreeGridItemType.USER_STORE) {
                 const userItem = selection[0].getData();
                 let type;
 
@@ -73,6 +71,8 @@ export class UserBrowsePanel extends api.app.browse.BrowsePanel<UserTreeGridItem
                 }
 
                 label = [i18n('action.new'), type].join(' ');
+            } else {
+                label = `${i18n('action.new')}…`;
             }
             newAction.setLabel(label);
         }, 10);
