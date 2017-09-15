@@ -1,3 +1,23 @@
+plugins {
+    id 'com.moowork.node' version '1.1.1'
+}
+
 allprojects {
+    apply plugin: 'com.moowork.node'
     group = 'com.enonic.xp'
+}
+
+node {
+    download = true
+    version = '6.9.2'
+}
+
+task lint( type: NpmTask, dependsOn: npmInstall ) {
+    args = ['run', 'lint']
+    inputs.files fileTree( dir: 'modules', include: '**/src/main/**.ts' )
+    outputs.dir file('gradle')
+}
+
+task cleanNode( type: Delete ) {
+    delete 'node_modules'
 }

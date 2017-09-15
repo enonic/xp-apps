@@ -4,12 +4,10 @@
   "description": "Enonix XP Applications",
   "scripts": {
     "build": "npm-run-all --parallel build:app-*",
-
     "build:app-applications": "npm run --prefix modules/app-applications/ build",
     "build:app-contentstudio": "npm run --prefix modules/app-contentstudio/ build",
     "build:app-main": "npm run --prefix modules/app-main/ build",
     "build:app-users": "npm run --prefix modules/app-users/ build",
-
     "lint:quick": "runwith scripts/lint.js --prop=diff",
     "lint": "tslint modules/**/**/src/main/resources/**/*.ts --exclude **/*.d.ts",
     "lint:fix": "tslint modules/**/**/src/main/resources/**/*.ts --fix --exclude **/*.d.ts || exit 0"
