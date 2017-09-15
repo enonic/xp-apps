@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Enonic Main App",
   "scripts": {
-    "build": "webpack"
+    "build": "webpack --hide-modules"
   },
   "devDependencies": {
     "css-loader": "^0.28.7",

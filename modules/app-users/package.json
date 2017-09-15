@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Enonix XP - Users App",
   "scripts": {
-    "build": "webpack",
+    "build": "webpack --hide-modules",
     "lint": "eslint . --fix"
   },
   "lint-staged": {
