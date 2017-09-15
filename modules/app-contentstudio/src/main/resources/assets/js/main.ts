@@ -12,7 +12,6 @@ declare const CONFIG;
 api.util.i18nInit(CONFIG.messages);
 
 import './api.ts';
-import '../../page-editor/js/main.ts';
 import {Router} from './app/Router';
 import {ContentAppPanel} from './app/ContentAppPanel';
 import {ContentDeletePromptEvent} from './app/browse/ContentDeletePromptEvent';

@@ -1,6 +1,5 @@
 import KeyBinding = api.ui.KeyBinding;
 import {LiveEditPage} from './LiveEditPage';
-import '../styles/_module.less';
 
 declare const CONFIG;
 declare const wemjq: JQueryStatic;

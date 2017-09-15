@@ -1,4 +1,4 @@
-import '../../assets/js/api.ts';
+import '../../js/api.ts';
 import PageView = api.liveedit.PageView;
 import PageViewBuilder = api.liveedit.PageViewBuilder;
 import ComponentViewDragStartedEvent = api.liveedit.ComponentViewDragStartedEvent;

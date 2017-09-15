@@ -2,7 +2,7 @@ const RelativeErrorsWebpackPlugin = require('./util/relativeErrorsWebpackPlugin'
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 const extractText = new ExtractTextPlugin({
-    filename: './styles/_all.css',
+    filename: './page-editor/styles/_all.css',
     allChunks: true,
     disable: false  //process.env.NODE_ENV === "development"
 });
@@ -10,11 +10,13 @@ const extractText = new ExtractTextPlugin({
 module.exports = {
     context: __dirname + '/src/main/resources/assets',
     entry: {
-        bundle: './js/main.ts'
+        'js/bundle': './js/main.ts',
+        'page-editor/js/_all': './page-editor/js/main.ts',
+        'page-editor/styles/styles': './page-editor/styles/_module.less'
     },
     output: {
         path: __dirname + '/build/resources/main/assets',
-        filename: './js/[name].js'
+        filename: './[name].js'
     },
     resolve: {
         extensions: ['.ts', '.js', '.less', '.css']
@@ -29,6 +31,7 @@ module.exports = {
                 test: /\.less$/,
                 use: extractText.extract({
                     fallback: 'style-loader',
+                    publicPath: '../../',
                     use: 'css-loader?importLoaders=1!less-loader'
                 })
             },
