@@ -2,9 +2,6 @@ import '../../../api.ts';
 
 declare var CONFIG;
 
-import Content = api.content.Content;
-import PageModel = api.content.page.PageModel;
-import SiteModel = api.content.site.SiteModel;
 import LiveEditModel = api.liveedit.LiveEditModel;
 import Component = api.content.page.region.Component;
 import RenderingMode = api.rendering.RenderingMode;
@@ -35,7 +32,6 @@ import LiveEditPageInitializationErrorEvent = api.liveedit.LiveEditPageInitializ
 import ComponentFragmentCreatedEvent = api.liveedit.ComponentFragmentCreatedEvent;
 import ShowWarningLiveEditEvent = api.liveedit.ShowWarningLiveEditEvent;
 import EditContentEvent = api.content.event.EditContentEvent;
-import ItemViewIdProducer = api.liveedit.ItemViewIdProducer;
 import CreateItemViewConfig = api.liveedit.CreateItemViewConfig;
 import RegionView = api.liveedit.RegionView;
 
@@ -146,7 +142,7 @@ export class LiveEditPageProxy {
 
     private createPlaceholderIFrame(): api.dom.IFrameEl {
         const placeholderIFrame = new api.dom.IFrameEl('live-edit-frame-blank');
-        placeholderIFrame.setSrc(CONFIG.assetsUri + '/_blank.html');
+        placeholderIFrame.setSrc(CONFIG.assetsUri + '/page-editor/_blank.html');
 
         placeholderIFrame.onLoaded(() => this.handlePlaceholderIFrameLoadedEvent(placeholderIFrame));
 
