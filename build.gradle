@@ -2,13 +2,7 @@ plugins {
     id 'com.moowork.node' version '1.1.1'
 }
 
-apply plugin: 'java-base'
-
 allprojects {
     apply plugin: 'com.moowork.node'
     group = 'com.enonic.xp'
-}
-
-configure( rootProject ) {
-    apply from: "$rootDir/gradle/lint.gradle"
 }
