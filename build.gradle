@@ -21,3 +21,7 @@ task lint( type: NpmTask, dependsOn: npmInstall ) {
 task cleanNode( type: Delete ) {
     delete 'node_modules'
 }
+
+task build
+
+build.dependsOn(lint)
