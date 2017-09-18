@@ -4,16 +4,26 @@
   "description": "Enonix XP Applications",
   "scripts": {
     "build": "run-p build:app-* --aggregate-output",
+    "lint": "run-p lint:* --aggregate-output",
+    "fix": "run-p fix:* --aggregate-output",
     "build:app-applications": "npm run --prefix modules/app-applications/ build",
     "build:app-contentstudio": "npm run --prefix modules/app-contentstudio/ build",
     "build:app-main": "npm run --prefix modules/app-main/ build",
     "build:app-users": "npm run --prefix modules/app-users/ build",
     "lint:quick": "runwith scripts/lint.js --prop=diff",
-    "lint": "tslint modules/**/**/src/main/resources/**/*.ts --exclude **/*.d.ts",
-    "fix": "tslint modules/**/**/src/main/resources/**/*.ts --fix --exclude **/*.d.ts"
+    "lint:ts": "tslint modules/**/**/src/main/resources/**/*.ts --exclude **/*.d.ts",
+    "lint:js": "eslint modules/app-{applications,contentstudio,users}/src/main/**/*.js",
+    "fix:ts": "tslint modules/**/src/main/resources/**/*.ts --fix --exclude **/*.d.ts",
+    "fix:js": "eslint modules/app-{applications,contentstudio,users}/src/main/**/*.js --fix"
   },
   "devDependencies": {
+    "eslint": "^3.19.0",
+    "eslint-config-airbnb-base": "^11.2.0",
+    "eslint-config-prettier": "^2.3.0",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-prettier": "^2.1.2",
     "npm-run-all": "^4.1.1",
+    "prettier": "^1.5.3",
     "runwith": "^0.3.0",
     "simple-git": "^1.77.0",
     "tslint": "^4.2.0",
