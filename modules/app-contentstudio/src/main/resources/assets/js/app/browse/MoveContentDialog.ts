@@ -6,14 +6,13 @@ import ContentPath = api.content.ContentPath;
 import ContentType = api.schema.content.ContentType;
 import GetContentTypeByNameRequest = api.schema.content.GetContentTypeByNameRequest;
 import ContentSummary = api.content.ContentSummary;
-import ContentResponse = api.content.resource.result.ContentResponse;
 import ContentIds = api.content.ContentIds;
 import MoveContentResult = api.content.resource.result.MoveContentResult;
 import MoveContentResultFailure = api.content.resource.result.MoveContentResultFailure;
 import ConfirmationDialog = api.ui.dialog.ConfirmationDialog;
 import TreeNode = api.ui.treegrid.TreeNode;
 import i18n = api.util.i18n;
-import ContentAndStatusTreeSelectorItem = api.content.resource.ContentAndStatusTreeSelectorItem;
+import ContentTreeSelectorItem = api.content.resource.ContentTreeSelectorItem;
 
 export class MoveContentDialog extends api.ui.dialog.ModalDialog {
 
@@ -71,7 +70,6 @@ export class MoveContentDialog extends api.ui.dialog.ModalDialog {
             const deferred = wemQ.defer<ContentType[]>();
             wemQ.all(contentTypeRequests).spread((...filterContentTypes: ContentType[]) => {
                 this.destinationSearchInput.setFilterContents(contents);
-                this.destinationSearchInput.setFilterContentTypes(filterContentTypes);
                 this.contentPathSubHeader.setHtml(contents.length === 1 ? contents[0].getPath().toString() : '');
                 this.open();
                 deferred.resolve(filterContentTypes);
@@ -115,8 +113,9 @@ export class MoveContentDialog extends api.ui.dialog.ModalDialog {
     private checkContentWillMoveOutOfSite(): boolean {
         let result = false;
         const targetContent = this.getParentContent();
-        const targetContentSite = targetContent ? (targetContent.isSite() ? targetContent : this.getParentSite(targetContent)) : null;
-
+        const targetContentSite = targetContent
+            ? (targetContent.isSite() ? targetContent : this.getParentSite(targetContent.getContent()))
+            : null;
         for (let i = 0; i < this.movedContentSummaries.length; i++) {
             let content = this.movedContentSummaries[i];
             let contentParentSite = content.isSite() ? null : this.getParentSite(content);
@@ -179,9 +178,8 @@ export class MoveContentDialog extends api.ui.dialog.ModalDialog {
         }).done();
     }
 
-    private getParentContent(): api.content.ContentSummary {
-        const selected = this.destinationSearchInput.getSelectedDisplayValues()[0];
-        return selected != null ? selected.getContent() : null;
+    private getParentContent(): ContentTreeSelectorItem {
+        return this.destinationSearchInput.getSelectedDisplayValues()[0];
     }
 
     show() {
