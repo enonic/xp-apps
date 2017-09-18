@@ -26,7 +26,7 @@ type ListUserItemsRequestResult = {
     total: number,
     userItems: UserItem[],
     aggregations: BucketAggregation[]
-}
+};
 
 export class ListUserItemsRequest
     extends ListGraphQlRequest<any, any> {

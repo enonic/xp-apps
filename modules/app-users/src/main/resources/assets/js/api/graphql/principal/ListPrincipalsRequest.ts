@@ -79,7 +79,7 @@ export class ListPrincipalsRequest
             return {
                 total: data.totalCount,
                 principals: data.edges.map(edge => this.fromJsonToPrincipal(edge.node))
-            }
+            };
         });
     }
 

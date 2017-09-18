@@ -4,8 +4,8 @@
   "description": "Enonix XP - Users App",
   "scripts": {
     "build": "webpack --hide-modules",
-    "lint": "run-p lint:* -c --aggregate-output",
-    "fix": "run-p fix:* -c --aggregate-output",
+    "lint": "run-p -c --aggregate-output lint:*",
+    "fix": "run-p -c --aggregate-output fix:*",
     "lint:ts": "tslint -c ../../tslint.json -e **/*.d.ts src/**/*.ts",
     "lint:js": "eslint ../../.eslintrc.js .",
     "fix:ts": "tslint -c ../../tslint.json -e **/*.d.ts src/**/*.ts --fix",

@@ -62,6 +62,7 @@ export class UpdateGroupRequest
         return vars;
     }
 
+    // tslint:disable max-line-length
     getMutation(): string {
         return `mutation ($key: String!, $displayName: String!, $description: String!, $addMembers: [String], $removeMembers: [String], $addMemberships: [String], $removeMemberships: [String]) {
             updateGroup(key: $key, displayName: $displayName, description: $description, addMembers: $addMembers, removeMembers: $removeMembers, addMemberships: $addMemberships, removeMemberships: $removeMemberships) {
@@ -76,10 +77,10 @@ export class UpdateGroupRequest
             }
         }`;
     }
+    // tslint:enable max-line-length
 
     sendAndParse(): wemQ.Promise<Group> {
         return this.mutate().then(json => Group.fromJson(json.updateGroup));
     }
 
 }
-

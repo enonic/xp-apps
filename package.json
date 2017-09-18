@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "Enonix XP Applications",
   "scripts": {
-    "build": "run-p build:app-* --aggregate-output",
-    "lint": "run-p lint:* --aggregate-output",
-    "fix": "run-p fix:* --aggregate-output",
+    "build": "run-p -c --aggregate-output build:app-*",
+    "lint": "run-p -c --aggregate-output lint:*",
+    "fix": "run-p -c --aggregate-output fix:*",
     "build:app-applications": "npm run --prefix modules/app-applications/ build",
     "build:app-contentstudio": "npm run --prefix modules/app-contentstudio/ build",
     "build:app-main": "npm run --prefix modules/app-main/ build",

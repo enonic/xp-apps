@@ -8,7 +8,6 @@ export class UpdatePasswordRequest
     private key: PrincipalKey;
     private password: string;
 
-
     setKey(key: PrincipalKey): UpdatePasswordRequest {
         this.key = key;
         return this;

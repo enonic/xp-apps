@@ -38,11 +38,11 @@ export class ListUserStoresRequest
         });
     }
 
-    userStorefromJson(us) {
-        if (us.authConfig && typeof us.authConfig.config === 'string') {
+    userStorefromJson(userstore: UserStoreJson) {
+        if (userstore.authConfig && typeof userstore.authConfig.config === 'string') {
             // config is passed as string
-            us.authConfig.config = JSON.parse(us.authConfig.config);
+            userstore.authConfig.config = JSON.parse(<string>userstore.authConfig.config);
         }
-        return UserStore.fromJson(us);
+        return UserStore.fromJson(userstore);
     }
 }

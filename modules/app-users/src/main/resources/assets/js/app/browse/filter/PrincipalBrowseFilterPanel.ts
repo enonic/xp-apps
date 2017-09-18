@@ -93,7 +93,8 @@ export class PrincipalBrowseFilterPanel
 
     private getCheckedTypes(): UserItemType[] {
         const values = this.getSearchInputValues();
-        const selectedBuckets: Bucket[] = values.getSelectedValuesForAggregationName(PrincipalBrowseFilterPanel.PRINCIPAL_TYPE_AGGREGATION_NAME) || [];
+        const aggregationType = PrincipalBrowseFilterPanel.PRINCIPAL_TYPE_AGGREGATION_NAME;
+        const selectedBuckets: Bucket[] = values.getSelectedValuesForAggregationName(aggregationType) || [];
         return selectedBuckets
             .map(bucket => UserItemType[bucket.getKey().replace(/\s/g, '_').toUpperCase()])
             .filter(type => type != null);
