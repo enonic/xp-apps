@@ -12,6 +12,7 @@ module.exports = {
     entry: {
         'js/bundle': './js/main.ts',
         'page-editor/js/_all': './page-editor/js/main.ts',
+        'page-editor/lib/_all': './page-editor/lib/_include.js',
         'page-editor/styles/styles': './page-editor/styles/_module.less'
     },
     output: {
