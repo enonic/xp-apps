@@ -143,6 +143,8 @@ export class ContentWizardPanel
 
     private contentDeleted: boolean;
 
+    private reloadPageEditorOnSave: boolean = true;
+
     public static debug: boolean = false;
 
     constructor(params: ContentWizardPanelParams) {
@@ -651,7 +653,9 @@ export class ContentWizardPanel
         return super.saveChanges().then((content: Content) => {
             if (liveFormPanel) {
                 this.liveEditModel.setContent(content);
-                this.updateLiveForm();
+                if (this.reloadPageEditorOnSave) {
+                    this.updateLiveForm();
+                }
             }
 
             if (content.getType().isImage()) {
@@ -1046,11 +1050,15 @@ export class ContentWizardPanel
         });
     }
 
-    saveChangesWithoutValidation(): wemQ.Promise<Content> {
+    saveChangesWithoutValidation(reloadPageEditor?: boolean): wemQ.Promise<Content> {
         this.skipValidation = true;
+        this.reloadPageEditorOnSave = reloadPageEditor;
 
         let result = this.saveChanges();
-        result.then(() => this.skipValidation = false);
+        result.then(() => {
+            this.skipValidation = false;
+            this.reloadPageEditorOnSave = true;
+        });
 
         return result;
     }
