@@ -1,8 +1,9 @@
 import '../../../../../../api.ts';
+import {FragmentDropdown} from './FragmentDropdown';
 
-import FragmentDropdown = api.content.page.region.FragmentDropdown;
 
-export class FragmentSelectorForm extends api.ui.form.Form {
+export class FragmentSelectorForm
+    extends api.ui.form.Form {
 
     private fragmentSelector: FragmentDropdown;
 

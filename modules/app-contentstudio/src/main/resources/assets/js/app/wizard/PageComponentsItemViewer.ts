@@ -1,19 +1,16 @@
 import '../../api.ts';
-
-import ItemView = api.liveedit.ItemView;
-import ComponentView = api.liveedit.ItemView;
-import ItemType = api.liveedit.ItemType;
-import PageView = api.liveedit.PageView;
-import PageItemType = api.liveedit.PageItemType;
+import {ItemView} from '../../page-editor/ItemView';
+import {TextItemType} from '../../page-editor/text/TextItemType';
+import {TextComponentView} from '../../page-editor/text/TextComponentView';
+import {TextComponentViewer} from '../../page-editor/text/TextComponentViewer';
+import {FragmentItemType} from '../../page-editor/fragment/FragmentItemType';
+import {FragmentComponentView} from '../../page-editor/fragment/FragmentComponentView';
+import {PageItemType} from '../../page-editor/PageItemType';
 import Content = api.content.Content;
-import TextItemType = api.liveedit.text.TextItemType;
-import FragmentItemType = api.liveedit.fragment.FragmentItemType;
-import TextComponentView = api.liveedit.text.TextComponentView;
-import FragmentComponentView = api.liveedit.fragment.FragmentComponentView;
 import TextComponent = api.content.page.region.TextComponent;
-import TextComponentViewer = api.liveedit.text.TextComponentViewer;
 
-export class PageComponentsItemViewer extends api.ui.NamesAndIconViewer<ItemView> {
+export class PageComponentsItemViewer
+    extends api.ui.NamesAndIconViewer<ItemView> {
 
     private content: Content;
 

@@ -6,31 +6,21 @@ import {PageControllerForm} from './PageControllerForm';
 import {PageControllerSelector} from './PageControllerSelector';
 import {PageTemplateOption} from './PageTemplateOption';
 import {SaveAsTemplateAction} from '../../../../action/SaveAsTemplateAction';
-
+import {LiveEditModel} from '../../../../../../page-editor/LiveEditModel';
+import {PageModel, SetTemplate} from '../../../../../../page-editor/PageModel';
 import PropertyChangedEvent = api.PropertyChangedEvent;
 import PropertyTree = api.data.PropertyTree;
 import FormContextBuilder = api.form.FormContextBuilder;
 import FormView = api.form.FormView;
 import FormContext = api.form.FormContext;
-import Content = api.content.Content;
-import Page = api.content.page.Page;
-import SetTemplate = api.content.page.SetTemplate;
-import PageModel = api.content.page.PageModel;
+
 import PageMode = api.content.page.PageMode;
-import LiveEditModel = api.liveedit.LiveEditModel;
+
 import PageTemplate = api.content.page.PageTemplate;
 import PageDescriptor = api.content.page.PageDescriptor;
 import GetPageDescriptorByKeyRequest = api.content.page.GetPageDescriptorByKeyRequest;
-import SetController = api.content.page.SetController;
-import PageTemplateDisplayName = api.content.page.PageTemplateDisplayName;
 import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
 import ActionButton = api.ui.button.ActionButton;
-import Button = api.ui.button.Button;
-import i18n = api.util.i18n;
-import Permission = api.security.acl.Permission;
-import EditContentEvent = api.content.event.EditContentEvent;
-import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
-import CreatePageTemplateRequest = api.content.page.CreatePageTemplateRequest;
 
 export class PageInspectionPanel
     extends BaseInspectionPanel {

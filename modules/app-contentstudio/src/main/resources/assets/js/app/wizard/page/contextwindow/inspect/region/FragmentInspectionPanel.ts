@@ -1,30 +1,26 @@
 import '../../../../../../api.ts';
 import {ComponentInspectionPanel, ComponentInspectionPanelConfig} from './ComponentInspectionPanel';
 import {FragmentSelectorForm} from './FragmentSelectorForm';
-
+import {FragmentComponentView} from '../../../../../../page-editor/fragment/FragmentComponentView';
+import {LiveEditModel} from '../../../../../../page-editor/LiveEditModel';
+import {ItemViewIconClassResolver} from '../../../../../../page-editor/ItemViewIconClassResolver';
+import {LayoutItemType} from '../../../../../../page-editor/layout/LayoutItemType';
+import {FragmentDropdown} from './FragmentDropdown';
 import FragmentComponent = api.content.page.region.FragmentComponent;
 import ContentSummary = api.content.ContentSummary;
 import ContentId = api.content.ContentId;
 import GetContentSummaryByIdRequest = api.content.resource.GetContentSummaryByIdRequest;
-import ContentTypeName = api.schema.content.ContentTypeName;
-import FragmentComponentView = api.liveedit.fragment.FragmentComponentView;
 import ComponentPropertyChangedEvent = api.content.page.region.ComponentPropertyChangedEvent;
 import Option = api.ui.selector.Option;
-import SelectedOption = api.ui.selector.combobox.SelectedOption;
 import GetContentByIdRequest = api.content.resource.GetContentByIdRequest;
 import Content = api.content.Content;
 import LayoutComponentType = api.content.page.region.LayoutComponentType;
-import QueryExpr = api.query.expr.QueryExpr;
-import FieldExpr = api.query.expr.FieldExpr;
-import ValueExpr = api.query.expr.ValueExpr;
-import FragmentDropdown = api.content.page.region.FragmentDropdown;
 import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
-import LiveEditModel = api.liveedit.LiveEditModel;
-import Component = api.content.page.region.Component;
 import ContentUpdatedEvent = api.content.event.ContentUpdatedEvent;
 import i18n = api.util.i18n;
 
-export class FragmentInspectionPanel extends ComponentInspectionPanel<FragmentComponent> {
+export class FragmentInspectionPanel
+    extends ComponentInspectionPanel<FragmentComponent> {
 
     private fragmentComponent: FragmentComponent;
 
@@ -42,13 +38,13 @@ export class FragmentInspectionPanel extends ComponentInspectionPanel<FragmentCo
 
     constructor() {
         super(<ComponentInspectionPanelConfig>{
-            iconClass: api.liveedit.ItemViewIconClassResolver.resolveByType('fragment')
+            iconClass: ItemViewIconClassResolver.resolveByType('fragment')
         });
     }
 
     setModel(liveEditModel: LiveEditModel) {
         super.setModel(liveEditModel);
-        if(this.fragmentSelector) {
+        if (this.fragmentSelector) {
             this.fragmentSelector.setModel(liveEditModel);
         }
         this.layout();
@@ -182,7 +178,7 @@ export class FragmentInspectionPanel extends ComponentInspectionPanel<FragmentCo
         if (!parent) {
             return false;
         }
-        return api.ObjectHelper.iFrameSafeInstanceOf(parent.getType(), api.liveedit.layout.LayoutItemType);
+        return api.ObjectHelper.iFrameSafeInstanceOf(parent.getType(), LayoutItemType);
     }
 
     getComponentView(): FragmentComponentView {

@@ -1,10 +1,11 @@
 import '../../../../../../api.ts';
 import {BaseInspectionPanel} from '../BaseInspectionPanel';
-
+import {ItemViewIconClassResolver} from '../../../../../../page-editor/ItemViewIconClassResolver';
 import Region = api.content.page.region.Region;
 import i18n = api.util.i18n;
 
-export class RegionInspectionPanel extends BaseInspectionPanel {
+export class RegionInspectionPanel
+    extends BaseInspectionPanel {
 
     private region: Region;
 
@@ -15,7 +16,7 @@ export class RegionInspectionPanel extends BaseInspectionPanel {
 
         this.namesAndIcon =
             new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.medium)).setIconClass(
-                api.liveedit.ItemViewIconClassResolver.resolveByType('region'));
+                ItemViewIconClassResolver.resolveByType('region'));
 
         this.appendChild(this.namesAndIcon);
     }

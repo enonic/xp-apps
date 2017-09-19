@@ -1,21 +1,23 @@
-import '../../js/api.ts';
-import PageView = api.liveedit.PageView;
-import PageViewBuilder = api.liveedit.PageViewBuilder;
-import ComponentViewDragStartedEvent = api.liveedit.ComponentViewDragStartedEvent;
-import ComponentViewDragStoppedEvent = api.liveedit.ComponentViewDragStoppedEvent;
-import ComponentResetEvent = api.liveedit.ComponentResetEvent;
-import ItemViewIdProducer = api.liveedit.ItemViewIdProducer;
-import Shader = api.liveedit.Shader;
-import Highlighter = api.liveedit.Highlighter;
-import SelectedHighlighter = api.liveedit.SelectedHighlighter;
-import Cursor = api.liveedit.Cursor;
-import DragAndDrop = api.liveedit.DragAndDrop;
+import './../api.ts';
+import {PageView, PageViewBuilder} from './PageView';
+import {InitializeLiveEditEvent} from './InitializeLiveEditEvent';
+import {SkipLiveEditReloadConfirmationEvent} from './SkipLiveEditReloadConfirmationEvent';
+import {ComponentLoadedEvent} from './ComponentLoadedEvent';
+import {ComponentResetEvent} from './ComponentResetEvent';
+import {ItemViewIdProducer} from './ItemViewIdProducer';
+import {LiveEditPageInitializationErrorEvent} from './LiveEditPageInitializationErrorEvent';
+import {DragAndDrop} from './DragAndDrop';
+import {LiveEditPageViewReadyEvent} from './LiveEditPageViewReadyEvent';
+import {PageUnloadedEvent} from './PageUnloadedEvent';
+import {LayoutItemType} from './layout/LayoutItemType';
+import {Highlighter} from './Highlighter';
+import {SelectedHighlighter} from './SelectedHighlighter';
+import {Shader} from './Shader';
+import {Cursor} from './Cursor';
+import {ComponentViewDragStartedEvent} from './ComponentViewDragStartedEvent';
+import {ComponentViewDragStoppedEvent} from './ComponentViewDraggingStoppedEvent';
 import Exception = api.Exception;
-import ComponentLoadedEvent = api.liveedit.ComponentLoadedEvent;
-import SkipLiveEditReloadConfirmationEvent = api.liveedit.SkipLiveEditReloadConfirmationEvent;
-import InitializeLiveEditEvent = api.liveedit.InitializeLiveEditEvent;
-import LiveEditPageInitializationErrorEvent = api.liveedit.LiveEditPageInitializationErrorEvent;
-import LiveEditPageViewReadyEvent = api.liveedit.LiveEditPageViewReadyEvent;
+
 
 declare const CONFIG;
 
@@ -125,7 +127,7 @@ export class LiveEditPage {
         this.unloadListener = () => {
 
             if (!this.skipNextReloadConfirmation) {
-                new api.liveedit.PageUnloadedEvent(this.pageView).fire();
+                new PageUnloadedEvent(this.pageView).fire();
                 // do remove to trigger model unbinding
             } else {
                 this.skipNextReloadConfirmation = false;
@@ -137,14 +139,14 @@ export class LiveEditPage {
 
         this.componentLoadedListener = (event: ComponentLoadedEvent) => {
 
-            if (api.liveedit.layout.LayoutItemType.get().equals(event.getNewComponentView().getType())) {
+            if (LayoutItemType.get().equals(event.getNewComponentView().getType())) {
                 DragAndDrop.get().createSortableLayout(event.getNewComponentView());
             } else {
                 DragAndDrop.get().refreshSortable();
             }
         };
 
-        api.liveedit.ComponentLoadedEvent.on(this.componentLoadedListener);
+        ComponentLoadedEvent.on(this.componentLoadedListener);
 
         this.componentResetListener = (event: ComponentResetEvent) => {
             DragAndDrop.get().refreshSortable();
@@ -183,7 +185,7 @@ export class LiveEditPage {
 
         api.dom.WindowDOM.get().unUnload(this.unloadListener);
 
-        api.liveedit.ComponentLoadedEvent.un(this.componentLoadedListener);
+        ComponentLoadedEvent.un(this.componentLoadedListener);
 
         ComponentResetEvent.un(this.componentResetListener);
 

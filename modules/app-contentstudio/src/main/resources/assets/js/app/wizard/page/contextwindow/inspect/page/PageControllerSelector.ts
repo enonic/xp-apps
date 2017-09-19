@@ -1,13 +1,14 @@
 import '../../../../../../api.ts';
-
+import {LiveEditModel} from '../../../../../../page-editor/LiveEditModel';
+import {PageDescriptorDropdown} from './PageDescriptorDropdown';
+import {PageModel} from '../../../../../../page-editor/PageModel';
 import PropertyChangedEvent = api.PropertyChangedEvent;
-import LiveEditModel = api.liveedit.LiveEditModel;
-import PageModel = api.content.page.PageModel;
 import PageDescriptor = api.content.page.PageDescriptor;
 import DescriptorKey = api.content.page.DescriptorKey;
 import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
 
-export class PageControllerSelector extends api.content.page.PageDescriptorDropdown {
+export class PageControllerSelector
+    extends PageDescriptorDropdown {
 
     constructor(model: LiveEditModel) {
         super(model);

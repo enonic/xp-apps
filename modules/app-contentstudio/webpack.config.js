@@ -11,7 +11,7 @@ module.exports = {
     context: __dirname + '/src/main/resources/assets',
     entry: {
         'js/bundle': './js/main.ts',
-        'page-editor/js/_all': './page-editor/js/main.ts',
+        'page-editor/js/_all': './js/page-editor.ts',
         'page-editor/lib/_all': './page-editor/lib/_include.js',
         'page-editor/styles/styles': './page-editor/styles/_module.less'
     },

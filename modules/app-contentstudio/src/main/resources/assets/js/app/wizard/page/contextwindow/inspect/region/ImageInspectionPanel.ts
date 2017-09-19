@@ -1,27 +1,25 @@
 import '../../../../../../api.ts';
 import {ComponentInspectionPanel, ComponentInspectionPanelConfig} from './ComponentInspectionPanel';
 import {ImageSelectorForm} from './ImageSelectorForm';
-
+import {ItemViewIconClassResolver} from '../../../../../../page-editor/ItemViewIconClassResolver';
+import {ImageComponentView} from '../../../../../../page-editor/image/ImageComponentView';
+import {LiveEditModel} from '../../../../../../page-editor/LiveEditModel';
 import ImageComponent = api.content.page.region.ImageComponent;
 import ContentSummary = api.content.ContentSummary;
 import ContentId = api.content.ContentId;
 import ContentSummaryLoader = api.content.resource.ContentSummaryLoader;
 import GetContentSummaryByIdRequest = api.content.resource.GetContentSummaryByIdRequest;
-import ContentComboBox = api.content.ContentComboBox;
 import ContentTypeName = api.schema.content.ContentTypeName;
-import LiveEditModel = api.liveedit.LiveEditModel;
-import ImageComponentView = api.liveedit.image.ImageComponentView;
 import ComponentPropertyChangedEvent = api.content.page.region.ComponentPropertyChangedEvent;
 import Option = api.ui.selector.Option;
-import SelectedOption = api.ui.selector.combobox.SelectedOption;
-import PropertyTree = api.data.PropertyTree;
 import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
 import ContentSummaryBuilder = api.content.ContentSummaryBuilder;
 import i18n = api.util.i18n;
 import ImageContentComboBox = api.content.image.ImageContentComboBox;
 import ContentSelectedOptionsView = api.content.ContentSelectedOptionsView;
 
-export class ImageInspectionPanel extends ComponentInspectionPanel<ImageComponent> {
+export class ImageInspectionPanel
+    extends ComponentInspectionPanel<ImageComponent> {
 
     private imageComponent: ImageComponent;
 
@@ -41,7 +39,7 @@ export class ImageInspectionPanel extends ComponentInspectionPanel<ImageComponen
 
     constructor() {
         super(<ComponentInspectionPanelConfig>{
-            iconClass: api.liveedit.ItemViewIconClassResolver.resolveByType('image', 'icon-xlarge')
+            iconClass: ItemViewIconClassResolver.resolveByType('image', 'icon-xlarge')
         });
         this.loader = new api.content.resource.ContentSummaryLoader();
         this.loader.setAllowedContentTypeNames([ContentTypeName.IMAGE, ContentTypeName.MEDIA_VECTOR]);
