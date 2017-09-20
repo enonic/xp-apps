@@ -769,7 +769,7 @@ export class ContentWizardPanel
         };
 
         let updateHandler = (updatedContent: ContentSummaryAndCompareStatus) => {
-            const contentId = updatedContent.getContentId();
+            const contentId: ContentId = updatedContent.getContentId();
 
             if (this.isCurrentContentId(contentId)) {
 
@@ -779,7 +779,7 @@ export class ContentWizardPanel
                 if (this.currentContent.getCompareStatus() != null) {
                     this.refreshScheduleWizardStep();
                 }
-                new GetContentByIdRequest(this.getPersistedItem().getContentId()).sendAndParse().done((content: Content) => {
+                this.fetchPersistedContent().then((content: Content) => {
                     let isAlreadyUpdated = content.equals(this.getPersistedItem());
 
                     if (!isAlreadyUpdated) {
@@ -797,22 +797,22 @@ export class ContentWizardPanel
                     } else {
                         this.resetWizard();
                     }
-                });
+                }).catch(api.DefaultErrorHandler.handle).done();
             } else {
-                const containsIdPromise = this.doComponentsContainId(contentId).then((contains) => {
+                const containsIdPromise: wemQ.Promise<boolean> = this.doComponentsContainId(contentId).then((contains) => {
                     if (contains) {
-                        new GetContentByIdRequest(this.getPersistedItem().getContentId()).sendAndParse().done((content: Content) => {
+                        this.fetchPersistedContent().then((content: Content) => {
                             this.updateWizard(content, true);
                             if (this.isEditorEnabled()) {
                                 return true;
                             }
-                        });
+                        }).catch(api.DefaultErrorHandler.handle).done();
                     } else {
                         return wemQ(false);
                     }
                 });
 
-                const templateUpdatedPromise = updateLiveEditModelIfNeeded(updatedContent);
+                const templateUpdatedPromise: wemQ.Promise<boolean> = updateLiveEditModelIfNeeded(updatedContent);
 
                 wemQ.all([containsIdPromise, templateUpdatedPromise]).spread((containsId, templateUpdated) => {
                     if (containsId || templateUpdated) {
@@ -820,6 +820,12 @@ export class ContentWizardPanel
                         this.getLivePanel().loadPage(false);
                     }
                 });
+            }
+
+            if (this.site.getContentId().equals(contentId)) {
+                new ContentWizardDataLoader().loadSite(contentId).then(site => {
+                    this.siteModel.update(site);
+                }).catch(api.DefaultErrorHandler.handle).done();
             }
         };
 
@@ -869,6 +875,10 @@ export class ContentWizardPanel
             serverEvents.unContentPublished(publishOrUnpublishHandler);
             serverEvents.unContentUnpublished(publishOrUnpublishHandler);
         });
+    }
+
+    private fetchPersistedContent(): wemQ.Promise<Content> {
+        return new GetContentByIdRequest(this.getPersistedItem().getContentId()).sendAndParse();
     }
 
     private updateLiveForm() {
