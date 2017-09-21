@@ -8,18 +8,19 @@ const browsePanel = require('../page_objects/browsepanel/userbrowse.panel');
 const userStoreWizard = require('../page_objects/wizardpanel/userstore.wizard');
 const newPrincipalDialog = require('../page_objects/browsepanel/new.principal.dialog');
 const filterPanel = require("../page_objects/browsepanel/principal.filter.panel");
+
 module.exports = {
     xpTabs: {},
     findAndSelectItem: function (name) {
         return browsePanel.clickOnSearchButton().then(()=> {
-           return filterPanel.waitForOpened();
+            return filterPanel.waitForOpened();
         }).then(()=>{
-           return filterPanel.typeSearchText(name);
+            return filterPanel.typeSearchText(name);
         }).then(()=>{
             return browsePanel.waitForSpinnerNotVisible(3000);
         }).then(()=>{
             return browsePanel.clickOnRowByName(name);
-        })
+        });
     },
     navigateToUsersApp: function (browser) {
         return launcherPanel.waitForPanelVisible(1000).then(()=> {
@@ -58,21 +59,32 @@ module.exports = {
         return browser.close().pause(300).then(()=> {
             return browser.switchTab(this.xpTabs[0]);
         })
-    }
-    ,
+    },
+    
     openWizardAndSaveUserStore: function (browser, userStoreData) {
-        return this.doOpenUserStoreWizard(browser).then(()=> {
+        return this.clickOnNewOpenUserStoreWizard(browser).then(()=> {
             return userStoreWizard.typeData(userStoreData)
         }).then(()=> {
             return userStoreWizard.waitAndClickOnSave()
         }).pause(500);
     },
 
-    doOpenUserStoreWizard: function (browser) {
+    clickOnNewOpenUserStoreWizard: function (browser) {
         return browsePanel.clickOnNewButton().then(()=> {
             return newPrincipalDialog.waitForOpened();
         }).then(()=> {
             return newPrincipalDialog.clickOnItem(`User Store`);
         }).then(()=>userStoreWizard.waitForOpened());
     },
+    getDisplayedElements: function(browser,selector){
+
+
+        var elems = browser.elements(selector).filter;
+        elems.value.map((element)=> {
+
+        })
+        //if(!elem.isVisible()){
+        //    //do something
+        //}
+    }
 };
