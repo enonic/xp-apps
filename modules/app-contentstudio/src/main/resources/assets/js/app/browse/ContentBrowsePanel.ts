@@ -21,7 +21,6 @@ import {ContentPublishMenuButton} from './ContentPublishMenuButton';
 import {TreeNodeParentOfContent} from './TreeNodeParentOfContent';
 import {TreeNodesOfContentPath} from './TreeNodesOfContentPath';
 import {ShowIssuesDialogButton} from '../issue/view/ShowIssuesDialogButton';
-
 import TreeNode = api.ui.treegrid.TreeNode;
 import BrowseItem = api.app.browse.BrowseItem;
 import UploadItem = api.ui.uploader.UploadItem;
@@ -36,8 +35,6 @@ import DataChangedEvent = api.ui.treegrid.DataChangedEvent;
 import ContentSummaryAndCompareStatusFetcher = api.content.resource.ContentSummaryAndCompareStatusFetcher;
 import TreeGridItemClickedEvent = api.ui.treegrid.TreeGridItemClickedEvent;
 import GetContentByIdRequest = api.content.resource.GetContentByIdRequest;
-import ActionButton = api.ui.button.ActionButton;
-import SelectionOnClickType = api.ui.treegrid.SelectionOnClickType;
 import ContentIconUrlResolver = api.content.util.ContentIconUrlResolver;
 import IsRenderableRequest = api.content.page.IsRenderableRequest;
 
@@ -197,10 +194,8 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
                     nonMobileDetailsPanelsManager.setActivePanel();
                     this.mobileContentItemStatisticsPanel.slideAllOut();
                 }
-                this.treeGrid.setSelectionOnClick(SelectionOnClickType.HIGHLIGHT);
             } else {
                 contentPublishMenuButton.minimize();
-                this.treeGrid.setSelectionOnClick(SelectionOnClickType.NONE);
             }
         });
     }
@@ -235,6 +230,9 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
 
     private initItemStatisticsPanelForMobile(detailsView: DetailsView) {
         this.mobileContentItemStatisticsPanel = new MobileContentItemStatisticsPanel(this.getBrowseActions(), detailsView);
+
+        // selection opens detail panel in mobile mode, so deselect it when returning back to grid
+        this.mobileContentItemStatisticsPanel.onSlideOut(() => this.treeGrid.deselectAll());
 
         const updateMobilePanel = (content: ContentSummaryAndCompareStatus, changed: boolean) => {
             if (changed) {
