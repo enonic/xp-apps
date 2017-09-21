@@ -1,4 +1,5 @@
 import {GraphQlRequest} from '../GraphQlRequest';
+import {GraphQlErrorParser} from '../GraphQlErrorParser';
 import UserStoreJson = api.security.UserStoreJson;
 import UserStore = api.security.UserStore;
 import UserStoreKey = api.security.UserStoreKey;
@@ -82,12 +83,12 @@ export class CreateUserStoreRequest
     }
 
     sendAndParse(): wemQ.Promise<UserStore> {
-        return this.mutate().then(json => this.userStorefromJson(json.createUserStore));
+        return this.mutate().then(json => this.userStorefromJson(json.createUserStore, json.error));
     }
 
-    userStorefromJson(us: UserStoreJson) {
+    userStorefromJson(us: UserStoreJson, error: string) {
         if (!us) {
-            throw `UserStore[${this.userStoreKey.toString()}] not found`;
+            throw GraphQlErrorParser.getUserStoreReason(error, this.userStoreKey.toString());
         }
         if (us.authConfig && typeof us.authConfig.config === 'string') {
             // config is passed as string
