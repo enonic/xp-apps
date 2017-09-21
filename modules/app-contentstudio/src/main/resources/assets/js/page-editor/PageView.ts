@@ -24,7 +24,7 @@ import {PageUnlockedEvent} from './PageUnlockedEvent';
 import {PageTextModeStartedEvent} from './PageTextModeStartedEvent';
 import {Highlighter} from './Highlighter';
 import {SelectedHighlighter} from './SelectedHighlighter';
-import {Position} from './Position';
+import {ClickPosition} from './ClickPosition';
 import {ItemViewId} from './ItemViewId';
 import {ItemType} from './ItemType';
 import {LayoutComponentView} from './layout/LayoutComponentView';
@@ -364,7 +364,7 @@ export class PageView
         });
     }
 
-    select(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition, isNew: boolean = false,
+    select(clickPosition?: ClickPosition, menuPosition?: ItemViewContextMenuPosition, isNew: boolean = false,
            rightClicked: boolean = false) {
         super.select(clickPosition, menuPosition, false, rightClicked);
 
@@ -377,7 +377,7 @@ export class PageView
         new PageSelectedEvent(this).fire();
     }
 
-    showContextMenu(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition) {
+    showContextMenu(clickPosition?: ClickPosition, menuPosition?: ItemViewContextMenuPosition) {
         if (!this.isLocked()) {
             super.showContextMenu(clickPosition, menuPosition);
         }
@@ -397,7 +397,7 @@ export class PageView
         return [unlockAction];
     }
 
-    selectLocked(pos: Position) {
+    selectLocked(pos: ClickPosition) {
         this.setLockVisible(true);
         this.lockedContextMenu.showAt(pos.x, pos.y);
 

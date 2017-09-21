@@ -1,4 +1,5 @@
 import './../api.ts';
+import {ClickPosition} from './ClickPosition';
 import {ItemView, ItemViewBuilder} from './ItemView';
 import {ComponentView} from './ComponentView';
 import {RegionItemType} from './RegionItemType';
@@ -270,7 +271,7 @@ export class RegionView
         }
     }
 
-    select(clickPosition?: Position,
+    select(clickPosition?: ClickPosition,
            menuPosition?: ItemViewContextMenuPosition,
            isNew: boolean = false,
            rightClicked: boolean = false) {

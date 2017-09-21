@@ -1,4 +1,5 @@
 import './../api.ts';
+import {ClickPosition} from './ClickPosition';
 import {ItemViewIdProducer} from './ItemViewIdProducer';
 import {ItemViewPlaceholder} from './ItemViewPlaceholder';
 import {ItemView, ItemViewBuilder} from './ItemView';
@@ -262,7 +263,7 @@ export class ComponentView<COMPONENT extends Component>
 
     }
 
-    select(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition, isNew: boolean = false,
+    select(clickPosition?: ClickPosition, menuPosition?: ItemViewContextMenuPosition, isNew: boolean = false,
            rightClicked: boolean = false) {
 
         Element.fromHtmlElement(<HTMLElement>window.frameElement).giveFocus();

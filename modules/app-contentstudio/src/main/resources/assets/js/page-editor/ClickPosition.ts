@@ -1,6 +1,6 @@
 import './../api.ts';
 
-export interface Position {
+export interface ClickPosition {
     x: number;
     y: number;
 }

@@ -1,18 +1,19 @@
 import './../api.ts';
 import {ItemView} from './ItemView';
+import {ClickPosition} from './ClickPosition';
 
 export class ItemViewSelectedEvent
     extends api.event.Event {
 
     private pageItemView: ItemView;
 
-    private position: Position;
+    private position: ClickPosition;
 
     private newlyCreated: boolean;
 
     private rightClicked: boolean;
 
-    constructor(itemView: ItemView, position: Position, isNew: boolean = false, rightClicked: boolean = false) {
+    constructor(itemView: ItemView, position: ClickPosition, isNew: boolean = false, rightClicked: boolean = false) {
         super();
         this.pageItemView = itemView;
         this.position = position;
@@ -24,7 +25,7 @@ export class ItemViewSelectedEvent
         return this.pageItemView;
     }
 
-    getPosition(): Position {
+    getPosition(): ClickPosition {
         return this.position;
     }
 

@@ -25,7 +25,7 @@ import {TextItemType} from './text/TextItemType';
 import {LayoutItemType} from './layout/LayoutItemType';
 import {PartItemType} from './part/PartItemType';
 import {LayoutComponentView} from './layout/LayoutComponentView';
-import {Position} from './Position';
+import {ClickPosition} from './ClickPosition';
 import {ImageItemType} from './image/ImageItemType';
 import Component = api.content.page.region.Component;
 import i18n = api.util.i18n;
@@ -626,7 +626,7 @@ export class ItemView
         return this.itemViewIdProducer;
     }
 
-    showContextMenu(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition) {
+    showContextMenu(clickPosition?: ClickPosition, menuPosition?: ItemViewContextMenuPosition) {
         if (this.getPageView().isDisabledContextMenu()) {
             return;
         }
