@@ -6,6 +6,17 @@ function Page() {
 Page.prototype.getBrowser = function () {
     return webDriverHelper.browser;
 };
+
+Page.prototype.numberOfElements = function (selector) {
+    return this.getBrowser().elements(selector).then((res)=> {
+        return res.value.filter(el=> {
+            return this.getBrowser().elementIdDisplayed(el.ELEMENT);
+        })
+    }).then((result)=> {
+        return Object.keys(result).length;
+    });
+};
+
 Page.prototype.getTitle = function () {
     return this.getBrowser().getTitle();
 };
@@ -67,22 +78,32 @@ Page.prototype.getText = function (selector) {
 Page.prototype.getElementId = function (ele) {
     return ele.value.ELEMENT;
 };
-Page.prototype.numberOfElements = function (selector) {
-    return this.getBrowser().elements(selector).then((result)=> {
-        return Object.keys(result.value).length;
-    });
-}
+Page.prototype.getDisplayedElements = function (selector) {
+    let displayedElements = [];
+    return this.getBrowser().elements(selector).then(results=> {
+        results.value.filter
+    })
+    return this.getBrowser().elementIdDisplayed(el.ELEMENT);
+    //https://github.com/webdriverio/webdriverio/issues/1701
+    //});
+};
 
 Page.prototype.getTextFromElements = function (selector) {
-    let strings = [];
-    return this.getBrowser().elements(selector).then((result)=> {
-        result.value.forEach((val,key)=> {
+    let json = [];
 
-            strings.push(this.getBrowser().elementIdText(val.ELEMENT).value);
+    return this.getBrowser().elements(selector).then((result)=> {
+        result.value.forEach((val)=> {
+            json.push(this.getBrowser().elementIdText(val.ELEMENT));
+        })
+        return Promise.all(json).then((p)=> {
+            return p;
         });
-          return Promise.all(strings).then((res)=>{
-              return res;
-          });
+    }).then(responses=> {
+        let res = [];
+        responses.forEach((str)=> {
+            return res.push(str.value);
+        })
+        return res;
     });
 }
 

@@ -18,7 +18,7 @@ describe('User Store saving and deleting spec', function () {
     it(`GIVEN 'User Store' wizard is opened WHEN name has been typed AND 'Save' button pressed THEN correct notification message should be displayed`,
         () => {
             userStore = userItemsBuilder.buildUserStore(userItemsBuilder.generateRandomName('store'), 'test user store');
-            return testUtils.doOpenUserStoreWizard(webDriverHelper.browser).then(()=> {
+            return testUtils.clickOnNewOpenUserStoreWizard(webDriverHelper.browser).then(()=> {
                 return userStoreWizard.typeDisplayName(userStore.displayName);
             }).then(()=> {
                 return userStoreWizard.waitAndClickOnSave();

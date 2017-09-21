@@ -196,6 +196,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
                 }
             } else {
                 contentPublishMenuButton.minimize();
+                ActiveDetailsPanelManager.setActiveDetailsPanel(this.mobileContentItemStatisticsPanel.getDetailsPanel());
             }
         });
     }
