@@ -35,7 +35,6 @@ import DataChangedEvent = api.ui.treegrid.DataChangedEvent;
 import ContentSummaryAndCompareStatusFetcher = api.content.resource.ContentSummaryAndCompareStatusFetcher;
 import TreeGridItemClickedEvent = api.ui.treegrid.TreeGridItemClickedEvent;
 import GetContentByIdRequest = api.content.resource.GetContentByIdRequest;
-import SelectionOnClickType = api.ui.treegrid.SelectionOnClickType;
 import ContentIconUrlResolver = api.content.util.ContentIconUrlResolver;
 import IsRenderableRequest = api.content.page.IsRenderableRequest;
 
@@ -195,11 +194,9 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
                     nonMobileDetailsPanelsManager.setActivePanel();
                     this.mobileContentItemStatisticsPanel.slideAllOut();
                 }
-                this.treeGrid.setSelectionOnClick(SelectionOnClickType.HIGHLIGHT);
             } else {
                 contentPublishMenuButton.minimize();
                 ActiveDetailsPanelManager.setActiveDetailsPanel(this.mobileContentItemStatisticsPanel.getDetailsPanel());
-                this.treeGrid.setSelectionOnClick(SelectionOnClickType.NONE);
             }
         });
     }
@@ -234,6 +231,9 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
 
     private initItemStatisticsPanelForMobile(detailsView: DetailsView) {
         this.mobileContentItemStatisticsPanel = new MobileContentItemStatisticsPanel(this.getBrowseActions(), detailsView);
+
+        // selection opens detail panel in mobile mode, so deselect it when returning back to grid
+        this.mobileContentItemStatisticsPanel.onSlideOut(() => this.treeGrid.deselectAll());
 
         const updateMobilePanel = (content: ContentSummaryAndCompareStatus, changed: boolean) => {
             if (changed) {
