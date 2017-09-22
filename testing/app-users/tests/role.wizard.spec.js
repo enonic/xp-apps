@@ -69,6 +69,20 @@ describe('Role Wizard page and info on the UserItemStatisticsPanel spec ', funct
             })
         });
 
+    it(`GIVEN existing 'Role' with a member is selected WHEN member has been removed AND navigated to the grid THEN correct info should be present in the 'statistics panel'`,
+        () => {
+            return testUtils.findAndSelectItem(testRole.displayName).then(()=> {
+                return userItemStatisticsPanel.waitForPanelVisible();
+            }).then(()=>{
+                roleWizard.removeMember(appConst.SUPER_USER)
+            }).then(()=> {
+                return expect(userItemStatisticsPanel.getItemName()).to.eventually.be.equal(testRole.displayName);
+                // }).then(()=>{
+                //    return expect(userItemStatisticsPanel.getItemPath()).to.eventually.be.equal('/roles/'+testRole.name);
+                // })
+            })
+        });
+
     beforeEach(() => testUtils.navigateToUsersApp(webDriverHelper.browser));
     afterEach(() => testUtils.doCloseUsersApp(webDriverHelper.browser));
 });
