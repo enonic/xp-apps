@@ -31,7 +31,7 @@ describe('User Store saving and deleting spec', function () {
 
     it(`GIVEN 'user store' wizard is opened WHEN the name that already in use has been typed THEN correct notification message should be present`,
         ()=> {
-            return testUtils.doOpenUserStoreWizard(webDriverHelper.browser).then(()=>userStoreWizard.waitForOpened())
+            return testUtils.clickOnNewOpenUserStoreWizard(webDriverHelper.browser).then(()=>userStoreWizard.waitForOpened())
                 .then(()=>userStoreWizard.typeDisplayName(userStore.displayName)).then(()=> {
                     return userStoreWizard.waitAndClickOnSave();
                 }).then(()=> {
