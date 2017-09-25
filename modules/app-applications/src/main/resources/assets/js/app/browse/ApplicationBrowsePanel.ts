@@ -27,7 +27,7 @@ export class ApplicationBrowsePanel extends api.app.browse.BrowsePanel<Applicati
     constructor() {
         super();
 
-        this.applicationIconUrl = api.util.UriHelper.getAdminUri('common/images/icons/icoMoon/128x128/puzzle.png');
+        this.applicationIconUrl = api.util.UriHelper.getAdminUri('common/images/puzzle.png');
 
         this.registerEvents();
     }

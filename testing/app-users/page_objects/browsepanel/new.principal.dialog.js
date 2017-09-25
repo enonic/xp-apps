@@ -16,6 +16,11 @@ var newPrincipalDialog = Object.create(page, {
             return `${dialog.container}${dialog.header}`;
         }
     },
+    cancelButton: {
+        get: function () {
+            return `${dialog.container}${elements.CANCEL_BUTTON}`;
+        }
+    },
     clickOnItem: {
         value: function (itemName) {
             return this.doClick(`${dialog.itemViewer}` + `${elements.itemByDisplayName(itemName)}`);
@@ -26,21 +31,21 @@ var newPrincipalDialog = Object.create(page, {
             return this.waitForVisible(`${dialog.container}`, 3000);
         }
     },
-    getHeaderString: {
-        value: function () {
-            return this.getText(this.header);
-        }
-    },
     getNumberOfItems:{
         value:function(){
-           let items= `${dialog.itemViewer}` +`${elements.H6_DISPLAY_NAME}`;
-           return this.numberOfElements(items)
+            let items= `${dialog.itemViewer}` +`${elements.H6_DISPLAY_NAME}`;
+            return this.numberOfElements(items)
         }
     },
     getItemNames:{
         value:function(){
             let items= `${dialog.itemViewer}` +`${elements.H6_DISPLAY_NAME}`;
             return this.getTextFromElements(items)
+        }
+    },
+    getHeaderText:{
+        value:function(){
+            return this.getText(this.header);
         }
     }
 });
