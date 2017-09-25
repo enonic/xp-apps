@@ -25,8 +25,7 @@ export class ContentMoveComboBox extends ContentComboBox {
             .setSelectedOptionsView(<SelectedOptionsView<ContentTreeSelectorItem>>new ContentSelectedOptionsView())
             .setOptionDisplayValueViewer(new api.content.ContentSummaryViewer())
             .setDelayedInputValueChangedHandling(500)
-            .setSkipAutoDropShowOnValueChange(true)
-            .setTreegridDropdownEnabled(true)
+            .setSkipAutoDropShowOnValueChange(true);
 
         super(richComboBoxBuilder);
         this.readonlyChecker = new MoveReadOnlyChecker();

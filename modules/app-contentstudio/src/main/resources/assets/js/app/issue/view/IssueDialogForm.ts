@@ -77,7 +77,7 @@ export class IssueDialogForm
         this.approversSelector = api.ui.security.PrincipalComboBox.create().setLoader(principalLoader).setMaxOccurences(0).setCompactView(
             this.compactAssigneesView).build();
 
-        this.contentItemsSelector = api.content.ContentComboBox.create().setShowStatus(true).setTreegridDropdownEnabled(true).build();
+        this.contentItemsSelector = api.content.ContentComboBox.create().setShowStatus(true).build();
 
         this.contentItemsSelector.onOptionSelected((option) => {
             this.notifyContentItemsAdded(
