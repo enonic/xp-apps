@@ -41,7 +41,6 @@ export class ImageInspectionPanel extends ComponentInspectionPanel<ImageComponen
         this.imageSelector = ImageContentComboBox
             .create()
             .setMaximumOccurrences(1)
-            .setTreegridDropdownEnabled(true)
             .setSelectedOptionsView(new ContentSelectedOptionsView())
             .build();
 
