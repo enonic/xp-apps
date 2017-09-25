@@ -6,7 +6,6 @@ import {ApplicationBrowseItemPanel} from './ApplicationBrowseItemPanel';
 import {StopApplicationEvent} from './StopApplicationEvent';
 import {StartApplicationEvent} from './StartApplicationEvent';
 import {UninstallApplicationEvent} from './UninstallApplicationEvent';
-
 import ApplicationKey = api.application.ApplicationKey;
 import Application = api.application.Application;
 import TreeNode = api.ui.treegrid.TreeNode;
@@ -20,14 +19,10 @@ import i18n = api.util.i18n;
 
 export class ApplicationBrowsePanel extends api.app.browse.BrowsePanel<Application> {
 
-    private applicationIconUrl: string;
-
     protected treeGrid: ApplicationTreeGrid;
 
     constructor() {
         super();
-
-        this.applicationIconUrl = api.util.UriHelper.getAdminUri('common/images/puzzle.png');
 
         this.registerEvents();
     }
@@ -59,8 +54,10 @@ export class ApplicationBrowsePanel extends api.app.browse.BrowsePanel<Applicati
             }
             if (i === index) {
                 let applicationEl = node.getData();
-                let item = new BrowseItem<Application>(applicationEl).setId(applicationEl.getId()).setDisplayName(
-                    applicationEl.getDisplayName()).setPath(applicationEl.getName()).setIconUrl(this.applicationIconUrl);
+                let item = new BrowseItem<Application>(applicationEl).setId(applicationEl.getId())
+                    .setDisplayName(applicationEl.getDisplayName())
+                    .setPath(applicationEl.getName())
+                    .setIconUrl(applicationEl.getIconUrl());
                 browseItems.push(item);
             }
         });
