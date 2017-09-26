@@ -38,7 +38,8 @@ import GetContentByIdRequest = api.content.resource.GetContentByIdRequest;
 import ContentIconUrlResolver = api.content.util.ContentIconUrlResolver;
 import IsRenderableRequest = api.content.page.IsRenderableRequest;
 
-export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummaryAndCompareStatus> {
+export class ContentBrowsePanel
+    extends api.app.browse.BrowsePanel<ContentSummaryAndCompareStatus> {
 
     protected treeGrid: ContentTreeGrid;
     protected browseToolbar: ContentBrowseToolbar;
@@ -189,10 +190,11 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
             if (ResponsiveRanges._540_720.isFitOrBigger(item.getOldRangeValue())) {
                 contentPublishMenuButton.maximize();
                 if (item.isInRangeOrSmaller(ResponsiveRanges._360_540)) {
+                    ActiveDetailsPanelManager.setActiveDetailsPanel(this.mobileContentItemStatisticsPanel.getDetailsPanel());
                     nonMobileDetailsPanelsManager.hideActivePanel(true);
                 } else {
                     nonMobileDetailsPanelsManager.setActivePanel();
-                    this.mobileContentItemStatisticsPanel.slideAllOut();
+                    this.mobileContentItemStatisticsPanel.slideAllOut(true);
                 }
             } else {
                 contentPublishMenuButton.minimize();
@@ -246,9 +248,9 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
                     this.mobileContentItemStatisticsPanel.getPreviewPanel().setBlankFrame();
                     this.mobileContentItemStatisticsPanel.getPreviewPanel().showMask();
                     new IsRenderableRequest(content.getContentId()).sendAndParse().then((renderable: boolean) => {
-                            item.setRenderable(renderable);
-                            this.mobileContentItemStatisticsPanel.getPreviewPanel().setItem(item);
-                        });
+                        item.setRenderable(renderable);
+                        this.mobileContentItemStatisticsPanel.getPreviewPanel().setItem(item);
+                    });
                 }, 300);
             }
         };

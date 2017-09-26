@@ -4,7 +4,6 @@ import {FloatingDetailsPanel} from './FloatingDetailsPanel';
 import {DockedDetailsPanel} from './DockedDetailsPanel';
 import {NonMobileDetailsPanelToggleButton} from './button/NonMobileDetailsPanelToggleButton';
 import {ActiveDetailsPanelManager} from './ActiveDetailsPanelManager';
-
 import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
 
 export class NonMobileDetailsPanelsManager {
@@ -89,8 +88,8 @@ export class NonMobileDetailsPanelsManager {
             return;
         }
 
-        ActiveDetailsPanelManager.setActiveDetailsPanel(this.requiresFloatingPanelDueToShortWidth() ?
-                                                        this.floatingDetailsPanel : this.dockedDetailsPanel);
+        ActiveDetailsPanelManager.setActiveDetailsPanel(
+            this.requiresFloatingPanelDueToShortWidth() ? this.floatingDetailsPanel : this.dockedDetailsPanel);
     }
 
     private doPanelAnimation(canSetActivePanel: boolean = true, onResize: boolean = false) {
@@ -100,7 +99,7 @@ export class NonMobileDetailsPanelsManager {
         if (this.requiresFloatingPanelDueToShortWidth()) {
             this.switchToFloatingMode(canSetActivePanel, onResize);
         } else {
-            this.switchToDockedMode(canSetActivePanel);
+            this.switchToDockedMode(canSetActivePanel, onResize);
         }
 
         setTimeout(() => {
@@ -108,7 +107,7 @@ export class NonMobileDetailsPanelsManager {
         }, this.isExpanded() ? 300 : 0);
     }
 
-    private switchToDockedMode(canSetActivePanel: boolean = true) {
+    private switchToDockedMode(canSetActivePanel: boolean = true, onResize?: boolean) {
         this.toggleButton.removeClass('floating-mode');
         if (this.floatingPanelIsShown()) {
             this.floatingToDockedSync();
@@ -120,12 +119,12 @@ export class NonMobileDetailsPanelsManager {
 
         this.dockedDetailsPanel.addClass('left-bordered');
 
-        if (this.isExpanded()) {
+        if (!this.isExpanded() || onResize) {
+            this.splitPanelWithGridAndDetails.showSecondPanel(false);
+        } else {
             if (!this.splitPanelWithGridAndDetails.isSecondPanelHidden()) {
                 this.splitPanelWithGridAndDetails.foldSecondPanel();
             }
-        } else {
-            this.splitPanelWithGridAndDetails.showSecondPanel(false);
         }
 
         setTimeout(() => {
@@ -161,15 +160,19 @@ export class NonMobileDetailsPanelsManager {
         }
         this.splitPanelWithGridAndDetails.setActiveWidthPxOfSecondPanel(this.floatingDetailsPanel.getActualWidth());
         this.splitPanelWithGridAndDetails.removeClass('sliding');
-
-        setTimeout(() => {
-            this.ensureButtonHasCorrectState();
-            this.splitPanelWithGridAndDetails.removeClass('details-panel-expanded');
-        }, this.isExpanded() ? 300 : 0);
     }
 
     hideActivePanel(onResize: boolean = false) {
-        this.doPanelAnimation(false, onResize);
+        if (this.isFloatingDetailsPanelActive()) {
+            this.toggleButton.removeClass('floating-mode');
+            this.floatingDetailsPanel.slideOut();
+        } else {
+            this.hideDockedDetailsPanel();
+        }
+
+        setTimeout(() => {
+            this.ensureButtonHasCorrectState();
+        }, this.isExpanded() ? 300 : 0);
     }
 
     hideDockedDetailsPanel() {
@@ -201,23 +204,17 @@ export class NonMobileDetailsPanelsManager {
     }
 
     private needsSwitchToFloatingMode(): boolean {
-        if (this.requiresFloatingPanelDueToShortWidth() && !this.splitPanelWithGridAndDetails.isSecondPanelHidden()) {
-            return true;
-        }
-        return false;
+        return this.requiresFloatingPanelDueToShortWidth() && !this.splitPanelWithGridAndDetails.isSecondPanelHidden();
     }
 
     private needsSwitchToDockedMode(): boolean {
-        if (!this.requiresFloatingPanelDueToShortWidth() && this.splitPanelWithGridAndDetails.isSecondPanelHidden() && this.isExpanded()) {
-            return true;
-        }
-        return false;
+        return !this.requiresFloatingPanelDueToShortWidth() && this.splitPanelWithGridAndDetails.isSecondPanelHidden() && this.isExpanded();
     }
 
     private requiresAnimation(): boolean {
-        return this.isExpanded() ?
-               (!this.splitPanelWithGridAndDetails.isSecondPanelHidden() || this.floatingPanelIsShown()) :
-               (this.splitPanelWithGridAndDetails.isSecondPanelHidden() && !this.floatingPanelIsShown());
+        return this.isExpanded()
+            ? (!this.splitPanelWithGridAndDetails.isSecondPanelHidden() || this.floatingPanelIsShown())
+            : (this.splitPanelWithGridAndDetails.isSecondPanelHidden() && !this.floatingPanelIsShown());
     }
 
     private floatingPanelIsShown(): boolean {

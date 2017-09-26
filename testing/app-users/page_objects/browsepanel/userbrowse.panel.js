@@ -138,7 +138,7 @@ var userBrowsePanel = Object.create(page, {
     clickOnRowByName: {
         value: function (name) {
             var displayNameXpath = panel.rowByName(name);
-            return this.waitForVisible(displayNameXpath, 2000).then(()=> {
+            return this.waitForVisible(displayNameXpath, 3000).then(()=> {
                 return this.doClick(displayNameXpath);
             }).catch(()=> {
                 throw Error('Row with the name ' + name + ' was not found')

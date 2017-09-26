@@ -78,6 +78,13 @@ Page.prototype.getText = function (selector) {
 Page.prototype.getElementId = function (ele) {
     return ele.value.ELEMENT;
 };
+Page.prototype.isAttributePresent = function (selector, atrName) {
+    return this.getBrowser().getAttribute(selector, atrName).then(result=>{
+        if(result == null){
+            return false;
+        }else return true;
+    })
+};
 Page.prototype.getDisplayedElements = function (selector) {
     let displayedElements = [];
     return this.getBrowser().elements(selector).then(results=> {

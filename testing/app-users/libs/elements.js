@@ -18,6 +18,9 @@ module.exports = Object.freeze({
     itemByName: function (name) {
         return ` //div[contains(@id,'NamesView') and child::p[contains(@class,'sub-name') and contains(.,'${name}')]]`
     },
+    tabItemByDisplayName: function (displayName) {
+        return `//li[contains(@id,'AppBarTabMenuItem') and descendant::a[contains(.,'${displayName}')]]`
+    },
     CANCEL_BUTTON: `//div[@class='cancel-button-top']`,
     COMBO_BOX_OPTION_FILTER_INPUT: "//input[contains(@id,'ComboBoxOptionFilterInput')]",
     PRINCIPAL_SELECTED_OPTION: "//div[contains(@id,'security.PrincipalSelectedOptionView')]",

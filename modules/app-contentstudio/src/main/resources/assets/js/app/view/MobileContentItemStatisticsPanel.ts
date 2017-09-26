@@ -164,17 +164,19 @@ export class MobileContentItemStatisticsPanel
         this.subHeaderLabel.setHtml(status);
     }
 
-    slideAllOut() {
-        this.slideOut();
+    slideAllOut(silent?: boolean) {
+        this.slideOut(silent);
         this.detailsPanel.slideOut();
         this.detailsToggleButton.removeClass('expanded');
     }
 
     // hide
-    slideOut() {
+    slideOut(silent?: boolean) {
         this.getEl().setRightPx(-this.getEl().getWidthWithBorder());
         api.dom.Body.get().getHTMLElement().classList.remove('mobile-statistics-panel');
-        this.notifySlideOut();
+        if (!silent) {
+            this.notifySlideOut();
+        }
     }
 
     // show
