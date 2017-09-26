@@ -757,11 +757,14 @@ export class ContentWizardPanel
         };
 
         const updateLiveEditModelIfNeeded = (updatedContent: ContentSummaryAndCompareStatus) => {
-            const isTemplate = updatedContent.getType().isPageTemplate();
+            const templateUpdated = updatedContent.getType().isPageTemplate();
+            const item = this.getPersistedItem();
+            const site = item instanceof Site ? item : null;
 
-            if (isTemplate && this.site && updatedContent.getPath().isDescendantOf(this.site.getPath())) {
-                return new ContentWizardDataLoader().loadDefaultModels(this.site, this.contentType.getContentTypeName()).then(
+            if (templateUpdated && site && updatedContent.getPath().isDescendantOf(site.getPath())) {
+                return new ContentWizardDataLoader().loadDefaultModels(site, this.contentType.getContentTypeName()).then(
                     defaultModels => {
+                        this.defaultModels = defaultModels;     
                         return this.liveEditModel.init(defaultModels.getPageTemplate(), defaultModels.getPageDescriptor()).then(model => {
                             this.getLivePanel().setModel(this.liveEditModel);
                             return true;
@@ -826,7 +829,7 @@ export class ContentWizardPanel
                 });
             }
 
-            if (this.site.getContentId().equals(contentId)) {
+            if (this.getPersistedItem().getContentId().equals(contentId)) {
                 new ContentWizardDataLoader().loadSite(contentId).then(site => {
                     this.siteModel.update(site);
                 }).catch(api.DefaultErrorHandler.handle).done();
