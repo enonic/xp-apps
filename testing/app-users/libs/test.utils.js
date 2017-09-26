@@ -6,6 +6,7 @@ const homePage = require('../page_objects/home.page');
 const loginPage = require('../page_objects/login.page');
 const browsePanel = require('../page_objects/browsepanel/userbrowse.panel');
 const userStoreWizard = require('../page_objects/wizardpanel/userstore.wizard');
+const userWizard = require('../page_objects/wizardpanel/user.wizard');
 const newPrincipalDialog = require('../page_objects/browsepanel/new.principal.dialog');
 const filterPanel = require("../page_objects/browsepanel/principal.filter.panel");
 
@@ -52,7 +53,9 @@ module.exports = {
             return launcherPanel.clickOnUsersLink().pause(1000);
         }).then(()=> {
             return this.doSwitchToUsersApp(browser);
-        });
+        }).catch((err)=>{
+            throw new Error(err);
+        })
     },
 
     doCloseUsersApp: function (browser) {
@@ -76,9 +79,18 @@ module.exports = {
             return newPrincipalDialog.clickOnItem(`User Store`);
         }).then(()=>userStoreWizard.waitForOpened());
     },
+    clickOnSystemOpenUserWizard: function(browser){
+        return browsePanel.clickOnRowByName('system').then(()=>{
+            return browsePanel.waitForNewButtonEnabled();
+        }) .then(()=>{
+            return browsePanel.clickOnNewButton();
+        }) .then(()=>{
+            return newPrincipalDialog.clickOnItem('User');
+        }).then(()=>{
+            return userWizard.waitForOpened();
+        });
+    },
     getDisplayedElements: function(browser,selector){
-
-
         var elems = browser.elements(selector).filter;
         elems.value.map((element)=> {
 

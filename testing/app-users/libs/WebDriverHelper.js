@@ -32,9 +32,11 @@ WebDriverHelper.prototype.setupBrowser = function setupBrowser() {
                 platform: platform_name
             }
         };
+
         _this.browser = webdriverio
             .remote(options)
             .init().url(baseUrl);
+        _this.browser.windowHandleSize({width:properties.get('browser.width') , height: properties.get('browser.height')});
         return _this.browser;
     });
     after(function() {
