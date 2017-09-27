@@ -1,5 +1,4 @@
 import Path = api.rest.Path;
-import JsonResponse = api.rest.JsonResponse;
 import JsonRequest = api.rest.JsonRequest;
 import StringHelper = api.util.StringHelper;
 
@@ -61,11 +60,15 @@ export class GraphQlRequest<RAW_JSON_TYPE, PARSED_TYPE> {
                 .setPath(this.path);
 
             return jsonRequest.send().then(response => {
-                let json = response.getJson();
+                const json = response.getJson();
+                const result = json.data;
                 if (json.errors) {
+                    const firstError = json.errors[0];
+                    const error = firstError && firstError.exception && firstError.exception.message;
+                    result.error = error;
                     console.warn('GraphQl response contains errors: ', json.errors);
                 }
-                return json ? json.data : null;
+                return result;
             }, error => {
                 console.error('GraphQl request error: ', error);
             });
