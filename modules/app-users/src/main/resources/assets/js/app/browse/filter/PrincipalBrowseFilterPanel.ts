@@ -3,19 +3,9 @@ import {UserTreeGridItem} from '../UserTreeGridItem';
 import {PrincipalTypeAggregationGroupView} from './PrincipalTypeAggregationGroupView';
 import {ListUserItemsRequest} from '../../../api/graphql/principal/ListUserItemsRequest';
 import {UserItemType} from '../UserItemType';
-import Principal = api.security.Principal;
-import PrincipalType = api.security.PrincipalType;
+import {PrincipalBrowseSearchData} from './PrincipalBrowseSearchData';
 import BrowseFilterResetEvent = api.app.browse.filter.BrowseFilterResetEvent;
 import BrowseFilterSearchEvent = api.app.browse.filter.BrowseFilterSearchEvent;
-import SearchInputValues = api.query.SearchInputValues;
-import QueryExpr = api.query.expr.QueryExpr;
-import CompareExpr = api.query.expr.CompareExpr;
-import LogicalExpr = api.query.expr.LogicalExpr;
-import ValueExpr = api.query.expr.ValueExpr;
-import LogicalOperator = api.query.expr.LogicalOperator;
-import LogicalExp = api.query.expr.LogicalExpr;
-import FieldExpr = api.query.expr.FieldExpr;
-import QueryField = api.query.QueryField;
 import AggregationGroupView = api.aggregation.AggregationGroupView;
 import AggregationSelection = api.aggregation.AggregationSelection;
 import Aggregation = api.aggregation.Aggregation;
@@ -101,8 +91,10 @@ export class PrincipalBrowseFilterPanel
 
     private searchDataAndHandleResponse(searchString: string, fireEvent: boolean = true): wemQ.Promise<void> {
 
+        const types = this.getCheckedTypes();
+
         return new ListUserItemsRequest()
-            .setTypes(this.getCheckedTypes())
+            .setTypes(types)
             .setQuery(searchString)
             .sendAndParse()
             .then((result) => {
@@ -114,7 +106,7 @@ export class PrincipalBrowseFilterPanel
                 }
 
                 if (fireEvent) {
-                    new BrowseFilterSearchEvent(userItems).fire();
+                    new BrowseFilterSearchEvent(new PrincipalBrowseSearchData(searchString, types, userItems)).fire();
                 }
                 this.updateAggregations(result.aggregations, false);
                 this.updateHitsCounter(userItems ? userItems.length : 0, api.util.StringHelper.isBlank(searchString));
