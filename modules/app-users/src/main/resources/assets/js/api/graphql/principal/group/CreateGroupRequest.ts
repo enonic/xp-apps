@@ -63,7 +63,14 @@ export class CreateGroupRequest
     }
 
     sendAndParse(): wemQ.Promise<Group> {
-        return this.mutate().then(json => Group.fromJson(json.createGroup));
+        return this.mutate().then(json => this.fromJson(json.createGroup, json.error));
+    }
+
+    fromJson(group: GroupJson, error: string): Group {
+        if (!group || error) {
+            throw error;
+        }
+        return Group.fromJson(group);
     }
 
 }
