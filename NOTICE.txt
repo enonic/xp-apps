@@ -19,7 +19,7 @@ Licenses used by Enonic XP Admin apps
     http://github.com/millermedeiros/hasher
 
     GraphQL.js
-    BSD 3 license
+    MIT License
     https://github.com/graphql/graphql-js/blob/master/LICENSE
 
     JMustache
