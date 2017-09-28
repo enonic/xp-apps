@@ -29,12 +29,12 @@ describe('User Wizard negative spec ', function () {
                 return userWizard.waitAndClickOnSave();
             }).then(()=> {
                 return userWizard.waitForErrorNotificationMessage();
-            }).then(result=> {
-                expect(result).to.equal(appConst.USER_WIZARD_PASS_MESSAGE);
+            }).then(message=> {
+                expect(message).to.equal(appConst.USER_WIZARD_PASS_MESSAGE);
             })
         });
 
-    it('GIVEN `User` wizard is opened WHEN name and e-mail has been typed  THEN red cirkle should be displayed on the wizard page ',
+    it('GIVEN `User` wizard is opened WHEN name and e-mail has been typed  THEN red circle should be displayed on the wizard page ',
         () => {
             let userName = userItemsBuilder.generateRandomName('user');
             testUser = userItemsBuilder.buildUser(userName, '1q2w3e', userItemsBuilder.generateEmail(userName), null);
@@ -45,7 +45,7 @@ describe('User Wizard negative spec ', function () {
             }).then(()=> {
                 return userWizard.isItemInvalid(testUser.displayName);
             }).then((result)=> {
-                assert.isTrue(result, 'red circle should be present on the tab');
+                assert.isTrue(result, 'red circle should be present on the tab, because `password` input is empty');
             })
         });
 
@@ -61,8 +61,8 @@ describe('User Wizard negative spec ', function () {
                 return userWizard.waitAndClickOnSave();
             }).then(()=> {
                 return userWizard.waitForErrorNotificationMessage();
-            }).then(result=> {
-                expect(result).to.equal(appConst.USER_WIZARD_EMAIL_MESSAGE);
+            }).then(message=> {
+                expect(message).to.equal(appConst.USER_WIZARD_EMAIL_MESSAGE);
             })
         });
 
@@ -75,9 +75,71 @@ describe('User Wizard negative spec ', function () {
             }).then(()=> {
                 return userWizard.typeDisplayName(testUser.displayName);
             }).then(()=> {
+                return userWizard.waitUntilInvalidIconAppears(testUser.displayName);
+            }).then((isRedIconPresent)=> {
+                assert.isTrue(isRedIconPresent, 'red circle should be present on the tab, because `password` is empty');
+            })
+        });
+
+    it('GIVEN `User` wizard is opened WHEN all data has been typed THEN red circle should not be displayed on the wizard page',
+        () => {
+            let userName = userItemsBuilder.generateRandomName('user');
+            testUser = userItemsBuilder.buildUser(userName, '1q2w3e', userItemsBuilder.generateEmail(userName), null);
+            return testUtils.clickOnSystemOpenUserWizard(webDriverHelper.browser).then(()=> {
+                return userWizard.typeData(testUser);
+            }).then(()=> {
+                return userWizard.waitUntilInvalidIconDisappears(testUser.displayName);
+            }).then((isRedIconNotPresent)=> {
+                assert.isTrue(isRedIconNotPresent, 'red circle should not be present on the tab, because all required inputs are filled');
+            })
+        });
+
+    it('GIVEN `User` wizard is opened AND all data has been typed WHEN password has been cleared THEN red circle should be displayed on the wizard page',
+        () => {
+            let userName = userItemsBuilder.generateRandomName('user');
+            testUser = userItemsBuilder.buildUser(userName, '1q2w3e', userItemsBuilder.generateEmail(userName), null);
+            return testUtils.clickOnSystemOpenUserWizard(webDriverHelper.browser).then(()=> {
+                return userWizard.typeData(testUser);
+            }).then(()=> {
+                return userWizard.clearPasswordInput();
+            }).then(()=> {
+                return userWizard.waitUntilInvalidIconAppears(testUser.displayName);
+            }).then(isRedIconPresent=> {
+                assert.isTrue(isRedIconPresent, 'red circle should be present on the tab, because `password` input has been cleared');
+            })
+        });
+
+    it('GIVEN `User` wizard is opened AND all data has been typed WHEN e-mail has been cleared THEN red circle should be displayed on the wizard page',
+        () => {
+            let userName = userItemsBuilder.generateRandomName('user');
+            testUser = userItemsBuilder.buildUser(userName, '1q2w3e', userItemsBuilder.generateEmail(userName), null);
+            return testUtils.clickOnSystemOpenUserWizard(webDriverHelper.browser).then(()=> {
+                return userWizard.typeData(testUser);
+            }).then(()=> {
+                return userWizard.clearEmailInput();
+            }).then(()=> {
+                return userWizard.waitUntilInvalidIconAppears(testUser.displayName);
+            }).then(isRedIconPresent=> {
+                assert.isTrue(isRedIconPresent, 'red circle should be present on the tab, because `email` input has been cleared');
+            })
+        });
+
+    it('GIVEN all data in the wizard has been typed WHEN e-mail is invalid THEN red circle should be displayed on the wizard page',
+        () => {
+            let userName = userItemsBuilder.generateRandomName('user');
+            testUser = userItemsBuilder.buildUser(userName, '1q2w3e', 'notvalid@@@mail.com', null);
+            return testUtils.clickOnSystemOpenUserWizard(webDriverHelper.browser).then(()=> {
+                return userWizard.typeData(testUser);
+            }).then(()=> {
+                return userWizard.waitAndClickOnSave();
+            }).then(()=> {
                 return userWizard.isItemInvalid(testUser.displayName);
             }).then((result)=> {
-                assert.isTrue(result, 'red circle should be present on the tab, because e-mail is empty');
+                assert.isTrue(result, 'red circle should be present on the tab, because `e-mail` is invalid');
+            }).then(()=> {
+                return userWizard.waitForErrorNotificationMessage();
+            }).then(message=> {
+                expect(message).to.equal(appConst.USER_WIZARD_EMAIL_IS_INVALID);
             })
         });
 

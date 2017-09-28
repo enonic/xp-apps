@@ -12,5 +12,5 @@ module.exports = Object.freeze({
     SUPER_USER:'Super User',
     USER_WIZARD_PASS_MESSAGE :'Password can not be empty.',
     USER_WIZARD_EMAIL_MESSAGE:'Email can not be empty.',
-    
+    USER_WIZARD_EMAIL_IS_INVALID:'Email is invalid.',
 });

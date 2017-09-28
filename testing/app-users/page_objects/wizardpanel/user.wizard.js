@@ -23,21 +23,33 @@ var userWizard = Object.create(wizard, {
         }
     },
     typeData: {
-        value: function (data) {
-            return this.typeTextInInput(this.displayNameInput, data.displayName)
-                .then(() => this.typeEmail(data.email)).then(()=> this.typePassword(data.password)).then(()=>{
-
-                })
+        value: function (user) {
+            return this.typeDisplayName(user.displayName).then(()=>{
+                return this.typeEmail(user.email);
+            }).then(()=>{
+                return this.typePassword(user.password);
+            });
         }
     },
+    clearPasswordInput: {
+        value: function () {
+            return this.clearElement(this.passwordInput);
+        }
+    },
+    clearEmailInput: {
+        value: function () {
+            return this.clearElement(this.emailInput);
+        }
+    },
+
     waitForOpened: {
         value: function () {
             return this.waitForVisible(this.displayNameInput, 3000);
         }
     },
 
-    addRoles:{
-        value: function(roleDisplayNames){
+    addRoles: {
+        value: function (roleDisplayNames) {
             return roleDisplayNames.forEach()
             //TODO implement it
         }
@@ -53,12 +65,12 @@ var userWizard = Object.create(wizard, {
     },
     typeEmail: {
         value: function (email) {
-            this.typeTextInInput(this.emailInput, email);
+            return this.typeTextInInput(this.emailInput, email);
         }
     },
     typePassword: {
         value: function (password) {
-            this.typeTextInInput(this.passwordInput, password);
+            return this.typeTextInInput(this.passwordInput, password);
         }
     },
     getDescription: {

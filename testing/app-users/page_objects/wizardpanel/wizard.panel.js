@@ -28,7 +28,6 @@ var wizardPanel = Object.create(page, {
     waitForSaveButtonEnabled: {
         value: function () {
             return this.waitForEnabled(this.saveButton, 1000);
-            //return this.isAttributePresent(this.saveButton, 'disabled');
         }
     },
     typeDisplayName: {
@@ -65,7 +64,36 @@ var wizardPanel = Object.create(page, {
                 throw new Error('tabItem: ' + err);
             });
         }
+    },
+    waitUntilInvalidIconAppears: {
+        value: function (displayName) {
+            let selector = elements.tabItemByDisplayName(displayName);
+              return  this.getBrowser().waitUntil(()=>{
+                    return this.getBrowser().getAttribute(selector, 'class').then(result=>{
+                        return result.includes('invalid');
+                    });
+                },2000).then(()=>{
+                return true;
+            }).catch((err)=>{
+                  throw new Error(err);
+              });
+        }
+    },
+    waitUntilInvalidIconDisappears: {
+        value: function (displayName) {
+            let selector = elements.tabItemByDisplayName(displayName);
+             return this.getBrowser().waitUntil(()=>{
+                return this.getBrowser().getAttribute(selector, 'class').then(result=>{
+                    return !result.includes('invalid');
+                })
+            },2000).then(()=>{
+                  return true;
+              } ).catch((err)=>{
+                  throw new Error(err);
+              });
+        }
     }
+
 });
 module.exports = wizardPanel;
 

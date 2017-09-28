@@ -59,10 +59,15 @@ Page.prototype.doClick = function (selector) {
 Page.prototype.typeTextInInput = function (selector, text) {
     return this.getBrowser().setValue(selector, text);
 };
+Page.prototype.clearElement = function (selector) {
+    return this.getBrowser().clearElement(selector).catch((err)=>{
+        throw new Error('input was not cleared '+err);
+    })
+},
 
-Page.prototype.getText = function (selector) {
-    return this.getBrowser().getText(selector);
-};
+    Page.prototype.getText = function (selector) {
+        return this.getBrowser().getText(selector);
+    };
 Page.prototype.waitForExist = function (selector, ms) {
     return this.getBrowser().waitForExist(selector, ms);
 };
@@ -79,10 +84,12 @@ Page.prototype.getElementId = function (ele) {
     return ele.value.ELEMENT;
 };
 Page.prototype.isAttributePresent = function (selector, atrName) {
-    return this.getBrowser().getAttribute(selector, atrName).then(result=>{
-        if(result == null){
+    return this.getBrowser().getAttribute(selector, atrName).then(result=> {
+        if (result == null) {
             return false;
-        }else return true;
+        } else {
+            return true;
+        }
     })
 };
 Page.prototype.getDisplayedElements = function (selector) {
