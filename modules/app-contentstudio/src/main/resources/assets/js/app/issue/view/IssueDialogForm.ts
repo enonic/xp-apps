@@ -8,7 +8,6 @@ import PrincipalType = api.security.PrincipalType;
 import FormItemBuilder = api.ui.form.FormItemBuilder;
 import Validators = api.ui.form.Validators;
 import FormItem = api.ui.form.FormItem;
-import {Issue} from '../Issue';
 import ValidityChangedEvent = api.ValidityChangedEvent;
 import PrincipalKey = api.security.PrincipalKey;
 import ContentId = api.content.ContentId;
@@ -16,6 +15,7 @@ import UserStoreKey = api.security.UserStoreKey;
 import i18n = api.util.i18n;
 import ContentTreeSelectorItem = api.content.resource.ContentTreeSelectorItem;
 import RichComboBox = api.ui.selector.combobox.RichComboBox;
+import {Issue} from '../Issue';
 
 export class IssueDialogForm
     extends api.ui.form.Form {
@@ -96,10 +96,12 @@ export class IssueDialogForm
 
         const titleFormItem = this.addValidationViewer(
             new FormItemBuilder(this.title).setLabel(i18n('field.title')).setValidator(Validators.required).build());
+        this.title.wrapWithElement(new api.dom.DivEl('input-wrapper'));
         fieldSet.add(titleFormItem);
 
         const descriptionFormItem = this.addValidationViewer(
             new FormItemBuilder(this.description).setLabel(i18n('field.description')).build());
+        this.description.wrapWithElement(new api.dom.DivEl('input-wrapper'));
         fieldSet.add(descriptionFormItem);
 
         const selectorFormItem = this.addValidationViewer(
