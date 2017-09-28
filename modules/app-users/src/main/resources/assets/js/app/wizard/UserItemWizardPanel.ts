@@ -2,13 +2,6 @@ import '../../api.ts';
 import {UserItemWizardActions} from './action/UserItemWizardActions';
 import {UserItemWizardPanelParams} from './UserItemWizardPanelParams';
 import {SaveBeforeCloseDialog} from './SaveBeforeCloseDialog';
-
-import Principal = api.security.Principal;
-import PrincipalKey = api.security.PrincipalKey;
-import PrincipalType = api.security.PrincipalType;
-import PrincipalNamedEvent = api.security.PrincipalNamedEvent;
-import UserStoreKey = api.security.UserStoreKey;
-
 import ResponsiveManager = api.ui.responsive.ResponsiveManager;
 import ResponsiveItem = api.ui.responsive.ResponsiveItem;
 import FormIcon = api.app.wizard.FormIcon;
@@ -16,7 +9,6 @@ import WizardHeaderWithDisplayNameAndName = api.app.wizard.WizardHeaderWithDispl
 import WizardHeaderWithDisplayNameAndNameBuilder = api.app.wizard.WizardHeaderWithDisplayNameAndNameBuilder;
 import WizardStep = api.app.wizard.WizardStep;
 import Toolbar = api.ui.toolbar.Toolbar;
-import WizardActions = api.app.wizard.WizardActions;
 import UserItem = api.security.UserItem;
 import i18n = api.util.i18n;
 
@@ -157,14 +149,11 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends UserItem> extends api.ap
 
     saveChanges(): wemQ.Promise<USER_ITEM_TYPE> {
         if (this.isRendered() && !this.getWizardHeader().getName()) {
-            let deferred = wemQ.defer<USER_ITEM_TYPE>();
-            api.notify.showError(i18n('notify.empty.name'));
-            deferred.reject(new Error('Name can not be empty'));
-            return deferred.promise;
-        } else {
-            return super.saveChanges();
+            return wemQ.fcall(() => {
+                throw i18n('notify.empty.name');
+            });
         }
-
+        return super.saveChanges();
     }
 
     close(checkCanClose: boolean = false) {
