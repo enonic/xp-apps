@@ -1,31 +1,9 @@
 
-Licenses used by Enonic XP
+Licenses used by Enonic XP Admin apps
 
-Most of the software used in this project is licensed as Apache 2.0 license.
-See http://www.apache.org/licenses/LICENSE-2.0 for license terms.
-
-Other software licenses used by this product:
-
-    Antlr v4
-    BSD License
-    http://www.antlr.org/license.html
-
-    JMustache
-    Liberal license from Michael Bayne
-    https://github.com/samskivert/jmustache/blob/master/LICENSE
-
-    Tiny MCE
-    GNU LGPL 2.1
-    https://raw.githubusercontent.com/tinymce/tinymce/master/LICENSE.TXT
-
-    Web Components
-    BSD "style" license:
-    https://github.com/webcomponents/webcomponentsjs/blob/master/LICENSE.md
-
-Javascript library licenses used by this product:
 
     CodeMirror
-    Liberal license from Marijn Haverbeke
+    MIT License
     https://github.com/codemirror/CodeMirror/blob/master/LICENSE
 
     Crossroads.js
@@ -36,29 +14,45 @@ Javascript library licenses used by this product:
     MIT License
     http://fineuploader.com/
 
-    GraphQL.js
-    BSD 3 license
-    https://github.com/graphql/graphql-js/blob/master/LICENSE
-
     Hasher
     MIT License
     http://github.com/millermedeiros/hasher
 
-    Signals
-    MIT License
-    http://millermedeiros.github.com/js-signals
+    GraphQL.js
+    BSD 3 license
+    https://github.com/graphql/graphql-js/blob/master/LICENSE
+
+    JMustache
+    BSD 3-clause
+    https://github.com/samskivert/jmustache/blob/master/LICENSE
 
     JQuery
     MIT License
     https://jquery.org/license/
 
+    Mousetrap
+    Apache 2.0
+    https://github.com/ccampbell/mousetrap
+
     Q.js
-    Very liberal license from Kristopher Michael Kowal
+    MIT License
     https://github.com/kriskowal/q/blob/v1/LICENSE
+
+    Signals
+    MIT License
+    http://millermedeiros.github.com/js-signals
 
     SlickGrid
     MIT License
     https://github.com/mleibman/SlickGrid/blob/master/MIT-LICENSE.txt
+
+    Tiny MCE
+    GNU LGPL 2.1
+    https://raw.githubusercontent.com/tinymce/tinymce/master/LICENSE.TXT
+
+    Web Components
+    BSD "style" license:
+    https://github.com/webcomponents/webcomponentsjs/blob/master/LICENSE.md
 
 Artwork licenses used by this product:
 
