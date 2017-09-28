@@ -23,7 +23,10 @@ var newPrincipalDialog = Object.create(page, {
     },
     clickOnItem: {
         value: function (itemName) {
-            return this.doClick(`${dialog.itemViewer}` + `${elements.itemByDisplayName(itemName)}`);
+            let selector = `${dialog.itemViewer}` + `${elements.itemByDisplayName(itemName)}`;
+            return this.waitForVisible(selector, 2000).then(()=> {
+                return this.doClick(selector);
+            })
         }
     },
     waitForOpened: {
@@ -31,20 +34,20 @@ var newPrincipalDialog = Object.create(page, {
             return this.waitForVisible(`${dialog.container}`, 3000);
         }
     },
-    getNumberOfItems:{
-        value:function(){
-            let items= `${dialog.itemViewer}` +`${elements.H6_DISPLAY_NAME}`;
+    getNumberOfItems: {
+        value: function () {
+            let items = `${dialog.itemViewer}` + `${elements.H6_DISPLAY_NAME}`;
             return this.numberOfElements(items)
         }
     },
-    getItemNames:{
-        value:function(){
-            let items= `${dialog.itemViewer}` +`${elements.H6_DISPLAY_NAME}`;
+    getItemNames: {
+        value: function () {
+            let items = `${dialog.itemViewer}` + `${elements.H6_DISPLAY_NAME}`;
             return this.getTextFromElements(items)
         }
     },
-    getHeaderText:{
-        value:function(){
+    getHeaderText: {
+        value: function () {
             return this.getText(this.header);
         }
     }
