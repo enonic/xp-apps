@@ -63,12 +63,12 @@ export class MobileContentItemStatisticsPanel
         serverEvents.onContentPublished(reloadItemPublishStateChange);
         serverEvents.onContentUnpublished(reloadItemPublishStateChange);
 
-        this.onRendered(() => {
-            this.slideAllOut();
-        });
+        this.onRendered(() => this.slideAllOut(true));
 
         ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
-            this.slideAllOut();
+            if (this.detailsPanel.isSlidedIn()) {
+                this.slideAllOut();
+            }
         });
     }
 
