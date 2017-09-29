@@ -41,7 +41,7 @@ export class PublishDialogDependantList extends DialogDependantList {
         });
 
         view.onRendered(() => {
-            (<StatusSelectionItem>view).setRemoveButtonTooltip('Exclude from publishing');
+            (<StatusSelectionItem>view).setRemoveButtonTooltip(i18n('dialog.publish.excludeFromPublishing'));
         });
 
         if (!isContentSummaryValid(item)) {
