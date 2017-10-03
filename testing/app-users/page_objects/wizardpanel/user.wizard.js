@@ -44,7 +44,9 @@ var userWizard = Object.create(wizard, {
 
     waitForOpened: {
         value: function () {
-            return this.waitForVisible(this.displayNameInput, 3000);
+            return this.waitForVisible(this.displayNameInput, 3000).catch((err)=>{
+                throw new Error('User Wizard is not loaded! ' + err);
+            });
         }
     },
 

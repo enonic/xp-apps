@@ -55,7 +55,6 @@ var roleWizard = Object.create(wizard, {
             return this.getTextFromElements(selectedOptions);
         }
     },
-    //TODO removeMember
     removeMember: {
         value: function (displayName) {
             let selector = `${panel.container}` + `${elements.PRINCIPAL_SELECTED_OPTION}`;

@@ -13,14 +13,17 @@ const filterPanel = require("../page_objects/browsepanel/principal.filter.panel"
 module.exports = {
     xpTabs: {},
     findAndSelectItem: function (name) {
+        return this.typeNameInFilterPanel(name).then(()=> {
+            return browsePanel.clickOnRowByName(name);
+        });
+    },
+    typeNameInFilterPanel: function (name) {
         return browsePanel.clickOnSearchButton().then(()=> {
             return filterPanel.waitForOpened();
-        }).then(()=>{
+        }).then(()=> {
             return filterPanel.typeSearchText(name);
-        }).then(()=>{
+        }).then(()=> {
             return browsePanel.waitForSpinnerNotVisible(3000);
-        }).then(()=>{
-            return browsePanel.clickOnRowByName(name);
         });
     },
     navigateToUsersApp: function (browser) {
@@ -53,7 +56,7 @@ module.exports = {
             return launcherPanel.clickOnUsersLink().pause(1000);
         }).then(()=> {
             return this.doSwitchToUsersApp(browser);
-        }).catch((err)=>{
+        }).catch((err)=> {
             throw new Error(err);
         })
     },
@@ -63,7 +66,7 @@ module.exports = {
             return browser.switchTab(this.xpTabs[0]);
         })
     },
-    
+
     openWizardAndSaveUserStore: function (browser, userStoreData) {
         return this.clickOnNewOpenUserStoreWizard(browser).then(()=> {
             return userStoreWizard.typeData(userStoreData)
@@ -79,18 +82,18 @@ module.exports = {
             return newPrincipalDialog.clickOnItem(`User Store`);
         }).then(()=>userStoreWizard.waitForOpened());
     },
-    clickOnSystemOpenUserWizard: function(browser){
-        return browsePanel.clickOnRowByName('system').then(()=>{
+    clickOnSystemOpenUserWizard: function (browser) {
+        return browsePanel.clickOnRowByName('system').then(()=> {
             return browsePanel.waitForNewButtonEnabled();
-        }) .then(()=>{
+        }).then(()=> {
             return browsePanel.clickOnNewButton();
-        }) .then(()=>{
+        }).then(()=> {
             return newPrincipalDialog.clickOnItem('User');
-        }).then(()=>{
+        }).then(()=> {
             return userWizard.waitForOpened();
         });
     },
-    getDisplayedElements: function(browser,selector){
+    getDisplayedElements: function (browser, selector) {
         var elems = browser.elements(selector).filter;
         elems.value.map((element)=> {
 

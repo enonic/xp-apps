@@ -8,6 +8,8 @@ var panel = {
     toolbar: `//div[contains(@id,'UserBrowseToolbar')]`,
     grid: `//div[@class='grid-canvas']`,
     searchButton: "//button[contains(@class, 'icon-search')]",
+    appHomeButton: "//div[contains(@id,'TabbedAppBar')]/div[contains(@class,'home-button')]",
+
     rowByName: function (name) {
         return `//div[contains(@id,'NamesView') and child::p[contains(@class,'sub-name') and contains(.,'${name}')]]`
     },
@@ -28,6 +30,11 @@ var panel = {
 var userBrowsePanel = Object.create(page, {
 
     /////////Getters
+    appHomeButton: {
+        get: function () {
+            return `${panel.appHomeButton}`;
+        }
+    },
     searchButton: {
         get: function () {
             return `${panel.toolbar}` + `${panel.searchButton}`;
@@ -76,7 +83,7 @@ var userBrowsePanel = Object.create(page, {
         value: function (ms) {
             return this.waitForVisible(`${panel.grid}`, ms).then(()=> {
                 return this.waitForSpinnerNotVisible(3000);
-            }).then(()=>{
+            }).then(()=> {
                 return console.log('spinner is not visible')
             });
         }
@@ -86,29 +93,36 @@ var userBrowsePanel = Object.create(page, {
             return this.doClick(this.searchButton);
         }
     },
+    clickOnAppHomeButton: {
+        value: function () {
+            return this.doClick(this.appHomeButton).catch((err)=> {
+                throw new Error('err: AppHome button ' + err);
+            })
+        }
+    },
     clickOnNewButton: {
         value: function () {
-            return this.waitForEnabled(this.newButton, 1000).then(()=>{
-                return  this.doClick(this.newButton);
-            }).catch((err)=>{
+            return this.waitForEnabled(this.newButton, 1000).then(()=> {
+                return this.doClick(this.newButton);
+            }).catch((err)=> {
                 throw new Error('New button is not enabled! ' + err);
             })
         }
     },
     clickOnEditButton: {
         value: function () {
-            return this.waitForEnabled(this.editButton, 1000).then(()=>{
-              return  this.doClick(this.editButton);
-            }).catch((err)=>{
+            return this.waitForEnabled(this.editButton, 1000).then(()=> {
+                return this.doClick(this.editButton);
+            }).catch((err)=> {
                 throw new Error('Edit button is not enabled! ' + err);
             })
         }
     },
     clickOnDeleteButton: {
         value: function () {
-            return this.waitForEnabled(this.deleteButton, 1000).then(()=>{
-                return  this.doClick(this.deleteButton);
-            }).catch((err)=>{
+            return this.waitForEnabled(this.deleteButton, 1000).then(()=> {
+                return this.doClick(this.deleteButton);
+            }).catch((err)=> {
                 throw new Error('Delete button is not enabled! ' + err);
             })
         }
@@ -157,8 +171,8 @@ var userBrowsePanel = Object.create(page, {
     },
     doClickOnCloseTabButton: {
         value: function (displayName) {
-            return this.doClick(`${panel.closeItemTabButton(displayName)}`).catch((err)=>{
-              throw new Error('itemTabButton was not found!' + displayName);
+            return this.doClick(`${panel.closeItemTabButton(displayName)}`).catch((err)=> {
+                throw new Error('itemTabButton was not found!' + displayName);
             })
         }
     },

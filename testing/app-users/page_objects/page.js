@@ -36,6 +36,10 @@ Page.prototype.isDisabled = function (selector) {
 Page.prototype.waitForVisible = function (selector, ms) {
     return this.getBrowser().waitForVisible(selector, ms);
 };
+
+Page.prototype.waitForNotVisible = function (selector, ms) {
+    return this.getBrowser().waitForVisible(selector, ms, true);
+};
 Page.prototype.waitForSpinnerNotVisible = function (ms) {
     return this.getBrowser().waitForVisible(`//div[@class='spinner']`, ms, true).catch(function (err) {
         console.log('spinner is still visible after a the interval ');
