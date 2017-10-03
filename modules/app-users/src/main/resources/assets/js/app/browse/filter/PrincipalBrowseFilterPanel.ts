@@ -110,7 +110,7 @@ export class PrincipalBrowseFilterPanel
                 if (fireEvent) {
                     new BrowseFilterSearchEvent(new PrincipalBrowseSearchData(searchString, types, userItems)).fire();
                 }
-                this.updateAggregations(result.aggregations, false);
+                this.updateAggregations(result.aggregations, !!searchString);
                 this.updateHitsCounter(userItems ? userItems.length : 0, api.util.StringHelper.isBlank(searchString));
                 this.toggleAggregationsVisibility(result.aggregations);
             }).catch((reason: any) => {
