@@ -4,6 +4,7 @@ import {PrincipalTypeAggregationGroupView} from './PrincipalTypeAggregationGroup
 import {ListUserItemsRequest} from '../../../api/graphql/principal/ListUserItemsRequest';
 import {UserItemType} from '../UserItemType';
 import {PrincipalBrowseSearchData} from './PrincipalBrowseSearchData';
+import {ListTypesRequest} from '../../../api/graphql/principal/ListTypesRequest';
 import BrowseFilterResetEvent = api.app.browse.filter.BrowseFilterResetEvent;
 import BrowseFilterSearchEvent = api.app.browse.filter.BrowseFilterSearchEvent;
 import AggregationGroupView = api.aggregation.AggregationGroupView;
@@ -61,6 +62,7 @@ export class PrincipalBrowseFilterPanel
         let searchText = values.getTextSearchFieldValue();
         if (!searchText && !this.hasConstraint()) {
             this.handleEmptyFilterInput(isRefresh);
+            this.fetchAndUpdateAggregations();
             return;
         }
 
@@ -108,7 +110,7 @@ export class PrincipalBrowseFilterPanel
                 if (fireEvent) {
                     new BrowseFilterSearchEvent(new PrincipalBrowseSearchData(searchString, types, userItems)).fire();
                 }
-                this.updateAggregations(result.aggregations, false);
+                this.updateAggregations(result.aggregations, !!searchString);
                 this.updateHitsCounter(userItems ? userItems.length : 0, api.util.StringHelper.isBlank(searchString));
                 this.toggleAggregationsVisibility(result.aggregations);
             }).catch((reason: any) => {
@@ -133,6 +135,17 @@ export class PrincipalBrowseFilterPanel
                 this.principalTypeAggregation.setVisible(!aggregationIsEmpty);
             }
         });
+    }
+
+    private fetchAndUpdateAggregations(): wemQ.Promise<void> {
+        return new ListTypesRequest()
+            .sendAndParse()
+            .then((typeAggregation) => {
+                this.updateAggregations([typeAggregation], true);
+                this.toggleAggregationsVisibility([typeAggregation]);
+            }).catch((reason: any) => {
+                api.DefaultErrorHandler.handle(reason);
+            });
     }
 
 }
