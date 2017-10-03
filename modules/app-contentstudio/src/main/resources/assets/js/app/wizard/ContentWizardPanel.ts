@@ -829,7 +829,7 @@ export class ContentWizardPanel
                 });
             }
 
-            if (this.getPersistedItem().getContentId().equals(contentId) && this.contentType.isSite()) {
+            if (this.getPersistedItem().getContentId().equals(contentId) && this.siteModel !== null) {
                 new ContentWizardDataLoader().loadSite(contentId).then(site => {
                     this.siteModel.update(site);
                 }).catch(api.DefaultErrorHandler.handle).done();
