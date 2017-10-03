@@ -829,7 +829,8 @@ export class ContentWizardPanel
                 });
             }
 
-            if (this.getPersistedItem().getContentId().equals(contentId) && this.siteModel !== null) {
+            // checks if parent site has been modified
+            if (this.site != null && this.siteModel !== null && this.site.getContentId().equals(contentId)) {
                 new ContentWizardDataLoader().loadSite(contentId).then(site => {
                     this.siteModel.update(site);
                 }).catch(api.DefaultErrorHandler.handle).done();
