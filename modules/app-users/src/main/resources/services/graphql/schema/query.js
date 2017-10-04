@@ -73,6 +73,20 @@ module.exports = graphQl.createObjectType({
                 return principals.getByKeys(key, memberships);
             }
         },
+        members: {
+            type: graphQl.list(graphQlObjectTypes.PrincipalType),
+            args: {
+                key: graphQl.GraphQLString,
+                from: graphQl.GraphQLInt,
+                size: graphQl.GraphQLInt
+            },
+            resolve: function(env) {
+                var key = env.args.key;
+                var from = env.args.from;
+                var size = env.args.size;
+                return principals.getMembers(key, from, size);
+            }
+        },
         userItemsConnection: {
             type: graphQlObjectTypes.UserItemConnectionType,
             args: {
