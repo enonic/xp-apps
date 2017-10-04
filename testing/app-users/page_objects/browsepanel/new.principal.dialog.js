@@ -21,6 +21,13 @@ var newPrincipalDialog = Object.create(page, {
             return `${dialog.container}${elements.CANCEL_BUTTON}`;
         }
     },
+    clickOnCancelButtonTop: {
+        value: function () {
+            return this.doClick(this.cancelButton).catch((err)=> {
+                throw new Error('Error when cancel button has been pressed ' + err);
+            })
+        }
+    },
     clickOnItem: {
         value: function (itemName) {
             let selector = `${dialog.itemViewer}` + `${elements.itemByDisplayName(itemName)}`;
@@ -32,6 +39,11 @@ var newPrincipalDialog = Object.create(page, {
     waitForOpened: {
         value: function () {
             return this.waitForVisible(`${dialog.container}`, 3000);
+        }
+    },
+    waitForClosed: {
+        value: function () {
+            return this.waitForNotVisible(`${dialog.container}`, 3000);
         }
     },
     getNumberOfItems: {
