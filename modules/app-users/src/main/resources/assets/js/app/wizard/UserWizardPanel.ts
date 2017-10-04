@@ -33,9 +33,11 @@ export class UserWizardPanel extends PrincipalWizardPanel {
 
             return super.saveChanges();
         } else {
-            this.showErrors();
-
-            return wemQ<Principal>(null);
+            return wemQ.fcall(() => {
+                // throw errors, if present
+                this.showErrors();
+                return null;
+            });
         }
     }
 
@@ -179,9 +181,9 @@ export class UserWizardPanel extends PrincipalWizardPanel {
     private showEmailErrors() {
         let formEmail = this.userEmailWizardStepForm.getEmail();
         if (api.util.StringHelper.isEmpty(formEmail)) {
-            api.notify.showError(i18n('notify.empty.email'));
+            throw i18n('notify.empty.email');
         } else if (!this.userEmailWizardStepForm.isValid()) {
-            api.notify.showError(i18n('notify.invalid.email'));
+            throw i18n('notify.invalid.email');
         }
 
     }
@@ -189,9 +191,9 @@ export class UserWizardPanel extends PrincipalWizardPanel {
     private showPasswordErrors() {
         let password = this.userPasswordWizardStepForm.getPassword();
         if (api.util.StringHelper.isEmpty(password)) {
-            api.notify.showError(i18n('notify.empty.password'));
+            throw i18n('notify.empty.password');
         } else if (!this.userEmailWizardStepForm.isValid()) {
-            api.notify.showError(i18n('notify.invalid.password'));
+            throw i18n('notify.invalid.password');
         }
     }
 
