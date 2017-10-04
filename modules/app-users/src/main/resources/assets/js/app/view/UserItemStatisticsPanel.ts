@@ -125,8 +125,6 @@ export class UserItemStatisticsPanel extends ItemStatisticsPanel<UserTreeGridIte
                 rolesGroup.addDataElements(null, p.asGroup().getMemberships().map(el => this.createPrincipalViewer(el)));
             }
 
-        //    const membersPromises = group.getMembers().map(el => new GetPrincipalByKeyRequest(el));
-
             return new GetMembersRequest(group.getKey()).sendAndParse().then((results: Principal[]) => {
                 membersGroup.addDataElements(null, results.map(el => this.createPrincipalViewer(el)));
             }).then(() => (principal.isGroup() ? [mainGroup, rolesGroup, membersGroup] : [mainGroup, membersGroup] ));
