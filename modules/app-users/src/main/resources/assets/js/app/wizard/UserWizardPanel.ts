@@ -166,47 +166,6 @@ export class UserWizardPanel extends PrincipalWizardPanel {
             .build();
     }
 
-    isPersistedEqualsViewed(): boolean {
-        let persistedPrincipal = this.getPersistedItem().asUser();
-        let viewedPrincipal = this.assembleViewedItem().asUser();
-        // Group/User order can be different for viewed and persisted principal
-        viewedPrincipal.getMemberships().sort((a, b) => {
-            return a.getKey().toString().localeCompare(b.getKey().toString());
-        });
-        persistedPrincipal.getMemberships().sort((a, b) => {
-            return a.getKey().toString().localeCompare(b.getKey().toString());
-        });
-
-        // #hack - The newly added members will have different modifiedData
-        let viewedMembershipsKeys = viewedPrincipal.getMemberships().map((el) => {
-            return el.getKey();
-        });
-        let persistedMembershipsKeys = persistedPrincipal.getMemberships().map((el) => {
-            return el.getKey();
-        });
-
-        if (api.ObjectHelper.arrayEquals(viewedMembershipsKeys, persistedMembershipsKeys)) {
-            viewedPrincipal.setMemberships(persistedPrincipal.getMemberships());
-        }
-
-        return viewedPrincipal.equals(persistedPrincipal);
-    }
-
-    hasUnsavedChanges(): boolean {
-        let persistedPrincipal = this.getPersistedItem();
-        let email = this.userEmailWizardStepForm.getEmail();
-        let memberships = this.membershipsWizardStepForm.getMemberships();
-        if (persistedPrincipal == null) {
-            let wizardHeader = this.getWizardHeader();
-            return wizardHeader.getName() !== '' ||
-                   wizardHeader.getDisplayName() !== '' ||
-                   (!!email && email !== '') ||
-                   (!!memberships && memberships.length !== 0);
-        } else {
-            return !this.isPersistedEqualsViewed();
-        }
-    }
-
     private showErrors() {
         if (!this.userEmailWizardStepForm.isValid()) {
             this.showEmailErrors();
@@ -234,5 +193,44 @@ export class UserWizardPanel extends PrincipalWizardPanel {
         } else if (!this.userEmailWizardStepForm.isValid()) {
             api.notify.showError(i18n('notify.invalid.password'));
         }
+    }
+
+    isPersistedEqualsViewed(): boolean {
+        let persistedPrincipal = this.getPersistedItem().asUser();
+        let viewedPrincipal = this.assembleViewedItem().asUser();
+        // Group/User order can be different for viewed and persisted principal
+        viewedPrincipal.getMemberships().sort((a, b) => {
+            return a.getKey().toString().localeCompare(b.getKey().toString());
+        });
+        persistedPrincipal.getMemberships().sort((a, b) => {
+            return a.getKey().toString().localeCompare(b.getKey().toString());
+        });
+
+        // #hack - The newly added members will have different modifiedData
+        let viewedMembershipsKeys = viewedPrincipal.getMemberships().map((el) => {
+            return el.getKey();
+        });
+        let persistedMembershipsKeys = persistedPrincipal.getMemberships().map((el) => {
+            return el.getKey();
+        });
+
+        if (api.ObjectHelper.arrayEquals(viewedMembershipsKeys, persistedMembershipsKeys)) {
+            viewedPrincipal.setMemberships(persistedPrincipal.getMemberships());
+        }
+
+        return viewedPrincipal.equals(persistedPrincipal);
+    }
+
+    isNewChanged(): boolean {
+        const wizardHeader = this.getWizardHeader();
+        const email = this.userEmailWizardStepForm.getEmail();
+        const password = this.userPasswordWizardStepForm.getPassword();
+        const memberships = this.membershipsWizardStepForm.getMemberships();
+
+        return wizardHeader.getName() !== '' ||
+               wizardHeader.getDisplayName() !== '' ||
+               (!!email && email !== '') ||
+               (!!password && password !== '') ||
+               (!!memberships && memberships.length !== 0);
     }
 }

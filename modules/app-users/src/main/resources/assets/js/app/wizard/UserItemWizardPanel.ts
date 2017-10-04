@@ -171,6 +171,14 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends UserItem> extends api.ap
         }
     }
 
+    hasUnsavedChanges(): boolean {
+        const persisted = this.getPersistedItem();
+        if (persisted) {
+            return !this.isPersistedEqualsViewed();
+        }
+        return this.isNewChanged();
+    }
+
     createSteps(persistedItem: USER_ITEM_TYPE): WizardStep[] {
         throw new Error('Must be implemented by inheritors');
     }
@@ -199,6 +207,14 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends UserItem> extends api.ap
     }
 
     protected updateHash() {
+        throw new Error('Must be implemented by inheritors');
+    }
+
+    isPersistedEqualsViewed(): boolean {
+        throw new Error('Must be implemented by inheritors');
+    }
+
+    isNewChanged(): boolean {
         throw new Error('Must be implemented by inheritors');
     }
 }
