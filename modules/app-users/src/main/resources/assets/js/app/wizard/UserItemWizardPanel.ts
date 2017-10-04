@@ -23,6 +23,10 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends UserItem> extends api.ap
         super(params);
 
         this.loadData();
+
+        this.onValidityChanged(() => {
+            this.wizardActions.getSaveAction().setEnabled(this.isValid());
+        });
     }
 
     protected getParams(): UserItemWizardPanelParams<USER_ITEM_TYPE> {
@@ -55,18 +59,6 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends UserItem> extends api.ap
 
             wizardHeader.disableNameInput();
             wizardHeader.setAutoGenerationEnabled(false);
-        } else {
-
-            wizardHeader.onPropertyChanged((event: api.PropertyChangedEvent) => {
-                let updateStatus = event.getPropertyName() === 'name' ||
-                                   (wizardHeader.isAutoGenerationEnabled()
-                                    && event.getPropertyName() === 'displayName');
-
-                if (updateStatus) {
-                    this.wizardActions.getSaveAction().setEnabled(!!event.getNewValue());
-                }
-            });
-
         }
 
         wizardHeader.setPath(this.getParams().persistedPath);
