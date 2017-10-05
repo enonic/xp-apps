@@ -48,15 +48,9 @@ export class StatusWidgetItemView extends WidgetItemView {
             if (this.getCompareStatus() != null) {
                 let statusEl = new api.dom.SpanEl();
 
-                statusEl.addClass(CompareStatus[this.getCompareStatus()].toLowerCase().replace('_', '-') || 'unknown');
-                let statusElHtml = CompareStatusFormatter.formatStatusFromContent(this.content).toLocaleUpperCase();
+                statusEl.setHtml(this.content.getStatusText().toLocaleUpperCase());
+                statusEl.addClass(this.content.getStatusClass());
 
-                if (PublishStatus.EXPIRED === this.getPublishStatus() || PublishStatus.PENDING === this.getPublishStatus()) {
-                    statusEl.addClass(PublishStatus[this.getPublishStatus()].toLowerCase().replace('_', '-') || 'unknown');
-                    statusElHtml += ' (' + PublishStatusFormatter.formatStatus(this.getPublishStatus()).toLocaleUpperCase() + ')';
-                }
-
-                statusEl.setHtml(statusElHtml);
                 this.removeChildren();
                 this.appendChild(statusEl);
             } else {

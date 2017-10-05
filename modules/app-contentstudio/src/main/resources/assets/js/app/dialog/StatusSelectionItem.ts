@@ -65,24 +65,11 @@ export class StatusSelectionItem extends api.app.browse.SelectionItem<ContentSum
 
     private initStatusDiv(content:ContentSummaryAndCompareStatus) {
 
-        const compareStatus = content.getCompareStatus();
-        const publishStatus = content.getPublishStatus();
-
         let statusDiv = new api.dom.DivEl('status');
-        let statusClass = '' + CompareStatus[compareStatus];
 
-        let compareStatusFormatted = api.content.CompareStatusFormatter.formatStatusFromContent(content);
+        statusDiv.setHtml(content.getStatusText());
+        statusDiv.addClass(content.getStatusClass());
 
-        if (publishStatus && (publishStatus === PublishStatus.PENDING || publishStatus === PublishStatus.EXPIRED)) {
-            let publishStatusFormatted = api.content.PublishStatusFormatter.formatStatus(publishStatus);
-            statusClass += ' ' + PublishStatus[publishStatus] + ' ' + ContentRowFormatter.makeClassName(compareStatusFormatted);
-            compareStatusFormatted += ` (${publishStatusFormatted})`;
-            statusClass += ' ' + PublishStatus[publishStatus];
-        } else {
-            statusClass += ' ' + ContentRowFormatter.makeClassName(compareStatusFormatted);
-        }
-        statusDiv.setHtml(compareStatusFormatted);
-        statusDiv.addClass(statusClass.toLowerCase());
         return statusDiv;
     }
 }
