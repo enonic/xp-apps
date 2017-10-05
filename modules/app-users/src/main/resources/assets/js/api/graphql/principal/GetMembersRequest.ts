@@ -39,7 +39,6 @@ export class GetMembersRequest
         if (this.key) {
             vars['key'] = this.key.toString();
         }
-        debugger;
         vars['from'] = this.from;
         vars['size'] = this.size;
         return vars;
