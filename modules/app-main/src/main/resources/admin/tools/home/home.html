@@ -51,7 +51,7 @@
     };
 
     function lazyFadeIn(imgEl) {
-        imgEl.remove();
+        imgEl.parentNode.removeChild(imgEl);
         document.getElementById('background-image').classList.remove('empty');
     }
 </script>
