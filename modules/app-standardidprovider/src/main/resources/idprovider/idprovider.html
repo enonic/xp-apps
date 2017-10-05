@@ -31,7 +31,7 @@
     <script type="text/javascript" src="{{i18nJsUrl}}"></script>
     <script>
         function lazyFadeIn(imgEl) {
-            imgEl.remove();
+            imgEl.parentNode.removeChild(imgEl);
             $('#background-image').removeClass('empty');
         }
     </script>
