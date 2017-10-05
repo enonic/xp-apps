@@ -50,8 +50,8 @@ module.exports = {
             module.exports.removeMemberships(key, removeMms);
         }
     },
-    getMembers: function(key) {
-        return authLib.getMembers(key);
+    getMembers: function(key, from, size) {
+        return authLib.getMembers({key: key, from: from, size: size});
     },
     addMembers: function(key, members) {
         try {

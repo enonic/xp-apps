@@ -9,6 +9,7 @@ import Principal = api.security.Principal;
 import PrincipalType = api.security.PrincipalType;
 import PrincipalViewer = api.ui.security.PrincipalViewer;
 import i18n = api.util.i18n;
+import {GetMembersRequest} from '../../api/graphql/principal/GetMembersRequest';
 
 export class UserItemStatisticsPanel extends ItemStatisticsPanel<UserTreeGridItem> {
 
@@ -124,9 +125,7 @@ export class UserItemStatisticsPanel extends ItemStatisticsPanel<UserTreeGridIte
                 rolesGroup.addDataElements(null, p.asGroup().getMemberships().map(el => this.createPrincipalViewer(el)));
             }
 
-            const membersPromises = group.getMembers().map(el => new GetPrincipalByKeyRequest(el).sendAndParse());
-
-            return wemQ.all(membersPromises).then((results: Principal[]) => {
+            return new GetMembersRequest(group.getKey()).sendAndParse().then((results: Principal[]) => {
                 membersGroup.addDataElements(null, results.map(el => this.createPrincipalViewer(el)));
             }).then(() => (principal.isGroup() ? [mainGroup, rolesGroup, membersGroup] : [mainGroup, membersGroup] ));
         });
