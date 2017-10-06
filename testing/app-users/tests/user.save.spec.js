@@ -50,7 +50,7 @@ describe('Save User spec ', function () {
                 return userBrowsePanel.doClickOnCloseTabButton(userName);
             }).then(()=> {
                 return userBrowsePanel.clickOnExpanderIcon("system");
-            }).then(()=> {
+            }).pause(500).then(()=> {
                 return userBrowsePanel.clickOnExpanderIcon("users");
             }).then(()=> {
                 return expect(userBrowsePanel.isExist(userName)).to.eventually.be.true;

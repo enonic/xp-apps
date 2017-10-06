@@ -41,10 +41,12 @@ var userWizard = Object.create(wizard, {
             }).then(()=> {
                 return this.typePassword(user.password);
             }).then(()=> {
-                return this.clickOnRolesAndGroupsLink();
-            }).pause(300).then(()=> {
                 if (user.roles != null) {
+                    return this.clickOnRolesAndGroupsLink();
+                }return;
+            }).pause(300).then(()=> {
                     //return this.filterOptionsAndAddRole(user.roles[0]);
+                if (user.roles != null) {
                     return this.addRoles(user.roles);
                 }
                 return;
