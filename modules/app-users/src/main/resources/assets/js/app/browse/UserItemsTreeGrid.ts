@@ -5,13 +5,9 @@ import {EditPrincipalEvent} from './EditPrincipalEvent';
 import {UserItemsRowFormatter} from './UserItemsRowFormatter';
 import {ListUserStoresRequest} from '../../api/graphql/userStore/ListUserStoresRequest';
 import {ListPrincipalsRequest} from '../../api/graphql/principal/ListPrincipalsRequest';
-
-import GridColumn = api.ui.grid.GridColumn;
-import GridColumnBuilder = api.ui.grid.GridColumnBuilder;
 import TreeGrid = api.ui.treegrid.TreeGrid;
 import TreeNode = api.ui.treegrid.TreeNode;
 import TreeGridBuilder = api.ui.treegrid.TreeGridBuilder;
-import DateTimeFormatter = api.ui.treegrid.DateTimeFormatter;
 import TreeGridContextMenu = api.ui.treegrid.TreeGridContextMenu;
 
 import Principal = api.security.Principal;
@@ -150,7 +146,7 @@ export class UserItemsTreeGrid
         this.fetchDataAndSetNodes(parentNode).then(() => {
             const parentItemType = UserTreeGridItem.getParentType(principal);
 
-            if (parentNode.getData().getType() === parentItemType) {
+            if (parentNode.getData() && parentNode.getData().getType() === parentItemType) {
                 deferred.resolve(parentNode);
             } else {
                 parentNode = parentNode.getChildren().filter(node => node.getData().getType() === parentItemType)[0] || parentNode;
