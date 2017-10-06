@@ -173,6 +173,10 @@ var userBrowsePanel = Object.create(page, {
         value: function (displayName) {
             return this.doClick(`${panel.closeItemTabButton(displayName)}`).catch((err)=> {
                 throw new Error('itemTabButton was not found!' + displayName);
+            }).then(()=> {
+                return this.waitForSpinnerNotVisible(1000);
+            }).then(()=> {
+                return this.waitForUsersGridLoaded(1000);
             })
         }
     },

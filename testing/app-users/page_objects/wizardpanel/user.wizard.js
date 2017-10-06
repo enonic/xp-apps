@@ -8,6 +8,8 @@ const loaderComboBox = require('../inputs/loaderComboBox');
 var panel = {
     container: `//div[contains(@id,'UserWizardPanel')]`,
     groupOptionsFilterInput: "//div[contains(@id,'FormItem') and child::label[text()='Groups']]" + `${loaderComboBox.optionFilterInput}`,
+    roleOptionsFilterInput: "//div[contains(@id,'FormItem') and child::label[text()='Roles']]" + `${loaderComboBox.optionFilterInput}`,
+    rolesGroupLink: `//li[child::a[text()='Roles & Groups']]`,
 };
 
 var userWizard = Object.create(wizard, {
@@ -22,13 +24,31 @@ var userWizard = Object.create(wizard, {
             return `${panel.container}//input[@type = 'password']`;
         }
     },
+    rolesGroupsLink: {
+        get: function () {
+            return `${panel.container}` + `${panel.rolesGroupLink}`;
+        }
+    },
+    clickOnRolesAndGroupsLink: {
+        value: function () {
+            return this.doClick(this.rolesGroupsLink);
+        }
+    },
     typeData: {
         value: function (user) {
-            return this.typeDisplayName(user.displayName).then(()=>{
+            return this.typeDisplayName(user.displayName).then(()=> {
                 return this.typeEmail(user.email);
-            }).then(()=>{
+            }).then(()=> {
                 return this.typePassword(user.password);
-            });
+            }).then(()=> {
+                return this.clickOnRolesAndGroupsLink();
+            }).pause(300).then(()=> {
+                if (user.roles != null) {
+                    //return this.filterOptionsAndAddRole(user.roles[0]);
+                    return this.addRoles(user.roles);
+                }
+                return;
+            })
         }
     },
     clearPasswordInput: {
@@ -44,24 +64,37 @@ var userWizard = Object.create(wizard, {
 
     waitForOpened: {
         value: function () {
-            return this.waitForVisible(this.displayNameInput, 3000).catch((err)=>{
+            return this.waitForVisible(this.displayNameInput, 3000).catch((err)=> {
                 throw new Error('User Wizard is not loaded! ' + err);
+                
             });
         }
     },
-
+    removeRole:{
+       value: function(roleDisplayName){
+           let selector = `${panel.container}` + `${elements.selectedPrincipalByDisplayName(roleDisplayName)}` + `${elements.REMOVE_ICON}`;
+           return this.clickOnRolesAndGroupsLink().pause(1000).then(()=>{
+              return this.doClick(selector).pause(500);
+           })
+       }
+    },
     addRoles: {
         value: function (roleDisplayNames) {
-            return roleDisplayNames.forEach()
-            //TODO implement it
+            let result = Promise.resolve();
+            roleDisplayNames.forEach((displayName)=> {
+                result = result.then(() => this.filterOptionsAndAddRole(displayName));
+            });
+            return result;
         }
     },
     filterOptionsAndAddRole: {
         value: function (roleDisplayName) {
-            return this.typeTextInInput(`${panel.groupOptionsFilterInput}`, roleDisplayName).then(()=> {
+            return this.typeTextInInput(`${panel.roleOptionsFilterInput}`, roleDisplayName).then(()=> {
                 return loaderComboBox.waitForOptionVisible(`${panel.container}`, roleDisplayName);
             }).then(()=> {
                 return loaderComboBox.clickOnOption(`${panel.container}`, roleDisplayName);
+            }).catch((err)=> {
+                throw new Error(err);
             })
         }
     },

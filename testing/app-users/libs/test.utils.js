@@ -7,6 +7,7 @@ const loginPage = require('../page_objects/login.page');
 const browsePanel = require('../page_objects/browsepanel/userbrowse.panel');
 const userStoreWizard = require('../page_objects/wizardpanel/userstore.wizard');
 const userWizard = require('../page_objects/wizardpanel/user.wizard');
+const wizard = require('../page_objects/wizardpanel/wizard.panel');
 const newPrincipalDialog = require('../page_objects/browsepanel/new.principal.dialog');
 const filterPanel = require("../page_objects/browsepanel/principal.filter.panel");
 
@@ -18,8 +19,13 @@ module.exports = {
         });
     },
     typeNameInFilterPanel: function (name) {
-        return browsePanel.clickOnSearchButton().then(()=> {
-            return filterPanel.waitForOpened();
+        return filterPanel.isPanelVisible().then((result)=> {
+            if (!result) {
+                return browsePanel.clickOnSearchButton().then(()=> {
+                    return filterPanel.waitForOpened();
+                })
+            }
+            return;
         }).then(()=> {
             return filterPanel.typeSearchText(name);
         }).then(()=> {
@@ -67,6 +73,35 @@ module.exports = {
         })
     },
 
+    selectUserAndOpen: function (displayName) {
+        return this.findAndSelectItem(displayName).then(()=> {
+            return browsePanel.waitForNewButtonEnabled();
+        }).then((result)=> {
+            if (!result) {
+                throw new Error('Edit button is disabled!');
+            }
+            return browsePanel.clickOnEditButton();
+        }).then(()=> {
+            return userWizard.waitForOpened();
+        })
+    },
+    selectRoleAndOpen: function (displayName) {
+        return this.findAndSelectItem(displayName).then(()=> {
+            return browsePanel.waitForNewButtonEnabled();
+        }).then((result)=> {
+            if (!result) {
+                throw new Error('Edit button is disabled!');
+            }
+            return browsePanel.clickOnEditButton();
+        }).then(()=> {
+            return userWizard.waitForOpened();
+        })
+    },
+    saveAndClose: function (displayName) {
+        return wizard.waitAndClickOnSave().then(()=> {
+            return browsePanel.doClickOnCloseTabButton(displayName);
+        })
+    },
     openWizardAndSaveUserStore: function (browser, userStoreData) {
         return this.clickOnNewOpenUserStoreWizard(browser).then(()=> {
             return userStoreWizard.typeData(userStoreData)

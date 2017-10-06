@@ -55,7 +55,7 @@ var newPrincipalDialog = Object.create(page, {
     getItemNames: {
         value: function () {
             let items = `${dialog.itemViewer}` + `${elements.H6_DISPLAY_NAME}`;
-            return this.getTextFromElements(items)
+            return this.getTextFromElements(items);
         }
     },
     getHeaderText: {

@@ -54,6 +54,7 @@ var wizardPanel = Object.create(page, {
             })
         }
     },
+   
     doClickOnDelete: {
         value: function () {
             return this.doClick(this.deleteButton);

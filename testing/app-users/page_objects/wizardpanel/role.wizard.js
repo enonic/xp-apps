@@ -34,7 +34,7 @@ var roleWizard = Object.create(wizard, {
     waitForOpened: {
         value: function () {
             return this.waitForVisible(this.displayNameInput, 3000).catch((e)=> {
-                throw new Error("Role wizard was not loaded! "+ e);
+                throw new Error("Role wizard was not loaded! " + e);
             });
         }
     },
@@ -57,8 +57,8 @@ var roleWizard = Object.create(wizard, {
     },
     removeMember: {
         value: function (displayName) {
-            let selector = `${panel.container}` + `${elements.PRINCIPAL_SELECTED_OPTION}`;
-            return this.doClick()
+            let selector = `${panel.container}` + `${elements.selectedPrincipalByDisplayName(displayName)}` + `${elements.REMOVE_ICON}`;
+            return this.doClick(selector).pause(300);
         }
     }
 });
