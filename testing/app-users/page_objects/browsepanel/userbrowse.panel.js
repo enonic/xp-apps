@@ -63,10 +63,18 @@ var userBrowsePanel = Object.create(page, {
             return this.waitForVisible(`${panel.toolbar}`, ms);
         }
     },
-    isExist: {
+    isItemDisplayed: {
         value: function (itemName) {
-            return this.waitForVisible(`${panel.rowByName(itemName)}`, 1000).catch(()=> {
-                console.log("item was not found:" + itemName);
+            return this.waitForVisible(`${panel.rowByName(itemName)}`, 1000).catch((err)=> {
+                console.log("item is not displayed:" + itemName);
+                return false;
+            });
+        }
+    },
+    waitForItemNotDisplayed: {
+        value: function (itemName) {
+            return this.waitForNotVisible(`${panel.rowByName(itemName)}`, 1000).catch((err)=> {
+                console.log("item is still displayed:" + itemName);
                 return false;
             });
         }
@@ -139,9 +147,25 @@ var userBrowsePanel = Object.create(page, {
         }
     },
 
+    waitForEditButtonEnabled: {
+        value: function () {
+            return this.waitForEnabled(this.editButton, 3000);
+        }
+    },
+    waitForDeleteButtonEnabled: {
+        value: function () {
+            return this.waitForEnabled(this.deleteButton, 3000);
+        }
+    },
+
     isDeleteButtonEnabled: {
         value: function () {
             return this.isEnabled(this.deleteButton);
+        }
+    },
+    isNewButtonEnabled: {
+        value: function () {
+            return this.isEnabled(this.newButton);
         }
     },
     isEditButtonEnabled: {

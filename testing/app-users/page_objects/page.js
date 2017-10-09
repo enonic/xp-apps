@@ -53,7 +53,7 @@ Page.prototype.isSpinnerVisible = function () {
 
 Page.prototype.doClick = function (selector) {
     return this.getBrowser().elements(selector).then((result)=> {
-        if(result.value.length==0){
+        if (result.value.length == 0) {
             throw new Error('Element was not found!')
         }
         return this.getBrowser().click(selector);
@@ -64,13 +64,13 @@ Page.prototype.doClick = function (selector) {
 };
 
 Page.prototype.typeTextInInput = function (selector, text) {
-    return this.getBrowser().setValue(selector, text).catch((err)=>{
-        throw new Error('text was not set in the input '+err);
+    return this.getBrowser().setValue(selector, text).catch((err)=> {
+        throw new Error('text was not set in the input ' + err);
     })
 };
 Page.prototype.clearElement = function (selector) {
-    return this.getBrowser().clearElement(selector).catch((err)=>{
-        throw new Error('input was not cleared '+err);
+    return this.getBrowser().clearElement(selector).catch((err)=> {
+        throw new Error('input was not cleared ' + err);
     })
 },
 
@@ -126,7 +126,7 @@ Page.prototype.getTextFromElements = function (selector) {
             return res.push(str.value);
         })
         return res;
-    }).catch((err)=>{
+    }).catch((err)=> {
         return [];
     });
 }

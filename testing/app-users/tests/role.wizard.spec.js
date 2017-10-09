@@ -71,7 +71,7 @@ describe('Role Wizard page and info on the UserItemStatisticsPanel spec ', funct
 
     it(`GIVEN existing 'Role' with a member is opened WHEN member has been removed AND navigated to the grid THEN no one member should be present on the 'statistics panel'`,
         () => {
-            return testUtils.selectRoleAndOpen(testRole.displayName).then(()=> {
+            return testUtils.selectRoleAndOpenWizard(testRole.displayName).then(()=> {
                 return roleWizard.removeMember(appConst.SUPER_USER)
             }).then(()=>{
                 // role has been saved and the wizard closed

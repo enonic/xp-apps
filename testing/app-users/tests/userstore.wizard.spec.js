@@ -14,7 +14,7 @@ describe('User store wizard spec ', function () {
 
     it('WHEN `New` button has been pressed AND `User Store` item selected THEN `User Store Wizard` should be opened with all required inputs',
         () => {
-            return testUtils.clickOnNewOpenUserStoreWizard(webDriverHelper.browser).then(()=> {
+            return testUtils.clickOnNewOpenUserStoreWizard().then(()=> {
                 return userStoreWizard.isDisplayNameInputVisible();
             }).then(isVisible=> {
                 assert.isTrue(isVisible, 'display name input should be present');
@@ -24,8 +24,8 @@ describe('User store wizard spec ', function () {
                 return userStoreWizard.waitUntilInvalidIconAppears('<Unnamed User Store>');
             }).then((isRedIconPresent)=> {
                 assert.isTrue(isRedIconPresent, 'red circle should be present on the tab, because `name` input is empty');
-            }).then(()=>{
-                
+            }).then(()=> {
+
             })
         });
 

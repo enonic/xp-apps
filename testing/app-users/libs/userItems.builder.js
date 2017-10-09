@@ -6,7 +6,7 @@ module.exports = {
         return part + Math.round(Math.random() * 1000000);
     },
     generateEmail: function (userName) {
-      return userName+'@gmail.com'
+        return userName + '@gmail.com'
     },
     buildUserStore: function (displayName, description, providerName) {
         return {
@@ -23,12 +23,20 @@ module.exports = {
             roles: roles,
         };
     },
-
     buildRole: function (displayName, description, members) {
         return {
             displayName: displayName,
             description: description,
             members: members,
         };
+    },
+    buildGroup: function (displayName, description, members, roles) {
+        return {
+            displayName: displayName,
+            description: description,
+            members: members,
+            roles: roles,
+        }
+            ;
     },
 };

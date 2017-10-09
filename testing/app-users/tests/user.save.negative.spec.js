@@ -21,7 +21,7 @@ describe('User Wizard negative spec ', function () {
         () => {
             let userName = userItemsBuilder.generateRandomName('user');
             testUser = userItemsBuilder.buildUser(userName, '1q2w3e', userItemsBuilder.generateEmail(userName), null);
-            return testUtils.clickOnSystemOpenUserWizard(webDriverHelper.browser).then(()=> {
+            return testUtils.clickOnSystemOpenUserWizard().then(()=> {
                 return userWizard.typeEmail(testUser.email);
             }).then(()=> {
                 return userWizard.typeDisplayName(testUser.displayName);
@@ -38,7 +38,7 @@ describe('User Wizard negative spec ', function () {
         () => {
             let userName = userItemsBuilder.generateRandomName('user');
             testUser = userItemsBuilder.buildUser(userName, '1q2w3e', userItemsBuilder.generateEmail(userName), null);
-            return testUtils.clickOnSystemOpenUserWizard(webDriverHelper.browser).then(()=> {
+            return testUtils.clickOnSystemOpenUserWizard().then(()=> {
                 return userWizard.typeEmail(testUser.email);
             }).then(()=> {
                 return userWizard.typeDisplayName(testUser.displayName);
@@ -53,7 +53,7 @@ describe('User Wizard negative spec ', function () {
         () => {
             let userName = userItemsBuilder.generateRandomName('user');
             testUser = userItemsBuilder.buildUser(userName, '1q2w3e', userItemsBuilder.generateEmail(userName), null);
-            return testUtils.clickOnSystemOpenUserWizard(webDriverHelper.browser).then(()=> {
+            return testUtils.clickOnSystemOpenUserWizard().then(()=> {
                 return userWizard.typePassword(testUser.password);
             }).then(()=> {
                 return userWizard.typeDisplayName(testUser.displayName);
@@ -70,7 +70,7 @@ describe('User Wizard negative spec ', function () {
         () => {
             let userName = userItemsBuilder.generateRandomName('user');
             testUser = userItemsBuilder.buildUser(userName, '1q2w3e', userItemsBuilder.generateEmail(userName), null);
-            return testUtils.clickOnSystemOpenUserWizard(webDriverHelper.browser).then(()=> {
+            return testUtils.clickOnSystemOpenUserWizard().then(()=> {
                 return userWizard.typeEmail(testUser.email);
             }).then(()=> {
                 return userWizard.typeDisplayName(testUser.displayName);
@@ -85,7 +85,7 @@ describe('User Wizard negative spec ', function () {
         () => {
             let userName = userItemsBuilder.generateRandomName('user');
             testUser = userItemsBuilder.buildUser(userName, '1q2w3e', userItemsBuilder.generateEmail(userName), null);
-            return testUtils.clickOnSystemOpenUserWizard(webDriverHelper.browser).then(()=> {
+            return testUtils.clickOnSystemOpenUserWizard().then(()=> {
                 return userWizard.typeData(testUser);
             }).then(()=> {
                 return userWizard.waitUntilInvalidIconDisappears(testUser.displayName);
@@ -98,7 +98,7 @@ describe('User Wizard negative spec ', function () {
         () => {
             let userName = userItemsBuilder.generateRandomName('user');
             testUser = userItemsBuilder.buildUser(userName, '1q2w3e', userItemsBuilder.generateEmail(userName), null);
-            return testUtils.clickOnSystemOpenUserWizard(webDriverHelper.browser).then(()=> {
+            return testUtils.clickOnSystemOpenUserWizard().then(()=> {
                 return userWizard.typeData(testUser);
             }).then(()=> {
                 return userWizard.clearPasswordInput();
@@ -113,7 +113,7 @@ describe('User Wizard negative spec ', function () {
         () => {
             let userName = userItemsBuilder.generateRandomName('user');
             testUser = userItemsBuilder.buildUser(userName, '1q2w3e', userItemsBuilder.generateEmail(userName), null);
-            return testUtils.clickOnSystemOpenUserWizard(webDriverHelper.browser).then(()=> {
+            return testUtils.clickOnSystemOpenUserWizard().then(()=> {
                 return userWizard.typeData(testUser);
             }).then(()=> {
                 return userWizard.clearEmailInput();
@@ -128,7 +128,7 @@ describe('User Wizard negative spec ', function () {
         () => {
             let userName = userItemsBuilder.generateRandomName('user');
             testUser = userItemsBuilder.buildUser(userName, '1q2w3e', 'notvalid@@@mail.com', null);
-            return testUtils.clickOnSystemOpenUserWizard(webDriverHelper.browser).then(()=> {
+            return testUtils.clickOnSystemOpenUserWizard().then(()=> {
                 return userWizard.typeData(testUser);
             }).then(()=> {
                 return userWizard.waitAndClickOnSave();

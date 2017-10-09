@@ -21,7 +21,7 @@ describe('Save User spec ', function () {
         () => {
             let userName = userItemsBuilder.generateRandomName('user');
             testUser = userItemsBuilder.buildUser(userName, '1q2w3e', userItemsBuilder.generateEmail(userName), null);
-            return testUtils.clickOnSystemOpenUserWizard(webDriverHelper.browser).then(()=> {
+            return testUtils.clickOnSystemOpenUserWizard().then(()=> {
                 return userWizard.typeData(testUser);
             }).then(()=> {
                 return userWizard.waitAndClickOnSave();
@@ -34,15 +34,15 @@ describe('Save User spec ', function () {
             }).then(()=> {
                 return testUtils.typeNameInFilterPanel(userName);
             }).then(()=> {
-                return expect(userBrowsePanel.isExist(userName)).to.eventually.be.true;
+                return expect(userBrowsePanel.isItemDisplayed(userName)).to.eventually.be.true;
             })
         });
 
     it('WHEN user has been saved in the wizard AND the wizard closed AND Users folder has been expanded THEN grid should be updated AND the user should be listed',
         () => {
-            let userName  = userItemsBuilder.generateRandomName('user');
+            let userName = userItemsBuilder.generateRandomName('user');
             testUser = userItemsBuilder.buildUser(userName, '1q2w3e', userItemsBuilder.generateEmail(userName), null);
-            return testUtils.clickOnSystemOpenUserWizard(webDriverHelper.browser).then(()=> {
+            return testUtils.clickOnSystemOpenUserWizard().then(()=> {
                 return userWizard.typeData(testUser);
             }).then(()=> {
                 return userWizard.waitAndClickOnSave();
@@ -59,8 +59,8 @@ describe('Save User spec ', function () {
 
     it('WHEN try to save user with name that already in use THEN correct notification message should appear',
         () => {
-            testUser.email="aa@gmail.com";
-            return testUtils.clickOnSystemOpenUserWizard(webDriverHelper.browser).then(()=> {
+            testUser.email = "aa@gmail.com";
+            return testUtils.clickOnSystemOpenUserWizard().then(()=> {
                 return userWizard.typeData(testUser);
             }).then(()=> {
                 return userWizard.waitAndClickOnSave();
