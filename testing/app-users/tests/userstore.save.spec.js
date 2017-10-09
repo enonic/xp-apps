@@ -95,9 +95,13 @@ describe('User Store saving and deleting spec', function () {
 
     it(`GIVEN existing 'User Store' with an user WHEN the user has been deleted THEN the store can be deleted`, () => {
         return testUtils.selectAndDeleteItem(testUser.displayName).then(()=> {
-            return userBrowsePanel.waitForItemNotDisplayed(testUser.displayName)
+            return userBrowsePanel.waitForItemNotDisplayed(testUser.displayName);
         }).then(result=> {
             assert.isTrue(result, 'the user should not be present in the grid');
+        }).then(()=> {
+            return testUtils.selectAndDeleteItem(userStore.name)
+        }).then(()=> {
+            return userBrowsePanel.waitForItemNotDisplayed(userStore.name)
         });
     });
 
