@@ -478,7 +478,7 @@ export class LiveFormPanel
             RenderingMode.EDIT,
             api.content.Branch.DRAFT);
 
-        this.contentWizardPanel.saveChangesWithoutValidation().then(() => {
+        this.contentWizardPanel.saveChangesWithoutValidation(false).then(() => {
             this.pageSkipReload = false;
             componentView.showLoadingSpinner();
             return this.liveEditPageProxy.loadComponent(componentView, componentUrl);

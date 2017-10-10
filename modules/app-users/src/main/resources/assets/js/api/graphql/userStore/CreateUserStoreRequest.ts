@@ -82,17 +82,17 @@ export class CreateUserStoreRequest
     }
 
     sendAndParse(): wemQ.Promise<UserStore> {
-        return this.mutate().then(json => this.userStorefromJson(json.createUserStore));
+        return this.mutate().then(json => this.fromJson(json.createUserStore, json.error));
     }
 
-    userStorefromJson(us: UserStoreJson) {
-        if (!us) {
-            throw `UserStore[${this.userStoreKey.toString()}] not found`;
+    fromJson(userStore: UserStoreJson, error: string): UserStore {
+        if (!userStore || error) {
+            throw error;
         }
-        if (us.authConfig && typeof us.authConfig.config === 'string') {
+        if (userStore.authConfig && typeof userStore.authConfig.config === 'string') {
             // config is passed as string
-            us.authConfig.config = JSON.parse(<string>us.authConfig.config);
+            userStore.authConfig.config = JSON.parse(<string>userStore.authConfig.config);
         }
-        return UserStore.fromJson(us);
+        return UserStore.fromJson(userStore);
     }
 }

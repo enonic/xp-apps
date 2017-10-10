@@ -2,34 +2,72 @@
  * Created on 05.09.2017.
  */
 const chai = require('chai');
-var should = require('chai').should
 const assert = chai.assert;
-var webDriverHelper = require('../libs/WebDriverHelper');
+const webDriverHelper = require('../libs/WebDriverHelper');
 const userBrowsePanel = require('../page_objects/browsepanel/userbrowse.panel');
-const userStoreWizard = require('../page_objects/wizardpanel/userstore.wizard');
+const appConst = require('../libs/app_const');
 const testUtils = require('../libs/test.utils');
-
+const roleWizard = require('../page_objects/wizardpanel/role.wizard');
 const newPrincipalDialog = require('../page_objects/browsepanel/new.principal.dialog');
 
 describe('New Principal dialog Spec', function () {
     this.timeout(70000);
     webDriverHelper.setupBrowser();
-    
+
     it(`GIVEN users grid is opened WHEN 'New' button has been clicked THEN modal dialog should appear with 4 items`,
         () => {
             return userBrowsePanel.clickOnNewButton().then(()=> {
                 return newPrincipalDialog.waitForOpened();
-            }).waitForVisible(newPrincipalDialog.header).then(result=> {
-                assert.isTrue(result, 'description input should be present');
+            }).then(()=> {
+                return newPrincipalDialog.getHeaderText();
+            }).then(result=> {
+                assert.equal(result, 'Create New', 'Correct header should be displayed');
+            }).waitForVisible(newPrincipalDialog.cancelButton).then(result=> {
+                assert.isTrue(result, '`Cancel` button should be present');
             }).then(()=>{
+                return newPrincipalDialog.getNumberOfItems()
+                then(result=>{
+                    assert.equal(result, 4, '`User` item should be present on the dialog');
+                })
+            }).then(()=> {
                 return newPrincipalDialog.getItemNames()
-            }).then((result)=>{
-                assert.isTrue(result.length==4, '4 items should be present on the dialog');
+            }).then((items)=> {
+                assert.equal(items[0], appConst.USER, '`User` item should be present on the dialog');
+                assert.equal(items[1], appConst.USER_GROUP, '`User Group` item should be present on the dialog');
+                assert.equal(items[2], appConst.USER_STORE, '`User Store` item should be present on the dialog');
+                assert.equal(items[3], appConst.ROLE, '`Role` item should be present');
             })
         });
-    
+
+    it(`GIVEN 'System store' is selected WHEN 'New' button has been clicked THEN modal dialog should appear with 2 items`,
+        () => {
+            return userBrowsePanel.clickOnRowByName('/system').waitForEnabled(userBrowsePanel.newButton).then(()=> {
+                return userBrowsePanel.clickOnNewButton()
+            }).then(()=> {
+                return newPrincipalDialog.waitForOpened();
+            }).waitForVisible(newPrincipalDialog.header).then(result=> {
+                assert.isTrue(result, 'description input should be present');
+            }).then(()=> {
+                return newPrincipalDialog.getItemNames()
+            }).then((items)=> {
+                assert.equal(items[0], appConst.USER, '`User` item should be present on the dialog');
+                assert.equal(items[1], appConst.USER_GROUP, '`User Group` item should be present on the dialog');
+            })
+        });
+
+    it(`GIVEN 'Roles' folder is selected WHEN 'New' button has been clicked THEN Role Wizard should be loaded`,
+        () => {
+            return userBrowsePanel.clickOnRowByName('roles').waitForEnabled(userBrowsePanel.newButton).then(()=> {
+                return userBrowsePanel.clickOnNewButton()
+            }).then(()=> {
+                return roleWizard.waitForOpened();
+            }).waitForVisible(roleWizard.descriptionInput).then(result=> {
+                assert.isTrue(result, 'Role Wizard should be loaded');
+            })
+        });
+
     beforeEach(() => {
-       return testUtils.navigateToUsersApp(webDriverHelper.browser)
+        return testUtils.navigateToUsersApp(webDriverHelper.browser)
     });
     afterEach(() => {
         return testUtils.doCloseUsersApp(webDriverHelper.browser)
