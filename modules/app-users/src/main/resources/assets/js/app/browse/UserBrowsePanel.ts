@@ -115,8 +115,10 @@ export class UserBrowsePanel extends api.app.browse.BrowsePanel<UserTreeGridItem
         nodes.forEach((node: TreeNode<UserTreeGridItem>) => {
             let userGridItem = node.getData();
 
-            let item = new BrowseItem<UserTreeGridItem>(userGridItem).setId(userGridItem.getDataId()).setDisplayName(
-                userGridItem.getItemDisplayName()).setIconClass(this.selectIconClass(userGridItem));
+            let item = <BrowseItem<UserTreeGridItem>>new BrowseItem<UserTreeGridItem>(userGridItem)
+                .setId(userGridItem.getDataId())
+                .setDisplayName(userGridItem.getItemDisplayName())
+                .setIconClass(this.selectIconClass(userGridItem));
             browseItems.push(item);
 
         });

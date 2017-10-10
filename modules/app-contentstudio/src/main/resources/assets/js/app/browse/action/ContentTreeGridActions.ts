@@ -107,7 +107,10 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
             this.doUpdateActionsEnabledState(contentBrowseItems)
         ];
 
-        return wemQ.all(parallelPromises).then(() => wemQ(contentBrowseItems)).catch(api.DefaultErrorHandler.handle);
+        return wemQ
+            .all(parallelPromises)
+            .catch(api.DefaultErrorHandler.handle)
+            .then(() => contentBrowseItems);
     }
 
     private resetDefaultActionsNoItemsSelected() {

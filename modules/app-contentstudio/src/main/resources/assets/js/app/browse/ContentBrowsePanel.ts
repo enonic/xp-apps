@@ -661,7 +661,7 @@ export class ContentBrowsePanel
     }
 
     private toBrowseItem(content: ContentSummaryAndCompareStatus, renderable: boolean): BrowseItem<ContentSummaryAndCompareStatus> {
-        return new BrowseItem<ContentSummaryAndCompareStatus>(content)
+        return <BrowseItem<ContentSummaryAndCompareStatus>>new BrowseItem<ContentSummaryAndCompareStatus>(content)
             .setId(content.getId())
             .setDisplayName(content.getDisplayName()).setPath(content.getPath().toString())
             .setIconUrl(new ContentIconUrlResolver().setContent(content.getContentSummary()).resolve())
