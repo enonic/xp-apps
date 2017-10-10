@@ -8,7 +8,6 @@ import Group = api.security.Group;
 import GroupJson = api.security.GroupJson;
 import User = api.security.User;
 import UserJson = api.security.UserJson;
-import PrincipalType = api.security.PrincipalType;
 
 export class GetPrincipalsByKeysRequest
     extends GraphQlRequest<any, Principal[]> {

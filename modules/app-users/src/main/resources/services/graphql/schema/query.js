@@ -82,8 +82,8 @@ module.exports = graphQl.createObjectType({
             resolve: function(env) {
                 var keys = env.args.keys;
                 var memberships = env.args.memberships;
-                if (keys.length >= 1024) {
-                    throw "Invalid field argument keys: The number of keys must be inferior to 1024";
+                if (keys.length >= 100) {
+                    throw "Invalid field argument keys: The number of keys must be inferior to 100";
                 }
                 return principals.getByKeys(keys, memberships);
             }
