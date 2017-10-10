@@ -9,3 +9,7 @@ repositories {
     jcenter()
     xp.enonicRepo()
 }
+
+configurations.all {
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+}

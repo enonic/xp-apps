@@ -16,9 +16,9 @@ export class ContentMoveComboBox extends ContentComboBox {
     private readonlyChecker: MoveReadOnlyChecker;
 
     constructor() {
-        const richComboBoxBuilder: ContentComboBoxBuilder = new ContentComboBoxBuilder();
+        const contentComboBoxBuilder: ContentComboBoxBuilder = new ContentComboBoxBuilder();
 
-        richComboBoxBuilder
+        contentComboBoxBuilder
             .setMaximumOccurrences(1)
             .setComboBoxName('contentSelector')
             .setLoader(new ContentSummaryOptionDataLoader())
@@ -27,8 +27,9 @@ export class ContentMoveComboBox extends ContentComboBox {
             .setDelayedInputValueChangedHandling(500)
             .setSkipAutoDropShowOnValueChange(true)
             .setTreegridDropdownEnabled(true)
+            .setTreeModeTogglerAllowed(false);
 
-        super(richComboBoxBuilder);
+        super(contentComboBoxBuilder);
         this.readonlyChecker = new MoveReadOnlyChecker();
         
         this.getComboBox().getComboBoxDropdownGrid().setReadonlyChecker(this.readonlyChecker.isReadOnly.bind(this.readonlyChecker));

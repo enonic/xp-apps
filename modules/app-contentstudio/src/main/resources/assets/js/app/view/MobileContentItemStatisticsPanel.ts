@@ -5,15 +5,14 @@ import {MobileDetailsPanelToggleButton} from './detail/button/MobileDetailsPanel
 import {ContentTreeGridActions} from '../browse/action/ContentTreeGridActions';
 import {DetailsView} from './detail/DetailsView';
 import {MobilePreviewFoldButton} from './MobilePreviewFoldButton';
-
 import ViewItem = api.app.view.ViewItem;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import StringHelper = api.util.StringHelper;
 import ResponsiveManager = api.ui.responsive.ResponsiveManager;
 import ResponsiveItem = api.ui.responsive.ResponsiveItem;
-import FoldButton = api.ui.toolbar.FoldButton;
 
-export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatisticsPanel<api.content.ContentSummaryAndCompareStatus> {
+export class MobileContentItemStatisticsPanel
+    extends api.app.view.ItemStatisticsPanel<api.content.ContentSummaryAndCompareStatus> {
 
     private itemHeader: api.dom.DivEl = new api.dom.DivEl('mobile-content-item-statistics-header');
     private headerLabel: api.dom.H6El = new api.dom.H6El('mobile-header-title');
@@ -24,6 +23,8 @@ export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatistic
     private detailsToggleButton: MobileDetailsPanelToggleButton;
 
     private foldButton: MobilePreviewFoldButton;
+
+    private slideOutListeners: { (): void }[] = [];
 
     constructor(browseActions: ContentTreeGridActions, detailsView: DetailsView) {
         super('mobile-content-item-statistics-panel');
@@ -62,12 +63,12 @@ export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatistic
         serverEvents.onContentPublished(reloadItemPublishStateChange);
         serverEvents.onContentUnpublished(reloadItemPublishStateChange);
 
-        this.onRendered(() => {
-            this.slideAllOut();
-        });
+        this.onRendered(() => this.slideAllOut(true));
 
         ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
-            this.slideAllOut();
+            if (this.detailsPanel.isSlidedIn()) {
+                this.slideAllOut();
+            }
         });
     }
 
@@ -163,22 +164,37 @@ export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatistic
         this.subHeaderLabel.setHtml(status);
     }
 
-    slideAllOut() {
-        this.slideOut();
+    slideAllOut(silent?: boolean) {
+        this.slideOut(silent);
         this.detailsPanel.slideOut();
         this.detailsToggleButton.removeClass('expanded');
     }
 
     // hide
-    slideOut() {
+    slideOut(silent?: boolean) {
         this.getEl().setRightPx(-this.getEl().getWidthWithBorder());
         api.dom.Body.get().getHTMLElement().classList.remove('mobile-statistics-panel');
+        if (!silent) {
+            this.notifySlideOut();
+        }
     }
 
     // show
     slideIn() {
         api.dom.Body.get().getHTMLElement().classList.add('mobile-statistics-panel');
         this.getEl().setRightPx(0);
+    }
+
+    onSlideOut(listener: () => void) {
+        this.slideOutListeners.push(listener);
+    }
+
+    unSlideOut(listener: () => void) {
+        this.slideOutListeners = this.slideOutListeners.filter(curr => curr != listener);
+    }
+
+    notifySlideOut() {
+        this.slideOutListeners.forEach(curr => curr());
     }
 
     private calcAndSetDetailsPanelTopOffset() {

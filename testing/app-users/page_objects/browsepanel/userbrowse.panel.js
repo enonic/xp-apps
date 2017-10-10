@@ -88,17 +88,29 @@ var userBrowsePanel = Object.create(page, {
     },
     clickOnNewButton: {
         value: function () {
-            return this.doClick(this.newButton);
+            return this.waitForEnabled(this.newButton, 1000).then(()=>{
+                return  this.doClick(this.newButton);
+            }).catch((err)=>{
+                throw new Error('New button is not enabled! ' + err);
+            })
         }
     },
     clickOnEditButton: {
         value: function () {
-            return this.doClick(this.editButton);
+            return this.waitForEnabled(this.editButton, 1000).then(()=>{
+              return  this.doClick(this.editButton);
+            }).catch((err)=>{
+                throw new Error('Edit button is not enabled! ' + err);
+            })
         }
     },
     clickOnDeleteButton: {
         value: function () {
-            return this.doClick(this.deleteButton);
+            return this.waitForEnabled(this.deleteButton, 1000).then(()=>{
+                return  this.doClick(this.deleteButton);
+            }).catch((err)=>{
+                throw new Error('Delete button is not enabled! ' + err);
+            })
         }
     },
 
@@ -126,7 +138,7 @@ var userBrowsePanel = Object.create(page, {
     clickOnRowByName: {
         value: function (name) {
             var displayNameXpath = panel.rowByName(name);
-            return this.waitForVisible(displayNameXpath, 2000).then(()=> {
+            return this.waitForVisible(displayNameXpath, 3000).then(()=> {
                 return this.doClick(displayNameXpath);
             }).catch(()=> {
                 throw Error('Row with the name ' + name + ' was not found')
@@ -145,7 +157,9 @@ var userBrowsePanel = Object.create(page, {
     },
     doClickOnCloseTabButton: {
         value: function (displayName) {
-            return this.doClick(`${panel.closeItemTabButton(displayName)}`);
+            return this.doClick(`${panel.closeItemTabButton(displayName)}`).catch((err)=>{
+              throw new Error('itemTabButton was not found!' + displayName);
+            })
         }
     },
     clickOnExpanderIcon: {

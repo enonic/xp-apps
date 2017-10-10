@@ -5,6 +5,9 @@ import {EditPrincipalEvent} from './EditPrincipalEvent';
 import {UserItemsRowFormatter} from './UserItemsRowFormatter';
 import {ListUserStoresRequest} from '../../api/graphql/userStore/ListUserStoresRequest';
 import {ListPrincipalsRequest} from '../../api/graphql/principal/ListPrincipalsRequest';
+import {PrincipalBrowseSearchData} from './filter/PrincipalBrowseSearchData';
+import {UserItemType} from './UserItemType';
+import {ListUserItemsRequest} from '../../api/graphql/principal/ListUserItemsRequest';
 import TreeGrid = api.ui.treegrid.TreeGrid;
 import TreeNode = api.ui.treegrid.TreeNode;
 import TreeGridBuilder = api.ui.treegrid.TreeGridBuilder;
@@ -24,14 +27,16 @@ export class UserItemsTreeGrid
     extends TreeGrid<UserTreeGridItem> {
 
     private treeGridActions: UserTreeGridActions;
+    private searchString: string;
+    private searchTypes: UserItemType[];
 
     constructor() {
 
         const builder = new TreeGridBuilder<UserTreeGridItem>().setColumnConfig([{
-                name: i18n('field.name'),
-                id: 'name',
-                field: 'displayName',
-                formatter: UserItemsRowFormatter.nameFormatter,
+            name: i18n('field.name'),
+            id: 'name',
+            field: 'displayName',
+            formatter: UserItemsRowFormatter.nameFormatter,
             style: {minWidth: 200}
         }]).setPartialLoadEnabled(true).setLoadBufferSize(20).prependClasses('user-tree-grid');
 
@@ -64,10 +69,13 @@ export class UserItemsTreeGrid
     }
 
     private initEventHandlers() {
-        BrowseFilterSearchEvent.on((event) => {
-            const items = event.getData().map((userItem: UserItem) => {
+        BrowseFilterSearchEvent.on((event: BrowseFilterSearchEvent<PrincipalBrowseSearchData>) => {
+            const data = event.getData();
+            const items = data.getUserItems().map((userItem: UserItem) => {
                 return new UserTreeGridItemBuilder().setAny(userItem).build();
             });
+            this.searchString = data.getSearchString();
+            this.searchTypes = data.getTypes();
             this.filter(items);
             this.notifyLoaded();
         });
@@ -146,7 +154,7 @@ export class UserItemsTreeGrid
         this.fetchDataAndSetNodes(parentNode).then(() => {
             const parentItemType = UserTreeGridItem.getParentType(principal);
 
-            if (parentNode.getData() && parentNode.getData().getType() === parentItemType) {
+            if (parentNode.getData().getType() === parentItemType) {
                 deferred.resolve(parentNode);
             } else {
                 parentNode = parentNode.getChildren().filter(node => node.getData().getType() === parentItemType)[0] || parentNode;
@@ -232,18 +240,31 @@ export class UserItemsTreeGrid
         }
 
         if (level === 0) {
-            // at root level, fetch user stores, and add 'Roles' folder
-            new ListUserStoresRequest().sendAndParse().then((userStores: UserStore[]) => {
-                userStores.forEach((userStore: UserStore) => {
-                    gridItems.push(new UserTreeGridItemBuilder().setUserStore(userStore).setType(UserTreeGridItemType.USER_STORE).build());
-                });
 
-                gridItems.push(new UserTreeGridItemBuilder().setType(UserTreeGridItemType.ROLES).build());
+            if (this.isFiltered()) {
+                new ListUserItemsRequest().setTypes(this.searchTypes).setQuery(this.searchString).sendAndParse()
+                    .then((result) => {
+                        const gridItems = result.userItems.map(item => new UserTreeGridItemBuilder().setAny(item).build());
+                        deferred.resolve(gridItems);
+                    })
+                    .catch(api.DefaultErrorHandler.handle)
+                    .done();
+            } else {
+                // at root level, fetch user stores, and add 'Roles' folder
+                new ListUserStoresRequest().sendAndParse()
+                    .then((userStores: UserStore[]) => {
+                        userStores.forEach((userStore: UserStore) => {
+                            gridItems.push(
+                                new UserTreeGridItemBuilder().setUserStore(userStore).setType(UserTreeGridItemType.USER_STORE).build());
+                        });
 
-                deferred.resolve(gridItems);
-            }).catch((reason: any) => {
-                api.DefaultErrorHandler.handle(reason);
-            }).done();
+                        gridItems.push(new UserTreeGridItemBuilder().setType(UserTreeGridItemType.ROLES).build());
+
+                        deferred.resolve(gridItems);
+                    })
+                    .catch(api.DefaultErrorHandler.handle)
+                    .done();
+            }
 
         } else if (parentNode.getData().isRole()) {
             // fetch roles, if parent node 'Roles' was selected

@@ -1,6 +1,7 @@
 import {GraphQlRequest} from '../../GraphQlRequest';
 import Role = api.security.Role;
 import PrincipalKey = api.security.PrincipalKey;
+import RoleJson = api.security.RoleJson;
 
 export class CreateRoleRequest
     extends GraphQlRequest<any, Role> {
@@ -51,7 +52,13 @@ export class CreateRoleRequest
     }
 
     sendAndParse(): wemQ.Promise<Role> {
-        return this.mutate().then(json => Role.fromJson(json.createRole));
+        return this.mutate().then(json => this.fromJson(json.createRole, json.error));
     }
 
+    fromJson(role: RoleJson, error: string): Role {
+        if (!role || error) {
+            throw error;
+        }
+        return Role.fromJson(role);
+    }
 }
