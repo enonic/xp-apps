@@ -239,7 +239,7 @@ export class ContentBrowsePanel
 
         const updateMobilePanel = (content: ContentSummaryAndCompareStatus, changed: boolean) => {
             if (changed) {
-                const item = this.toBrowseItem(content, null).toViewItem();
+                const item = this.toBrowseItem(content, null);
 
                 this.mobileContentItemStatisticsPanel.getPreviewPanel().showMask();
                 this.mobileContentItemStatisticsPanel.setItem(item);

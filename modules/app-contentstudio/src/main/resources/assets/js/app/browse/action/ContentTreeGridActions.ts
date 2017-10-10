@@ -15,7 +15,6 @@ import {ContentBrowseItem} from '../ContentBrowseItem';
 import {PreviewContentHandler} from './handler/PreviewContentHandler';
 import {UndoPendingDeleteContentAction} from './UndoPendingDeleteContentAction';
 import {CreateIssueAction} from './CreateIssueAction';
-
 import Action = api.ui.Action;
 import TreeGridActions = api.ui.treegrid.actions.TreeGridActions;
 import BrowseItem = api.app.browse.BrowseItem;
@@ -23,11 +22,6 @@ import BrowseItemsChanges = api.app.browse.BrowseItemsChanges;
 import ContentSummary = api.content.ContentSummary;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import Content = api.content.Content;
-import PermissionHelper = api.security.acl.PermissionHelper;
-import AccessControlEntry = api.security.acl.AccessControlEntry;
-import AccessControlList = api.security.acl.AccessControlList;
-import ContentId = api.content.ContentId;
-import ContentAccessControlList = api.security.acl.ContentAccessControlList;
 import Permission = api.security.acl.Permission;
 import GetContentByPathRequest = api.content.resource.GetContentByPathRequest;
 
@@ -102,11 +96,8 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
     updateActionsEnabledState(contentBrowseItems: ContentBrowseItem[],
                               changes?: BrowseItemsChanges<ContentSummaryAndCompareStatus>): wemQ.Promise<BrowseItem<ContentSummaryAndCompareStatus>[]> {
 
-        let deferred = wemQ.defer<ContentBrowseItem[]>();
-
-        if (!!changes && changes.getAdded().length == 0 && changes.getRemoved().length == 0) {
-            deferred.resolve(contentBrowseItems);
-            return deferred.promise;
+        if (changes && changes.getAdded().length == 0 && changes.getRemoved().length == 0) {
+            return wemQ(contentBrowseItems);
         }
 
         this.TOGGLE_SEARCH_PANEL.setVisible(false);
@@ -116,12 +107,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
             this.doUpdateActionsEnabledState(contentBrowseItems)
         ];
 
-        wemQ.all(parallelPromises).spread<void>(() => {
-            deferred.resolve(contentBrowseItems);
-            return wemQ(null);
-        }).catch(api.DefaultErrorHandler.handle);
-
-        return deferred.promise;
+        return wemQ.all(parallelPromises).then(() => wemQ(contentBrowseItems)).catch(api.DefaultErrorHandler.handle);
     }
 
     private resetDefaultActionsNoItemsSelected() {
