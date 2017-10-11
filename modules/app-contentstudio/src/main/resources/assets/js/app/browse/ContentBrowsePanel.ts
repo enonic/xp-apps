@@ -21,7 +21,6 @@ import {ContentPublishMenuButton} from './ContentPublishMenuButton';
 import {TreeNodeParentOfContent} from './TreeNodeParentOfContent';
 import {TreeNodesOfContentPath} from './TreeNodesOfContentPath';
 import {ShowIssuesDialogButton} from '../issue/view/ShowIssuesDialogButton';
-
 import TreeNode = api.ui.treegrid.TreeNode;
 import BrowseItem = api.app.browse.BrowseItem;
 import UploadItem = api.ui.uploader.UploadItem;
@@ -36,12 +35,11 @@ import DataChangedEvent = api.ui.treegrid.DataChangedEvent;
 import ContentSummaryAndCompareStatusFetcher = api.content.resource.ContentSummaryAndCompareStatusFetcher;
 import TreeGridItemClickedEvent = api.ui.treegrid.TreeGridItemClickedEvent;
 import GetContentByIdRequest = api.content.resource.GetContentByIdRequest;
-import ActionButton = api.ui.button.ActionButton;
-import SelectionOnClickType = api.ui.treegrid.SelectionOnClickType;
 import ContentIconUrlResolver = api.content.util.ContentIconUrlResolver;
 import IsRenderableRequest = api.content.page.IsRenderableRequest;
 
-export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummaryAndCompareStatus> {
+export class ContentBrowsePanel
+    extends api.app.browse.BrowsePanel<ContentSummaryAndCompareStatus> {
 
     protected treeGrid: ContentTreeGrid;
     protected browseToolbar: ContentBrowseToolbar;
@@ -192,15 +190,15 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
             if (ResponsiveRanges._540_720.isFitOrBigger(item.getOldRangeValue())) {
                 contentPublishMenuButton.maximize();
                 if (item.isInRangeOrSmaller(ResponsiveRanges._360_540)) {
+                    ActiveDetailsPanelManager.setActiveDetailsPanel(this.mobileContentItemStatisticsPanel.getDetailsPanel());
                     nonMobileDetailsPanelsManager.hideActivePanel(true);
                 } else {
                     nonMobileDetailsPanelsManager.setActivePanel();
-                    this.mobileContentItemStatisticsPanel.slideAllOut();
+                    this.mobileContentItemStatisticsPanel.slideAllOut(true);
                 }
-                this.treeGrid.setSelectionOnClick(SelectionOnClickType.HIGHLIGHT);
             } else {
                 contentPublishMenuButton.minimize();
-                this.treeGrid.setSelectionOnClick(SelectionOnClickType.NONE);
+                ActiveDetailsPanelManager.setActiveDetailsPanel(this.mobileContentItemStatisticsPanel.getDetailsPanel());
             }
         });
     }
@@ -236,6 +234,9 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
     private initItemStatisticsPanelForMobile(detailsView: DetailsView) {
         this.mobileContentItemStatisticsPanel = new MobileContentItemStatisticsPanel(this.getBrowseActions(), detailsView);
 
+        // selection opens detail panel in mobile mode, so deselect it when returning back to grid
+        this.mobileContentItemStatisticsPanel.onSlideOut(() => this.treeGrid.deselectAll());
+
         const updateMobilePanel = (content: ContentSummaryAndCompareStatus, changed: boolean) => {
             if (changed) {
                 const item = this.toBrowseItem(content, null).toViewItem();
@@ -247,9 +248,9 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
                     this.mobileContentItemStatisticsPanel.getPreviewPanel().setBlankFrame();
                     this.mobileContentItemStatisticsPanel.getPreviewPanel().showMask();
                     new IsRenderableRequest(content.getContentId()).sendAndParse().then((renderable: boolean) => {
-                            item.setRenderable(renderable);
-                            this.mobileContentItemStatisticsPanel.getPreviewPanel().setItem(item);
-                        });
+                        item.setRenderable(renderable);
+                        this.mobileContentItemStatisticsPanel.getPreviewPanel().setItem(item);
+                    });
                 }, 300);
             }
         };

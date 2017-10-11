@@ -1,0 +1,85 @@
+import com.enonic.uitest.server.ServerInstance
+
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+            jcenter()
+        }
+    }
+
+    dependencies {
+        classpath 'com.moowork.gradle:gradle-gulp-plugin:0.13'
+        classpath "com.moowork.gradle:gradle-node-plugin:0.13"
+    }
+}
+apply plugin: 'com.moowork.node'
+apply plugin: 'com.moowork.gulp'
+apply plugin: 'java'
+
+
+configurations {
+    distro
+}
+
+ext {
+    xpVersion = '6.12.0-SNAPSHOT'
+    unpackDir = "$buildDir${File.separator}install"
+    screenshotsDir = "$buildDir${File.separator}screenshots"
+    reportsDir = "$buildDir${File.separator}repots"
+    distroDir = "$unpackDir${File.separator}enonic-xp-$xpVersion"
+    deployDir = "$distroDir${File.separator}home${File.separator}deploy"
+    xpHome = "$distroDir${File.separator}home"
+}
+
+
+dependencies {
+    compile "com.enonic.xp:core-api:$xpVersion"
+    distro "com.enonic.xp:distro:$xpVersion@zip"
+}
+
+task deleteFolders( type: Delete ) {
+    delete unpackDir, screenshotsDir, reportsDir
+}
+
+task unpackDistro( type: Copy ) {
+    from {
+        configurations.distro.collect { zipTree( it ) }
+    }
+    into file( unpackDir )
+}
+
+ext {
+    xpServer = new ServerInstance()
+}
+
+task startServer( dependsOn: unpackDistro ) {
+    doLast {
+        xpServer.installDir = file( distroDir )
+        xpServer.startupDelay = 40000
+        xpServer.start()
+    }
+}
+
+task stopServer << {
+    xpServer.stop()
+}
+
+tasks.withType( Test ) {
+    jvmArgs '-Xms128m', '-Xmx1024m'
+    testLogging {
+        exceptionFormat "full"
+        events "started", "passed", "skipped", "failed", "standardOut", "standardError"
+        displayGranularity = 0
+    }
+}
+//run the tusk in the gulpfile.js. Name of the task is 'test'
+task gulpTest( type: GulpTask, dependsOn: [npmInstall, startServer,] ) {
+    inputs.files fileTree( dir: '.' )
+    outputs.files fileTree( dir: '/test-results' )
+    args = ['test']
+    startServer.mustRunAfter npmInstall
+}
+//tasks.withType(Test)*.finalizedBy allureReport
+gulpTest.finalizedBy = ['stopServer']
+

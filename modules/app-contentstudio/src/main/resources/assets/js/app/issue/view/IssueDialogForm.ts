@@ -10,7 +10,6 @@ import Validators = api.ui.form.Validators;
 import FormItem = api.ui.form.FormItem;
 import {Issue} from '../Issue';
 import ValidityChangedEvent = api.ValidityChangedEvent;
-import StringHelper = api.util.StringHelper;
 import PrincipalKey = api.security.PrincipalKey;
 import ContentId = api.content.ContentId;
 import UserStoreKey = api.security.UserStoreKey;
@@ -18,7 +17,8 @@ import i18n = api.util.i18n;
 import ContentTreeSelectorItem = api.content.resource.ContentTreeSelectorItem;
 import RichComboBox = api.ui.selector.combobox.RichComboBox;
 
-export class IssueDialogForm extends api.ui.form.Form {
+export class IssueDialogForm
+    extends api.ui.form.Form {
 
     private approversSelector: PrincipalComboBox;
 
@@ -32,9 +32,9 @@ export class IssueDialogForm extends api.ui.form.Form {
 
     private compactAssigneesView: boolean;
 
-    private contentItemsAddedListeners: {(items: ContentTreeSelectorItem[]): void}[] = [];
+    private contentItemsAddedListeners: { (items: ContentTreeSelectorItem[]): void }[] = [];
 
-    private contentItemsRemovedListeners: {(items: ContentTreeSelectorItem[]): void}[] = [];
+    private contentItemsRemovedListeners: { (items: ContentTreeSelectorItem[]): void }[] = [];
 
     constructor(compactAssigneesView?: boolean) {
 
@@ -51,8 +51,8 @@ export class IssueDialogForm extends api.ui.form.Form {
     public doRender(): wemQ.Promise<boolean> {
         return super.doRender().then(() => {
             return this.approversSelector.getLoader().load().then(() => {
-                    this.title.giveFocus();
-                    return true;
+                this.title.giveFocus();
+                return true;
             });
         });
     }
@@ -77,15 +77,14 @@ export class IssueDialogForm extends api.ui.form.Form {
         this.approversSelector = api.ui.security.PrincipalComboBox.create().setLoader(principalLoader).setMaxOccurences(0).setCompactView(
             this.compactAssigneesView).build();
 
-        this.contentItemsSelector = api.content.ContentComboBox.create().
-            setLoader(new api.content.resource.ContentSummaryLoader()).setShowStatus(true).setTreegridDropdownEnabled(true).build();
+        this.contentItemsSelector = api.content.ContentComboBox.create().setShowStatus(true).build();
 
         this.contentItemsSelector.onOptionSelected((option) => {
             this.notifyContentItemsAdded(
                 [<ContentTreeSelectorItem>option.getSelectedOption().getOption().displayValue]);
         });
 
-        this.contentItemsSelector.onOptionDeselected((option ) => {
+        this.contentItemsSelector.onOptionDeselected((option) => {
             this.notifyContentItemsRemoved(
                 [<ContentTreeSelectorItem>option.getSelectedOption().getOption().displayValue]);
         });

@@ -7,7 +7,6 @@ import {LiveEditModel} from '../../../../../../page-editor/LiveEditModel';
 import ImageComponent = api.content.page.region.ImageComponent;
 import ContentSummary = api.content.ContentSummary;
 import ContentId = api.content.ContentId;
-import ContentSummaryLoader = api.content.resource.ContentSummaryLoader;
 import GetContentSummaryByIdRequest = api.content.resource.GetContentSummaryByIdRequest;
 import ContentTypeName = api.schema.content.ContentTypeName;
 import ComponentPropertyChangedEvent = api.content.page.region.ComponentPropertyChangedEvent;
@@ -17,6 +16,7 @@ import ContentSummaryBuilder = api.content.ContentSummaryBuilder;
 import i18n = api.util.i18n;
 import ImageContentComboBox = api.content.image.ImageContentComboBox;
 import ContentSelectedOptionsView = api.content.ContentSelectedOptionsView;
+import ImageTreeSelectorItem = api.content.image.ImageTreeSelectorItem;
 
 export class ImageInspectionPanel
     extends ComponentInspectionPanel<ImageComponent> {
@@ -29,8 +29,6 @@ export class ImageInspectionPanel
 
     private imageSelector: ImageContentComboBox;
 
-    private loader: ContentSummaryLoader;
-
     private imageSelectorForm: ImageSelectorForm;
 
     private handleSelectorEvents: boolean = true;
@@ -41,14 +39,10 @@ export class ImageInspectionPanel
         super(<ComponentInspectionPanelConfig>{
             iconClass: ItemViewIconClassResolver.resolveByType('image', 'icon-xlarge')
         });
-        this.loader = new api.content.resource.ContentSummaryLoader();
-        this.loader.setAllowedContentTypeNames([ContentTypeName.IMAGE, ContentTypeName.MEDIA_VECTOR]);
 
         this.imageSelector = ImageContentComboBox
             .create()
-            .setLoader(this.loader)
             .setMaximumOccurrences(1)
-            .setTreegridDropdownEnabled(true)
             .setSelectedOptionsView(new ContentSelectedOptionsView())
             .build();
 
@@ -70,7 +64,6 @@ export class ImageInspectionPanel
 
     setModel(liveEditModel: LiveEditModel) {
         super.setModel(liveEditModel);
-        this.loader.setContentPath(liveEditModel.getContent().getPath());
     }
 
     setComponent(component: ImageComponent) {
@@ -80,7 +73,7 @@ export class ImageInspectionPanel
     setImageComponent(imageView: ImageComponentView) {
         this.imageView = imageView;
 
-        this.imageSelector.getOptionDataLoader().setContent(this.imageView.getLiveEditModel().getContent());
+        (/*<any>*/this.imageSelector.getLoader()).setContent(this.imageView.getLiveEditModel().getContent());
 
         if (this.imageComponent) {
             this.unregisterComponentListeners(this.imageComponent);
@@ -147,15 +140,15 @@ export class ImageInspectionPanel
 
     private initSelectorListeners() {
 
-        this.imageSelector.onOptionSelected((event: SelectedOptionEvent<ContentSummary>) => {
+        this.imageSelector.onOptionSelected((event: SelectedOptionEvent<ImageTreeSelectorItem>) => {
             if (this.handleSelectorEvents) {
-                let option: Option<ContentSummary> = event.getSelectedOption().getOption();
+                let option: Option<ImageTreeSelectorItem> = event.getSelectedOption().getOption();
                 let imageContent = option.displayValue;
                 this.imageComponent.setImage(imageContent.getContentId(), imageContent.getDisplayName());
             }
         });
 
-        this.imageSelector.onOptionDeselected((event: SelectedOptionEvent<ContentSummary>) => {
+        this.imageSelector.onOptionDeselected((event: SelectedOptionEvent<ImageTreeSelectorItem>) => {
             if (this.handleSelectorEvents) {
                 this.imageComponent.reset();
             }

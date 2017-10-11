@@ -84,6 +84,8 @@ export class PageTemplateSelector
             event.getData().forEach((pageTemplate: PageTemplate) => options.push(this.createPageTemplateOption(pageTemplate)));
 
             deferred.resolve(options);
+
+            return wemQ(options);
         });
 
         loader.load();

@@ -1,0 +1,31 @@
+{
+  "name": "webdriverio_standalone",
+  "version": "1.0.0",
+  "author": "Hauruseu Siarhei",
+  "license": "ISC",
+  "scripts": {
+    "test": "gulp test",
+    "report": "allure generate allure-results --clean -o allure-report && allure open allure-report"
+  },
+  "devDependencies": {
+    "assert": "^1.3.0",
+    "gulp": "^3.9.1",
+    "gulp-mocha": "^2.2.0",
+    "selenium-standalone": "^5.1.0",
+    "webdriverio": "^4.0.5",
+    "chai": "^3.5.0",
+    "wdio-chai-plugin": "^0.0.1",
+    "chai-http": "^2.0.1",
+    "gulp-download": "0.0.1",
+    "unzip": "0.1.11",
+    "gulp-unzip": "0.2.0",
+    "gulp-sequence": "0.4.6",
+    "run-sequence": "2.1.0",
+    "mocha-allure-reporter": "1.3.2",
+    "allure-commandline": "^2.0.0",
+    "gulp-javac": "2.0.1",
+    "gulp-run": "1.7.1 ",
+    "properties-reader":"0.0.15",
+    "chai-as-promised":"7.1.1"
+  }
+}

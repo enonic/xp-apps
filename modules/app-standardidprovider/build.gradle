@@ -2,7 +2,7 @@ plugins {
     id 'java'
     id 'maven'
     id 'com.enonic.defaults' version '1.0.3'
-    id 'com.enonic.xp.app' version '1.0.10'
+    id 'com.enonic.xp.app' version '1.0.13'
 }
 
 apply from: "$rootDir/gradle/defaults.gradle"
@@ -12,7 +12,7 @@ dependencies {
     include "${group}:lib-mustache:${version}"
     include "${group}:lib-portal:${version}"
     include "${group}:lib-auth:${version}"
-    include 'com.enonic.lib:lib-admin-ui:1.0.1'
+    include 'com.enonic.lib:lib-admin-ui:1.0.4'
 }
 
 app {
