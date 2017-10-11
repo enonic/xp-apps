@@ -28,6 +28,8 @@ var roleWizard = Object.create(wizard, {
                 return loaderComboBox.waitForOptionVisible(`${panel.container}`, displayName);
             }).then(()=> {
                 return loaderComboBox.clickOnOption(`${panel.container}`, displayName);
+            }).catch((err)=> {
+                throw new Error('Error selecting option ' + displayName + ' ' + err);
             })
         }
     },
@@ -52,13 +54,19 @@ var roleWizard = Object.create(wizard, {
     getMembers: {
         value: function () {
             let selectedOptions = `${panel.container}` + `${elements.PRINCIPAL_SELECTED_OPTION}` + `${elements.H6_DISPLAY_NAME}`
-            return this.getTextFromElements(selectedOptions);
+            return this.getTextFromElements(selectedOptions).catch((err)=> {
+                throw new Error('Error when getting text from elements ')
+            });
         }
     },
     removeMember: {
         value: function (displayName) {
             let selector = `${panel.container}` + `${elements.selectedPrincipalByDisplayName(displayName)}` + `${elements.REMOVE_ICON}`;
-            return this.doClick(selector).pause(300);
+            return this.clickOnMembersLink().pause(200).then(()=> {
+                return this.doClick(selector);
+            }).catch(()=> {
+                throw new Error('Remove-icon for the role ' + displayName + ' ' + 'was not found on the  wizard page');
+            }).pause(300);
         }
     }
 });

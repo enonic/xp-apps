@@ -43,9 +43,9 @@ var userWizard = Object.create(wizard, {
             }).then(()=> {
                 if (user.roles != null) {
                     return this.clickOnRolesAndGroupsLink();
-                }return;
+                }
+                return;
             }).pause(300).then(()=> {
-                    //return this.filterOptionsAndAddRole(user.roles[0]);
                 if (user.roles != null) {
                     return this.addRoles(user.roles);
                 }
@@ -68,17 +68,16 @@ var userWizard = Object.create(wizard, {
         value: function () {
             return this.waitForVisible(this.displayNameInput, 3000).catch((err)=> {
                 throw new Error('User Wizard is not loaded! ' + err);
-                
             });
         }
     },
-    removeRole:{
-       value: function(roleDisplayName){
-           let selector = `${panel.container}` + `${elements.selectedPrincipalByDisplayName(roleDisplayName)}` + `${elements.REMOVE_ICON}`;
-           return this.clickOnRolesAndGroupsLink().pause(1000).then(()=>{
-              return this.doClick(selector).pause(500);
-           })
-       }
+    removeRole: {
+        value: function (roleDisplayName) {
+            let selector = `${panel.container}` + `${elements.selectedPrincipalByDisplayName(roleDisplayName)}` + `${elements.REMOVE_ICON}`;
+            return this.clickOnRolesAndGroupsLink().pause(1000).then(()=> {
+                return this.doClick(selector).pause(500);
+            })
+        }
     },
     addRoles: {
         value: function (roleDisplayNames) {
@@ -96,7 +95,7 @@ var userWizard = Object.create(wizard, {
             }).then(()=> {
                 return loaderComboBox.clickOnOption(`${panel.container}`, roleDisplayName);
             }).catch((err)=> {
-                throw new Error(err);
+                throw new Error('Error when selecting the role-option: ' + roleDisplayName + ' ' + err);
             })
         }
     },

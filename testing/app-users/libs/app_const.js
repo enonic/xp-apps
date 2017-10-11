@@ -14,6 +14,8 @@ module.exports = Object.freeze({
     USER_WIZARD_EMAIL_MESSAGE: 'Email can not be empty.',
     USER_WIZARD_EMAIL_IS_INVALID: 'Email is invalid.',
     USER_WAS_CREATED_MESSAGE: 'User was created',
+    GROUP_WAS_CREATED: 'Group was created',
+    
     roles: {
         CM_ADMIN: 'Content Manager Administrator',
         ADMIN_CONSOLE: 'Administration Console Login',
