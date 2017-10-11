@@ -4,7 +4,6 @@ import {StartApplicationAction} from './StartApplicationAction';
 import {StopApplicationAction} from './StopApplicationAction';
 import {InstallApplicationAction} from './InstallApplicationAction';
 import {UninstallApplicationAction} from './UninstallApplicationAction';
-
 import BrowseItem = api.app.browse.BrowseItem;
 import Application = api.application.Application;
 import TreeGridActions = api.ui.treegrid.actions.TreeGridActions;
@@ -45,31 +44,30 @@ export class ApplicationBrowseActions implements TreeGridActions<Application> {
         return this.allActions;
     }
 
-    updateActionsEnabledState(applicationBrowseItems: BrowseItem<Application>[]): wemQ.Promise<BrowseItem<Application>[]> {
-        let applicationsSelected = applicationBrowseItems.length;
-        let anySelected = applicationsSelected > 0;
-        let anyStarted = false;
-        let anyStopped = false;
-        let localAppSelected = false;
-        applicationBrowseItems.forEach((applicationBrowseItem: BrowseItem<Application>) => {
-            let state = applicationBrowseItem.getModel().getState();
-            if (state === Application.STATE_STARTED) {
-                anyStarted = true;
-            } else if (state === Application.STATE_STOPPED) {
-                anyStopped = true;
-            }
-            if ((<Application>applicationBrowseItem.getModel()).isLocal()) {
-                localAppSelected = true;
-            }
+    updateActionsEnabledState(browseItems: BrowseItem<Application>[]): wemQ.Promise<void> {
+        return wemQ().then(() => {
+            const applicationsSelected = browseItems.length;
+            const anySelected = applicationsSelected > 0;
+
+            let anyStarted = false;
+            let anyStopped = false;
+            let localAppSelected = false;
+
+            browseItems.forEach((browseItem: BrowseItem<Application>) => {
+                let state = browseItem.getModel().getState();
+                if (state === Application.STATE_STARTED) {
+                    anyStarted = true;
+                } else if (state === Application.STATE_STOPPED) {
+                    anyStopped = true;
+                }
+                if ((<Application>browseItem.getModel()).isLocal()) {
+                    localAppSelected = true;
+                }
+            });
+
+            this.START_APPLICATION.setEnabled(anyStopped);
+            this.STOP_APPLICATION.setEnabled(anyStarted);
+            this.UNINSTALL_APPLICATION.setEnabled(anySelected && !localAppSelected);
         });
-
-        this.START_APPLICATION.setEnabled(anyStopped);
-        this.STOP_APPLICATION.setEnabled(anyStarted);
-        this.UNINSTALL_APPLICATION.setEnabled(anySelected && !localAppSelected);
-
-        let deferred = wemQ.defer<BrowseItem<Application>[]>();
-        deferred.resolve(applicationBrowseItems);
-        return deferred.promise;
     }
-
 }

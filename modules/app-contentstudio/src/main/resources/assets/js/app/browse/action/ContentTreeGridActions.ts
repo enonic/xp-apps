@@ -17,7 +17,6 @@ import {UndoPendingDeleteContentAction} from './UndoPendingDeleteContentAction';
 import {CreateIssueAction} from './CreateIssueAction';
 import Action = api.ui.Action;
 import TreeGridActions = api.ui.treegrid.actions.TreeGridActions;
-import BrowseItem = api.app.browse.BrowseItem;
 import BrowseItemsChanges = api.app.browse.BrowseItemsChanges;
 import ContentSummary = api.content.ContentSummary;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
@@ -93,24 +92,20 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
     }
 
     // tslint:disable-next-line:max-line-length
-    updateActionsEnabledState(contentBrowseItems: ContentBrowseItem[],
-                              changes?: BrowseItemsChanges<ContentSummaryAndCompareStatus>): wemQ.Promise<BrowseItem<ContentSummaryAndCompareStatus>[]> {
+    updateActionsEnabledState(browseItems: ContentBrowseItem[], changes?: BrowseItemsChanges<ContentSummaryAndCompareStatus>): wemQ.Promise<void> {
 
         if (changes && changes.getAdded().length == 0 && changes.getRemoved().length == 0) {
-            return wemQ(contentBrowseItems);
+            return wemQ();
         }
 
         this.TOGGLE_SEARCH_PANEL.setVisible(false);
 
         let parallelPromises: wemQ.Promise<any>[] = [
-            this.getPreviewHandler().updateState(contentBrowseItems, changes),
-            this.doUpdateActionsEnabledState(contentBrowseItems)
+            this.getPreviewHandler().updateState(browseItems, changes),
+            this.doUpdateActionsEnabledState(browseItems)
         ];
 
-        return wemQ
-            .all(parallelPromises)
-            .catch(api.DefaultErrorHandler.handle)
-            .then(() => contentBrowseItems);
+        return wemQ.all(parallelPromises).catch(api.DefaultErrorHandler.handle);
     }
 
     private resetDefaultActionsNoItemsSelected() {
