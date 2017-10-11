@@ -2,6 +2,9 @@
  * Created on 05.09.2017.
  */
 const chai = require('chai');
+chai.Should();
+chai.use(require('chai-as-promised'));
+const expect = chai.expect;
 const assert = chai.assert;
 const webDriverHelper = require('../libs/WebDriverHelper');
 const userBrowsePanel = require('../page_objects/browsepanel/userbrowse.panel');
@@ -14,6 +17,17 @@ describe('New Principal dialog Spec', function () {
     this.timeout(70000);
     webDriverHelper.setupBrowser();
 
+    it('GIVEN `NewPrincipal` dialog is opened WHEN `Cancel` button(top) has been pressed  THEN the dialog should be closed',
+        () => {
+            return userBrowsePanel.clickOnNewButton().then(()=> {
+                return newPrincipalDialog.waitForOpened();
+            }).then(()=> {
+                return newPrincipalDialog.clickOnCancelButtonTop();
+            }).then(()=> {
+                return expect(newPrincipalDialog.waitForClosed()).to.eventually.be.true;
+            })
+        });
+
     it(`GIVEN users grid is opened WHEN 'New' button has been clicked THEN modal dialog should appear with 4 items`,
         () => {
             return userBrowsePanel.clickOnNewButton().then(()=> {
@@ -24,9 +38,9 @@ describe('New Principal dialog Spec', function () {
                 assert.equal(result, 'Create New', 'Correct header should be displayed');
             }).waitForVisible(newPrincipalDialog.cancelButton).then(result=> {
                 assert.isTrue(result, '`Cancel` button should be present');
-            }).then(()=>{
+            }).then(()=> {
                 return newPrincipalDialog.getNumberOfItems()
-                then(result=>{
+                then(result=> {
                     assert.equal(result, 4, '`User` item should be present on the dialog');
                 })
             }).then(()=> {

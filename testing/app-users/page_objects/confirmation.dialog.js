@@ -20,19 +20,26 @@ var confirmationDialog = Object.create(page, {
         }
     },
 
-    clickOnYesButton: {
-        get: function () {
-            return this.doClick(this.yesButton);
-        }
-    },
-
     noButton: {
         get: function () {
             return `${dialog.container}//div[@class='dialog-buttons']//button/span[text()='No']`
         }
     },
 
+    clickOnYesButton: {
+        value: function () {
+            return this.doClick(this.yesButton).then(()=> {
+                return this.waitForNotVisible(`${dialog.container}`, 2000);
+            });
+        }
+    },
+
     waitForDialogVisible: {
+        value: function (ms) {
+            return this.waitForVisible(`${dialog.container}`, ms);
+        }
+    },
+    waitForDialogClosed: {
         value: function (ms) {
             return this.waitForVisible(`${dialog.container}`, ms);
         }

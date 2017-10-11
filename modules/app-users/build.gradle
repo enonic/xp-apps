@@ -26,7 +26,7 @@ dependencies {
     include "${group}:lib-i18n:${version}"
     include "com.graphql-java:graphql-java:2.3.0"
     include "com.enonic.lib:graphql:0.5.2"
-    include 'com.enonic.lib:lib-admin-ui:1.0.4'
+    include "com.enonic.lib:lib-admin-ui:${libAdminUiVersion}"
 }
 
 node {
