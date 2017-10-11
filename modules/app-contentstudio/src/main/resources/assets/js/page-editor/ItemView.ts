@@ -714,7 +714,7 @@ export class ItemView
         return this.getEl().hasAttribute('data-live-edit-selected');
     }
 
-    select(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition, isNew: boolean = false,
+    select(clickPosition?: ClickPosition, menuPosition?: ItemViewContextMenuPosition, isNew: boolean = false,
            rightClicked: boolean = false) {
         Highlighter.get().hide();
         this.selectItem();

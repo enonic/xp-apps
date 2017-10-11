@@ -5,6 +5,8 @@ import ContentTypeName = api.schema.content.ContentTypeName;
 import ImageComponent = api.content.page.region.ImageComponent;
 import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
 import i18n = api.util.i18n;
+import ImageOptionDataLoader = api.content.image.ImageOptionDataLoader;
+import ImageTreeSelectorItem = api.content.image.ImageTreeSelectorItem;
 
 export class ImagePlaceholder
     extends ItemViewPlaceholder {
@@ -28,17 +30,21 @@ export class ImagePlaceholder
     }
 
     private initImageCombobox(imageView: ImageComponentView) {
-        let loader = new api.content.resource.ContentSummaryLoader();
-        loader.setContentPath(imageView.getLiveEditModel().getContent().getPath());
-        loader.setAllowedContentTypeNames([ContentTypeName.IMAGE, ContentTypeName.MEDIA_VECTOR]);
+        let loader = ImageOptionDataLoader.create()
+            .setContent(imageView.getLiveEditModel().getContent())
+            .setContentTypeNames([ContentTypeName.IMAGE.toString(), ContentTypeName.MEDIA_VECTOR.toString()])
+            .build();
 
-        this.comboBox = api.content.image.ImageContentComboBox.create().setMaximumOccurrences(1).setLoader(loader).setContent(
-            imageView.getLiveEditModel().getContent()).setTreegridDropdownEnabled(
-            true).//  setSelectedOptionsView(new ContentSelectedOptionsView()).
-        setMinWidth(270).build();
+        this.comboBox = api.content.image.ImageContentComboBox.create()
+            .setMaximumOccurrences(1)
+            .setLoader(loader)
+            .setContent(imageView.getLiveEditModel().getContent())
+            .setTreegridDropdownEnabled(true)
+            .setMinWidth(270)
+            .build();
 
         this.comboBox.getComboBox().getInput().setPlaceholder(i18n('field.image.option.placeholder'));
-        this.comboBox.onOptionSelected((event: SelectedOptionEvent<api.content.ContentSummary>) => {
+        this.comboBox.onOptionSelected((event: SelectedOptionEvent<ImageTreeSelectorItem>) => {
 
             let component: ImageComponent = this.imageComponentView.getComponent();
             let imageContent = event.getSelectedOption().getOption().displayValue;

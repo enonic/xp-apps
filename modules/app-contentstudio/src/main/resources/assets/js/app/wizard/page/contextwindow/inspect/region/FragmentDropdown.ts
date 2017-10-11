@@ -1,10 +1,10 @@
 import Option = api.ui.selector.Option;
 
 import ContentSummary = api.content.ContentSummary;
-import FragmentContentSummaryLoader = api.content.resource.FragmentContentSummaryLoader;
 
 import RichDropdown = api.ui.selector.dropdown.RichDropdown;
 import ContentSummaryViewer = api.content.ContentSummaryViewer;
+import FragmentContentSummaryLoader = api.content.FragmentContentSummaryLoader;
 import {LiveEditModel} from '../../../../../../page-editor/LiveEditModel';
 
 export class FragmentDropdown

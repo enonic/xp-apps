@@ -3,12 +3,14 @@ import {ItemViewPlaceholder} from '../ItemViewPlaceholder';
 import {FragmentComponentView} from './FragmentComponentView';
 import {ShowWarningLiveEditEvent} from '../ShowWarningLiveEditEvent';
 import {LayoutItemType} from '../layout/LayoutItemType';
+import {FragmentOptionDataLoader} from './FragmentOptionDataLoader';
 import FragmentComponent = api.content.page.region.FragmentComponent;
 import GetContentByIdRequest = api.content.resource.GetContentByIdRequest;
 import Content = api.content.Content;
 import LayoutComponentType = api.content.page.region.LayoutComponentType;
 import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
 import i18n = api.util.i18n;
+import ContentTreeSelectorItem = api.content.resource.ContentTreeSelectorItem;
 
 export class FragmentPlaceholder
     extends ItemViewPlaceholder {
@@ -27,16 +29,19 @@ export class FragmentPlaceholder
         this.comboboxWrapper = new api.dom.DivEl('rich-combobox-wrapper');
 
         let sitePath = this.fragmentComponentView.getLiveEditModel().getSiteModel().getSite().getPath().toString();
-        let loader = new api.content.resource.FragmentContentSummaryLoader().setParentSitePath(sitePath);
+        let loader = new FragmentOptionDataLoader().setParentSitePath(sitePath);
 
-        this.comboBox =
-            api.content.ContentComboBox.create().setMaximumOccurrences(1).setLoader(loader).setMinWidth(270).setTreegridDropdownEnabled(
-                false).build();
+        this.comboBox = api.content.ContentComboBox.create()
+            .setMaximumOccurrences(1)
+            .setLoader(loader)
+            .setMinWidth(270)
+            .setTreegridDropdownEnabled(false)
+            .build();
 
         this.comboboxWrapper.appendChildren(this.comboBox);
         this.appendChild(this.comboboxWrapper);
 
-        this.comboBox.onOptionSelected((event: SelectedOptionEvent<api.content.ContentSummary>) => {
+        this.comboBox.onOptionSelected((event: SelectedOptionEvent<ContentTreeSelectorItem>) => {
 
             let component: FragmentComponent = this.fragmentComponentView.getComponent();
             let fragmentContent = event.getSelectedOption().getOption().displayValue;
@@ -82,4 +87,3 @@ export class FragmentPlaceholder
         this.comboboxWrapper.hide();
     }
 }
-
