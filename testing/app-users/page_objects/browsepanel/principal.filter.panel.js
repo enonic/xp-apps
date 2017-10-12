@@ -32,6 +32,12 @@ var browseFilterPanel = Object.create(page, {
 
         }
     },
+    isPanelVisible: {
+        value: function () {
+            return this.isVisible(`${panel.container}`);
+
+        }
+    },
     waitForClearLinkVisible: {
         value: function () {
             return this.waitForVisible(this.clearFilterLink)
