@@ -112,7 +112,7 @@ export class VersionsView
         if (workspace === VersionsView.branchMaster) {
             return api.content.CompareStatusFormatter.formatStatus(api.content.CompareStatus.EQUAL);
         } else {
-            return api.content.CompareStatusFormatter.formatStatusFromContent(this.content);
+            return api.content.CompareStatusFormatter.formatStatusTextFromContent(this.content);
         }
     }
 

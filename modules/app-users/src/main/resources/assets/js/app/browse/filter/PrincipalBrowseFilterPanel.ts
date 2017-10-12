@@ -39,43 +39,43 @@ export class PrincipalBrowseFilterPanel
         aggregationGroupViews.forEach(aggregation => aggregation.initialize());
     }
 
-    doRefresh() {
-        this.searchFacets(true);
+    doRefresh(): wemQ.Promise<void> {
+        return this.searchFacets(true);
     }
 
-    doSearch(elementChanged?: api.dom.Element) {
-        this.searchFacets();
+    doSearch(elementChanged?: api.dom.Element): wemQ.Promise<void> {
+        return this.searchFacets();
     }
 
-    protected resetFacets(suppressEvent?: boolean, doResetAll?: boolean) {
+    protected resetFacets(suppressEvent?: boolean, doResetAll?: boolean): wemQ.Promise<void> {
         const notify = this.hasSelectedAggregations();
-        this.searchDataAndHandleResponse('', notify);
 
         // then fire usual reset event with content grid reloading
         if (!suppressEvent && !notify) {
             new BrowseFilterResetEvent().fire();
         }
+
+        return this.searchDataAndHandleResponse('', notify);
     }
 
-    private searchFacets(isRefresh: boolean = false) {
+    private searchFacets(isRefresh: boolean = false): wemQ.Promise<void> {
         let values = this.getSearchInputValues();
         let searchText = values.getTextSearchFieldValue();
         if (!searchText && !this.hasConstraint()) {
-            this.handleEmptyFilterInput(isRefresh);
-            this.fetchAndUpdateAggregations();
-            return;
+            return this.handleEmptyFilterInput(isRefresh).then(() => {
+                return this.fetchAndUpdateAggregations();
+            });
         }
 
-        this.searchDataAndHandleResponse(searchText);
+        return this.searchDataAndHandleResponse(searchText);
     }
 
-    private handleEmptyFilterInput(isRefresh: boolean) {
+    private handleEmptyFilterInput(isRefresh: boolean): wemQ.Promise<void> {
         const hasSelectedAggregations = this.hasSelectedAggregations();
         if (isRefresh || hasSelectedAggregations) {
-            this.resetFacets(isRefresh);
-        } else {
-            this.reset();
+            return this.resetFacets(isRefresh);
         }
+        return this.reset();
     }
 
     private hasSelectedAggregations(): boolean {

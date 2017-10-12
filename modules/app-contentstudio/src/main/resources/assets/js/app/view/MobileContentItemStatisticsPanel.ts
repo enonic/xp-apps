@@ -5,14 +5,16 @@ import {MobileDetailsPanelToggleButton} from './detail/button/MobileDetailsPanel
 import {ContentTreeGridActions} from '../browse/action/ContentTreeGridActions';
 import {DetailsView} from './detail/DetailsView';
 import {MobilePreviewFoldButton} from './MobilePreviewFoldButton';
+
 import ViewItem = api.app.view.ViewItem;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import StringHelper = api.util.StringHelper;
 import ResponsiveManager = api.ui.responsive.ResponsiveManager;
 import ResponsiveItem = api.ui.responsive.ResponsiveItem;
+import FoldButton = api.ui.toolbar.FoldButton;
+import CompareStatusFormatter = api.content.CompareStatusFormatter;
 
-export class MobileContentItemStatisticsPanel
-    extends api.app.view.ItemStatisticsPanel<api.content.ContentSummaryAndCompareStatus> {
+export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatisticsPanel<api.content.ContentSummaryAndCompareStatus> {
 
     private itemHeader: api.dom.DivEl = new api.dom.DivEl('mobile-content-item-statistics-header');
     private headerLabel: api.dom.H6El = new api.dom.H6El('mobile-header-title');
@@ -130,7 +132,7 @@ export class MobileContentItemStatisticsPanel
             this.detailsPanel.setItem(!!item ? item.getModel() : null);
             if (item) {
                 this.setName(this.makeDisplayName(item));
-                this.setStatus(this.makeCompareStatus(item));
+                this.setStatus(item.getModel());
             }
         }
     }
@@ -140,10 +142,6 @@ export class MobileContentItemStatisticsPanel
         return StringHelper.isEmpty(item.getDisplayName())
             ? api.content.ContentUnnamed.prettifyUnnamed(localName)
             : item.getDisplayName();
-    }
-
-    private makeCompareStatus(item: ViewItem<ContentSummaryAndCompareStatus>): string {
-        return api.content.CompareStatusFormatter.formatStatusFromContent(item.getModel());
     }
 
     getDetailsPanel(): MobileDetailsPanel {
@@ -158,10 +156,10 @@ export class MobileContentItemStatisticsPanel
         this.headerLabel.setHtml(name);
     }
 
-    private setStatus(status: string) {
+    private setStatus(content: ContentSummaryAndCompareStatus) {
         this.subHeaderLabel.getHTMLElement().setAttribute('class', '');
-        this.subHeaderLabel.addClass(status.toLowerCase().replace(' ', '-'));
-        this.subHeaderLabel.setHtml(status);
+        this.subHeaderLabel.addClass(content.getStatusClass());
+        this.subHeaderLabel.setHtml(content.getStatusText());
     }
 
     slideAllOut(silent?: boolean) {

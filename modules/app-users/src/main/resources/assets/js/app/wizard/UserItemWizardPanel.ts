@@ -2,13 +2,7 @@ import '../../api.ts';
 import {UserItemWizardActions} from './action/UserItemWizardActions';
 import {UserItemWizardPanelParams} from './UserItemWizardPanelParams';
 import {SaveBeforeCloseDialog} from './SaveBeforeCloseDialog';
-
-import Principal = api.security.Principal;
-import PrincipalKey = api.security.PrincipalKey;
-import PrincipalType = api.security.PrincipalType;
-import PrincipalNamedEvent = api.security.PrincipalNamedEvent;
-import UserStoreKey = api.security.UserStoreKey;
-
+import {PrincipalServerEventsHandler} from '../event/PrincipalServerEventsHandler';
 import ResponsiveManager = api.ui.responsive.ResponsiveManager;
 import ResponsiveItem = api.ui.responsive.ResponsiveItem;
 import FormIcon = api.app.wizard.FormIcon;
@@ -16,11 +10,11 @@ import WizardHeaderWithDisplayNameAndName = api.app.wizard.WizardHeaderWithDispl
 import WizardHeaderWithDisplayNameAndNameBuilder = api.app.wizard.WizardHeaderWithDisplayNameAndNameBuilder;
 import WizardStep = api.app.wizard.WizardStep;
 import Toolbar = api.ui.toolbar.Toolbar;
-import WizardActions = api.app.wizard.WizardActions;
 import UserItem = api.security.UserItem;
 import i18n = api.util.i18n;
 
-export class UserItemWizardPanel<USER_ITEM_TYPE extends UserItem> extends api.app.wizard.WizardPanel<USER_ITEM_TYPE> {
+export class UserItemWizardPanel<USER_ITEM_TYPE extends UserItem>
+    extends api.app.wizard.WizardPanel<USER_ITEM_TYPE> {
 
     protected wizardActions: UserItemWizardActions<USER_ITEM_TYPE>;
 
@@ -117,18 +111,18 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends UserItem> extends api.ap
                 responsiveItem.update();
             });
 
-            const deleteHandler = ((event: api.security.event.PrincipalDeletedEvent) => {
-                event.getDeletedItems().forEach((path: string) => {
-                    if (!!this.getPersistedItem() && this.getPersistedItemPath() === path) {
-                        this.close();
-                    }
-                });
+            const deleteHandler = ((ids: string[]) => {
+                const item = this.getPersistedItem();
+                if (!!item && ids.indexOf(item.getKey().getId()) >= 0) {
+                    this.close();
+                }
             });
 
-            api.security.event.PrincipalDeletedEvent.on(deleteHandler);
+            const handler = PrincipalServerEventsHandler.getInstance();
+            handler.onUserItemDeleted(deleteHandler);
 
             this.onRemoved(() => {
-                api.security.event.PrincipalDeletedEvent.un(deleteHandler);
+                handler.unUserItemDeleted(deleteHandler);
             });
 
             return nextRendered;
