@@ -38,15 +38,17 @@ export class PartPlaceholder
 
         let siteModel = partView.getLiveEditModel().getSiteModel();
 
-        let listener = () => this.reloadDescriptorsOnApplicationChange(siteModel);
+            let listener = () => this.reloadDescriptors(siteModel);
 
-        siteModel.onApplicationAdded(listener);
-        siteModel.onApplicationRemoved(listener);
+            siteModel.onApplicationAdded(listener);
+            siteModel.onApplicationRemoved(listener);
+            siteModel.onSiteModelUpdated(listener);
 
-        this.onRemoved(() => {
-            siteModel.unApplicationAdded(listener);
-            siteModel.unApplicationRemoved(listener);
-        });
+            this.onRemoved(() => {
+                siteModel.unApplicationAdded(listener);
+                siteModel.unApplicationRemoved(listener);
+                siteModel.unSiteModelUpdated(listener);
+            });
 
         this.displayName = new api.dom.H3El('display-name');
         this.appendChild(this.displayName);
@@ -56,9 +58,9 @@ export class PartPlaceholder
         }
     }
 
-    private reloadDescriptorsOnApplicationChange(siteModel: SiteModel) {
-        this.comboBox.loadDescriptors(siteModel.getApplicationKeys());
-    }
+        private reloadDescriptors(siteModel: SiteModel) {
+            this.comboBox.loadDescriptors(siteModel.getApplicationKeys());
+        }
 
     setDisplayName(name: string) {
         this.displayName.setHtml(name);
