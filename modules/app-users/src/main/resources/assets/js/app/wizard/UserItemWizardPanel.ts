@@ -30,14 +30,6 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends UserItem>
             this.wizardActions.getSaveAction().setEnabled(this.isValid());
         });
 
-        PrincipalServerEventsHandler.getInstance().onUserItemDeleted((ids: string[]) => {
-            const persistedItem = this.getPersistedItem();
-            if (!!persistedItem) {
-                if (ids.some(id => id === persistedItem.getKey().toString())) {
-                    this.close(false);
-                }
-            }
-        });
     }
 
     protected getParams(): UserItemWizardPanelParams<USER_ITEM_TYPE> {
@@ -114,7 +106,7 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends UserItem>
 
             const deleteHandler = ((ids: string[]) => {
                 const item = this.getPersistedItem();
-                if (!!item && ids.indexOf(item.getKey().getId()) >= 0) {
+                if (!!item && ids.indexOf(item.getKey().toString()) >= 0) {
                     this.close();
                 }
             });
