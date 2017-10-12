@@ -18,7 +18,7 @@ describe('Role Wizard page and info on the UserItemStatisticsPanel spec ', funct
     this.timeout(70000);
     webDriverHelper.setupBrowser();
     let testRole
-    it('GIVEN `Roles` wizard is opened WHEN name and description has been typed AND `Save` button pressed THEN `User Store Wizard` should be present',
+    it('GIVEN `Roles` wizard is opened WHEN name and description has been typed AND `Save` button pressed THEN `Role was created` message should appear',
         () => {
             testRole = userItemsBuilder.buildRole(userItemsBuilder.generateRandomName('role'), 'test role', null);
             return userBrowsePanel.clickOnRowByName('roles').then(()=> {

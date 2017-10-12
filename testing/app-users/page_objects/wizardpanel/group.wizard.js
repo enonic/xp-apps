@@ -10,6 +10,10 @@ var panel = {
     container: `//div[contains(@id,'GroupWizardPanel')]`,
     memberOptionsFilterInput: "//div[contains(@id,'FormItem') and child::label[text()='Members']]" + `${loaderComboBox.optionFilterInput}`,
     roleOptionsFilterInput: "//div[contains(@id,'FormItem') and child::label[text()='Roles']]" + `${loaderComboBox.optionFilterInput}`,
+    rolesLink: `//li[child::a[text()='Roles']]`,
+    membersLink: `//li[child::a[text()='Members']]`,
+    membersStepForm: `//div[contains(@id,'GroupMembersWizardStepForm')]`,
+    rolesStepForm: `//div[contains(@id,'MembershipsWizardStepForm')]`
 };
 var groupWizard = Object.create(wizard, {
 
@@ -28,10 +32,68 @@ var groupWizard = Object.create(wizard, {
             return `${panel.container}` + `${panel.roleOptionsFilterInput}`;
         }
     },
+    rolesLink: {
+        get: function () {
+            return `${panel.container}` + `${panel.rolesLink}`;
+        }
+    },
+    membersLink: {
+        get: function () {
+            return `${panel.container}` + `${panel.membersLink}`;
+        }
+    },
+    clickOnRolesLink: {
+        value: function () {
+            return this.doClick(this.rolesLink).pause(300);
+        }
+    },
+    clickOnMembersLink: {
+        value: function () {
+            return this.doClick(this.membersLink);
+        }
+    },
     typeData: {
-        value: function (data) {
-            return this.typeTextInInput(this.displayNameInput, data.displayName)
-                .then(() => this.typeTextInInput(this.descriptionInput, data.description));
+        value: function (group) {
+            return this.typeTextInInput(this.displayNameInput, group.displayName)
+                .then(() => this.typeTextInInput(this.descriptionInput, group.description)).then(()=> {
+                    if (group.roles != null) {
+                        return this.clickOnRolesLink();
+                    }
+                    return;
+                }).pause(300).then(()=> {
+                    if (group.roles != null) {
+                        return this.addRoles(group.roles);
+                    }
+                    return;
+                }).then(()=> {
+                    if (group.members != null) {
+                        return this.clickOnMembersLink();
+                    }
+                    return;
+                }).pause(300).then(()=> {
+                    if (group.members != null) {
+                        return this.addMembers(group.members);
+                    }
+                    return;
+                });
+        }
+    },
+    addRoles: {
+        value: function (roleDisplayNames) {
+            let result = Promise.resolve();
+            roleDisplayNames.forEach((displayName)=> {
+                result = result.then(() => this.filterOptionsAndAddRole(displayName));
+            });
+            return result;
+        }
+    },
+    addMembers: {
+        value: function (memberDisplayNames) {
+            let result = Promise.resolve();
+            memberDisplayNames.forEach((displayName)=> {
+                result = result.then(() => this.filterOptionsAndAddMember(displayName));
+            });
+            return result;
         }
     },
     filterOptionsAndAddMember: {
@@ -40,7 +102,9 @@ var groupWizard = Object.create(wizard, {
                 return loaderComboBox.waitForOptionVisible(`${panel.container}`, displayName);
             }).then(()=> {
                 return loaderComboBox.clickOnOption(`${panel.container}`, displayName);
-            })
+            }).catch((err)=> {
+                throw new Error('Error selecting the member-option ' + displayName + ' ' + err);
+            }).pause(300);
         }
     },
     filterOptionsAndAddRole: {
@@ -49,7 +113,9 @@ var groupWizard = Object.create(wizard, {
                 return loaderComboBox.waitForOptionVisible(`${panel.container}`, displayName);
             }).then(()=> {
                 return loaderComboBox.clickOnOption(`${panel.container}`, displayName);
-            })
+            }).catch((err)=> {
+                throw new Error('Error selecting the role-option ' + displayName + ' ' + err);
+            }).pause(1000);
         }
     },
     waitForOpened: {
@@ -72,28 +138,30 @@ var groupWizard = Object.create(wizard, {
     },
     getMembers: {
         value: function () {
-            let selectedOptions = `${panel.container}` + `${elements.PRINCIPAL_SELECTED_OPTION}` + `${elements.H6_DISPLAY_NAME}`
+            let selectedOptions = `${panel.container}` + `${panel.membersStepForm}` + `${elements.PRINCIPAL_SELECTED_OPTION}`
+                                  + `${elements.H6_DISPLAY_NAME}`
             return this.getTextFromElements(selectedOptions);
         }
     },
     getRoles: {
         value: function () {
-            let selectedOptions = `${panel.container}` + `${elements.PRINCIPAL_SELECTED_OPTION}` + `${elements.H6_DISPLAY_NAME}`
-            return this.getTextFromElements(selectedOptions);
+            let selectedOptions = `${panel.container}` + `${panel.rolesStepForm}` + `${elements.PRINCIPAL_SELECTED_OPTION}` +
+                                  `${elements.H6_DISPLAY_NAME}`
+            return this.clickOnRolesLink().then(()=>this.getTextFromElements(selectedOptions));
         }
     },
     removeMember: {
         value: function (displayName) {
-            //TODO
-            let selector = `${panel.container}` + `${elements.selectedPrincipalByDisplayName(displayName)}` + `${elements.REMOVE_ICON}`;
+            let selector = `${panel.container}` + `${panel.membersStepForm}` + `${elements.selectedPrincipalByDisplayName(displayName)}` +
+                           `${elements.REMOVE_ICON}`;
             return this.doClick(selector).pause(300);
         }
     },
     removeRole: {
         value: function (displayName) {
-            //TODO
-            let selector = `${panel.container}` + `${elements.selectedPrincipalByDisplayName(displayName)}` + `${elements.REMOVE_ICON}`;
-            return this.doClick(selector).pause(300);
+            let selector = `${panel.container}` + `${panel.rolesStepForm}` + `${elements.selectedPrincipalByDisplayName(displayName)}` +
+                           `${elements.REMOVE_ICON}`;
+            return this.clickOnMembersLink().pause(400).then(()=>this.doClick(selector)).pause(300);
         }
     },
 
