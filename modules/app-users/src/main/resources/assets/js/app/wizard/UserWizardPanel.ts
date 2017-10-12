@@ -2,16 +2,13 @@ import '../../api.ts';
 import {PrincipalWizardPanel} from './PrincipalWizardPanel';
 import {UserEmailWizardStepForm} from './UserEmailWizardStepForm';
 import {UserPasswordWizardStepForm} from './UserPasswordWizardStepForm';
-import {MembershipsWizardStepForm, MembershipsType} from './MembershipsWizardStepForm';
+import {MembershipsType, MembershipsWizardStepForm} from './MembershipsWizardStepForm';
 import {PrincipalWizardPanelParams} from './PrincipalWizardPanelParams';
 import {CreateUserRequest} from '../../api/graphql/principal/user/CreateUserRequest';
 import {UpdateUserRequest} from '../../api/graphql/principal/user/UpdateUserRequest';
-
-import User = api.security.User;
 import UserBuilder = api.security.UserBuilder;
 import Principal = api.security.Principal;
 import PrincipalKey = api.security.PrincipalKey;
-import UserStoreKey = api.security.UserStoreKey;
 import ConfirmationDialog = api.ui.dialog.ConfirmationDialog;
 import WizardStep = api.app.wizard.WizardStep;
 import ArrayHelper = api.util.ArrayHelper;
@@ -32,8 +29,7 @@ export class UserWizardPanel extends PrincipalWizardPanel {
 
     saveChanges(): wemQ.Promise<Principal> {
         if (!this.isRendered() ||
-            (this.userEmailWizardStepForm.isValid()
-             && (this.getPersistedItem() || this.userPasswordWizardStepForm.isValid()))) {
+            (this.userEmailWizardStepForm.isValid() && (this.getPersistedItem() || this.userPasswordWizardStepForm.isValid()))) {
 
             return super.saveChanges();
         } else {
@@ -104,6 +100,10 @@ export class UserWizardPanel extends PrincipalWizardPanel {
             api.notify.showFeedback(i18n('notify.create.user'));
             this.notifyPrincipalNamed(principal);
 
+            this.membershipsWizardStepForm.layout(principal);
+            this.userEmailWizardStepForm.layout(principal);
+            this.userPasswordWizardStepForm.layout(principal);
+
             return principal;
         });
     }
@@ -129,6 +129,8 @@ export class UserWizardPanel extends PrincipalWizardPanel {
         return super.updatePersistedItem().then((principal: Principal) => {
             //remove after users event handling is configured and layout is updated on receiving upd from server
             this.membershipsWizardStepForm.layout(principal);
+            this.userEmailWizardStepForm.layout(principal);
+            this.userPasswordWizardStepForm.layout(principal);
             return principal;
         });
     }

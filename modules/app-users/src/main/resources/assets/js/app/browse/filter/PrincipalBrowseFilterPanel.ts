@@ -3,19 +3,10 @@ import {UserTreeGridItem} from '../UserTreeGridItem';
 import {PrincipalTypeAggregationGroupView} from './PrincipalTypeAggregationGroupView';
 import {ListUserItemsRequest} from '../../../api/graphql/principal/ListUserItemsRequest';
 import {UserItemType} from '../UserItemType';
-import Principal = api.security.Principal;
-import PrincipalType = api.security.PrincipalType;
+import {PrincipalBrowseSearchData} from './PrincipalBrowseSearchData';
+import {ListTypesRequest} from '../../../api/graphql/principal/ListTypesRequest';
 import BrowseFilterResetEvent = api.app.browse.filter.BrowseFilterResetEvent;
 import BrowseFilterSearchEvent = api.app.browse.filter.BrowseFilterSearchEvent;
-import SearchInputValues = api.query.SearchInputValues;
-import QueryExpr = api.query.expr.QueryExpr;
-import CompareExpr = api.query.expr.CompareExpr;
-import LogicalExpr = api.query.expr.LogicalExpr;
-import ValueExpr = api.query.expr.ValueExpr;
-import LogicalOperator = api.query.expr.LogicalOperator;
-import LogicalExp = api.query.expr.LogicalExpr;
-import FieldExpr = api.query.expr.FieldExpr;
-import QueryField = api.query.QueryField;
 import AggregationGroupView = api.aggregation.AggregationGroupView;
 import AggregationSelection = api.aggregation.AggregationSelection;
 import Aggregation = api.aggregation.Aggregation;
@@ -48,42 +39,43 @@ export class PrincipalBrowseFilterPanel
         aggregationGroupViews.forEach(aggregation => aggregation.initialize());
     }
 
-    doRefresh() {
-        this.searchFacets(true);
+    doRefresh(): wemQ.Promise<void> {
+        return this.searchFacets(true);
     }
 
-    doSearch(elementChanged?: api.dom.Element) {
-        this.searchFacets();
+    doSearch(elementChanged?: api.dom.Element): wemQ.Promise<void> {
+        return this.searchFacets();
     }
 
-    protected resetFacets(suppressEvent?: boolean, doResetAll?: boolean) {
+    protected resetFacets(suppressEvent?: boolean, doResetAll?: boolean): wemQ.Promise<void> {
         const notify = this.hasSelectedAggregations();
-        this.searchDataAndHandleResponse('', notify);
 
         // then fire usual reset event with content grid reloading
         if (!suppressEvent && !notify) {
             new BrowseFilterResetEvent().fire();
         }
+
+        return this.searchDataAndHandleResponse('', notify);
     }
 
-    private searchFacets(isRefresh: boolean = false) {
+    private searchFacets(isRefresh: boolean = false): wemQ.Promise<void> {
         let values = this.getSearchInputValues();
         let searchText = values.getTextSearchFieldValue();
         if (!searchText && !this.hasConstraint()) {
-            this.handleEmptyFilterInput(isRefresh);
-            return;
+            return this.handleEmptyFilterInput(isRefresh).then(() => {
+                return this.fetchAndUpdateAggregations();
+            });
         }
 
-        this.searchDataAndHandleResponse(searchText);
+        return this.searchDataAndHandleResponse(searchText);
     }
 
-    private handleEmptyFilterInput(isRefresh: boolean) {
+    private handleEmptyFilterInput(isRefresh: boolean): wemQ.Promise<void> {
         const hasSelectedAggregations = this.hasSelectedAggregations();
         if (isRefresh || hasSelectedAggregations) {
-            this.resetFacets(isRefresh);
-        } else {
-            this.reset();
+            return this.resetFacets(isRefresh);
         }
+        return this.reset();
     }
 
     private hasSelectedAggregations(): boolean {
@@ -101,8 +93,10 @@ export class PrincipalBrowseFilterPanel
 
     private searchDataAndHandleResponse(searchString: string, fireEvent: boolean = true): wemQ.Promise<void> {
 
+        const types = this.getCheckedTypes();
+
         return new ListUserItemsRequest()
-            .setTypes(this.getCheckedTypes())
+            .setTypes(types)
             .setQuery(searchString)
             .sendAndParse()
             .then((result) => {
@@ -114,9 +108,9 @@ export class PrincipalBrowseFilterPanel
                 }
 
                 if (fireEvent) {
-                    new BrowseFilterSearchEvent(userItems).fire();
+                    new BrowseFilterSearchEvent(new PrincipalBrowseSearchData(searchString, types, userItems)).fire();
                 }
-                this.updateAggregations(result.aggregations, false);
+                this.updateAggregations(result.aggregations, !!searchString);
                 this.updateHitsCounter(userItems ? userItems.length : 0, api.util.StringHelper.isBlank(searchString));
                 this.toggleAggregationsVisibility(result.aggregations);
             }).catch((reason: any) => {
@@ -141,6 +135,17 @@ export class PrincipalBrowseFilterPanel
                 this.principalTypeAggregation.setVisible(!aggregationIsEmpty);
             }
         });
+    }
+
+    private fetchAndUpdateAggregations(): wemQ.Promise<void> {
+        return new ListTypesRequest()
+            .sendAndParse()
+            .then((typeAggregation) => {
+                this.updateAggregations([typeAggregation], true);
+                this.toggleAggregationsVisibility([typeAggregation]);
+            }).catch((reason: any) => {
+                api.DefaultErrorHandler.handle(reason);
+            });
     }
 
 }

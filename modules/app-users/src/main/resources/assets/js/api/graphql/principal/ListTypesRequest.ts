@@ -1,24 +1,7 @@
-import UserStoreListResult = api.security.UserStoreListResult;
-import UserStore = api.security.UserStore;
-import UserStoreJson = api.security.UserStoreJson;
 import {ListGraphQlRequest} from '../ListGraphQlRequest';
 import {UserItemAggregationHelper} from '../aggregation/UserItemAggregationHelper';
 import {UserItemBucketAggregationJson} from '../aggregation/UserItemBucketAggregationJson';
-import Principal = api.security.Principal;
-import PrincipalJson = api.security.PrincipalJson;
-import PrincipalListJson = api.security.PrincipalListJson;
-import PrincipalType = api.security.PrincipalType;
-import UserStoreKey = api.security.UserStoreKey;
-import PrincipalKey = api.security.PrincipalKey;
-import Role = api.security.Role;
-import Group = api.security.Group;
-import User = api.security.User;
-import StringHelper = api.util.StringHelper;
-import AggregationTypeWrapperJson = api.aggregation.AggregationTypeWrapperJson;
 import BucketAggregation = api.aggregation.BucketAggregation;
-import Aggregation = api.aggregation.Aggregation;
-import Bucket = api.aggregation.Bucket;
-import BucketAggregationJson = api.aggregation.BucketAggregationJson;
 
 export class ListTypesRequest
     extends ListGraphQlRequest<any, any> {

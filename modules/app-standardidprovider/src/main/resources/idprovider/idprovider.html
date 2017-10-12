@@ -31,12 +31,12 @@
     <script type="text/javascript" src="{{i18nJsUrl}}"></script>
     <script>
         function lazyFadeIn(imgEl) {
-            imgEl.remove();
+            imgEl.parentNode.removeChild(imgEl);
             $('#background-image').removeClass('empty');
         }
     </script>
 </head>
-<body>
+<body style="background-color: #53585F;">
 <div class="home-main-container">
     <img style="opacity: 0;" src="{{appLoginBackgroundUrl}}" onload="lazyFadeIn(this);">
     <div id="background-image" style="background-image: url(&quot;{{appLoginBackgroundUrl}}&quot;);" class="lazy-image empty"></div>
@@ -62,9 +62,6 @@
         </div>
     </div>
 </div>
-
-<div class="home-main-footer"><a href="https://no.wikipedia.org/wiki/Hav%C3%B8rn#/media/File:Haliaeetus_albicilla_(Svolv%C3%A6r,_2012).jpg"
-                                 target="_blank">Photo: Yathin S. Krishnappa</a></div>
 
 <script type="text/javascript" src="{{appLoginJsUrl}}"></script>
 <script>

@@ -1,19 +1,16 @@
 import '../../../../../../api.ts';
 import {PageTemplateOption} from './PageTemplateOption';
 import {PageTemplateOptionViewer} from './PageTemplateOptionViewer';
-
 import PropertyChangedEvent = api.PropertyChangedEvent;
 import ContentId = api.content.ContentId;
 import PageTemplateKey = api.content.page.PageTemplateKey;
 import PageTemplate = api.content.page.PageTemplate;
 import PageTemplateBuilder = api.content.page.PageTemplateBuilder;
 import Option = api.ui.selector.Option;
-import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
 import Dropdown = api.ui.selector.dropdown.Dropdown;
 import DropdownConfig = api.ui.selector.dropdown.DropdownConfig;
 import PageModel = api.content.page.PageModel;
 import LiveEditModel = api.liveedit.LiveEditModel;
-import PageMode = api.content.page.PageMode;
 import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
 import GetPageTemplatesByCanRenderRequest = api.content.page.GetPageTemplatesByCanRenderRequest;
 import PageTemplateLoader = api.content.page.PageTemplateLoader;
@@ -87,6 +84,8 @@ export class PageTemplateSelector
             event.getData().forEach((pageTemplate: PageTemplate) => options.push(this.createPageTemplateOption(pageTemplate)));
 
             deferred.resolve(options);
+
+            return wemQ(options);
         });
 
         loader.load();
