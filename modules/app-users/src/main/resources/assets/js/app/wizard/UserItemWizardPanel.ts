@@ -13,8 +13,7 @@ import Toolbar = api.ui.toolbar.Toolbar;
 import UserItem = api.security.UserItem;
 import i18n = api.util.i18n;
 
-export class UserItemWizardPanel<USER_ITEM_TYPE extends UserItem>
-    extends api.app.wizard.WizardPanel<USER_ITEM_TYPE> {
+export class UserItemWizardPanel<USER_ITEM_TYPE extends UserItem> extends api.app.wizard.WizardPanel<USER_ITEM_TYPE> {
 
     protected wizardActions: UserItemWizardActions<USER_ITEM_TYPE>;
 
@@ -25,6 +24,10 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends UserItem>
         super(params);
 
         this.loadData();
+
+        this.onValidityChanged(() => {
+            this.wizardActions.getSaveAction().setEnabled(this.isValid());
+        });
     }
 
     protected getParams(): UserItemWizardPanelParams<USER_ITEM_TYPE> {
@@ -57,18 +60,6 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends UserItem>
 
             wizardHeader.disableNameInput();
             wizardHeader.setAutoGenerationEnabled(false);
-        } else {
-
-            wizardHeader.onPropertyChanged((event: api.PropertyChangedEvent) => {
-                let updateStatus = event.getPropertyName() === 'name' ||
-                                   (wizardHeader.isAutoGenerationEnabled()
-                                    && event.getPropertyName() === 'displayName');
-
-                if (updateStatus) {
-                    this.wizardActions.getSaveAction().setEnabled(!!event.getNewValue());
-                }
-            });
-
         }
 
         wizardHeader.setPath(this.getParams().persistedPath);
@@ -151,14 +142,11 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends UserItem>
 
     saveChanges(): wemQ.Promise<USER_ITEM_TYPE> {
         if (this.isRendered() && !this.getWizardHeader().getName()) {
-            let deferred = wemQ.defer<USER_ITEM_TYPE>();
-            api.notify.showError(i18n('notify.empty.name'));
-            deferred.reject(new Error('Name can not be empty'));
-            return deferred.promise;
-        } else {
-            return super.saveChanges();
+            return wemQ.fcall(() => {
+                throw i18n('notify.empty.name');
+            });
         }
-
+        return super.saveChanges();
     }
 
     close(checkCanClose: boolean = false) {
@@ -174,6 +162,14 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends UserItem>
         } else {
             return true;
         }
+    }
+
+    hasUnsavedChanges(): boolean {
+        const persisted = this.getPersistedItem();
+        if (persisted) {
+            return !this.isPersistedEqualsViewed();
+        }
+        return this.isNewChanged();
     }
 
     createSteps(persistedItem: USER_ITEM_TYPE): WizardStep[] {
@@ -204,6 +200,14 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends UserItem>
     }
 
     protected updateHash() {
+        throw new Error('Must be implemented by inheritors');
+    }
+
+    isPersistedEqualsViewed(): boolean {
+        throw new Error('Must be implemented by inheritors');
+    }
+
+    isNewChanged(): boolean {
         throw new Error('Must be implemented by inheritors');
     }
 }

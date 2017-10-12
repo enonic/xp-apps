@@ -48,8 +48,11 @@ export class SaveBeforeCloseDialog extends ModalDialog {
     private doSaveAndClose() {
 
         this.close();
-        this.wizardPanel.saveChanges().then(() => this.wizardPanel.close(true)).catch(
-            (reason: any) => api.DefaultErrorHandler.handle(reason)).done();
+        this.wizardPanel.saveChanges()
+            .then((event) => {
+                return this.wizardPanel.close(true);
+            })
+            .catch(reason => api.DefaultErrorHandler.handle(reason));
     }
 
     private doCloseWithoutSaveCheck() {

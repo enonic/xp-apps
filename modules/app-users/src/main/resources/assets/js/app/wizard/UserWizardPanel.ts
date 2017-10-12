@@ -33,9 +33,11 @@ export class UserWizardPanel extends PrincipalWizardPanel {
 
             return super.saveChanges();
         } else {
-            this.showErrors();
-
-            return wemQ<Principal>(null);
+            return wemQ.fcall(() => {
+                // throw errors, if present
+                this.showErrors();
+                return null;
+            });
         }
     }
 
@@ -166,6 +168,35 @@ export class UserWizardPanel extends PrincipalWizardPanel {
             .build();
     }
 
+    private showErrors() {
+        if (!this.userEmailWizardStepForm.isValid()) {
+            this.showEmailErrors();
+        }
+
+        if (!(this.getPersistedItem() || this.userPasswordWizardStepForm.isValid())) {
+            this.showPasswordErrors();
+        }
+    }
+
+    private showEmailErrors() {
+        let formEmail = this.userEmailWizardStepForm.getEmail();
+        if (api.util.StringHelper.isEmpty(formEmail)) {
+            throw i18n('notify.empty.email');
+        } else if (!this.userEmailWizardStepForm.isValid()) {
+            throw i18n('notify.invalid.email');
+        }
+
+    }
+
+    private showPasswordErrors() {
+        let password = this.userPasswordWizardStepForm.getPassword();
+        if (api.util.StringHelper.isEmpty(password)) {
+            throw i18n('notify.empty.password');
+        } else if (!this.userEmailWizardStepForm.isValid()) {
+            throw i18n('notify.invalid.password');
+        }
+    }
+
     isPersistedEqualsViewed(): boolean {
         let persistedPrincipal = this.getPersistedItem().asUser();
         let viewedPrincipal = this.assembleViewedItem().asUser();
@@ -192,47 +223,16 @@ export class UserWizardPanel extends PrincipalWizardPanel {
         return viewedPrincipal.equals(persistedPrincipal);
     }
 
-    hasUnsavedChanges(): boolean {
-        let persistedPrincipal = this.getPersistedItem();
-        let email = this.userEmailWizardStepForm.getEmail();
-        let memberships = this.membershipsWizardStepForm.getMemberships();
-        if (persistedPrincipal == null) {
-            let wizardHeader = this.getWizardHeader();
-            return wizardHeader.getName() !== '' ||
-                   wizardHeader.getDisplayName() !== '' ||
-                   (!!email && email !== '') ||
-                   (!!memberships && memberships.length !== 0);
-        } else {
-            return !this.isPersistedEqualsViewed();
-        }
-    }
+    isNewChanged(): boolean {
+        const wizardHeader = this.getWizardHeader();
+        const email = this.userEmailWizardStepForm.getEmail();
+        const password = this.userPasswordWizardStepForm.getPassword();
+        const memberships = this.membershipsWizardStepForm.getMemberships();
 
-    private showErrors() {
-        if (!this.userEmailWizardStepForm.isValid()) {
-            this.showEmailErrors();
-        }
-
-        if (!(this.getPersistedItem() || this.userPasswordWizardStepForm.isValid())) {
-            this.showPasswordErrors();
-        }
-    }
-
-    private showEmailErrors() {
-        let formEmail = this.userEmailWizardStepForm.getEmail();
-        if (api.util.StringHelper.isEmpty(formEmail)) {
-            api.notify.showError(i18n('notify.empty.email'));
-        } else if (!this.userEmailWizardStepForm.isValid()) {
-            api.notify.showError(i18n('notify.invalid.email'));
-        }
-
-    }
-
-    private showPasswordErrors() {
-        let password = this.userPasswordWizardStepForm.getPassword();
-        if (api.util.StringHelper.isEmpty(password)) {
-            api.notify.showError(i18n('notify.empty.password'));
-        } else if (!this.userEmailWizardStepForm.isValid()) {
-            api.notify.showError(i18n('notify.invalid.password'));
-        }
+        return wizardHeader.getName() !== '' ||
+               wizardHeader.getDisplayName() !== '' ||
+               (!!email && email !== '') ||
+               (!!password && password !== '') ||
+               (!!memberships && memberships.length !== 0);
     }
 }

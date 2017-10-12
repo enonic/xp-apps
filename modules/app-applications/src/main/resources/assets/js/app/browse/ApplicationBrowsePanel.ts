@@ -41,6 +41,15 @@ export class ApplicationBrowsePanel extends api.app.browse.BrowsePanel<Applicati
         return new ApplicationBrowseItemPanel();
     }
 
+    treeNodeToBrowseItem(node: TreeNode<Application>): BrowseItem<Application>|null {
+        const data = node ? node.getData() : null;
+        return !data ? null : <BrowseItem<Application>>new BrowseItem<Application>(data)
+            .setId(data.getId())
+            .setDisplayName(data.getDisplayName())
+            .setPath(data.getName())
+            .setIconUrl(data.getIconUrl());
+    }
+
     treeNodesToBrowseItems(nodes: TreeNode<Application>[]): BrowseItem<Application>[] {
         let browseItems: BrowseItem<Application>[] = [];
 
@@ -53,12 +62,10 @@ export class ApplicationBrowsePanel extends api.app.browse.BrowsePanel<Applicati
                 }
             }
             if (i === index) {
-                let applicationEl = node.getData();
-                let item = new BrowseItem<Application>(applicationEl).setId(applicationEl.getId())
-                    .setDisplayName(applicationEl.getDisplayName())
-                    .setPath(applicationEl.getName())
-                    .setIconUrl(applicationEl.getIconUrl());
-                browseItems.push(item);
+                const item = this.treeNodeToBrowseItem(node);
+                if (item) {
+                    browseItems.push(item);
+                }
             }
         });
         return browseItems;

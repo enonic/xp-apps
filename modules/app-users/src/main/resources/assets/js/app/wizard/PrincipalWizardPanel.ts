@@ -4,23 +4,13 @@ import {PrincipalWizardPanelParams} from './PrincipalWizardPanelParams';
 import {Router} from '../Router';
 import {PrincipalWizardDataLoader} from './PrincipalWizardDataLoader';
 import {GraphQlRequest} from '../../api/graphql/GraphQlRequest';
-
 import Principal = api.security.Principal;
 import PrincipalType = api.security.PrincipalType;
 import PrincipalNamedEvent = api.security.PrincipalNamedEvent;
 import UserStore = api.security.UserStore;
-import UserStoreKey = api.security.UserStoreKey;
-import PrincipalKey = api.security.PrincipalKey;
 
 import ConfirmationDialog = api.ui.dialog.ConfirmationDialog;
-import ResponsiveManager = api.ui.responsive.ResponsiveManager;
-import ResponsiveItem = api.ui.responsive.ResponsiveItem;
-import WizardHeaderWithDisplayNameAndName = api.app.wizard.WizardHeaderWithDisplayNameAndName;
-import WizardHeaderWithDisplayNameAndNameBuilder = api.app.wizard.WizardHeaderWithDisplayNameAndNameBuilder;
 import WizardStep = api.app.wizard.WizardStep;
-import SecurityResourceRequest = api.security.SecurityResourceRequest;
-import StringHelper = api.util.StringHelper;
-import PrincipalJson = api.security.PrincipalJson;
 import i18n = api.util.i18n;
 
 export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
@@ -179,16 +169,6 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
         });
     }
 
-    hasUnsavedChanges(): boolean {
-        let persistedPrincipal: Principal = this.getPersistedItem();
-        if (persistedPrincipal == null) {
-            return true;
-        } else {
-            let viewedPrincipal = this.assembleViewedItem();
-            return !viewedPrincipal.equals(this.getPersistedItem());
-        }
-    }
-
     protected produceUpdateRequest(viewedPrincipal: Principal): GraphQlRequest<any, Principal> {
         throw new Error('Must be implemented by inheritors');
     }
@@ -213,5 +193,14 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
         } else {
             Router.setHash('new/' + PrincipalType[this.getParams().persistedType].toLowerCase());
         }
+    }
+
+    isPersistedEqualsViewed(): boolean {
+        const viewedPrincipal = this.assembleViewedItem();
+        return viewedPrincipal.equals(this.getPersistedItem());
+    }
+
+    isNewChanged(): boolean {
+        return true;
     }
 }

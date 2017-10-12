@@ -18,6 +18,7 @@ function WebDriverHelper() {
 WebDriverHelper.prototype.setupBrowser = function setupBrowser() {
     var _this = this;
     before(function() {
+        //screenshotPath: `${__dirname}/../../screenshots/`,
         var PropertiesReader = require('properties-reader');
         var path = require( 'path' )
         var webdriverio = require('webdriverio');
@@ -29,7 +30,12 @@ WebDriverHelper.prototype.setupBrowser = function setupBrowser() {
         var options = {
             desiredCapabilities: {
                 browserName: browser_name,
-                platform: platform_name
+                platform: platform_name,
+                chromeOptions: {
+                    "args": [
+                        "--lang=en"
+                    ],
+                }
             }
         };
 

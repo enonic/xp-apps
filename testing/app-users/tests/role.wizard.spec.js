@@ -12,7 +12,7 @@ const userBrowsePanel = require('../page_objects/browsepanel/userbrowse.panel');
 const testUtils = require('../libs/test.utils');
 const userItemsBuilder = require('../libs/userItems.builder.js');
 const appConst = require('../libs/app_const');
-const userItemStatisticsPanel = require('../page_objects/browsepanel/userItem.statistics.panel')
+const roleStatisticsPanel = require('../page_objects/browsepanel/role.statistics.panel');
 
 describe('Role Wizard page and info on the UserItemStatisticsPanel spec ', function () {
     this.timeout(70000);
@@ -59,9 +59,9 @@ describe('Role Wizard page and info on the UserItemStatisticsPanel spec ', funct
     it(`GIVEN existing 'Role' with a member WHEN it has been selected THEN correct info should be present in the 'statistics panel'`,
         () => {
             return testUtils.findAndSelectItem(testRole.displayName).then(()=> {
-                return userItemStatisticsPanel.waitForPanelVisible();
+                return roleStatisticsPanel.waitForPanelVisible();
             }).then(()=> {
-                return expect(userItemStatisticsPanel.getItemName()).to.eventually.be.equal(testRole.displayName);
+                return expect(roleStatisticsPanel.getItemName()).to.eventually.be.equal(testRole.displayName);
                 //TODO uncomment  it , when the bug will be fixed
                 // }).then(()=>{
                 //    return expect(userItemStatisticsPanel.getItemPath()).to.eventually.be.equal('/roles/'+testRole.name);
@@ -69,17 +69,17 @@ describe('Role Wizard page and info on the UserItemStatisticsPanel spec ', funct
             })
         });
 
-    it(`GIVEN existing 'Role' with a member is selected WHEN member has been removed AND navigated to the grid THEN correct info should be present in the 'statistics panel'`,
+    it(`GIVEN existing 'Role' with a member is opened WHEN member has been removed AND navigated to the grid THEN no one member should be present on the 'statistics panel'`,
         () => {
-            return testUtils.findAndSelectItem(testRole.displayName).then(()=> {
-                return userItemStatisticsPanel.waitForPanelVisible();
+            return testUtils.selectRoleAndOpenWizard(testRole.displayName).then(()=> {
+                return roleWizard.removeMember(appConst.SUPER_USER)
             }).then(()=>{
-                roleWizard.removeMember(appConst.SUPER_USER)
+                // role has been saved and the wizard closed
+                return testUtils.saveAndClose(testRole.displayName);
             }).then(()=> {
-                return expect(userItemStatisticsPanel.getItemName()).to.eventually.be.equal(testRole.displayName);
-                // }).then(()=>{
-                //    return expect(userItemStatisticsPanel.getItemPath()).to.eventually.be.equal('/roles/'+testRole.name);
-                // })
+                return roleStatisticsPanel.getDisplayNameOfMembers();
+            }).then((members)=>{
+                expect(members.length).to.equal(0);
             })
         });
 

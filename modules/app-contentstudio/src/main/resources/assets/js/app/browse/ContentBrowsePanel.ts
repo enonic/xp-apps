@@ -84,8 +84,7 @@ export class ContentBrowsePanel
             if (event.getType() === 'updated') {
                 let browseItems = this.treeNodesToBrowseItems(event.getTreeNodes());
                 this.getBrowseItemPanel().updateItems(browseItems);
-                this.getBrowseActions().updateActionsEnabledState(
-                    this.treeNodesToBrowseItems(this.treeGrid.getRoot().getFullSelection()));
+                this.getBrowseActions().updateActionsEnabledState(this.treeNodesToBrowseItems(this.treeGrid.getRoot().getFullSelection()));
             }
         });
 
@@ -239,7 +238,7 @@ export class ContentBrowsePanel
 
         const updateMobilePanel = (content: ContentSummaryAndCompareStatus, changed: boolean) => {
             if (changed) {
-                const item = this.toBrowseItem(content, null).toViewItem();
+                const item = this.toBrowseItem(content, null);
 
                 this.mobileContentItemStatisticsPanel.getPreviewPanel().showMask();
                 this.mobileContentItemStatisticsPanel.setItem(item);
@@ -290,13 +289,7 @@ export class ContentBrowsePanel
             nodes = [this.treeGrid.getFirstSelectedOrHighlightedNode()];
         }
 
-        let browseItems: BrowseItem<ContentSummaryAndCompareStatus>[] = this.treeNodesToBrowseItems(nodes);
-
-        return (browseItems.length > 0) ? browseItems[0] : null;
-    }
-
-    private isSomethingSelected(): boolean {
-        return !!this.getFirstSelectedOrHighlightedBrowseItem();
+        return this.treeNodeToBrowseItem(nodes[0]);
     }
 
     private isMobileMode(): boolean {
@@ -311,24 +304,31 @@ export class ContentBrowsePanel
         }
     }
 
+    treeNodeToBrowseItem(node: TreeNode<ContentSummaryAndCompareStatus>): ContentBrowseItem|null {
+        const data = node ? node.getData() : null;
+        return (!data || !data.getContentSummary()) ? null : <ContentBrowseItem>new ContentBrowseItem(data)
+            .setId(data.getId())
+            .setDisplayName(data.getContentSummary().getDisplayName())
+            .setPath(data.getContentSummary().getPath().toString())
+            .setIconUrl(new ContentIconUrlResolver().setContent(data.getContentSummary()).resolve());
+    }
+
     treeNodesToBrowseItems(nodes: TreeNode<ContentSummaryAndCompareStatus>[]): ContentBrowseItem[] {
         let browseItems: ContentBrowseItem[] = [];
 
         // do not proceed duplicated content. still, it can be selected
         nodes.forEach((node: TreeNode<ContentSummaryAndCompareStatus>, index: number) => {
             let i = 0;
+            // Take last in a sequence with the same id
             for (; i <= index; i++) {
                 if (nodes[i].getData().getId() === node.getData().getId()) {
                     break;
                 }
             }
             if (i === index) {
-                let data = node.getData();
-                if (!!data && !!data.getContentSummary()) {
-                    let item = new ContentBrowseItem(data).setId(data.getId()).setDisplayName(
-                        data.getContentSummary().getDisplayName()).setPath(data.getContentSummary().getPath().toString()).setIconUrl(
-                        new api.content.util.ContentIconUrlResolver().setContent(data.getContentSummary()).resolve());
-                    browseItems.push(<ContentBrowseItem> item);
+                const item = this.treeNodeToBrowseItem(node);
+                if (item) {
+                    browseItems.push(item);
                 }
             }
         });
@@ -661,7 +661,7 @@ export class ContentBrowsePanel
     }
 
     private toBrowseItem(content: ContentSummaryAndCompareStatus, renderable: boolean): BrowseItem<ContentSummaryAndCompareStatus> {
-        return new BrowseItem<ContentSummaryAndCompareStatus>(content)
+        return <BrowseItem<ContentSummaryAndCompareStatus>>new BrowseItem<ContentSummaryAndCompareStatus>(content)
             .setId(content.getId())
             .setDisplayName(content.getDisplayName()).setPath(content.getPath().toString())
             .setIconUrl(new ContentIconUrlResolver().setContent(content.getContentSummary()).resolve())
