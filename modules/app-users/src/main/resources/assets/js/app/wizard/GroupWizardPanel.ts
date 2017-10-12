@@ -4,9 +4,7 @@ import {PrincipalWizardPanelParams} from './PrincipalWizardPanelParams';
 import {GroupMembersWizardStepForm} from './GroupMembersWizardStepForm';
 import {CreateGroupRequest} from '../../api/graphql/principal/group/CreateGroupRequest';
 import {UpdateGroupRequest} from '../../api/graphql/principal/group/UpdateGroupRequest';
-import {MembershipsWizardStepForm, MembershipsType} from './MembershipsWizardStepForm';
-
-import Group = api.security.Group;
+import {MembershipsType, MembershipsWizardStepForm} from './MembershipsWizardStepForm';
 import GroupBuilder = api.security.GroupBuilder;
 import Principal = api.security.Principal;
 import PrincipalKey = api.security.PrincipalKey;
@@ -129,5 +127,9 @@ export class GroupWizardPanel extends GroupRoleWizardPanel {
         persistedPrincipal.getMembers().sort((a, b) => a.getId().localeCompare(b.getId()));
 
         return viewedPrincipal.equals(persistedPrincipal);
+    }
+
+    isNewChanged(): boolean {
+        return super.isNewChanged() || this.membershipsWizardStepForm.getMemberships().length !== 0;
     }
 }
