@@ -22,6 +22,13 @@ module.exports = Object.freeze({
         return `//li[contains(@id,'AppBarTabMenuItem') and descendant::a[contains(.,'${displayName}')]]`
     },
     CANCEL_BUTTON: `//div[@class='cancel-button-top']`,
+    
     COMBO_BOX_OPTION_FILTER_INPUT: "//input[contains(@id,'ComboBoxOptionFilterInput')]",
-    PRINCIPAL_SELECTED_OPTION: "//div[contains(@id,'security.PrincipalSelectedOptionView')]",
+
+    PRINCIPAL_SELECTED_OPTION: `//div[contains(@id,'security.PrincipalSelectedOptionView')]`,
+
+    selectedPrincipalByDisplayName: function (displayName) {
+        return `//div[contains(@id,'PrincipalSelectedOptionView') and descendant::h6[contains(@class,'main-name') and text()='${displayName}']]`
+    },
+    REMOVE_ICON: `//a[@class='icon-close']`,
 });

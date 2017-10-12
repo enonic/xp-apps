@@ -36,6 +36,10 @@ Page.prototype.isDisabled = function (selector) {
 Page.prototype.waitForVisible = function (selector, ms) {
     return this.getBrowser().waitForVisible(selector, ms);
 };
+
+Page.prototype.waitForNotVisible = function (selector, ms) {
+    return this.getBrowser().waitForVisible(selector, ms, true);
+};
 Page.prototype.waitForSpinnerNotVisible = function (ms) {
     return this.getBrowser().waitForVisible(`//div[@class='spinner']`, ms, true).catch(function (err) {
         console.log('spinner is still visible after a the interval ');
@@ -48,7 +52,10 @@ Page.prototype.isSpinnerVisible = function () {
 };
 
 Page.prototype.doClick = function (selector) {
-    return this.getBrowser().element(selector).then(()=> {
+    return this.getBrowser().elements(selector).then((result)=> {
+        if (result.value.length == 0) {
+            throw new Error('Element was not found!')
+        }
         return this.getBrowser().click(selector);
     }).catch(function (err) {
         console.log(err.message);
@@ -57,11 +64,13 @@ Page.prototype.doClick = function (selector) {
 };
 
 Page.prototype.typeTextInInput = function (selector, text) {
-    return this.getBrowser().setValue(selector, text);
+    return this.getBrowser().setValue(selector, text).catch((err)=> {
+        throw new Error('text was not set in the input ' + err);
+    })
 };
 Page.prototype.clearElement = function (selector) {
-    return this.getBrowser().clearElement(selector).catch((err)=>{
-        throw new Error('input was not cleared '+err);
+    return this.getBrowser().clearElement(selector).catch((err)=> {
+        throw new Error('input was not cleared ' + err);
     })
 },
 
@@ -104,7 +113,6 @@ Page.prototype.getDisplayedElements = function (selector) {
 
 Page.prototype.getTextFromElements = function (selector) {
     let json = [];
-
     return this.getBrowser().elements(selector).then((result)=> {
         result.value.forEach((val)=> {
             json.push(this.getBrowser().elementIdText(val.ELEMENT));
@@ -118,6 +126,8 @@ Page.prototype.getTextFromElements = function (selector) {
             return res.push(str.value);
         })
         return res;
+    }).catch((err)=> {
+        return [];
     });
 }
 

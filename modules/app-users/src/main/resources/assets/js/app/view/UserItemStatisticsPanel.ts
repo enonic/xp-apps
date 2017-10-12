@@ -1,7 +1,7 @@
 import '../../api.ts';
 import {UserTreeGridItem, UserTreeGridItemType} from '../browse/UserTreeGridItem';
 import {GetPrincipalByKeyRequest} from '../../api/graphql/principal/GetPrincipalByKeyRequest';
-
+import {GetPrincipalsByKeysRequest} from '../../api/graphql/principal/GetPrincipalsByKeysRequest';
 import ViewItem = api.app.view.ViewItem;
 import ItemStatisticsPanel = api.app.view.ItemStatisticsPanel;
 import ItemDataGroup = api.app.view.ItemDataGroup;
@@ -124,11 +124,17 @@ export class UserItemStatisticsPanel extends ItemStatisticsPanel<UserTreeGridIte
                 rolesGroup.addDataElements(null, p.asGroup().getMemberships().map(el => this.createPrincipalViewer(el)));
             }
 
-            const membersPromises = group.getMembers().map(el => new GetPrincipalByKeyRequest(el).sendAndParse());
+            const membersKeys = group.getMembers().slice(0, 100);
+            const hasNoMembers = !membersKeys || membersKeys.length === 0;
 
-            return wemQ.all(membersPromises).then((results: Principal[]) => {
-                membersGroup.addDataElements(null, results.map(el => this.createPrincipalViewer(el)));
-            }).then(() => (principal.isGroup() ? [mainGroup, rolesGroup, membersGroup] : [mainGroup, membersGroup] ));
+            const createMetadataGroups = () => (principal.isGroup() ? [mainGroup, rolesGroup, membersGroup] : [mainGroup, membersGroup]);
+
+            return hasNoMembers ?
+                   wemQ(createMetadataGroups()) :
+                   new GetPrincipalsByKeysRequest(membersKeys).sendAndParse()
+                       .then((results: Principal[]) => {
+                           membersGroup.addDataElements(null, results.map(el => this.createPrincipalViewer(el)));
+                        }).then(createMetadataGroups);
         });
     }
 }

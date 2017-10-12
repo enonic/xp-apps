@@ -9,6 +9,11 @@ var userStoreWizard = Object.create(wizard, {
             return `${panel.container}//input[contains(@name,'description')]`;
         }
     },
+    descriptionInput: {
+        get: function () {
+            return `${panel.container}//input[contains(@name,'description')]`;
+        }
+    },
     typeData: {
         value: function (data) {
             return this.typeTextInInput(this.displayNameInput, data.displayName)

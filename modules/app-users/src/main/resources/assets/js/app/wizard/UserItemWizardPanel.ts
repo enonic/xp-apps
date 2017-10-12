@@ -2,6 +2,7 @@ import '../../api.ts';
 import {UserItemWizardActions} from './action/UserItemWizardActions';
 import {UserItemWizardPanelParams} from './UserItemWizardPanelParams';
 import {SaveBeforeCloseDialog} from './SaveBeforeCloseDialog';
+import {PrincipalServerEventsHandler} from '../event/PrincipalServerEventsHandler';
 import ResponsiveManager = api.ui.responsive.ResponsiveManager;
 import ResponsiveItem = api.ui.responsive.ResponsiveItem;
 import FormIcon = api.app.wizard.FormIcon;
@@ -101,18 +102,18 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends UserItem> extends api.ap
                 responsiveItem.update();
             });
 
-            const deleteHandler = ((event: api.security.event.PrincipalDeletedEvent) => {
-                event.getDeletedItems().forEach((path: string) => {
-                    if (!!this.getPersistedItem() && this.getPersistedItemPath() === path) {
-                        this.close();
-                    }
-                });
+            const deleteHandler = ((ids: string[]) => {
+                const item = this.getPersistedItem();
+                if (!!item && ids.indexOf(item.getKey().getId()) >= 0) {
+                    this.close();
+                }
             });
 
-            api.security.event.PrincipalDeletedEvent.on(deleteHandler);
+            const handler = PrincipalServerEventsHandler.getInstance();
+            handler.onUserItemDeleted(deleteHandler);
 
             this.onRemoved(() => {
-                api.security.event.PrincipalDeletedEvent.un(deleteHandler);
+                handler.unUserItemDeleted(deleteHandler);
             });
 
             return nextRendered;

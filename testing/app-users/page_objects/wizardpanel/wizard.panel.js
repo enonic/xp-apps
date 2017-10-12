@@ -35,7 +35,11 @@ var wizardPanel = Object.create(page, {
             return this.typeTextInInput(this.displayNameInput, displayName);
         }
     },
-
+    isDisplayNameInputVisible: {
+        value: function () {
+            return this.isVisible(this.displayNameInput);
+        }
+    },
     waitAndClickOnSave: {
         value: function () {
             return this.waitForSaveButtonEnabled().then((result)=> {
@@ -50,6 +54,7 @@ var wizardPanel = Object.create(page, {
             })
         }
     },
+   
     doClickOnDelete: {
         value: function () {
             return this.doClick(this.deleteButton);
@@ -68,29 +73,29 @@ var wizardPanel = Object.create(page, {
     waitUntilInvalidIconAppears: {
         value: function (displayName) {
             let selector = elements.tabItemByDisplayName(displayName);
-              return  this.getBrowser().waitUntil(()=>{
-                    return this.getBrowser().getAttribute(selector, 'class').then(result=>{
-                        return result.includes('invalid');
-                    });
-                },2000).then(()=>{
+            return this.getBrowser().waitUntil(()=> {
+                return this.getBrowser().getAttribute(selector, 'class').then(result=> {
+                    return result.includes('invalid');
+                });
+            }, 2000).then(()=> {
                 return true;
-            }).catch((err)=>{
-                  throw new Error(err);
-              });
+            }).catch((err)=> {
+                throw new Error(err);
+            });
         }
     },
     waitUntilInvalidIconDisappears: {
         value: function (displayName) {
             let selector = elements.tabItemByDisplayName(displayName);
-             return this.getBrowser().waitUntil(()=>{
-                return this.getBrowser().getAttribute(selector, 'class').then(result=>{
+            return this.getBrowser().waitUntil(()=> {
+                return this.getBrowser().getAttribute(selector, 'class').then(result=> {
                     return !result.includes('invalid');
                 })
-            },2000).then(()=>{
-                  return true;
-              } ).catch((err)=>{
-                  throw new Error(err);
-              });
+            }, 2000).then(()=> {
+                return true;
+            }).catch((err)=> {
+                throw new Error(err);
+            });
         }
     }
 

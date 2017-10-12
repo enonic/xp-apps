@@ -21,6 +21,13 @@ var newPrincipalDialog = Object.create(page, {
             return `${dialog.container}${elements.CANCEL_BUTTON}`;
         }
     },
+    clickOnCancelButtonTop: {
+        value: function () {
+            return this.doClick(this.cancelButton).catch((err)=> {
+                throw new Error('Error when cancel button has been pressed ' + err);
+            })
+        }
+    },
     clickOnItem: {
         value: function (itemName) {
             let selector = `${dialog.itemViewer}` + `${elements.itemByDisplayName(itemName)}`;
@@ -34,6 +41,11 @@ var newPrincipalDialog = Object.create(page, {
             return this.waitForVisible(`${dialog.container}`, 3000);
         }
     },
+    waitForClosed: {
+        value: function () {
+            return this.waitForNotVisible(`${dialog.container}`, 3000);
+        }
+    },
     getNumberOfItems: {
         value: function () {
             let items = `${dialog.itemViewer}` + `${elements.H6_DISPLAY_NAME}`;
@@ -43,7 +55,7 @@ var newPrincipalDialog = Object.create(page, {
     getItemNames: {
         value: function () {
             let items = `${dialog.itemViewer}` + `${elements.H6_DISPLAY_NAME}`;
-            return this.getTextFromElements(items)
+            return this.getTextFromElements(items);
         }
     },
     getHeaderText: {
