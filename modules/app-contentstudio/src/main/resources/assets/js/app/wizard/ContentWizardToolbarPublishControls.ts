@@ -95,7 +95,7 @@ export class ContentWizardToolbarPublishControls
 
         this.contentStateSpan.setHtml(this.getContentStateValueForSpan(this.content), false);
         this.publishButtonForMobile.setLabel(
-            i18n('field.publish.item', api.content.CompareStatusFormatter.formatStatusFromContent(this.content)));
+            i18n('field.publish.item', api.content.CompareStatusFormatter.formatStatusTextFromContent(this.content)));
     }
 
     public isOnline(): boolean {
@@ -120,19 +120,14 @@ export class ContentWizardToolbarPublishControls
 
     private getContentStateValueForSpan(content: ContentSummaryAndCompareStatus): string {
 
-        const publishStatus: PublishStatus = this.getPublishStatus();
-
         let status = new api.dom.SpanEl();
         if (this.isOnline()) {
             status.addClass('online');
         }
-        if (publishStatus && (publishStatus === PublishStatus.PENDING || publishStatus === PublishStatus.EXPIRED)) {
-            status.addClass(api.content.PublishStatusFormatter.formatStatus(publishStatus).toLowerCase());
-            status.setHtml(api.content.CompareStatusFormatter.formatStatusFromContent(content) + ' (' +
-                           api.content.PublishStatusFormatter.formatStatus(publishStatus) + ')');
-        } else {
-            status.setHtml(api.content.CompareStatusFormatter.formatStatusFromContent(content));
-        }
+
+        status.addClass(content.getStatusClass());
+        status.setHtml(content.getStatusText());
+
         return i18n('field.publish.status', status.toString());
     }
 
