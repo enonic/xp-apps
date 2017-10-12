@@ -45,7 +45,7 @@ export class ApplicationBrowseActions implements TreeGridActions<Application> {
         return this.allActions;
     }
 
-    updateActionsEnabledState(browseItems: BrowseItem<Application>[], changes?: BrowseItemsChanges<any>): wemQ.Promise<void> {
+    updateActionsEnabledState(browseItems: BrowseItem<Application>[], changes?: BrowseItemsChanges<Application>): wemQ.Promise<void> {
         return wemQ(true).then(() => {
             const applicationsSelected = browseItems.length;
             const anySelected = applicationsSelected > 0;

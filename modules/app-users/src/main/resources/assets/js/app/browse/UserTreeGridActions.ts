@@ -10,6 +10,7 @@ import TreeGridActions = api.ui.treegrid.actions.TreeGridActions;
 import BrowseItem = api.app.browse.BrowseItem;
 import UserStore = api.security.UserStore;
 import User = api.security.User;
+import BrowseItemsChanges = api.app.browse.BrowseItemsChanges;
 
 export class UserTreeGridActions implements TreeGridActions<UserTreeGridItem> {
 
@@ -33,7 +34,7 @@ export class UserTreeGridActions implements TreeGridActions<UserTreeGridItem> {
         return this.actions;
     }
 
-    updateActionsEnabledState(browseItems: BrowseItem<UserTreeGridItem>[]): wemQ.Promise<void> {
+    updateActionsEnabledState(browseItems: BrowseItem<UserTreeGridItem>[], changes?: BrowseItemsChanges<UserTreeGridItem>): wemQ.Promise<void> {
         return wemQ(true).then(() => {
             let userStoresSelected: number = 0;
             let principalsSelected: number = 0;
