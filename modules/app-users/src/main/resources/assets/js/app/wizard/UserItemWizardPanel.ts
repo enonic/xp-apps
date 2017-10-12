@@ -13,7 +13,8 @@ import Toolbar = api.ui.toolbar.Toolbar;
 import UserItem = api.security.UserItem;
 import i18n = api.util.i18n;
 
-export class UserItemWizardPanel<USER_ITEM_TYPE extends UserItem> extends api.app.wizard.WizardPanel<USER_ITEM_TYPE> {
+export class UserItemWizardPanel<USER_ITEM_TYPE extends UserItem>
+    extends api.app.wizard.WizardPanel<USER_ITEM_TYPE> {
 
     protected wizardActions: UserItemWizardActions<USER_ITEM_TYPE>;
 
@@ -27,6 +28,15 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends UserItem> extends api.ap
 
         this.onValidityChanged(() => {
             this.wizardActions.getSaveAction().setEnabled(this.isValid());
+        });
+
+        PrincipalServerEventsHandler.getInstance().onUserItemDeleted((ids: string[]) => {
+            const persistedItem = this.getPersistedItem();
+            if (!!persistedItem) {
+                if (ids.some(id => id === persistedItem.getKey().toString())) {
+                    this.close(false);
+                }
+            }
         });
     }
 
