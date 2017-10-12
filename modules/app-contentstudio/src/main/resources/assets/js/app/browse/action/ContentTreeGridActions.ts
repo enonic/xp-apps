@@ -95,7 +95,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
     updateActionsEnabledState(browseItems: ContentBrowseItem[], changes?: BrowseItemsChanges<ContentSummaryAndCompareStatus>): wemQ.Promise<void> {
 
         if (changes && changes.getAdded().length == 0 && changes.getRemoved().length == 0) {
-            return wemQ();
+            return wemQ<void>(null);
         }
 
         this.TOGGLE_SEARCH_PANEL.setVisible(false);

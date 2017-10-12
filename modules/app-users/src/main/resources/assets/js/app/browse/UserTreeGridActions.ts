@@ -34,7 +34,7 @@ export class UserTreeGridActions implements TreeGridActions<UserTreeGridItem> {
     }
 
     updateActionsEnabledState(browseItems: BrowseItem<UserTreeGridItem>[]): wemQ.Promise<void> {
-        return wemQ().then(() => {
+        return wemQ(true).then(() => {
             let userStoresSelected: number = 0;
             let principalsSelected: number = 0;
             let directoriesSelected: number = 0;

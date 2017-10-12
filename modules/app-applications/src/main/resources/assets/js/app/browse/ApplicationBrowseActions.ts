@@ -7,6 +7,7 @@ import {UninstallApplicationAction} from './UninstallApplicationAction';
 import BrowseItem = api.app.browse.BrowseItem;
 import Application = api.application.Application;
 import TreeGridActions = api.ui.treegrid.actions.TreeGridActions;
+import BrowseItemsChanges = api.app.browse.BrowseItemsChanges;
 
 export class ApplicationBrowseActions implements TreeGridActions<Application> {
 
@@ -44,8 +45,8 @@ export class ApplicationBrowseActions implements TreeGridActions<Application> {
         return this.allActions;
     }
 
-    updateActionsEnabledState(browseItems: BrowseItem<Application>[]): wemQ.Promise<void> {
-        return wemQ().then(() => {
+    updateActionsEnabledState(browseItems: BrowseItem<Application>[], changes?: BrowseItemsChanges<any>): wemQ.Promise<void> {
+        return wemQ(true).then(() => {
             const applicationsSelected = browseItems.length;
             const anySelected = applicationsSelected > 0;
 
