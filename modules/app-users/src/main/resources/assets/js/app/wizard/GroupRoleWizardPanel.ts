@@ -3,13 +3,10 @@ import {PrincipalDescriptionWizardStepForm} from './PrincipalDescriptionWizardSt
 import {PrincipalWizardPanel} from './PrincipalWizardPanel';
 import {PrincipalWizardPanelParams} from './PrincipalWizardPanelParams';
 import {PrincipalMembersWizardStepForm} from './PrincipalMembersWizardStepForm';
-
 import Principal = api.security.Principal;
 
 import ConfirmationDialog = api.ui.dialog.ConfirmationDialog;
-import WizardStep = api.app.wizard.WizardStep;
 import i18n = api.util.i18n;
-import DefaultErrorHandler = api.DefaultErrorHandler;
 
 export class GroupRoleWizardPanel extends PrincipalWizardPanel {
 
@@ -71,19 +68,11 @@ export class GroupRoleWizardPanel extends PrincipalWizardPanel {
         });
     }
 
-    hasUnsavedChanges(): boolean {
-        let persistedPrincipal = this.getPersistedItem();
-        let wizardHeader = this.getWizardHeader();
-        if (persistedPrincipal == null) {
-            return wizardHeader.getName() !== '' ||
-                   wizardHeader.getDisplayName() !== '' ||
-                   this.membersWizardStepForm.getMembers().length !== 0;
-        } else {
-            return !this.isPersistedEqualsViewed();
-        }
-    }
-
-    isPersistedEqualsViewed(): boolean {
-        throw new Error('Must be implemented by inheritors');
+    isNewChanged(): boolean {
+        const wizardHeader = this.getWizardHeader();
+        return wizardHeader.getName() !== '' ||
+               wizardHeader.getDisplayName() !== '' ||
+               this.descriptionWizardStepForm.getDescription() !== '' ||
+               this.membersWizardStepForm.getMembers().length !== 0;
     }
 }

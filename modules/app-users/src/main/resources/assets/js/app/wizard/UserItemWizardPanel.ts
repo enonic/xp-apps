@@ -2,13 +2,7 @@ import '../../api.ts';
 import {UserItemWizardActions} from './action/UserItemWizardActions';
 import {UserItemWizardPanelParams} from './UserItemWizardPanelParams';
 import {SaveBeforeCloseDialog} from './SaveBeforeCloseDialog';
-
-import Principal = api.security.Principal;
-import PrincipalKey = api.security.PrincipalKey;
-import PrincipalType = api.security.PrincipalType;
-import PrincipalNamedEvent = api.security.PrincipalNamedEvent;
-import UserStoreKey = api.security.UserStoreKey;
-
+import {PrincipalServerEventsHandler} from '../event/PrincipalServerEventsHandler';
 import ResponsiveManager = api.ui.responsive.ResponsiveManager;
 import ResponsiveItem = api.ui.responsive.ResponsiveItem;
 import FormIcon = api.app.wizard.FormIcon;
@@ -16,7 +10,6 @@ import WizardHeaderWithDisplayNameAndName = api.app.wizard.WizardHeaderWithDispl
 import WizardHeaderWithDisplayNameAndNameBuilder = api.app.wizard.WizardHeaderWithDisplayNameAndNameBuilder;
 import WizardStep = api.app.wizard.WizardStep;
 import Toolbar = api.ui.toolbar.Toolbar;
-import WizardActions = api.app.wizard.WizardActions;
 import UserItem = api.security.UserItem;
 import i18n = api.util.i18n;
 
@@ -31,6 +24,10 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends UserItem> extends api.ap
         super(params);
 
         this.loadData();
+
+        this.onValidityChanged(() => {
+            this.wizardActions.getSaveAction().setEnabled(this.isValid());
+        });
     }
 
     protected getParams(): UserItemWizardPanelParams<USER_ITEM_TYPE> {
@@ -63,18 +60,6 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends UserItem> extends api.ap
 
             wizardHeader.disableNameInput();
             wizardHeader.setAutoGenerationEnabled(false);
-        } else {
-
-            wizardHeader.onPropertyChanged((event: api.PropertyChangedEvent) => {
-                let updateStatus = event.getPropertyName() === 'name' ||
-                                   (wizardHeader.isAutoGenerationEnabled()
-                                    && event.getPropertyName() === 'displayName');
-
-                if (updateStatus) {
-                    this.wizardActions.getSaveAction().setEnabled(!!event.getNewValue());
-                }
-            });
-
         }
 
         wizardHeader.setPath(this.getParams().persistedPath);
@@ -117,18 +102,18 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends UserItem> extends api.ap
                 responsiveItem.update();
             });
 
-            const deleteHandler = ((event: api.security.event.PrincipalDeletedEvent) => {
-                event.getDeletedItems().forEach((path: string) => {
-                    if (!!this.getPersistedItem() && this.getPersistedItemPath() === path) {
-                        this.close();
-                    }
-                });
+            const deleteHandler = ((ids: string[]) => {
+                const item = this.getPersistedItem();
+                if (!!item && ids.indexOf(item.getKey().getId()) >= 0) {
+                    this.close();
+                }
             });
 
-            api.security.event.PrincipalDeletedEvent.on(deleteHandler);
+            const handler = PrincipalServerEventsHandler.getInstance();
+            handler.onUserItemDeleted(deleteHandler);
 
             this.onRemoved(() => {
-                api.security.event.PrincipalDeletedEvent.un(deleteHandler);
+                handler.unUserItemDeleted(deleteHandler);
             });
 
             return nextRendered;
@@ -157,14 +142,11 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends UserItem> extends api.ap
 
     saveChanges(): wemQ.Promise<USER_ITEM_TYPE> {
         if (this.isRendered() && !this.getWizardHeader().getName()) {
-            let deferred = wemQ.defer<USER_ITEM_TYPE>();
-            api.notify.showError(i18n('notify.empty.name'));
-            deferred.reject(new Error('Name can not be empty'));
-            return deferred.promise;
-        } else {
-            return super.saveChanges();
+            return wemQ.fcall(() => {
+                throw i18n('notify.empty.name');
+            });
         }
-
+        return super.saveChanges();
     }
 
     close(checkCanClose: boolean = false) {
@@ -180,6 +162,14 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends UserItem> extends api.ap
         } else {
             return true;
         }
+    }
+
+    hasUnsavedChanges(): boolean {
+        const persisted = this.getPersistedItem();
+        if (persisted) {
+            return !this.isPersistedEqualsViewed();
+        }
+        return this.isNewChanged();
     }
 
     createSteps(persistedItem: USER_ITEM_TYPE): WizardStep[] {
@@ -210,6 +200,14 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends UserItem> extends api.ap
     }
 
     protected updateHash() {
+        throw new Error('Must be implemented by inheritors');
+    }
+
+    isPersistedEqualsViewed(): boolean {
+        throw new Error('Must be implemented by inheritors');
+    }
+
+    isNewChanged(): boolean {
         throw new Error('Must be implemented by inheritors');
     }
 }

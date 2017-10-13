@@ -6,12 +6,13 @@ import {UserBrowseItemPanel} from './UserBrowseItemPanel';
 import {UserTreeGridActions} from './UserTreeGridActions';
 import {PrincipalBrowseFilterPanel} from './filter/PrincipalBrowseFilterPanel';
 import {Router} from '../Router';
-
-import TreeGrid = api.ui.treegrid.TreeGrid;
+import {PrincipalServerEventsHandler} from '../event/PrincipalServerEventsHandler';
 import TreeNode = api.ui.treegrid.TreeNode;
 import BrowseItem = api.app.browse.BrowseItem;
 import PrincipalType = api.security.PrincipalType;
 import i18n = api.util.i18n;
+import UserStore = api.security.UserStore;
+import Principal = api.security.Principal;
 
 export class UserBrowsePanel extends api.app.browse.BrowsePanel<UserTreeGridItem> {
 
@@ -20,27 +21,7 @@ export class UserBrowsePanel extends api.app.browse.BrowsePanel<UserTreeGridItem
     constructor() {
         super();
 
-        api.security.UserItemCreatedEvent.on((event) => {
-            this.treeGrid.appendUserNode(event.getPrincipal(), event.getUserStore(), event.isParentOfSameType());
-            this.setRefreshOfFilterRequired();
-        });
-
-        api.security.UserItemUpdatedEvent.on((event) => {
-            this.treeGrid.updateUserNode(event.getPrincipal(), event.getUserStore());
-        });
-
-        api.security.UserItemDeletedEvent.on((event) => {
-            this.setRefreshOfFilterRequired();
-            /*
-             Deleting content won't trigger browsePanel.onShow event,
-             because we are left on the same panel. We need to refresh manually.
-             */
-            const userTreeGridItems: UserTreeGridItem[] = this.convertUserItemsToUserTreeGridItems(event.getPrincipals(),
-                event.getUserStores());
-
-            this.treeGrid.deleteNodes(userTreeGridItems);
-            this.refreshFilter();
-        });
+        this.bindServerEventListeners();
 
         const changeSelectionStatus = api.util.AppHelper.debounce((selection: TreeNode<UserTreeGridItem>[]) => {
             const singleSelection = selection.length === 1;
@@ -86,6 +67,36 @@ export class UserBrowsePanel extends api.app.browse.BrowsePanel<UserTreeGridItem
         });
     }
 
+    private bindServerEventListeners() {
+        const serverHandler = PrincipalServerEventsHandler.getInstance();
+
+        serverHandler.onUserItemCreated((principal: Principal, userStore: UserStore, sameTypeParent?: boolean) => {
+            this.treeGrid.appendUserNode(principal, userStore, sameTypeParent);
+            this.setRefreshOfFilterRequired();
+        });
+
+        serverHandler.onUserItemUpdated((principal: Principal, userStore: UserStore) => {
+            this.treeGrid.updateUserNode(principal, userStore);
+        });
+
+        serverHandler.onUserItemDeleted((ids: string[]) => {
+            this.setRefreshOfFilterRequired();
+            /*
+             Deleting content won't trigger browsePanel.onShow event,
+             because we are left on the same panel. We need to refresh manually.
+             */
+
+            ids.forEach(id => {
+                const node = this.treeGrid.getRoot().getCurrentRoot().findNode(id);
+                if (node) {
+                    this.treeGrid.deleteNode(node.getData());
+                }
+            });
+
+            this.refreshFilter();
+        });
+    }
+
     protected createToolbar(): UserBrowseToolbar {
         let browseActions = <UserTreeGridActions> this.treeGrid.getTreeGridActions();
 
@@ -108,17 +119,23 @@ export class UserBrowsePanel extends api.app.browse.BrowsePanel<UserTreeGridItem
         this.treeGrid.filter(this.treeGrid.getSelectedDataList());
     }
 
+    treeNodeToBrowseItem(node: TreeNode<UserTreeGridItem>): BrowseItem<UserTreeGridItem>|null {
+        const data = node ? node.getData() : null;
+        return !data ? null : <BrowseItem<UserTreeGridItem>>new BrowseItem<UserTreeGridItem>(data)
+            .setId(data.getDataId())
+            .setDisplayName(data.getItemDisplayName())
+            .setIconClass(this.selectIconClass(data));
+    }
+
     treeNodesToBrowseItems(nodes: TreeNode<UserTreeGridItem>[]): BrowseItem<UserTreeGridItem>[] {
         let browseItems: BrowseItem<UserTreeGridItem>[] = [];
 
         // do not proceed duplicated content. still, it can be selected
         nodes.forEach((node: TreeNode<UserTreeGridItem>) => {
-            let userGridItem = node.getData();
-
-            let item = new BrowseItem<UserTreeGridItem>(userGridItem).setId(userGridItem.getDataId()).setDisplayName(
-                userGridItem.getItemDisplayName()).setIconClass(this.selectIconClass(userGridItem));
-            browseItems.push(item);
-
+            const item = this.treeNodeToBrowseItem(node);
+            if (item) {
+                browseItems.push(item);
+            }
         });
         return browseItems;
     }

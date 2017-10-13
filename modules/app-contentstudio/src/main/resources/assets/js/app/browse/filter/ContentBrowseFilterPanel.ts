@@ -1,16 +1,13 @@
 import '../../../api.ts';
 import {ContentBrowseSearchData} from './ContentBrowseSearchData';
-
 import ContentQueryRequest = api.content.resource.ContentQueryRequest;
 import ContentTypeName = api.schema.content.ContentTypeName;
 import ContentSummaryJson = api.content.json.ContentSummaryJson;
 import ContentQueryResult = api.content.resource.result.ContentQueryResult;
 import ContentSummary = api.content.ContentSummary;
-import AggregationTypeWrapperJson = api.aggregation.AggregationTypeWrapperJson;
 import AggregationGroupView = api.aggregation.AggregationGroupView;
 import ContentTypeAggregationGroupView = api.aggregation.ContentTypeAggregationGroupView;
 import Aggregation = api.aggregation.Aggregation;
-import AggregationFactory = api.aggregation.AggregationFactory;
 import SearchInputValues = api.query.SearchInputValues;
 import ContentQuery = api.content.query.ContentQuery;
 import TermsAggregationQuery = api.query.aggregation.TermsAggregationQuery;
@@ -21,14 +18,9 @@ import CompareExpr = api.query.expr.CompareExpr;
 import LogicalExpr = api.query.expr.LogicalExpr;
 import ValueExpr = api.query.expr.ValueExpr;
 import LogicalOperator = api.query.expr.LogicalOperator;
-import LogicalExp = api.query.expr.LogicalExpr;
 import FieldExpr = api.query.expr.FieldExpr;
-import Value = api.data.Value;
-import ValueTypes = api.data.ValueTypes;
 import QueryField = api.query.QueryField;
 import ContentSummaryViewer = api.content.ContentSummaryViewer;
-import ActionButton = api.ui.button.ActionButton;
-import Action = api.ui.Action;
 import BrowseFilterResetEvent = api.app.browse.filter.BrowseFilterResetEvent;
 import BrowseFilterRefreshEvent = api.app.browse.filter.BrowseFilterRefreshEvent;
 import BrowseFilterSearchEvent = api.app.browse.filter.BrowseFilterSearchEvent;
@@ -83,20 +75,18 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
         this.setConstraintItems(this.dependenciesSection, [ContentSummaryAndCompareStatus.fromContentSummary(item)]);
     }
 
-    doRefresh() {
+    doRefresh(): wemQ.Promise<void>  {
         if (!this.isFilteredOrConstrained()) {
-            this.handleEmptyFilterInput(true);
-        } else {
-            this.refreshDataAndHandleResponse(this.createContentQuery());
+            return this.handleEmptyFilterInput(true);
         }
+        return this.refreshDataAndHandleResponse(this.createContentQuery());
     }
 
-    doSearch(elementChanged?: api.dom.Element) {
+    doSearch(elementChanged?: api.dom.Element): wemQ.Promise<void>  {
         if (!this.isFilteredOrConstrained()) {
-            this.handleEmptyFilterInput();
-        } else {
-            this.searchDataAndHandleResponse(this.createContentQuery());
+            return this.handleEmptyFilterInput();
         }
+        return this.searchDataAndHandleResponse(this.createContentQuery());
     }
 
     setSelectedItems(items: ContentSummaryAndCompareStatus[]) {
@@ -109,18 +99,14 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
         return super.isFilteredOrConstrained() || this.dependenciesSection.isActive();
     }
 
-    private handleEmptyFilterInput(isRefresh?: boolean) {
+    private handleEmptyFilterInput(isRefresh?: boolean): wemQ.Promise<void>  {
         if (isRefresh) {
-
-            this.resetFacets(true, true).then(() => {
+            return this.resetFacets(true, true).then(() => {
                 new BrowseFilterRefreshEvent().fire();
-            }).catch((reason: any) => {
-                api.DefaultErrorHandler.handle(reason);
-            }).done();
-
-        } else { // it's SearchEvent, usual reset with grid reload
-            this.reset();
+            }).catch(api.DefaultErrorHandler.handle);
         }
+        // it's SearchEvent, usual reset with grid reload
+        return this.reset();
     }
 
     private createContentQuery(): ContentQuery {
@@ -145,17 +131,17 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
         return contentQuery;
     }
 
-    private searchDataAndHandleResponse(contentQuery: ContentQuery) {
-        new ContentQueryRequest<ContentSummaryJson,ContentSummary>(contentQuery).setExpand(api.rest.Expand.SUMMARY).sendAndParse().then(
+    private searchDataAndHandleResponse(contentQuery: ContentQuery): wemQ.Promise<void>  {
+        return new ContentQueryRequest<ContentSummaryJson,ContentSummary>(contentQuery).setExpand(api.rest.Expand.SUMMARY).sendAndParse().then(
             (contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
                 this.handleDataSearchResult(contentQuery, contentQueryResult);
             }).catch((reason: any) => {
             api.DefaultErrorHandler.handle(reason);
-        }).done();
+        });
     }
 
-    private refreshDataAndHandleResponse(contentQuery: ContentQuery) {
-        new ContentQueryRequest<ContentSummaryJson,ContentSummary>(contentQuery).setExpand(api.rest.Expand.SUMMARY).sendAndParse().then(
+    private refreshDataAndHandleResponse(contentQuery: ContentQuery): wemQ.Promise<void>  {
+        return new ContentQueryRequest<ContentSummaryJson,ContentSummary>(contentQuery).setExpand(api.rest.Expand.SUMMARY).sendAndParse().then(
             (contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
                 if (contentQueryResult.getMetadata().getTotalHits() > 0) {
                     this.handleDataSearchResult(contentQuery, contentQueryResult);
@@ -164,7 +150,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
                 }
             }).catch((reason: any) => {
             api.DefaultErrorHandler.handle(reason);
-        }).done();
+        });
     }
 
     private handleDataSearchResult(contentQuery: ContentQuery,
@@ -177,16 +163,15 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
         });
     }
 
-    private handleNoSearchResultOnRefresh(contentQuery: ContentQuery) {
+    private handleNoSearchResultOnRefresh(contentQuery: ContentQuery): wemQ.Promise<void>  {
         // remove content type facet from search if both content types and date are filtered
         if (this.contentTypesAndRangeFiltersUsed(contentQuery)) {
-            this.refreshDataAndHandleResponse(this.cloneContentQueryNoContentTypes(contentQuery));
+            return this.refreshDataAndHandleResponse(this.cloneContentQueryNoContentTypes(contentQuery));
         } else if (this.hasSearchStringSet()) { // if still no result and search text is set remove last modified facet
             this.deselectAll();
-            this.searchDataAndHandleResponse(this.cloneContentQueryNoAggregations(contentQuery));
-        } else {
-            this.reset();
+            return this.searchDataAndHandleResponse(this.cloneContentQueryNoAggregations(contentQuery));
         }
+        return this.reset();
     }
 
     private contentTypesAndRangeFiltersUsed(contentQuery: ContentQuery): boolean {
@@ -255,7 +240,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
         }).done();
     }
 
-    protected resetFacets(suppressEvent?: boolean, doResetAll?: boolean) {
+    protected resetFacets(suppressEvent?: boolean, doResetAll?: boolean): wemQ.Promise<void>  {
 
         let contentQuery: ContentQuery = this.buildAggregationsQuery();
 
