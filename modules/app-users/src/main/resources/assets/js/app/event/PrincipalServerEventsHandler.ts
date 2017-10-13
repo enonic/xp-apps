@@ -62,12 +62,12 @@ export class PrincipalServerEventsHandler {
             const id = this.getId(item);
             if (!path.hasParent()) {
                 // it's a userStore
-                new GetUserStoreByKeyRequest(UserStoreKey.fromString(id)).sendAndParse().done(userStore => {
+                new GetUserStoreByKeyRequest(UserStoreKey.fromString(id)).sendAndParse().then(userStore => {
                     if (PrincipalServerEventsHandler.debug) {
                         console.debug('PrincipalServerEventsHandler.loaded userstore:', userStore);
                     }
                     this.onUserItemLoaded(event, null, userStore);
-                }, api.DefaultErrorHandler.handle);
+                }).catch(api.DefaultErrorHandler.handle);
             } else {
                 // it's a principal, fetch him as well as userStore
                 const name = path.getElement(path.getElements().length - 1);
@@ -77,25 +77,24 @@ export class PrincipalServerEventsHandler {
                 }
                 const key = PrincipalKey.fromString(id);
                 if (key.isRole()) {
-                    new GetPrincipalByKeyRequest(key).sendAndParse().done(principal => {
+                    new GetPrincipalByKeyRequest(key).sendAndParse().then(principal => {
                         if (PrincipalServerEventsHandler.debug) {
                             console.debug('PrincipalServerEventsHandler.loaded principal:', principal);
                         }
                         this.onUserItemLoaded(event, principal, null);
-                    }, api.DefaultErrorHandler.handle);
+                    }).catch(api.DefaultErrorHandler.handle);
                 } else {
-                    new GetPrincipalByKeyRequest(key).sendAndParse().done(principal => {
+                    new GetPrincipalByKeyRequest(key).sendAndParse().then(principal => {
                         if (PrincipalServerEventsHandler.debug) {
                             console.debug('PrincipalServerEventsHandler.loaded principal:', principal);
                         }
-                        if (!!principal) {
-                            return new GetUserStoreByKeyRequest(principal.getKey().getUserStore()).sendAndParse().done(userStore => {
+                        if (principal) {
+                            return new GetUserStoreByKeyRequest(principal.getKey().getUserStore()).sendAndParse().then(userStore => {
                                 this.onUserItemLoaded(event, principal, userStore);
                             });
-                        } else {
-                            console.warn('PrincipalServerEventsHandler: could not load principal[' + key.toString() + ']');
                         }
-                    }, api.DefaultErrorHandler.handle);
+                        console.warn('PrincipalServerEventsHandler: could not load principal[' + key.toString() + ']');
+                    }).catch(api.DefaultErrorHandler.handle);
                 }
             }
         });
