@@ -38,23 +38,7 @@ export class UserMembershipsWizardStepForm extends api.app.wizard.WizardStepForm
             RoleKeys.AUTHENTICATED]);
 
         this.groups = PrincipalComboBox.create().setLoader(groupsLoader).build();
-        groupsLoader.load();
         this.roles = PrincipalComboBox.create().setLoader(rolesLoader).build();
-        rolesLoader.load();
-
-        let groupsHandler = () => {
-            this.groupsLoaded = true;
-            this.selectMembership();
-            this.groups.unLoaded(groupsHandler);
-        };
-        let rolesHandler = () => {
-            this.rolesLoaded = true;
-            this.selectMembership();
-            this.roles.unLoaded(rolesHandler);
-        };
-
-        this.groups.onLoaded(groupsHandler);
-        this.roles.onLoaded(rolesHandler);
 
         let groupsFormItem = new FormItemBuilder(this.groups).setLabel(i18n('field.groups')).build();
 
@@ -87,7 +71,10 @@ export class UserMembershipsWizardStepForm extends api.app.wizard.WizardStepForm
         if (!!this.principal && this.groupsLoaded && this.rolesLoaded) {
 
             this.groups.clearSelection();
+            this.groups.resetBaseValues();
+
             this.roles.clearSelection();
+            this.roles.resetBaseValues();
 
             let groups = this.principal.asUser().getMemberships().filter((el) => {
                 return el.isGroup();
@@ -101,17 +88,8 @@ export class UserMembershipsWizardStepForm extends api.app.wizard.WizardStepForm
                 return el.getKey().toString();
             });
 
-            this.groups.getDisplayValues().filter((principal: Principal) => {
-                return groups.indexOf(principal.getKey().toString()) >= 0;
-            }).forEach((selection) => {
-                this.groups.select(selection);
-            });
-
-            this.roles.getDisplayValues().filter((principal: Principal) => {
-                return roles.indexOf(principal.getKey().toString()) >= 0;
-            }).forEach((selection) => {
-                this.roles.select(selection);
-            });
+            this.groups.setValue(groups.join(';'));
+            this.roles.setValue(roles.join(';'));
         }
     }
 

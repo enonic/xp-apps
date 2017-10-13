@@ -10,7 +10,6 @@ export class RoleMembersWizardStepForm extends PrincipalMembersWizardStepForm {
 
     constructor() {
         super();
-        this.getLoader().load();
     }
 
     getPrincipalMembers(): PrincipalKey[] {
