@@ -15,7 +15,6 @@ import {ItemViewSelectedEvent} from './ItemViewSelectedEvent';
 import {ItemViewContextMenuPosition} from './ItemViewContextMenuPosition';
 import {TextItemType} from './text/TextItemType';
 import {TextComponentView} from './text/TextComponentView';
-import {DragAndDrop} from './DragAndDrop';
 import {Shader} from './Shader';
 import {PageSelectedEvent} from './PageSelectedEvent';
 import {ItemViewDeselectedEvent} from './ItemViewDeselectedEvent';
@@ -31,6 +30,9 @@ import {LayoutComponentView} from './layout/LayoutComponentView';
 import {RegionItemType} from './RegionItemType';
 import {CreateItemViewConfig} from './CreateItemViewConfig';
 import {PageModel} from './PageModel';
+import {DragAndDrop} from './DragAndDrop';
+import {ItemViewFactory} from './ItemViewFactory';
+import {PageViewController} from './PageViewController';
 import PageMode = api.content.page.PageMode;
 import PageModeChangedEvent = api.content.page.PageModeChangedEvent;
 import Component = api.content.page.region.Component;
@@ -42,7 +44,9 @@ export class PageViewBuilder {
 
     liveEditModel: LiveEditModel;
 
-    itemViewProducer: ItemViewIdProducer;
+    itemViewIdProducer: ItemViewIdProducer;
+
+    itemViewFactory: ItemViewFactory;
 
     element: api.dom.Body;
 
@@ -51,8 +55,13 @@ export class PageViewBuilder {
         return this;
     }
 
-    setItemViewProducer(value: ItemViewIdProducer): PageViewBuilder {
-        this.itemViewProducer = value;
+    setItemViewIdProducer(value: ItemViewIdProducer): PageViewBuilder {
+        this.itemViewIdProducer = value;
+        return this;
+    }
+
+    setItemViewFactory(value: ItemViewFactory): PageViewBuilder {
+        this.itemViewFactory = value;
         return this;
     }
 
@@ -103,21 +112,16 @@ export class PageView
 
     private lockedContextMenu: ItemViewContextMenu;
 
-    private disableContextMenu: boolean;
-
     private closeTextEditModeButton: api.dom.Element;
 
     private editorToolbar: api.dom.DivEl;
-
-    private highlightingAllowed: boolean;
-
-    private nextClickDisabled: boolean;
 
     constructor(builder: PageViewBuilder) {
 
         super(new ItemViewBuilder()
             .setLiveEditModel(builder.liveEditModel)
-            .setItemViewIdProducer(builder.itemViewProducer)
+            .setItemViewIdProducer(builder.itemViewIdProducer)
+            .setItemViewFactory(builder.itemViewFactory)
             .setViewer(new api.content.ContentSummaryViewer())
             .setType(PageItemType.get())
             .setElement(builder.element)
@@ -131,15 +135,14 @@ export class PageView
 
         this.registerPageModel();
 
+        this.registerPageViewController();
+
         this.regionViews = [];
         this.viewsById = {};
         this.itemViewAddedListeners = [];
         this.itemViewRemovedListeners = [];
         this.pageLockedListeners = [];
         this.ignorePropertyChanges = false;
-        this.disableContextMenu = false;
-        this.highlightingAllowed = true;
-        this.nextClickDisabled = false;
 
         this.addClassEx('page-view');
 
@@ -160,6 +163,29 @@ export class PageView
             this.setLocked(true);
         }
 
+    }
+
+    private registerPageViewController() {
+        const ctrl = PageViewController.get();
+        const textEditModeListener = this.setTextEditMode.bind(this);
+
+        ctrl.onTextEditModeChanged(textEditModeListener);
+
+        this.onRemoved(event => {
+            ctrl.unTextEditModeChanged(textEditModeListener)
+        });
+    }
+
+    protected isDragging(): boolean {
+        return DragAndDrop.get().isDragging();
+    }
+
+    public createDraggable(item: JQuery) {
+        return DragAndDrop.get().createDraggable(item);
+    }
+
+    public destroyDraggable(item: JQuery) {
+        return DragAndDrop.get().destroyDraggable(item);
     }
 
     private registerPageModel() {
@@ -298,15 +324,12 @@ export class PageView
             this.editorToolbar = new api.dom.DivEl('mce-toolbar-container');
             this.appendChild(this.editorToolbar);
             this.addClass('has-toolbar-container');
+            PageViewController.get().setEditorToolbar(this.editorToolbar);
         }
     }
 
-    hasToolbarContainer(): boolean {
+    private hasToolbarContainer(): boolean {
         return this.hasClass('has-toolbar-container');
-    }
-
-    getEditorToolbarHeight(): number {
-        return !!this.editorToolbar ? this.editorToolbar.getEl().getHeightWithMargin() : 0;
     }
 
     private setIgnorePropertyChanges(value: boolean) {
@@ -323,8 +346,7 @@ export class PageView
      }
      */
     highlightSelected() {
-        let isDragging = DragAndDrop.get().isDragging();
-        if (!this.isTextEditMode() && !this.isLocked() && !isDragging) {
+        if (!this.isTextEditMode() && !this.isLocked() && !this.isDragging()) {
             super.highlightSelected();
         }
     }
@@ -355,8 +377,7 @@ export class PageView
         });
 
         this.onMouseOverView(() => {
-            let isDragging = DragAndDrop.get().isDragging();
-            if (isDragging && this.lockedContextMenu) {
+            if (this.isDragging() && this.lockedContextMenu) {
                 if (this.lockedContextMenu.isVisible()) {
                     this.lockedContextMenu.hide();
                 }
@@ -498,6 +519,7 @@ export class PageView
         }
 
         this.notifyPageLockChanged(locked);
+        PageViewController.get().setLocked(locked);
     }
 
     isTextEditMode(): boolean {
@@ -505,7 +527,7 @@ export class PageView
     }
 
     setTextEditMode(flag: boolean) {
-        this.setHighlightingAllowed(!flag);
+        PageViewController.get().setHighlightingDisabled(flag);
         this.toggleClass('text-edit-mode', flag);
 
         let textItemViews = this.getItemViewsByType(TextItemType.get());
@@ -538,7 +560,7 @@ export class PageView
     }
 
     private addVerticalSpaceForEditorToolbar() {
-        this.getPageView().getEl().setPosition('relative');
+        this.getEl().setPosition('relative');
         this.updateVerticalSpaceForEditorToolbar();
         this.toggleStickyToolbar();
     }
@@ -551,7 +573,7 @@ export class PageView
         let result = this.getEditorToolbarWidth();
 
         if (!!result) {
-            this.getPageView().getEl().setTop(this.getEditorToolbarWidth() + 'px');
+            this.getEl().setTop(this.getEditorToolbarWidth() + 'px');
         } else {
             this.waitUntilEditorToolbarShown();
         }
@@ -567,7 +589,7 @@ export class PageView
             attempts++;
             toolbarHeight = this.getEditorToolbarWidth();
             if (!!toolbarHeight) {
-                this.getPageView().getEl().setTop(toolbarHeight + 'px');
+                this.getEl().setTop(toolbarHeight + 'px');
                 clearInterval(intervalId);
             } else if (attempts > 10) {
                 clearInterval(intervalId);
@@ -699,7 +721,7 @@ export class PageView
     }
 
     hasSelectedView(): boolean {
-        return !!this.getSelectedView();
+        return !!SelectedHighlighter.get().getSelectedView();
     }
 
     getSelectedView(): ItemView {
@@ -925,7 +947,7 @@ export class PageView
                         .setData(component)
                         .setElement(childElement)
                         .setParentElement(parentElement ? parentElement : this);
-                    componentView = <ComponentView<Component>> itemType.createView(itemViewConfig);
+                    componentView = <ComponentView<Component>>this.createView(itemType, itemViewConfig);
 
                     this.registerFragmentComponentView(componentView);
                 }
@@ -999,29 +1021,5 @@ export class PageView
         this.pageLockedListeners.forEach((listener) => {
             listener(locked);
         });
-    }
-
-    setDisabledContextMenu(value: boolean) {
-        this.disableContextMenu = value;
-    }
-
-    isDisabledContextMenu(): boolean {
-        return this.disableContextMenu;
-    }
-
-    setHighlightingAllowed(value: boolean) {
-        this.highlightingAllowed = value;
-    }
-
-    setNextClickDisabled(value: boolean) {
-        this.nextClickDisabled = value;
-    }
-
-    isHighlightingAllowed(): boolean {
-        return this.highlightingAllowed;
-    }
-
-    isNextClickDisabled(): boolean {
-        return this.nextClickDisabled;
     }
 }

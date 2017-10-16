@@ -1,5 +1,6 @@
 import './../api.ts';
 import {ComponentView, ComponentViewBuilder} from './ComponentView';
+import {DragAndDrop} from './DragAndDrop';
 import Component = api.content.page.region.Component;
 import ContentSummary = api.content.ContentSummary;
 import ContentSummaryBuilder = api.content.ContentSummaryBuilder;
@@ -29,6 +30,10 @@ export class ContentBasedComponentView<COMPONENT extends Component>
         this.contentTypeName = builder.contentTypeName;
 
         this.addEditActionToMenu();
+    }
+
+    protected isDragging(): boolean {
+        return DragAndDrop.get().isDragging();
     }
 
     private addEditActionToMenu() {

@@ -1,7 +1,6 @@
 import './../api.ts';
 import {ClickPosition} from './ClickPosition';
 import {ItemView, ItemViewBuilder} from './ItemView';
-import {ComponentView} from './ComponentView';
 import {RegionItemType} from './RegionItemType';
 import {RegionViewContextMenuTitle} from './RegionViewContextMenuTitle';
 import {RegionComponentViewer} from './RegionComponentViewer';
@@ -9,22 +8,22 @@ import {RegionPlaceholder} from './RegionPlaceholder';
 import {LiveEditModel} from './LiveEditModel';
 import {ItemViewAddedEvent} from './ItemViewAddedEvent';
 import {ItemViewRemovedEvent} from './ItemViewRemovedEvent';
-import {DragAndDrop} from './DragAndDrop';
 import {ItemViewContextMenuPosition} from './ItemViewContextMenuPosition';
 import {RegionSelectedEvent} from './RegionSelectedEvent';
 import {ComponentAddedEvent} from './ComponentAddedEvent';
 import {ComponentRemovedEvent} from './ComponentRemovedEvent';
-import {LayoutComponentView} from './layout/LayoutComponentView';
 import {ItemType} from './ItemType';
 import {CreateItemViewConfig} from './CreateItemViewConfig';
+import {PageViewController} from './PageViewController';
+import {LayoutItemType} from './layout/LayoutItemType';
+import {ComponentView} from './ComponentView';
+import {PageView} from './PageView';
+import {LayoutComponentView} from './layout/LayoutComponentView';
+import {DragAndDrop} from './DragAndDrop';
 import Region = api.content.page.region.Region;
 import RegionPath = api.content.page.region.RegionPath;
 import Component = api.content.page.region.Component;
 import ComponentPath = api.content.page.region.ComponentPath;
-import PropertyTree = api.data.PropertyTree;
-import ComponentType = api.content.page.region.ComponentType;
-import DescriptorBasedComponent = api.content.page.region.DescriptorBasedComponent;
-import DescriptorBasedComponentBuilder = api.content.page.region.DescriptorBasedComponentBuilder;
 import i18n = api.util.i18n;
 
 export class RegionViewBuilder {
@@ -68,8 +67,6 @@ export class RegionViewBuilder {
 export class RegionView
     extends ItemView {
 
-    private parentView: ItemView;
-
     private region: Region;
 
     private componentViews: ComponentView<Component>[];
@@ -95,10 +92,16 @@ export class RegionView
     public static debug: boolean = false;
 
     constructor(builder: RegionViewBuilder) {
-        super(new ItemViewBuilder().setItemViewIdProducer(builder.parentView.getItemViewIdProducer()).setType(
-            RegionItemType.get()).setElement(builder.element).setPlaceholder(new RegionPlaceholder(builder.region)).setViewer(
-            new RegionComponentViewer()).setParentElement(builder.parentElement).setParentView(builder.parentView).setContextMenuTitle(
-            new RegionViewContextMenuTitle(builder.region)));
+        super(new ItemViewBuilder()
+            .setItemViewIdProducer(builder.parentView.getItemViewIdProducer())
+            .setItemViewFactory(builder.parentView.getItemViewFactory())
+            .setType(RegionItemType.get())
+            .setElement(builder.element)
+            .setPlaceholder(new RegionPlaceholder(builder.region))
+            .setViewer(new RegionComponentViewer())
+            .setParentElement(builder.parentElement)
+            .setParentView(builder.parentView)
+            .setContextMenuTitle(new RegionViewContextMenuTitle(builder.region)));
 
         this.addClassEx('region-view');
 
@@ -106,7 +109,6 @@ export class RegionView
         this.componentIndex = 0;
         this.itemViewAddedListeners = [];
         this.itemViewRemovedListeners = [];
-        this.parentView = builder.parentView;
         this.initListeners();
 
         this.setRegion(builder.region);
@@ -153,9 +155,7 @@ export class RegionView
         this.onMouseDown(this.memorizeLastMouseDownTarget.bind(this));
 
         this.mouseOverListener = (e: MouseEvent) => {
-            let isDragging = DragAndDrop.get().isDragging();
-
-            if (isDragging && this.isElementOverRegion((<HTMLElement>e.target))) {
+            if (this.isDragging() && this.isElementOverRegion((<HTMLElement>e.target))) {
                 this.highlight();
             }
         };
@@ -189,15 +189,6 @@ export class RegionView
         }));
 
         this.addContextMenuActions(actions);
-    }
-
-    getParentItemView(): ItemView {
-        return this.parentView;
-    }
-
-    setParentItemView(itemView: ItemView) {
-        super.setParentItemView(itemView);
-        this.parentView = itemView;
     }
 
     setRegion(region: Region) {
@@ -247,20 +238,19 @@ export class RegionView
             }
     */
     highlightSelected() {
-        let isDragging = DragAndDrop.get().isDragging();
-        if (!this.getPageView().isTextEditMode() && !isDragging) {
+        if (!PageViewController.get().isTextEditMode() && !this.isDragging()) {
             super.highlightSelected();
         }
     }
 
     showCursor() {
-        if (!this.getPageView().isTextEditMode()) {
+        if (!PageViewController.get().isTextEditMode()) {
             super.showCursor();
         }
     }
 
     handleClick(event: MouseEvent) {
-        let pageView = this.getPageView();
+        let pageView = <PageView>this.getPageView();
         if (pageView.isTextEditMode()) {
             event.stopPropagation();
             if (!pageView.hasTargetWithinTextComponent(this.mouseDownLastTarget)) {
@@ -392,7 +382,7 @@ export class RegionView
 
         for (let i = 0; i < this.componentViews.length; i++) {
             let componentView = this.componentViews[i];
-            if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, LayoutComponentView)) {
+            if (componentView.getType().equals(LayoutItemType.get())) {
 
                 let layoutView = <LayoutComponentView>componentView;
                 let match = layoutView.getComponentViewByPath(path.removeFirstLevel());
@@ -403,10 +393,6 @@ export class RegionView
         }
 
         return null;
-    }
-
-    hasParentLayoutComponentView(): boolean {
-        return api.ObjectHelper.iFrameSafeInstanceOf(this.parentView, LayoutComponentView);
     }
 
     hasOnlyMovingComponentViews(): boolean {
@@ -431,6 +417,10 @@ export class RegionView
             // remove component modifies the components array so we can't rely on forEach
             this.removeComponentView(this.componentViews[0]);
         }
+    }
+
+    getPageView(): PageView {
+        return <PageView>super.getPageView();
     }
 
     remove(): RegionView {
@@ -487,18 +477,6 @@ export class RegionView
         return this;
     }
 
-    public createComponent(componentType: ComponentType): Component {
-
-        let builder = componentType.newComponentBuilder().setName(componentType.getDefaultName());
-
-        if (api.ObjectHelper.iFrameSafeInstanceOf(builder, DescriptorBasedComponentBuilder)) {
-            let descriptorBuilder = <DescriptorBasedComponentBuilder<DescriptorBasedComponent>> builder;
-            descriptorBuilder.setConfig(new PropertyTree());
-        }
-
-        return builder.build();
-    }
-
     private notifyItemViewRemovedForAll(itemViews: ItemView[]) {
         itemViews.forEach((itemView: ItemView) => {
             this.notifyItemViewRemoved(itemView);
@@ -537,7 +515,7 @@ export class RegionView
         children.forEach((childElement: api.dom.Element) => {
             let itemType = ItemType.fromElement(childElement);
             let isComponentView = api.ObjectHelper.iFrameSafeInstanceOf(childElement, ComponentView);
-            let component;
+            let component: Component;
             let componentView;
 
             if (isComponentView) {
@@ -557,9 +535,13 @@ export class RegionView
                 component = region.getComponentByIndex(this.componentIndex++);
                 if (component) {
 
-                    componentView = <ComponentView<Component>> itemType.createView(
-                        new CreateItemViewConfig().setParentView(this).setData(component).setElement(childElement).setParentElement(
-                            parentElement ? parentElement : this));
+                    componentView = <ComponentView<Component>>this.createView(
+                        itemType,
+                        new CreateItemViewConfig<RegionView, Component>()
+                            .setParentView(this)
+                            .setData(component)
+                            .setElement(childElement)
+                            .setParentElement(parentElement ? parentElement : this));
 
                     this.registerComponentView(componentView, this.componentIndex);
                 }
@@ -567,6 +549,10 @@ export class RegionView
                 this.doParseComponentViews(childElement);
             }
         });
+    }
+
+    protected isDragging(): boolean {
+        return DragAndDrop.get().isDragging();
     }
 
     // TODO: by task about using HTML5 DnD api (JVS 2014-06-23) - do not remove

@@ -16,6 +16,7 @@ import {Shader} from './Shader';
 import {Cursor} from './Cursor';
 import {ComponentViewDragStartedEvent} from './ComponentViewDragStartedEvent';
 import {ComponentViewDragStoppedEvent} from './ComponentViewDraggingStoppedEvent';
+import {DefaultItemViewFactory} from './ItemViewFactory';
 import Exception = api.Exception;
 
 
@@ -70,7 +71,8 @@ export class LiveEditPage {
         let body = api.dom.Body.get().loadExistingChildren();
         try {
             this.pageView = new PageViewBuilder()
-                .setItemViewProducer(new ItemViewIdProducer())
+                .setItemViewIdProducer(new ItemViewIdProducer())
+                .setItemViewFactory(new DefaultItemViewFactory())
                 .setLiveEditModel(liveEditModel)
                 .setElement(body).build();
         } catch (error) {

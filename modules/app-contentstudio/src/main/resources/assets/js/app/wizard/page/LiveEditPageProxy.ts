@@ -191,11 +191,13 @@ export class LiveEditPageProxy {
     }
 
     public createDraggable(item: JQuery) {
-        this.liveEditWindow.api.liveedit.DragAndDrop.get().createDraggable(item);
+        this.pageView.createDraggable(item);
+        //this.liveEditWindow.DragAndDrop.get().createDraggable(item);
     }
 
     public destroyDraggable(item: JQuery) {
-        this.liveEditWindow.api.liveedit.DragAndDrop.get().destroyDraggable(item);
+        this.pageView.destroyDraggable(item);
+        //this.liveEditWindow.DragAndDrop.get().destroyDraggable(item);
     }
 
     public getDragMask(): api.ui.mask.DragMask {
@@ -326,11 +328,17 @@ export class LiveEditPageProxy {
             success: (htmlAsString: string) => {
                 let newElement = api.dom.Element.fromString(htmlAsString);
                 let itemViewIdProducer = componentView.getItemViewIdProducer();
+                let itemViewFactory = componentView.getItemViewFactory();
 
-                let createViewConfig = new CreateItemViewConfig<RegionView, Component>().setItemViewProducer(
-                    itemViewIdProducer).setParentView(componentView.getParentItemView()).setData(componentView.getComponent()).setElement(
-                    newElement);
-                let newComponentView: ComponentView<Component> = componentView.getType().createView(createViewConfig);
+                let createViewConfig = new CreateItemViewConfig<RegionView, Component>()
+                    .setItemViewIdProducer(itemViewIdProducer)
+                    .setItemViewFactory(itemViewFactory)
+                    .setParentView(componentView.getParentItemView())
+                    .setData(componentView.getComponent())
+                    .setElement(newElement);
+
+                let newComponentView = <ComponentView<Component>>itemViewFactory.createView(componentView.getType(),
+                    createViewConfig);
 
                 componentView.replaceWith(newComponentView);
 

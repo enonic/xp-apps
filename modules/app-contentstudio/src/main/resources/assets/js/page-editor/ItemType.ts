@@ -1,7 +1,5 @@
 import './../api.ts';
 import {ItemTypeConfig} from './ItemTypeConfig';
-import {CreateItemViewConfig} from './CreateItemViewConfig';
-import {ItemView} from './ItemView';
 import StringHelper = api.util.StringHelper;
 import i18n = api.util.i18n;
 
@@ -46,23 +44,14 @@ export class ItemType
         return api.content.page.region.ComponentType.byShortName(this.shortName);
     }
 
-    createView(config: CreateItemViewConfig<ItemView, any>): ItemView {
-        throw new Error('Must be implemented by inheritors');
-    }
-
     equals(o: api.Equitable): boolean {
 
         if (!api.ObjectHelper.iFrameSafeInstanceOf(o, ItemType)) {
             return false;
         }
 
-        let other = <ItemType>o;
-
-        if (!api.ObjectHelper.stringEquals(this.shortName, other.shortName)) {
-            return false;
-        }
-
-        return true;
+        const other = <ItemType>o;
+        return api.ObjectHelper.stringEquals(this.shortName, other.shortName);
     }
 
     static getDraggables(): ItemType[] {

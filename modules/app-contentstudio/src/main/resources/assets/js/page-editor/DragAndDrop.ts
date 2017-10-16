@@ -17,6 +17,7 @@ import {PageView} from './PageView';
 import Component = api.content.page.region.Component;
 import DragHelper = api.ui.DragHelper;
 import i18n = api.util.i18n;
+import {LayoutItemType} from './layout/LayoutItemType';
 
 export class DragAndDrop {
 
@@ -289,9 +290,12 @@ export class DragAndDrop {
 
                 let newComponent = regionView.createComponent(componentType.toComponentType());
 
-                this.draggedComponentView = componentType.createView(
-                    new CreateItemViewConfig<RegionView, Component>().setParentView(regionView).setParentElement(regionView).setData(
-                        newComponent).setPositionIndex(componentIndex));
+                this.draggedComponentView = <ComponentView<Component>> this.pageView.createView(componentType,
+                    new CreateItemViewConfig<RegionView, Component>()
+                        .setParentView(regionView)
+                        .setParentElement(regionView)
+                        .setData(newComponent)
+                        .setPositionIndex(componentIndex));
 
                 regionView.addComponentView(this.draggedComponentView, componentIndex, true);
 
@@ -578,7 +582,7 @@ export class DragAndDrop {
     }
 
     private isDraggingLayoutOverLayout(regionView: RegionView, draggingItemType: ItemType): boolean {
-        let isLayout = regionView.hasParentLayoutComponentView() && draggingItemType.getShortName() === 'layout';
+        let isLayout = regionView.hasParentLayoutComponentView() && draggingItemType.equals(LayoutItemType.get());
         if (!isLayout) {
             let itemType = this.getItemType();
             if (FragmentItemType.get().equals(itemType)) {
@@ -632,3 +636,4 @@ export class DragAndDrop {
     }
 
 }
+

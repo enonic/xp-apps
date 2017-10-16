@@ -1,7 +1,7 @@
 import {IssueDialog} from './IssueDialog';
 import {CreateIssueRequest} from '../resource/CreateIssueRequest';
 import {PublishRequest} from '../PublishRequest';
-import {IssueDetailsDialog} from './IssueDetailsDialog';
+import {Issue} from '../Issue';
 import LabelEl = api.dom.LabelEl;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import DialogButton = api.ui.dialog.DialogButton;
@@ -9,7 +9,8 @@ import AEl = api.dom.AEl;
 import i18n = api.util.i18n;
 import PrincipalKey = api.security.PrincipalKey;
 
-export class CreateIssueDialog extends IssueDialog {
+export class CreateIssueDialog
+    extends IssueDialog {
 
     private static INSTANCE: CreateIssueDialog;
 
@@ -18,6 +19,8 @@ export class CreateIssueDialog extends IssueDialog {
     private cancelButton: DialogButton;
 
     private backButton: AEl;
+
+    private issueCreatedListeners: { (issue: Issue): void }[] = [];
 
     protected constructor() {
         super(i18n('dialog.newIssue'));
@@ -84,18 +87,30 @@ export class CreateIssueDialog extends IssueDialog {
 
             createIssueRequest.sendAndParse().then((issue) => {
                 api.notify.showSuccess(i18n('notify.issue.created'));
-                if ( approvers.length > issue.getApprovers().length ) {
+                if (approvers.length > issue.getApprovers().length) {
                     api.notify.showWarning(i18n('notify.issue.assignees.norights'));
                 }
                 this.close();
                 this.reset();
-                IssueDetailsDialog.get().setIssue(issue).open();
+                this.notifyIssueCreated(issue);
             }).catch((reason) => {
                 if (reason && reason.message) {
                     api.notify.showError(reason.message);
                 }
             });
         }
+    }
+
+    private notifyIssueCreated(issue: Issue) {
+        this.issueCreatedListeners.forEach(listener => listener(issue));
+    }
+
+    public onIssueCreated(listener: (issue: Issue) => void) {
+        this.issueCreatedListeners.push(listener);
+    }
+
+    public unIssueCreated(listener: (issue: Issue) => void) {
+        this.issueCreatedListeners = this.issueCreatedListeners.filter(curr => curr !== listener);
     }
 
     public lockPublishItems() {
@@ -143,7 +158,8 @@ export class CreateIssueDialog extends IssueDialog {
     }
 }
 
-export class CreateIssueAction extends api.ui.Action {
+export class CreateIssueAction
+    extends api.ui.Action {
 
     constructor(itemCount: number) {
         super();

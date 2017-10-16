@@ -1,9 +1,6 @@
 import './../api.ts';
-import {PageView} from './PageView';
-import {CreateItemViewConfig} from './CreateItemViewConfig';
 import {ItemTypeConfig, ItemTypeConfigJson} from './ItemTypeConfig';
 import {ItemType} from './ItemType';
-import i18n = api.util.i18n;
 
 export class PageItemType
     extends ItemType {
@@ -31,10 +28,6 @@ export class PageItemType
             },
             contextMenuConfig: ['reset']
         });
-    }
-
-    createView(config: CreateItemViewConfig<any, any>): PageView {
-        throw new Error(i18n('live.view.itemtype.error.createviewnotsupported'));
     }
 }
 

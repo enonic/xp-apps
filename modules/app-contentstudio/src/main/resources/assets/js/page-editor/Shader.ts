@@ -1,5 +1,4 @@
 import './../api.ts';
-import {PageView} from './PageView';
 import Element = api.dom.Element;
 import DivEl = api.dom.DivEl;
 import Body = api.dom.Body;
@@ -87,7 +86,7 @@ export class Shader {
             return;
         }
 
-        if (api.ObjectHelper.iFrameSafeInstanceOf(element, PageView)) {
+        if (api.ClassHelper.getClassName(element) == 'PageView') {
             this.resizeToPage();
         } else {
             this.resizeToElement(element);

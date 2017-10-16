@@ -1,10 +1,6 @@
 import './../api.ts';
 import {ItemType} from './ItemType';
 import {ItemTypeConfig, ItemTypeConfigJson} from './ItemTypeConfig';
-import {CreateItemViewConfig} from './CreateItemViewConfig';
-import {ItemView} from './ItemView';
-import {RegionView, RegionViewBuilder} from './RegionView';
-import Region = api.content.page.region.Region;
 
 export class RegionItemType
     extends ItemType {
@@ -36,11 +32,6 @@ export class RegionItemType
             },
             contextMenuConfig: ['parent', 'clearRegion']
         });
-    }
-
-    createView(config: CreateItemViewConfig<ItemView, Region>): RegionView {
-        return new RegionView(new RegionViewBuilder().setParentView(config.parentView).setParentElement(config.parentElement).setRegion(
-            config.data).setElement(config.element));
     }
 }
 

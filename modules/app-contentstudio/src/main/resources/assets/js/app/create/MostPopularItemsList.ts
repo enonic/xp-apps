@@ -7,6 +7,8 @@ import ContentTypeSummary = api.schema.content.ContentTypeSummary;
 
 export class MostPopularItemsList extends NewContentDialogList {
 
+    public static DEFAULT_MAX_ITEMS: number = 2;
+
     constructor() {
         super('most-popular-content-types-list');
     }
@@ -42,7 +44,7 @@ export class MostPopularItemsList extends NewContentDialogList {
             });
         let aggregatedList: ContentTypeInfo[] = this.getAggregatedItemList(allowedContentTypes);
 
-        for (let i = 0; i < aggregatedList.length && i < MostPopularItemsBlock.DEFAULT_MAX_ITEMS; i++) {
+        for (let i = 0; i < aggregatedList.length && i < MostPopularItemsList.DEFAULT_MAX_ITEMS; i++) {
             let contentType: ContentTypeSummary = api.util.ArrayHelper.findElementByFieldValue(contentTypes, 'name',
                 aggregatedList[i].contentType);
             mostPopularItems.push(new MostPopularItem(contentType, aggregatedList[i].count));

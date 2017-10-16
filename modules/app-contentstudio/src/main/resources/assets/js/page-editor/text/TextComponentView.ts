@@ -4,9 +4,10 @@ import {TextItemType} from './TextItemType';
 import {TextPlaceholder} from './TextPlaceholder';
 import {TextComponentViewer} from './TextComponentViewer';
 import {LiveEditPageDialogCreatedEvent} from '../LiveEditPageDialogCreatedEvent';
-import {DragAndDrop} from '../DragAndDrop';
 import {Highlighter} from '../Highlighter';
 import {ItemView} from '../ItemView';
+import {PageViewController} from '../PageViewController';
+import {LiveEditPageViewReadyEvent} from '../LiveEditPageViewReadyEvent';
 
 declare var CONFIG;
 
@@ -82,8 +83,6 @@ export class TextComponentView
             this.initialize();
         });
 
-        this.getPageView().appendContainerForTextToolbar();
-
         this.onRemoved(() => {
             this.destroyEditor();
         });
@@ -98,6 +97,10 @@ export class TextComponentView
             if (this.getEl().hasClass(TextComponentView.EDITOR_FOCUSED_CLASS)) {
                 this.processEditorValue();
             }
+        });
+
+        LiveEditPageViewReadyEvent.on(event => {
+            event.getPageView().appendContainerForTextToolbar();
         });
 
         LiveEditPageDialogCreatedEvent.on(handleDialogCreated.bind(this));
@@ -147,8 +150,7 @@ export class TextComponentView
     }
 
     highlight() {
-        let isDragging = DragAndDrop.get().isDragging();
-        if (!this.isEditMode() && !isDragging) {
+        if (!this.isEditMode() && !this.isDragging()) {
             super.highlight();
         }
     }
@@ -157,6 +159,10 @@ export class TextComponentView
         if (!this.isEditMode()) {
             super.unhighlight();
         }
+    }
+
+    protected isDragging(): boolean {
+        return DragAndDrop.get().isDragging();
     }
 
     private initializeRootElement() {
@@ -309,14 +315,13 @@ export class TextComponentView
 
         setTimeout(() => {
             if (!this.anyEditorHasFocus()) {
-                let pageView = this.getPageView();
-                if (pageView.isTextEditMode()) {
-                    pageView.setTextEditMode(false);
+                if (PageViewController.get().isTextEditMode()) {
+                    PageViewController.get().setTextEditMode(false);
                     // preventing mouse click event that triggered blur from further processing in ItemView
-                    pageView.setNextClickDisabled(true);
+                    PageViewController.get().setNextClickDisabled(true);
 
                     // enable mouse click handling if click's target was not ItemView
-                    setTimeout(() => pageView.setNextClickDisabled(false), 200);
+                    setTimeout(() => PageViewController.get().setNextClickDisabled(false), 200);
                 }
             }
         }, 50);
@@ -330,7 +335,7 @@ export class TextComponentView
         }
 
         if (e.keyCode === 27 || saveShortcut) { // esc or Cmd-S
-            this.closePageTextEditMode();
+            PageViewController.get().setTextEditMode(false);
             this.removeClass(TextComponentView.EDITOR_FOCUSED_CLASS);
         } else if ((e.altKey) && e.keyCode === 9) { // alt+tab for OSX
             let nextFocusable = api.dom.FormEl.getNextFocusable(this, '.xp-page-editor-text-view', true);
@@ -410,7 +415,7 @@ export class TextComponentView
     }
 
     private anyEditorHasFocus(): boolean {
-        let textItemViews = this.getPageView().getItemViewsByType(TextItemType.get());
+        let textItemViews = (<PageView>this.getPageView()).getItemViewsByType(TextItemType.get());
 
         let editorFocused = textItemViews.some((view: ItemView) => {
             return view.getEl().hasClass(TextComponentView.EDITOR_FOCUSED_CLASS);
@@ -461,7 +466,7 @@ export class TextComponentView
     }
 
     private startPageTextEditMode() {
-        let pageView = this.getPageView();
+        let pageView = <PageView>this.getPageView();
 
         if (pageView.hasSelectedView()) {
             pageView.getSelectedView().deselect();
@@ -472,13 +477,6 @@ export class TextComponentView
         }
 
         this.giveFocus();
-    }
-
-    private closePageTextEditMode() {
-        let pageView = this.getPageView();
-        if (pageView.isTextEditMode()) {
-            pageView.setTextEditMode(false);
-        }
     }
 
     giveFocus() {
@@ -510,3 +508,6 @@ export class TextComponentView
         return wemjq(this.getHTMLElement()).text().trim();
     }
 }
+
+import {DragAndDrop} from '../DragAndDrop';
+import {PageView} from '../PageView';

@@ -1,6 +1,7 @@
 import './../api.ts';
 import {ElementDimensions, ItemView} from './ItemView';
 import {HighlighterStyle} from './ItemTypeConfig';
+import {PageViewController} from './PageViewController';
 
 export enum HighlighterMode {
     RECTANGLE,
@@ -54,9 +55,7 @@ export class Highlighter
         let dimensions = itemView.getEl().getDimensions();
         let style = itemView.getType().getConfig().getHighlighterStyle();
 
-        if (!!itemView.getPageView() && itemView.getPageView().hasToolbarContainer()) {
-            dimensions.top = dimensions.top - itemView.getPageView().getEditorToolbarHeight();
-        }
+        dimensions.top -= PageViewController.get().getEditorToolbarHeight();
 
         this.resize(dimensions, this.preProcessStyle(style, itemView.isEmpty()));
         this.show();

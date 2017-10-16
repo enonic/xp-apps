@@ -1,9 +1,6 @@
 import './../api.ts';
 import {ItemType} from './ItemType';
 import {ItemTypeConfig, ItemTypeConfigJson} from './ItemTypeConfig';
-import {CreateItemViewConfig} from './CreateItemViewConfig';
-import {PartComponentView} from './part/PartComponentView';
-import {ContentView, ContentViewBuilder} from './ContentView';
 
 export class ContentItemType
     extends ItemType {
@@ -31,12 +28,6 @@ export class ContentItemType
             },
             contextMenuConfig: ['parent', 'opencontent', 'view']
         });
-    }
-
-    createView(config: CreateItemViewConfig<PartComponentView, any>): ContentView {
-        return new ContentView(
-            new ContentViewBuilder().setParentPartComponentView(config.parentView).setParentElement(config.parentElement).setElement(
-                config.element));
     }
 }
 

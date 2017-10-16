@@ -7,28 +7,30 @@ import {ItemViewContextMenuTitle} from './ItemViewContextMenuTitle';
 import {ItemViewPlaceholder} from './ItemViewPlaceholder';
 import {ItemViewContextMenu, ItemViewContextMenuOrientation} from './ItemViewContextMenu';
 import {Shader} from './Shader';
-import {DragAndDrop} from './DragAndDrop';
-import {PageView} from './PageView';
 import {Highlighter} from './Highlighter';
 import {SelectedHighlighter} from './SelectedHighlighter';
 import {Cursor} from './Cursor';
-import {PageItemType} from './PageItemType';
 import {ItemViewId} from './ItemViewId';
 import {ItemViewSelectedEvent} from './ItemViewSelectedEvent';
 import {ItemViewDeselectedEvent} from './ItemViewDeselectedEvent';
-import {RegionView} from './RegionView';
 import {ItemViewIconClassResolver} from './ItemViewIconClassResolver';
-import {ComponentView} from './ComponentView';
 import {CreateItemViewConfig} from './CreateItemViewConfig';
+import {ClickPosition} from './ClickPosition';
 import {FragmentItemType} from './fragment/FragmentItemType';
 import {TextItemType} from './text/TextItemType';
 import {LayoutItemType} from './layout/LayoutItemType';
 import {PartItemType} from './part/PartItemType';
-import {LayoutComponentView} from './layout/LayoutComponentView';
-import {ClickPosition} from './ClickPosition';
 import {ImageItemType} from './image/ImageItemType';
+import {PageViewController} from './PageViewController';
+import {ItemViewFactory} from './ItemViewFactory';
+import {RegionItemType} from './RegionItemType';
+import {PageItemType} from './PageItemType';
 import Component = api.content.page.region.Component;
+import PropertyTree = api.data.PropertyTree;
 import i18n = api.util.i18n;
+import ComponentType = api.content.page.region.ComponentType;
+import DescriptorBasedComponentBuilder = api.content.page.region.DescriptorBasedComponentBuilder;
+import DescriptorBasedComponent = api.content.page.region.DescriptorBasedComponent;
 
 export interface ElementDimensions {
     top: number;
@@ -42,6 +44,8 @@ export class ItemViewBuilder {
     liveEditModel: LiveEditModel;
 
     itemViewIdProducer: ItemViewIdProducer;
+
+    itemViewFactory: ItemViewFactory;
 
     type: ItemType;
 
@@ -66,6 +70,11 @@ export class ItemViewBuilder {
 
     setItemViewIdProducer(value: ItemViewIdProducer): ItemViewBuilder {
         this.itemViewIdProducer = value;
+        return this;
+    }
+
+    setItemViewFactory(value: ItemViewFactory): ItemViewBuilder {
+        this.itemViewFactory = value;
         return this;
     }
 
@@ -116,6 +125,8 @@ export class ItemView
     protected liveEditModel: LiveEditModel;
 
     private itemViewIdProducer: ItemViewIdProducer;
+
+    private itemViewFactory: ItemViewFactory;
 
     private placeholder: ItemViewPlaceholder;
 
@@ -175,6 +186,7 @@ export class ItemView
         this.parentItemView = builder.parentView;
         this.liveEditModel = builder.liveEditModel ? builder.liveEditModel : builder.parentView.getLiveEditModel();
         this.itemViewIdProducer = builder.itemViewIdProducer;
+        this.itemViewFactory = builder.itemViewFactory;
         this.contextMenuTitle = builder.contextMenuTitle;
 
         this.addClassEx('item-view');
@@ -269,7 +281,7 @@ export class ItemView
         Shader.get().onClicked(this.shaderClickedListener);
 
         this.mouseOverViewListener = () => {
-            let isRegistered = !!this.getParentItemView() || api.ObjectHelper.iFrameSafeInstanceOf(this, PageView);
+            let isRegistered = !!this.getParentItemView() || PageItemType.get().equals(this.getType());
             if (ItemView.debug) {
                 console.log('ItemView[' + this.toString() + '].mouseOverViewListener registered: ' + isRegistered);
             }
@@ -278,9 +290,7 @@ export class ItemView
                 return;
             }
 
-            let isDragging = DragAndDrop.get().isDragging();
-
-            if (!isDragging) {
+            if (!this.isDragging()) {
                 this.showCursor();
                 this.highlight();
             }
@@ -288,7 +298,7 @@ export class ItemView
         this.onMouseOverView(this.mouseOverViewListener);
 
         this.mouseLeaveViewListener = () => {
-            let isRegistered = !!this.getParentItemView() || api.ObjectHelper.iFrameSafeInstanceOf(this, PageView);
+            let isRegistered = !!this.getParentItemView() || PageItemType.get().equals(this.getType());
             if (ItemView.debug) {
                 console.log('ItemView[' + this.toString() + '].mouseLeaveViewListener registered: ' + isRegistered);
             }
@@ -297,9 +307,7 @@ export class ItemView
                 return;
             }
 
-            let isDragging = DragAndDrop.get().isDragging();
-
-            if (!isDragging) {
+            if (!this.isDragging()) {
                 this.resetCursor();
                 this.unhighlight();
             }
@@ -319,6 +327,10 @@ export class ItemView
          */
     }
 
+    protected isDragging(): boolean {
+        throw "Should be overridden, typically DragAndDrop.get().isDragging()";
+    }
+
     protected unbindMouseListeners() {
         this.unMouseEnter(this.mouseEnterListener);
         this.unMouseLeave(this.mouseLeaveListener);
@@ -333,7 +345,7 @@ export class ItemView
     }
 
     highlight() {
-        if (!this.getPageView().isHighlightingAllowed() || this.isViewInsideSelectedContainer()) {
+        if (PageViewController.get().isHighlightingDisabled() || this.isViewInsideSelectedContainer()) {
             return;
         }
         Highlighter.get().highlightItemView(this);
@@ -352,7 +364,7 @@ export class ItemView
     }
 
     highlightSelected() {
-        if (!this.getPageView().isHighlightingAllowed()) {
+        if (PageViewController.get().isHighlightingDisabled()) {
             return;
         }
 
@@ -380,14 +392,6 @@ export class ItemView
 
     resetCursor() {
         Cursor.get().reset();
-    }
-
-    getPageView(): PageView {
-        let itemView: ItemView = this;
-        while (!PageItemType.get().equals(itemView.getType())) {
-            itemView = itemView.parentItemView;
-        }
-        return <PageView>itemView;
     }
 
     remove(): ItemView {
@@ -548,10 +552,8 @@ export class ItemView
     handleClick(event: MouseEvent) {
         event.stopPropagation();
 
-        let pageView = this.getPageView();
-
-        if (pageView.isNextClickDisabled()) {
-            pageView.setNextClickDisabled(false);
+        if (PageViewController.get().isNextClickDisabled()) {
+            PageViewController.get().setNextClickDisabled(false);
             return;
         }
 
@@ -568,7 +570,7 @@ export class ItemView
         }
 
         if (!this.isSelected() || rightClicked) {
-            let selectedView = pageView.getSelectedView();
+            let selectedView = SelectedHighlighter.get().getSelectedView();
             let isViewInsideSelectedContainer = this.isViewInsideSelectedContainer();
             let clickPosition = !this.isEmpty() ? {x: event.pageX, y: event.pageY} : null;
 
@@ -582,8 +584,8 @@ export class ItemView
             if (!selectedView || selectedView === this || !isViewInsideSelectedContainer) {
                 let menuPosition = rightClicked ? null : ItemViewContextMenuPosition.NONE;
 
-                if (pageView.isTextEditMode()) { // if in text edit mode don't select on first click
-                    pageView.setTextEditMode(false);
+                if (PageViewController.get().isTextEditMode()) { // if in text edit mode don't select on first click
+                    PageViewController.get().setTextEditMode(false);
                     this.unhighlight();
                 } else {
                     this.select(clickPosition, menuPosition, false, rightClicked);
@@ -600,7 +602,7 @@ export class ItemView
     handleShaderClick(event: MouseEvent) {
         event.stopPropagation();
 
-        if (this.getPageView().isLocked()) {
+        if (PageViewController.get().isLocked()) {
             return;
         }
         if (this.isSelected()) {
@@ -626,8 +628,12 @@ export class ItemView
         return this.itemViewIdProducer;
     }
 
+    getItemViewFactory(): ItemViewFactory {
+        return this.itemViewFactory;
+    }
+
     showContextMenu(clickPosition?: ClickPosition, menuPosition?: ItemViewContextMenuPosition) {
-        if (this.getPageView().isDisabledContextMenu()) {
+        if (PageViewController.get().isContextMenuDisabled()) {
             return;
         }
 
@@ -728,8 +734,7 @@ export class ItemView
     }
 
     private selectItem() {
-        let pageView = this.getPageView();
-        let selectedView = pageView.getSelectedView();
+        let selectedView = SelectedHighlighter.get().getSelectedView();
 
         if (selectedView === this) {
             // view is already selected
@@ -741,14 +746,16 @@ export class ItemView
 
         // selecting anything should exit the text edit mode
         // do this before highlighting as this might change text component dimensions
-        this.stopTextEditMode();
+        if (PageViewController.get().isTextEditMode()) {
+            PageViewController.get().setTextEditMode(false);
+        }
 
         this.getEl().setData('live-edit-selected', 'true');
 
         //this.shade();
         this.showCursor();
 
-        if (!pageView.isLocked()) {
+        if (!PageViewController.get().isLocked()) {
             this.highlightSelected();
         }
 
@@ -775,15 +782,7 @@ export class ItemView
     }
 
     isDraggableView(): boolean {
-        return !(api.ObjectHelper.iFrameSafeInstanceOf(this, RegionView) ||
-                 api.ObjectHelper.iFrameSafeInstanceOf(this, PageView));
-    }
-
-    private stopTextEditMode() {
-        let pageView = this.getPageView();
-        if (pageView.isTextEditMode()) {
-            pageView.setTextEditMode(false);
-        }
+        return !this.getType().equals(RegionItemType.get()) && !this.getType().equals(PageItemType.get());
     }
 
     private selectPlaceholder() {
@@ -923,7 +922,7 @@ export class ItemView
         }
     }
 
-    protected addComponentView(componentView: ComponentView<Component>, index?: number, isNew: boolean = false) {
+    protected addComponentView(componentView: ItemView, index?: number, isNew: boolean = false) {
         throw new Error('Must be implemented by inheritors');
     }
 
@@ -931,12 +930,28 @@ export class ItemView
         throw new Error('Must be implemented by inheritors');
     }
 
-    protected createComponentView(componentItemType: ItemType): ItemView {
-        let regionView = this.getRegionView();
-        let newComponent = regionView.createComponent(componentItemType.toComponentType());
+    public createView(type: ItemType, config?: CreateItemViewConfig<ItemView, Component>): ItemView {
+        if (!config) {
+            const regionView = this.getRegionView();
+            let newComponent = this.createComponent(type.toComponentType());
+            config = new CreateItemViewConfig<ItemView, Component>()
+                .setParentView(regionView)
+                .setParentElement(regionView)
+                .setData(newComponent);
+        }
+        return this.itemViewFactory.createView(type, config);
+    }
 
-        return componentItemType.createView(
-            new CreateItemViewConfig<RegionView, Component>().setParentView(regionView).setParentElement(regionView).setData(newComponent));
+    public createComponent(componentType: ComponentType): Component {
+
+        let builder = componentType.newComponentBuilder().setName(componentType.getDefaultName());
+
+        if (api.ObjectHelper.iFrameSafeInstanceOf(builder, DescriptorBasedComponentBuilder)) {
+            let descriptorBuilder = <DescriptorBasedComponentBuilder<DescriptorBasedComponent>> builder;
+            descriptorBuilder.setConfig(new PropertyTree());
+        }
+
+        return builder.build();
     }
 
     private getInsertActions(liveEditModel: LiveEditModel): api.ui.Action[] {
@@ -945,7 +960,7 @@ export class ItemView
         let actions = [this.createInsertSubAction('image', ImageItemType.get()),
             this.createInsertSubAction('part', PartItemType.get())];
 
-        let isInRegion = api.ObjectHelper.iFrameSafeInstanceOf(this.getRegionView(), RegionView);
+        let isInRegion = this.getRegionView().getType().equals(RegionItemType.get());
         if (isInRegion && !this.getRegionView().hasParentLayoutComponentView() && !isFragmentContent) {
             actions.push(this.createInsertSubAction('layout', LayoutItemType.get()));
         }
@@ -955,8 +970,21 @@ export class ItemView
         return actions;
     }
 
-    protected getRegionView(): RegionView {
-        throw new Error('Must be implemented by inheritors');
+    hasParentLayoutComponentView(): boolean {
+        const parentView = this.getParentItemView();
+        return !!parentView && parentView.getType().equals(LayoutItemType.get());
+    }
+
+    protected getRegionView(): ItemView {
+        return this.getParentItemView()
+    }
+
+    getPageView(): ItemView {
+        let itemView: ItemView = this;
+        while (!PageItemType.get().equals(itemView.getType())) {
+            itemView = itemView.getParentItemView();
+        }
+        return itemView;
     }
 
     protected createInsertAction(): api.ui.Action {
@@ -981,8 +1009,8 @@ export class ItemView
 
     private createInsertSubAction(label: string, componentItemType: ItemType): api.ui.Action {
         let action = new api.ui.Action(i18n('live.view.insert.' + label)).onExecuted(() => {
-            let componentView = this.createComponentView(componentItemType);
-            this.addComponentView(<ComponentView<Component>>componentView, this.getNewItemIndex(), true);
+            let componentView = this.createView(componentItemType);
+            this.addComponentView(componentView, this.getNewItemIndex(), true);
         });
 
         action.setIconClass(api.StyleHelper.getCommonIconCls(label));
@@ -1005,9 +1033,7 @@ export class ItemView
     }
 
     isContainer(): boolean {
-        return api.ObjectHelper.iFrameSafeInstanceOf(this, PageView) ||
-               api.ObjectHelper.iFrameSafeInstanceOf(this, RegionView) ||
-               api.ObjectHelper.iFrameSafeInstanceOf(this, LayoutComponentView);
+        return this.isDraggableView() || this.getType().equals(LayoutItemType.get());
     }
 
     private isViewInsideSelectedContainer() {

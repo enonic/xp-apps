@@ -1,10 +1,18 @@
 const RelativeErrorsWebpackPlugin = require('./util/relativeErrorsWebpackPlugin');
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
+const CircularDependencyPlugin = require('circular-dependency-plugin');
 
 const extractText = new ExtractTextPlugin({
     filename: './page-editor/styles/_all.css',
     allChunks: true,
     disable: false  //process.env.NODE_ENV === "development"
+});
+
+const detectCirculars = new CircularDependencyPlugin({
+    // exclude detection of files based on a RegExp
+    exclude: /a\.js|node_modules/,
+    // add errors to webpack instead of warnings
+    failOnError: true
 });
 
 module.exports = {
@@ -48,7 +56,8 @@ module.exports = {
     },
     plugins: [
         RelativeErrorsWebpackPlugin,
-        extractText
+        extractText,
+        detectCirculars
     ],
     devtool: 'source-map'
 };

@@ -16,6 +16,7 @@ import {ComponentResetEvent} from '../../page-editor/ComponentResetEvent';
 import {ItemView} from '../../page-editor/ItemView';
 import {ComponentView} from '../../page-editor/ComponentView';
 import {ClickPosition} from '../../page-editor/ClickPosition';
+import {PageViewController} from '../../page-editor/PageViewController';
 import Content = api.content.Content;
 import TreeNode = api.ui.treegrid.TreeNode;
 
@@ -680,7 +681,7 @@ export class PageComponentsView
 
         if (node) {
             itemView = node.getData();
-            pageView = itemView.getPageView();
+            pageView = <PageView>itemView.getPageView();
         } else {
             pageView = this.pageView;
         }
@@ -700,7 +701,7 @@ export class PageComponentsView
         }
 
         this.contextMenu.getMenu().onBeforeAction((action: Action) => {
-            this.pageView.setDisabledContextMenu(true);
+            PageViewController.get().setContextMenuDisabled(true);
             if (action.hasParentAction() && action.getParentAction().getLabel() === i18n('field.insert')) {
                 this.notifyBeforeInsertAction();
             }
@@ -710,7 +711,7 @@ export class PageComponentsView
             this.hidePageComponentsIfInMobileView(action);
 
             setTimeout(() => {
-                this.pageView.setDisabledContextMenu(false);
+                PageViewController.get().setContextMenuDisabled(false);
                 this.contextMenu.getMenu().clearActionListeners();
                 if (this.getHTMLElement().offsetHeight === 0) { // if PCV not visible, for example fragment created, hide highlighter
                     Highlighter.get().hide();

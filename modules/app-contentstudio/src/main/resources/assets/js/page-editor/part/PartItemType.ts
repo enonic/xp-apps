@@ -1,9 +1,5 @@
 import './../../api.ts';
-import {CreateItemViewConfig} from '../CreateItemViewConfig';
-import {PartComponentView, PartComponentViewBuilder} from './PartComponentView';
 import {ComponentItemType} from '../ComponentItemType';
-import {RegionView} from '../RegionView';
-import PartComponent = api.content.page.region.PartComponent;
 
 export class PartItemType
     extends ComponentItemType {
@@ -20,13 +16,6 @@ export class PartItemType
 
     isComponentType(): boolean {
         return true;
-    }
-
-    createView(config: CreateItemViewConfig<RegionView, PartComponent>): PartComponentView {
-
-        return new PartComponentView(new PartComponentViewBuilder().setItemViewProducer(config.itemViewProducer).setParentRegionView(
-            config.parentView).setParentElement(config.parentElement).setComponent(config.data).setElement(config.element).setPositionIndex(
-            config.positionIndex));
     }
 }
 

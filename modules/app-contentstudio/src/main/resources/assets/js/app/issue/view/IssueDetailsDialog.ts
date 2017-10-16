@@ -1,12 +1,11 @@
 import {IssueDialogForm} from './IssueDialogForm';
 import {SchedulableDialog} from '../../dialog/SchedulableDialog';
 import {Issue} from '../Issue';
-import {UpdateIssueDialog} from './UpdateIssueDialog';
 import {ProgressBarConfig} from '../../dialog/ProgressBarDialog';
 import {ContentPublishPromptEvent} from '../../browse/ContentPublishPromptEvent';
 import {Router} from '../../Router';
 import {PublicStatusSelectionItem, PublishDialogItemList} from '../../publish/PublishDialogItemList';
-import {ContentPublishDialogAction} from '../../publish/ContentPublishDialog';
+import {ContentPublishDialogAction} from '../../publish/ContentPublishDialogAction';
 import {PublishDialogDependantList} from '../../publish/PublishDialogDependantList';
 import {UpdateIssueRequest} from '../resource/UpdateIssueRequest';
 import {IssueStatus, IssueStatusFormatter} from '../IssueStatus';
@@ -16,34 +15,28 @@ import {PublishRequest} from '../PublishRequest';
 import {PublishRequestItem} from '../PublishRequestItem';
 import {IssueStatusInfoGenerator} from './IssueStatusInfoGenerator';
 import {IssueDetailsDialogButtonRow} from './IssueDetailsDialogDropdownButtonRow';
-import {IssueListDialog} from './IssueListDialog';
 import AEl = api.dom.AEl;
 import DialogButton = api.ui.dialog.DialogButton;
-import Checkbox = api.ui.Checkbox;
 import ContentSummaryAndCompareStatusFetcher = api.content.resource.ContentSummaryAndCompareStatusFetcher;
-import InputAlignment = api.ui.InputAlignment;
 import PublishContentRequest = api.content.resource.PublishContentRequest;
 import TaskState = api.task.TaskState;
 import ListBox = api.ui.selector.list.ListBox;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import ResolvePublishDependenciesResult = api.content.resource.result.ResolvePublishDependenciesResult;
-import CompareStatus = api.content.CompareStatus;
 import ResolvePublishDependenciesRequest = api.content.resource.ResolvePublishDependenciesRequest;
 import H6El = api.dom.H6El;
-import PEl = api.dom.PEl;
 import SpanEl = api.dom.SpanEl;
 import DivEl = api.dom.DivEl;
 import RequestError = api.rest.RequestError;
 import MenuButton = api.ui.button.MenuButton;
 import Action = api.ui.Action;
-import DropdownButtonRow = api.ui.dialog.DropdownButtonRow;
 import User = api.security.User;
-import ModalDialog = api.ui.dialog.ModalDialog;
 import i18n = api.util.i18n;
 import ArrayHelper = api.util.ArrayHelper;
 import Tooltip = api.ui.Tooltip;
 
-export class IssueDetailsDialog extends SchedulableDialog {
+export class IssueDetailsDialog
+    extends SchedulableDialog {
 
     private form: IssueDialogForm;
 
@@ -54,6 +47,8 @@ export class IssueDetailsDialog extends SchedulableDialog {
     private currentUser: User;
 
     private errorTooltip: Tooltip;
+
+    private editAction: api.ui.Action;
 
     private static INSTANCE: IssueDetailsDialog = new IssueDetailsDialog();
 
@@ -72,9 +67,10 @@ export class IssueDetailsDialog extends SchedulableDialog {
         );
         this.addClass('issue-details-dialog');
 
+        this.editAction = new Action(i18n('action.editIssue'));
+
         this.loadCurrentUser();
         this.initRouting();
-        this.handleUpdateIssueDialogEvents();
         this.handleIssueGlobalEvents();
         this.initElements();
         this.initElementsListeners();
@@ -100,10 +96,6 @@ export class IssueDetailsDialog extends SchedulableDialog {
         this.getDependantList().onItemsAdded(() => {
             setTimeout(() => this.centerMyself(), 100);
         });
-
-        this.closeIcon.onClicked(() => {
-            IssueListDialog.get().close();
-        });
     }
 
     doRender(): Q.Promise<boolean> {
@@ -113,7 +105,6 @@ export class IssueDetailsDialog extends SchedulableDialog {
             this.createBackButton();
             this.createNoActionMessage();
             this.itemsHeader.insertBeforeEl(this.getItemList());
-            this.addClickIgnoredElement(UpdateIssueDialog.get());
             return rendered;
         });
     }
@@ -142,15 +133,6 @@ export class IssueDetailsDialog extends SchedulableDialog {
                 if (issues.some((issue) => issue.getId() === this.issue.getId())) {
                     updateHandler(issues[0]);
                 }
-            }
-        });
-    }
-
-    private handleUpdateIssueDialogEvents() {
-        UpdateIssueDialog.get().onClosed(() => {
-            this.removeClass('masked');
-            if (this.isVisible()) {
-                this.getEl().focus();
             }
         });
     }
@@ -229,7 +211,7 @@ export class IssueDetailsDialog extends SchedulableDialog {
 
     private isChildrenIncluded(itemView: PublicStatusSelectionItem) {
         return this.issue.getPublishRequest().getExcludeChildrenIds().map(contentId => contentId.toString()).indexOf(
-                itemView.getBrowseItem().getId()) < 0;
+            itemView.getBrowseItem().getId()) < 0;
     }
 
     protected initActions() {
@@ -255,12 +237,14 @@ export class IssueDetailsDialog extends SchedulableDialog {
     }
 
     private createEditButton() {
-        const editIssueAction = new Action(i18n('action.editIssue'));
-        const editButton: DialogButton = this.getButtonRow().addAction(editIssueAction);
+        const editButton: DialogButton = this.getButtonRow().addAction(this.editAction);
         editButton.addClass('edit-issue force-enabled');
+    }
 
-        editIssueAction.onExecuted(() => {
-            this.showUpdateIssueDialog();
+    onEditButtonClicked(listener: (issue: Issue, summaries: ContentSummaryAndCompareStatus[], excludeChildIds: ContentId[]) => void) {
+        return this.editAction.onExecuted(action => {
+            const itemList = this.getItemList();
+            listener(this.issue, itemList.getItems(), itemList.getExcludeChildrenIds());
         });
     }
 
@@ -316,15 +300,6 @@ export class IssueDetailsDialog extends SchedulableDialog {
         });
     }
 
-    private showUpdateIssueDialog() {
-        UpdateIssueDialog.get().open();
-        UpdateIssueDialog.get().unlockPublishItems();
-        UpdateIssueDialog.get().setIssue(this.issue, this.getItemList().getItems());
-        UpdateIssueDialog.get().setExcludeChildrenIds(this.getItemList().getExcludeChildrenIds());
-
-        this.addClass('masked');
-    }
-
     protected createItemList(): ListBox<ContentSummaryAndCompareStatus> {
         return new PublishDialogItemList();
     }
@@ -342,11 +317,6 @@ export class IssueDetailsDialog extends SchedulableDialog {
     }
 
     open() {
-        IssueListDialog.get().addClass('masked');
-        if (!IssueListDialog.get().isVisible()) {
-            IssueListDialog.get().open();
-        }
-
         this.form.giveFocus();
         super.open();
     }
@@ -354,11 +324,6 @@ export class IssueDetailsDialog extends SchedulableDialog {
     close() {
         this.getItemList().clearExcludeChildrenIds();
         super.close();
-
-        IssueListDialog.get().removeClass('masked');
-        if (IssueListDialog.get().isVisible()) {
-            IssueListDialog.get().getEl().focus();
-        }
     }
 
     private reloadPublishDependencies(): wemQ.Promise<void> {
@@ -461,13 +426,14 @@ export class IssueDetailsDialog extends SchedulableDialog {
     }
 }
 
-class DetailsDialogSubTitle extends DivEl {
+class DetailsDialogSubTitle
+    extends DivEl {
 
     private issue: Issue;
 
     private currentUser: User;
 
-    private issueStatusChangedListeners: {(event: api.ValueChangedEvent): void}[] = [];
+    private issueStatusChangedListeners: { (event: api.ValueChangedEvent): void }[] = [];
 
     constructor(issue: Issue, currentUser: User) {
         super('issue-details-sub-title');
@@ -490,11 +456,11 @@ class DetailsDialogSubTitle extends DivEl {
         });
     }
 
-    onIssueStatusChanged(listener: (event: api.ValueChangedEvent)=>void) {
+    onIssueStatusChanged(listener: (event: api.ValueChangedEvent) => void) {
         this.issueStatusChangedListeners.push(listener);
     }
 
-    unIssueStatusChanged(listener: (event: api.ValueChangedEvent)=>void) {
+    unIssueStatusChanged(listener: (event: api.ValueChangedEvent) => void) {
         this.issueStatusChangedListeners = this.issueStatusChangedListeners.filter((curr) => {
             return curr !== listener;
         });

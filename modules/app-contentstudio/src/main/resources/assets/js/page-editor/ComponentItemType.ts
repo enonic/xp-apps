@@ -1,17 +1,9 @@
 import './../api.ts';
 import {ItemTypeConfig, ItemTypeConfigJson} from './ItemTypeConfig';
-import {ComponentView} from './ComponentView';
 import {ItemType} from './ItemType';
-import {CreateItemViewConfig} from './CreateItemViewConfig';
-import {RegionView} from './RegionView';
-import Component = api.content.page.region.Component;
 
 export class ComponentItemType
     extends ItemType {
-
-    createView(config: CreateItemViewConfig<RegionView, Component>): ComponentView<Component> {
-        throw new Error('Must be implemented by inheritors');
-    }
 
     protected getItemTypeConfig(itemType: string): ItemTypeConfig {
         return new ItemTypeConfig(<ItemTypeConfigJson>{

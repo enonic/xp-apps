@@ -1,9 +1,5 @@
 import './../../api.ts';
-import {CreateItemViewConfig} from '../CreateItemViewConfig';
 import {ComponentItemType} from '../ComponentItemType';
-import {RegionView} from '../RegionView';
-import {LayoutComponentView, LayoutComponentViewBuilder} from './LayoutComponentView';
-import LayoutComponent = api.content.page.region.LayoutComponent;
 
 
 export class LayoutItemType
@@ -21,12 +17,6 @@ export class LayoutItemType
 
     isComponentType(): boolean {
         return true;
-    }
-
-    createView(config: CreateItemViewConfig<RegionView, LayoutComponent>): LayoutComponentView {
-        return new LayoutComponentView(new LayoutComponentViewBuilder().setItemViewProducer(config.itemViewProducer).setParentRegionView(
-            config.parentView).setParentElement(config.parentElement).setComponent(config.data).setElement(config.element).setPositionIndex(
-            config.positionIndex));
     }
 }
 

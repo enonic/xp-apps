@@ -1,7 +1,6 @@
 import './../../api.ts';
 import {ComponentView, ComponentViewBuilder} from '../ComponentView';
 import {LayoutItemType} from './LayoutItemType';
-import {RegionView, RegionViewBuilder} from '../RegionView';
 import {ItemViewAddedEvent} from '../ItemViewAddedEvent';
 import {ItemViewRemovedEvent} from '../ItemViewRemovedEvent';
 import {LayoutComponentViewer} from './LayoutComponentViewer';
@@ -58,6 +57,10 @@ export class LayoutComponentView
             }
         }
         return null;
+    }
+
+    protected isDragging(): boolean {
+        return DragAndDrop.get().isDragging();
     }
 
     getComponentViewByPath(path: ComponentPath): ComponentView<Component> {
@@ -194,3 +197,5 @@ export class LayoutComponentView
     }
 }
 
+import {DragAndDrop} from '../DragAndDrop';
+import {RegionView, RegionViewBuilder} from '../RegionView';

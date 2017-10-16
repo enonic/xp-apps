@@ -33,6 +33,8 @@ import {IssueListDialog} from './app/issue/view/IssueListDialog';
 import {IssueServerEventsHandler} from './app/issue/event/IssueServerEventsHandler';
 import {CreateIssueDialog} from './app/issue/view/CreateIssueDialog';
 import {CreateIssuePromptEvent} from './app/browse/CreateIssuePromptEvent';
+import {IssueDialogsManager} from './app/issue/IssueDialogsManager';
+import {ShowIssuesDialogEvent} from './app/browse/ShowIssuesDialogEvent';
 
 /*
  module components {
@@ -234,14 +236,9 @@ function startApplication() {
             .open();
     });
 
-    const createIssueDialog = CreateIssueDialog.get();
-    CreateIssuePromptEvent.on((event) => {
-        createIssueDialog.unlockPublishItems();
-        createIssueDialog
-            .setItems(event.getModels())
-            .forceResetOnClose(true)
-            .open();
-    });
+    CreateIssuePromptEvent.on((event) => IssueDialogsManager.get().openCreateDialog(event.getModels()));
+
+    ShowIssuesDialogEvent.on((event) => IssueDialogsManager.get().openListDialog());
 
     let editPermissionsDialog = new EditPermissionsDialog();
 

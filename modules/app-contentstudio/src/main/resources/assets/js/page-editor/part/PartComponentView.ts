@@ -7,6 +7,7 @@ import {PartPlaceholder} from './PartPlaceholder';
 import {ItemView} from '../ItemView';
 import {ItemType} from '../ItemType';
 import {ContentItemType} from '../ContentItemType';
+import {DragAndDrop} from '../DragAndDrop';
 import PartComponent = api.content.page.region.PartComponent;
 
 export class PartComponentViewBuilder
@@ -49,6 +50,10 @@ export class PartComponentView
         if (builder.element && builder.element.getEl().hasAttribute('href')) {
             builder.element.getEl().setAttribute('href', '#');
         }
+    }
+
+    protected isDragging(): boolean {
+        return DragAndDrop.get().isDragging();
     }
 
     /*
