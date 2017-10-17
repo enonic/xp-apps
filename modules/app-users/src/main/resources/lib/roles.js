@@ -4,9 +4,10 @@ var authLib = require('/lib/xp/auth');
 
 exports.create = function createRole(params) {
     var key = common.required(params, 'key');
+    var name = common.nameFromKey(key);
 
     var createdRole = authLib.createRole({
-        key: key,
+        name: name,
         displayName: common.required(params, 'displayName'),
         description: params.description
     });
