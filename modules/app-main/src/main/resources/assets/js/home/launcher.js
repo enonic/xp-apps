@@ -187,22 +187,27 @@ function closeLauncherPanel(skipTransition) {
     unselectCurrentApp();
 }
 
-function onKeyPressed(e) {
+var closeBinding = new api.ui.KeyBinding('esc').setGlobal(true).setCallback(function(e , combo) {
     if (!isPanelExpanded()) {
         return;
     }
-    e.stopPropagation();
-    if (e.keyCode === 27) {
-        closeLauncherPanel();
+    // preventing Browser shortcuts to kick in
+    if (e.preventDefault) {
+        e.preventDefault();
+    } else {
+        // internet explorer
+        e.returnValue = false;
     }
-}
+    closeLauncherPanel();
+    return false;
+});
 
 function listenToKeyboardEvents() {
-    window.addEventListener('keydown', onKeyPressed, true);
+    api.ui.KeyBindings.get().bindKey(closeBinding);
 }
 
 function unlistenToKeyboardEvents() {
-    window.removeEventListener('keydown', onKeyPressed, true);
+    api.ui.KeyBindings.get().unbindKey(closeBinding);
 }
 
 function getSelectedApp() {
