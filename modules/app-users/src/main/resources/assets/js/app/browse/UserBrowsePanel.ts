@@ -14,7 +14,8 @@ import i18n = api.util.i18n;
 import UserStore = api.security.UserStore;
 import Principal = api.security.Principal;
 
-export class UserBrowsePanel extends api.app.browse.BrowsePanel<UserTreeGridItem> {
+export class UserBrowsePanel
+    extends api.app.browse.BrowsePanel<UserTreeGridItem> {
 
     protected treeGrid: UserItemsTreeGrid;
 
@@ -34,26 +35,23 @@ export class UserBrowsePanel extends api.app.browse.BrowsePanel<UserTreeGridItem
                 let type;
 
                 switch (userItem.getType()) {
-
                 case UserTreeGridItemType.USERS:
-                    type = i18n('field.user');
+                    label = i18n('action.new.user');
                     break;
                 case UserTreeGridItemType.GROUPS:
-                    type = i18n('field.userGroup');
+                    label = i18n('action.new.group');
                     break;
                 case UserTreeGridItemType.ROLES:
-                    type = i18n('field.role');
+                    label = i18n('action.new.role');
                     break;
                 case UserTreeGridItemType.PRINCIPAL:
-                    type = i18n(`field.${PrincipalType[userItem.getPrincipal().getType()].toLowerCase()}`);
+                    label = i18n(`action.new.${PrincipalType[userItem.getPrincipal().getType()].toLowerCase()}`);
                     break;
                 default:
-                    type = '';
+                    label = i18n('action.new.more');
                 }
-
-                label = [i18n('action.new'), type].join(' ');
             } else {
-                label = `${i18n('action.new')}…`;
+                label = i18n('action.new.more');
             }
             newAction.setLabel(label);
         }, 10);
@@ -119,7 +117,7 @@ export class UserBrowsePanel extends api.app.browse.BrowsePanel<UserTreeGridItem
         this.treeGrid.filter(this.treeGrid.getSelectedDataList());
     }
 
-    treeNodeToBrowseItem(node: TreeNode<UserTreeGridItem>): BrowseItem<UserTreeGridItem>|null {
+    treeNodeToBrowseItem(node: TreeNode<UserTreeGridItem>): BrowseItem<UserTreeGridItem> | null {
         const data = node ? node.getData() : null;
         return !data ? null : <BrowseItem<UserTreeGridItem>>new BrowseItem<UserTreeGridItem>(data)
             .setId(data.getDataId())
