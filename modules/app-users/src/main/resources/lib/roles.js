@@ -25,8 +25,8 @@ exports.create = function createRole(params) {
 exports.update = function updateRole(params) {
     var key = common.required(params, 'key');
 
-    var updatedRole = common.update({
-        key: '/identity/roles/' + common.nameFromKey(key),
+    var modifiedRole = authLib.modifyRole({
+        key: key,
         editor: function(role) {
             var newRole = role;
             newRole.displayName = params.displayName;
@@ -37,9 +37,9 @@ exports.update = function updateRole(params) {
 
     principals.updateMembers(key, params.addMembers, params.removeMembers);
 
-    populateMembers(updatedRole);
+    populateMembers(modifiedRole);
 
-    return updatedRole;
+    return modifiedRole;
 };
 
 function populateMembers(role) {
