@@ -23,7 +23,7 @@ export class PrincipalServerEventsHandler {
     private userItemUpdatedListeners: { (principal: Principal, userStore: UserStore): void }[] = [];
     private userItemDeletedListeners: { (ids: string[]): void }[] = [];
 
-    private static debug: boolean = true;
+    private static debug: boolean = false;
 
     static getInstance(): PrincipalServerEventsHandler {
         return this.instance;
@@ -51,37 +51,53 @@ export class PrincipalServerEventsHandler {
         if (event.getType() == NodeServerChangeType.DELETE) {
             this.handleUserItemDeleted(this.extractPrincipalIds([event.getNodeChange()]));
         } else {
-            event.getNodeChange().getChangeItems().forEach((item: PrincipalServerChangeItem) => {
-                const path = Path.fromString(item.getPath());
-                const id = this.getId(item);
-                if (!path.hasParent()) {
-                    // it's a userStore
-                    new GetUserStoreByKeyRequest(UserStoreKey.fromString(id)).sendAndParse().done(userStore => {
-                        this.onUserItemLoaded(event, null, userStore);
-                    });
-                } else {
-                    // it's a principal, fetch him as well as userStore
-                    const name = path.getElement(path.getElements().length - 1);
-                    if (name === 'groups' || name === 'users') {
-                        // ignore groups and users nodes of userstore
-                        return;
-                    }
-                    const key = PrincipalKey.fromString(id);
-                    if (key.isRole()) {
-                        new GetPrincipalByKeyRequest(key).sendAndParse().then(principal => {
-                            this.onUserItemLoaded(event, principal, null);
-                        });
-                    } else {
-                        new GetPrincipalByKeyRequest(key).sendAndParse().then(principal => {
+            // allow some time for the backend to process items before requesting them
+            setTimeout(this.loadUserItems.bind(this, event), 1000);
+        }
+    }
 
-                            new GetUserStoreByKeyRequest(principal.getKey().getUserStore()).sendAndParse().done(userStore => {
+    private loadUserItems(event: PrincipalServerEvent) {
+        event.getNodeChange().getChangeItems().forEach((item: PrincipalServerChangeItem) => {
+            const path = Path.fromString(item.getPath());
+            const id = this.getId(item);
+            if (!path.hasParent()) {
+                // it's a userStore
+                new GetUserStoreByKeyRequest(UserStoreKey.fromString(id)).sendAndParse().then(userStore => {
+                    if (PrincipalServerEventsHandler.debug) {
+                        console.debug('PrincipalServerEventsHandler.loaded userstore:', userStore);
+                    }
+                    this.onUserItemLoaded(event, null, userStore);
+                }).catch(api.DefaultErrorHandler.handle);
+            } else {
+                // it's a principal, fetch him as well as userStore
+                const name = path.getElement(path.getElements().length - 1);
+                if (name === 'groups' || name === 'users') {
+                    // ignore groups and users nodes of userstore
+                    return;
+                }
+                const key = PrincipalKey.fromString(id);
+                if (key.isRole()) {
+                    new GetPrincipalByKeyRequest(key).sendAndParse().then(principal => {
+                        if (PrincipalServerEventsHandler.debug) {
+                            console.debug('PrincipalServerEventsHandler.loaded principal:', principal);
+                        }
+                        this.onUserItemLoaded(event, principal, null);
+                    }).catch(api.DefaultErrorHandler.handle);
+                } else {
+                    new GetPrincipalByKeyRequest(key).sendAndParse().then(principal => {
+                        if (PrincipalServerEventsHandler.debug) {
+                            console.debug('PrincipalServerEventsHandler.loaded principal:', principal);
+                        }
+                        if (principal) {
+                            return new GetUserStoreByKeyRequest(principal.getKey().getUserStore()).sendAndParse().then(userStore => {
                                 this.onUserItemLoaded(event, principal, userStore);
                             });
-                        });
-                    }
+                        }
+                        console.warn('PrincipalServerEventsHandler: could not load principal[' + key.toString() + ']');
+                    }).catch(api.DefaultErrorHandler.handle);
                 }
-            });
-        }
+            }
+        });
     }
 
     private onUserItemLoaded(event: PrincipalServerEvent, principal: Principal, userStore: UserStore) {

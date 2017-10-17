@@ -154,7 +154,7 @@ export class UserItemsTreeGrid
         this.fetchDataAndSetNodes(parentNode).then(() => {
             const parentItemType = UserTreeGridItem.getParentType(principal);
 
-            if (parentNode.getData().getType() === parentItemType) {
+            if (parentNode.getData() && parentNode.getData().getType() === parentItemType) {
                 deferred.resolve(parentNode);
             } else {
                 parentNode = parentNode.getChildren().filter(node => node.getData().getType() === parentItemType)[0] || parentNode;
