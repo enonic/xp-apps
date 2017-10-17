@@ -33,7 +33,7 @@ exports.get = function () {
     });
 
     var user = auth.getUser();
-    var locale = admin.getLocale();
+    var locales = admin.getLocales();
 
     var view = resolve('./launcher.html');
     var params = {
@@ -49,17 +49,17 @@ exports.get = function () {
         homeToolCaption: i18n.localize({
             key: 'launcher.tools.home.caption',
             bundles: ['admin/i18n/common'],
-            locale: locale
+            locale: locales
         }),
         homeToolDescription: i18n.localize({
             key: 'launcher.tools.home.description',
             bundles: ['admin/i18n/common'],
-            locale: locale
+            locale: locales
         }),
         logOutLink: i18n.localize({
             key: 'launcher.link.logout',
             bundles: ['admin/i18n/common'],
-            locale: locale
+            locale: locales
         }),
         adminAssetsUri: admin.getAssetsUri(),
         assetsUri: portal.assetUrl({
