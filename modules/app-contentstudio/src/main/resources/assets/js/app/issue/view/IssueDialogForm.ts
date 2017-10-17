@@ -248,12 +248,11 @@ export class IssueDialogForm
     }
 
     private setApprovers(approvers: PrincipalKey[]) {
-        this.approversSelector.clearSelection();
+       this.approversSelector.clearSelection();
+       this.approversSelector.resetBaseValues();
 
         if (approvers) {
-            approvers.forEach((approver) => {
-                this.approversSelector.selectOptionByValue(approver.toString());
-            });
+            this.approversSelector.setValue(approvers.map(key => key.toString()).join(';'));
         }
     }
 

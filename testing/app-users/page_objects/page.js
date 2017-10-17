@@ -53,12 +53,8 @@ Page.prototype.isSpinnerVisible = function () {
 
 Page.prototype.doClick = function (selector) {
     return this.getBrowser().elements(selector).then((result)=> {
-        if (result.value.length == 0) {
-            throw new Error('Element was not found!')
-        }
         return this.getBrowser().click(selector);
     }).catch(function (err) {
-        console.log(err.message);
         throw Error(err.message + ` ` + selector);
     })
 };
@@ -126,8 +122,6 @@ Page.prototype.getTextFromElements = function (selector) {
             return res.push(str.value);
         })
         return res;
-    }).catch((err)=> {
-        return [];
     });
 }
 
