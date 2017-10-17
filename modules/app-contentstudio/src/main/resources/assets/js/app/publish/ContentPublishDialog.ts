@@ -8,20 +8,13 @@ import {SchedulableDialog} from '../dialog/SchedulableDialog';
 import {PublishProcessor} from './PublishProcessor';
 import {IssueServerEventsHandler} from '../issue/event/IssueServerEventsHandler';
 import {Issue} from '../issue/Issue';
-
+import {ContentPublishDialogAction} from './ContentPublishDialogAction';
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import PublishContentRequest = api.content.resource.PublishContentRequest;
-import ResolvePublishDependenciesResult = api.content.resource.result.ResolvePublishDependenciesResult;
 import CompareStatus = api.content.CompareStatus;
 import ContentId = api.content.ContentId;
 import ListBox = api.ui.selector.list.ListBox;
-import LoadMask = api.ui.mask.LoadMask;
-import BrowseItem = api.app.browse.BrowseItem;
-import ContentSummaryAndCompareStatusViewer = api.content.ContentSummaryAndCompareStatusViewer;
-import Checkbox = api.ui.Checkbox;
-import HasUnpublishedChildrenResult = api.content.resource.result.HasUnpublishedChildrenResult;
 import HasUnpublishedChildrenRequest = api.content.resource.HasUnpublishedChildrenRequest;
-import ModalDialogButtonRow = api.ui.dialog.ButtonRow;
 import MenuButton = api.ui.button.MenuButton;
 import Action = api.ui.Action;
 import ActionButton = api.ui.button.ActionButton;
@@ -35,7 +28,8 @@ import i18n = api.util.i18n;
  * Dependant items number will change depending on includeChildren checkbox state as
  * resolved dependencies usually differ in that case.
  */
-export class ContentPublishDialog extends SchedulableDialog {
+export class ContentPublishDialog
+    extends SchedulableDialog {
 
     private publishButton: ActionButton;
 
@@ -47,9 +41,9 @@ export class ContentPublishDialog extends SchedulableDialog {
 
     constructor() {
         super(<ProgressBarConfig> {
-            dialogName: i18n('dialog.publish'),
-            dialogSubName: i18n('dialog.publish.resolving'),
-            dependantsName: i18n('dialog.publish.dependants'),
+                dialogName: i18n('dialog.publish'),
+                dialogSubName: i18n('dialog.publish.resolving'),
+                dependantsName: i18n('dialog.publish.dependants'),
                 isProcessingClass: 'is-publishing',
                 processingLabel: `${i18n('field.progress.publishing')}...`,
                 processHandler: () => {
@@ -320,10 +314,10 @@ export class ContentPublishDialog extends SchedulableDialog {
     private updateSubTitle(count: number) {
         const allValid = this.areItemsAndDependantsValid();
 
-        let subTitle = (count === 0) ? i18n('dialog.publish.noItems') :
-                       this.isAllPublishable() ?
-                       (allValid ? i18n('dialog.publish.changesReady') : i18n('dialog.publish.invalidError')
-                       ) : i18n('dialog.publish.newIssue');
+        let subTitle = (count === 0) ? i18n('dialog.publish.noItems') : this.isAllPublishable() ? (allValid
+                ? i18n('dialog.publish.changesReady')
+                : i18n('dialog.publish.invalidError')
+        ) : i18n('dialog.publish.newIssue');
 
         this.setSubTitle(subTitle);
         this.toggleClass('invalid', !allValid && this.isAllPublishable());
@@ -383,7 +377,8 @@ export class ContentPublishDialog extends SchedulableDialog {
     }
 }
 
-export class ContentPublishDialogButtonRow extends DropdownButtonRow {
+export class ContentPublishDialogButtonRow
+    extends DropdownButtonRow {
 
     makeActionMenu(mainAction: Action, menuActions: Action[], useDefault: boolean = true): MenuButton {
         super.makeActionMenu(mainAction, menuActions, useDefault);
@@ -393,16 +388,9 @@ export class ContentPublishDialogButtonRow extends DropdownButtonRow {
 
 }
 
-export class ContentPublishDialogAction extends api.ui.Action {
-    constructor(handler: () => wemQ.Promise<any>|void) {
-        super(i18n('action.publish'));
-        this.setIconClass('publish-action');
-        this.onExecuted(handler);
-    }
-}
-
-export class CreateIssueDialogAction extends api.ui.Action {
-    constructor(handler: () => wemQ.Promise<any>|void) {
+export class CreateIssueDialogAction
+    extends api.ui.Action {
+    constructor(handler: () => wemQ.Promise<any> | void) {
         super(i18n('action.createIssueMore'));
         this.setIconClass('create-issue-action');
         this.onExecuted(handler);

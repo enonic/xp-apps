@@ -4,8 +4,6 @@ import i18n = api.util.i18n;
 
 export class MostPopularItemsBlock extends api.dom.DivEl {
 
-    public static DEFAULT_MAX_ITEMS: number = 2;
-
     private mostPopularItemsList: MostPopularItemsList;
 
     private title: api.dom.H2El;

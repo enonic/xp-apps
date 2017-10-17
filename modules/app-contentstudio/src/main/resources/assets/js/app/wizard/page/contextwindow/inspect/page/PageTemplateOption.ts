@@ -1,6 +1,4 @@
 import '../../../../../../api.ts';
-
-import PageModel = api.content.page.PageModel;
 import PageTemplate = api.content.page.PageTemplate;
 
 export class PageTemplateOption implements api.Equitable {

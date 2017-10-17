@@ -4,10 +4,6 @@ import {ShowContentFormEvent} from '../../ShowContentFormEvent';
 import {ShowSplitEditEvent} from '../../ShowSplitEditEvent';
 import {ShowLiveEditEvent} from '../../ShowLiveEditEvent';
 import {ContentWizardPanel} from '../../ContentWizardPanel';
-
-import ComponentView = api.liveedit.ComponentView;
-import Component = api.content.page.region.Component;
-import PageView = api.liveedit.PageView;
 import TogglerButton = api.ui.button.TogglerButton;
 
 export class ContextWindowController {

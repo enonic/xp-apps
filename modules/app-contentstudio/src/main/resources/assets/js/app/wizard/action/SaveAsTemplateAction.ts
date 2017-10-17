@@ -1,11 +1,10 @@
 import '../../../api.ts';
-
+import {PageModel} from '../../../page-editor/PageModel';
 import i18n = api.util.i18n;
 import CreatePageTemplateRequest = api.content.page.CreatePageTemplateRequest;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import EditContentEvent = api.content.event.EditContentEvent;
 import Action = api.ui.Action;
-import PageModel = api.content.page.PageModel;
 import Permission = api.security.acl.Permission;
 import ContentSummary = api.content.ContentSummary;
 

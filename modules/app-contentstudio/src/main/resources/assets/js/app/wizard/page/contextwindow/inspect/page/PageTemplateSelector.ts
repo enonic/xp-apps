@@ -1,6 +1,8 @@
 import '../../../../../../api.ts';
 import {PageTemplateOption} from './PageTemplateOption';
 import {PageTemplateOptionViewer} from './PageTemplateOptionViewer';
+import {LiveEditModel} from '../../../../../../page-editor/LiveEditModel';
+import {PageModel} from '../../../../../../page-editor/PageModel';
 import PropertyChangedEvent = api.PropertyChangedEvent;
 import ContentId = api.content.ContentId;
 import PageTemplateKey = api.content.page.PageTemplateKey;
@@ -9,8 +11,6 @@ import PageTemplateBuilder = api.content.page.PageTemplateBuilder;
 import Option = api.ui.selector.Option;
 import Dropdown = api.ui.selector.dropdown.Dropdown;
 import DropdownConfig = api.ui.selector.dropdown.DropdownConfig;
-import PageModel = api.content.page.PageModel;
-import LiveEditModel = api.liveedit.LiveEditModel;
 import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
 import GetPageTemplatesByCanRenderRequest = api.content.page.GetPageTemplatesByCanRenderRequest;
 import PageTemplateLoader = api.content.page.PageTemplateLoader;
@@ -53,7 +53,7 @@ export class PageTemplateSelector
 
             const deletedIds: ContentId[] = items.map(item => item.getContentId());
 
-            if(this.getOptions().some(option => ArrayHelper.contains(deletedIds, new ContentId(option.value)))) {
+            if (this.getOptions().some(option => ArrayHelper.contains(deletedIds, new ContentId(option.value)))) {
                 this.reload(liveEditModel);
             }
         });

@@ -1,16 +1,12 @@
 import {Issue} from '../Issue';
 import {IssueResponse} from '../resource/IssueResponse';
-import {IssueDetailsDialog} from './IssueDetailsDialog';
-import {IssueListDialog} from './IssueListDialog';
 import {IssueStatusInfoGenerator} from './IssueStatusInfoGenerator';
 import {IssueStatus} from '../IssueStatus';
 import {ListIssuesRequest} from '../resource/ListIssuesRequest';
 import {IssueWithAssignees} from '../IssueWithAssignees';
 import ListBox = api.ui.selector.list.ListBox;
-import LoadMask = api.ui.mask.LoadMask;
 import User = api.security.User;
 import PEl = api.dom.PEl;
-import NamesView = api.app.NamesView;
 import SpanEl = api.dom.SpanEl;
 import PrincipalViewerCompact = api.ui.security.PrincipalViewerCompact;
 import DivEl = api.dom.DivEl;
@@ -18,7 +14,8 @@ import Tooltip = api.ui.Tooltip;
 import Element = api.dom.Element;
 import i18n = api.util.i18n;
 
-export class IssueList extends ListBox<IssueWithAssignees> {
+export class IssueList
+    extends ListBox<IssueWithAssignees> {
 
     private issueStatus: IssueStatus;
 
@@ -29,6 +26,8 @@ export class IssueList extends ListBox<IssueWithAssignees> {
     private loadAssignedToMe: boolean = false;
 
     private loadMyIssues: boolean = false;
+
+    private issueSelectedListeners: { (issue: IssueWithAssignees): void }[] = [];
 
     constructor(issueStatus: IssueStatus) {
         super('issue-list');
@@ -104,9 +103,7 @@ export class IssueList extends ListBox<IssueWithAssignees> {
 
         const itemEl = new IssueListItem(issueWithAssignees, this.currentUser);
 
-        itemEl.onClicked(() => {
-            this.handleIssueSelected(itemEl);
-        });
+        itemEl.onClicked(() => this.notifyIssueSelected(issueWithAssignees));
 
         return itemEl;
     }
@@ -115,9 +112,16 @@ export class IssueList extends ListBox<IssueWithAssignees> {
         return issueWithAssignees.getIssue().getId();
     }
 
-    private handleIssueSelected(issueListItem: IssueListItem) {
-        IssueListDialog.get().addClass('masked');
-        IssueDetailsDialog.get().setIssue(issueListItem.getIssue()).open();
+    private notifyIssueSelected(issue: IssueWithAssignees) {
+        this.issueSelectedListeners.forEach(listener => listener(issue));
+    }
+
+    public onIssueSelected(listener: (issue: IssueWithAssignees) => void) {
+        this.issueSelectedListeners.push(listener);
+    }
+
+    public unIssueSelected(listener: (issue: IssueWithAssignees) => void) {
+        this.issueSelectedListeners = this.issueSelectedListeners.filter(curr => curr !== listener);
     }
 
     private isScrolledToBottom(): boolean {
@@ -130,7 +134,8 @@ export class IssueList extends ListBox<IssueWithAssignees> {
     }
 }
 
-export class IssueListItem extends api.dom.LiEl {
+export class IssueListItem
+    extends api.dom.LiEl {
 
     private issue: Issue;
 
@@ -179,7 +184,8 @@ export class IssueListItem extends api.dom.LiEl {
     }
 }
 
-class AssigneesLine extends DivEl {
+class AssigneesLine
+    extends DivEl {
 
     private assignees: User[];
 

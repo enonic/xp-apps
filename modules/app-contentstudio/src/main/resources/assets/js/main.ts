@@ -1,4 +1,11 @@
 import i18n = api.util.i18n;
+import ContentTypeName = api.schema.content.ContentTypeName;
+import ContentIconUrlResolver = api.content.util.ContentIconUrlResolver;
+import Content = api.content.Content;
+import ImgEl = api.dom.ImgEl;
+import LostConnectionDetector = api.system.LostConnectionDetector;
+import GetContentByIdRequest = api.content.resource.GetContentByIdRequest;
+import GetContentTypeByNameRequest = api.schema.content.GetContentTypeByNameRequest;
 
 declare const CONFIG;
 // init should go before imports to correctly translate their static fields etc.
@@ -26,20 +33,8 @@ import {IssueListDialog} from './app/issue/view/IssueListDialog';
 import {IssueServerEventsHandler} from './app/issue/event/IssueServerEventsHandler';
 import {CreateIssueDialog} from './app/issue/view/CreateIssueDialog';
 import {CreateIssuePromptEvent} from './app/browse/CreateIssuePromptEvent';
-import UriHelper = api.util.UriHelper;
-import ContentTypeName = api.schema.content.ContentTypeName;
-import ContentId = api.content.ContentId;
-import AppBarTabId = api.app.bar.AppBarTabId;
-import ContentNamedEvent = api.content.event.ContentNamedEvent;
-import PropertyChangedEvent = api.PropertyChangedEvent;
-import ContentIconUrlResolver = api.content.util.ContentIconUrlResolver;
-import Content = api.content.Content;
-import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
-import ShowBrowsePanelEvent = api.app.ShowBrowsePanelEvent;
-import ImgEl = api.dom.ImgEl;
-import LostConnectionDetector = api.system.LostConnectionDetector;
-import GetContentByIdRequest = api.content.resource.GetContentByIdRequest;
-import GetContentTypeByNameRequest = api.schema.content.GetContentTypeByNameRequest;
+import {IssueDialogsManager} from './app/issue/IssueDialogsManager';
+import {ShowIssuesDialogEvent} from './app/browse/ShowIssuesDialogEvent';
 
 /*
  module components {
@@ -135,7 +130,7 @@ function shouldUpdateFavicon(contentTypeName: ContentTypeName): boolean {
     return contentTypeName.isImage() || navigator.userAgent.search('Chrome') === -1;
 }
 
-let faviconCache: {[url: string]: Element} = {};
+let faviconCache: { [url: string]: Element } = {};
 
 let iconUrlResolver = new ContentIconUrlResolver();
 
@@ -241,14 +236,9 @@ function startApplication() {
             .open();
     });
 
-    const createIssueDialog = CreateIssueDialog.get();
-    CreateIssuePromptEvent.on((event) => {
-        createIssueDialog.unlockPublishItems();
-        createIssueDialog
-            .setItems(event.getModels())
-            .forceResetOnClose(true)
-            .open();
-    });
+    CreateIssuePromptEvent.on((event) => IssueDialogsManager.get().openCreateDialog(event.getModels()));
+
+    ShowIssuesDialogEvent.on((event) => IssueDialogsManager.get().openListDialog());
 
     let editPermissionsDialog = new EditPermissionsDialog();
 

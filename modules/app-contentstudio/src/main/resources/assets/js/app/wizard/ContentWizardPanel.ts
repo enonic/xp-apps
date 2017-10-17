@@ -15,6 +15,7 @@ import {PersistNewContentRoutine} from './PersistNewContentRoutine';
 import {UpdatePersistedContentRoutine} from './UpdatePersistedContentRoutine';
 import {ContentWizardDataLoader} from './ContentWizardDataLoader';
 import {ThumbnailUploaderEl} from './ThumbnailUploaderEl';
+import {LiveEditModel} from '../../page-editor/LiveEditModel';
 import PropertyTree = api.data.PropertyTree;
 import FormView = api.form.FormView;
 import ContentFormContext = api.content.form.ContentFormContext;
@@ -34,7 +35,6 @@ import ExtraData = api.content.ExtraData;
 import Page = api.content.page.Page;
 import Site = api.content.site.Site;
 import SiteModel = api.content.site.SiteModel;
-import LiveEditModel = api.liveedit.LiveEditModel;
 import ContentType = api.schema.content.ContentType;
 import ContentTypeName = api.schema.content.ContentTypeName;
 

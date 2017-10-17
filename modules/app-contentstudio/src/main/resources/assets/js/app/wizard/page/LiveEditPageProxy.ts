@@ -1,49 +1,46 @@
 import '../../../api.ts';
+import {LiveEditModel} from '../../../page-editor/LiveEditModel';
+import {PageView} from '../../../page-editor/PageView';
+import {ComponentViewDragStartedEvent} from '../../../page-editor/ComponentViewDragStartedEvent';
+import {ComponentViewDragStoppedEvent} from '../../../page-editor/ComponentViewDraggingStoppedEvent';
+import {ComponentViewDragCanceledEvent} from '../../../page-editor/ComponentViewDragCanceledEvent';
+import {ComponentViewDragDroppedEvent} from '../../../page-editor/ComponentViewDragDroppedEventEvent';
+import {PageSelectedEvent} from '../../../page-editor/PageSelectedEvent';
+import {PageLockedEvent} from '../../../page-editor/PageLockedEvent';
+import {PageUnlockedEvent} from '../../../page-editor/PageUnlockedEvent';
+import {PageUnloadedEvent} from '../../../page-editor/PageUnloadedEvent';
+import {PageTextModeStartedEvent} from '../../../page-editor/PageTextModeStartedEvent';
+import {RegionSelectedEvent} from '../../../page-editor/RegionSelectedEvent';
+import {ItemViewSelectedEvent} from '../../../page-editor/ItemViewSelectedEvent';
+import {ItemViewDeselectedEvent} from '../../../page-editor/ItemViewDeselectedEvent';
+import {ComponentAddedEvent} from '../../../page-editor/ComponentAddedEvent';
+import {ComponentRemovedEvent} from '../../../page-editor/ComponentRemovedEvent';
+import {ComponentDuplicatedEvent} from '../../../page-editor/ComponentDuplicatedEvent';
+import {ComponentInspectedEvent} from '../../../page-editor/ComponentInspectedEvent';
+import {PageInspectedEvent} from '../../../page-editor/PageInspectedEvent';
+import {ComponentLoadedEvent} from '../../../page-editor/ComponentLoadedEvent';
+import {ComponentResetEvent} from '../../../page-editor/ComponentResetEvent';
+import {LiveEditPageViewReadyEvent} from '../../../page-editor/LiveEditPageViewReadyEvent';
+import {LiveEditPageInitializationErrorEvent} from '../../../page-editor/LiveEditPageInitializationErrorEvent';
+import {ComponentFragmentCreatedEvent} from '../../../page-editor/ComponentFragmentCreatedEvent';
+import {FragmentComponentReloadRequiredEvent} from '../../../page-editor/FragmentComponentReloadRequiredEvent';
+import {ShowWarningLiveEditEvent} from '../../../page-editor/ShowWarningLiveEditEvent';
+import {InitializeLiveEditEvent} from '../../../page-editor/InitializeLiveEditEvent';
+import {ComponentView} from '../../../page-editor/ComponentView';
+import {RegionView} from '../../../page-editor/RegionView';
+import {CreateItemViewConfig} from '../../../page-editor/CreateItemViewConfig';
+import {SkipLiveEditReloadConfirmationEvent} from '../../../page-editor/SkipLiveEditReloadConfirmationEvent';
+import {LiveEditPageDialogCreatedEvent} from '../../../page-editor/LiveEditPageDialogCreatedEvent';
 
 declare var CONFIG;
 
-import Content = api.content.Content;
-import PageModel = api.content.page.PageModel;
-import SiteModel = api.content.site.SiteModel;
-import LiveEditModel = api.liveedit.LiveEditModel;
 import Component = api.content.page.region.Component;
 import RenderingMode = api.rendering.RenderingMode;
 import Workspace = api.content.Branch;
-
-import ComponentView = api.liveedit.ComponentView;
-import LiveEditPageViewReadyEvent = api.liveedit.LiveEditPageViewReadyEvent;
-import ComponentViewDragStartedEvent = api.liveedit.ComponentViewDragStartedEvent;
-import ComponentViewDragStoppedEvent = api.liveedit.ComponentViewDragStoppedEvent;
-import ComponentViewDragCanceledEvent = api.liveedit.ComponentViewDragCanceledEvent;
-import ComponentViewDragDroppedEvent = api.liveedit.ComponentViewDragDroppedEvent;
-import PageSelectedEvent = api.liveedit.PageSelectedEvent;
-import PageLockedEvent = api.liveedit.PageLockedEvent;
-import PageUnlockedEvent = api.liveedit.PageUnlockedEvent;
-import PageUnloadedEvent = api.liveedit.PageUnloadedEvent;
-import PageTextModeStartedEvent = api.liveedit.PageTextModeStartedEvent;
-import RegionSelectedEvent = api.liveedit.RegionSelectedEvent;
-import ItemViewSelectedEvent = api.liveedit.ItemViewSelectedEvent;
-import ItemViewDeselectedEvent = api.liveedit.ItemViewDeselectedEvent;
-import ComponentAddedEvent = api.liveedit.ComponentAddedEvent;
-import ComponentRemovedEvent = api.liveedit.ComponentRemovedEvent;
-import ComponentDuplicatedEvent = api.liveedit.ComponentDuplicatedEvent;
-import ComponentInspectedEvent = api.liveedit.ComponentInspectedEvent;
-import PageInspectedEvent = api.liveedit.PageInspectedEvent;
-import ComponentLoadedEvent = api.liveedit.ComponentLoadedEvent;
-import ComponentResetEvent = api.liveedit.ComponentResetEvent;
-import LiveEditPageInitializationErrorEvent = api.liveedit.LiveEditPageInitializationErrorEvent;
-import ComponentFragmentCreatedEvent = api.liveedit.ComponentFragmentCreatedEvent;
-import ShowWarningLiveEditEvent = api.liveedit.ShowWarningLiveEditEvent;
 import EditContentEvent = api.content.event.EditContentEvent;
-import ItemViewIdProducer = api.liveedit.ItemViewIdProducer;
-import CreateItemViewConfig = api.liveedit.CreateItemViewConfig;
-import RegionView = api.liveedit.RegionView;
-
 import CreateHtmlAreaDialogEvent = api.util.htmlarea.dialog.CreateHtmlAreaDialogEvent;
-import LiveEditPageDialogCreatedEvent = api.liveedit.LiveEditPageDialogCreatedEvent;
 import MinimizeWizardPanelEvent = api.app.wizard.MinimizeWizardPanelEvent;
-import PageView = api.liveedit.PageView;
-import FragmentComponentReloadRequiredEvent = api.liveedit.FragmentComponentReloadRequiredEvent;
+
 import i18n = api.util.i18n;
 
 export class LiveEditPageProxy {
@@ -62,59 +59,59 @@ export class LiveEditPageProxy {
 
     private dragMask: api.ui.mask.DragMask;
 
-    private loadedListeners: {(): void;}[] = [];
+    private loadedListeners: { (): void; }[] = [];
 
-    private componentViewDragStartedListeners: {(event: ComponentViewDragStartedEvent): void;}[] = [];
+    private componentViewDragStartedListeners: { (event: ComponentViewDragStartedEvent): void; }[] = [];
 
-    private componentViewDragStoppedListeners: {(event: ComponentViewDragStoppedEvent): void;}[] = [];
+    private componentViewDragStoppedListeners: { (event: ComponentViewDragStoppedEvent): void; }[] = [];
 
-    private componentViewDragCanceledListeners: {(event: ComponentViewDragCanceledEvent): void;}[] = [];
+    private componentViewDragCanceledListeners: { (event: ComponentViewDragCanceledEvent): void; }[] = [];
 
-    private componentViewDragDroppedListeners: {(event: ComponentViewDragDroppedEvent): void;}[] = [];
+    private componentViewDragDroppedListeners: { (event: ComponentViewDragDroppedEvent): void; }[] = [];
 
-    private pageSelectedListeners: {(event: PageSelectedEvent): void;}[] = [];
+    private pageSelectedListeners: { (event: PageSelectedEvent): void; }[] = [];
 
-    private pageLockedListeners: {(event: PageLockedEvent): void;}[] = [];
+    private pageLockedListeners: { (event: PageLockedEvent): void; }[] = [];
 
-    private pageUnlockedListeners: {(event: PageUnlockedEvent): void;}[] = [];
+    private pageUnlockedListeners: { (event: PageUnlockedEvent): void; }[] = [];
 
-    private pageUnloadedListeners: {(event: PageUnloadedEvent): void;}[] = [];
+    private pageUnloadedListeners: { (event: PageUnloadedEvent): void; }[] = [];
 
-    private pageTextModeStartedListeners: {(event: PageTextModeStartedEvent): void;}[] = [];
+    private pageTextModeStartedListeners: { (event: PageTextModeStartedEvent): void; }[] = [];
 
-    private regionSelectedListeners: {(event: RegionSelectedEvent): void;}[] = [];
+    private regionSelectedListeners: { (event: RegionSelectedEvent): void; }[] = [];
 
-    private itemViewSelectedListeners: {(event: ItemViewSelectedEvent): void;}[] = [];
+    private itemViewSelectedListeners: { (event: ItemViewSelectedEvent): void; }[] = [];
 
-    private itemViewDeselectedListeners: {(event: ItemViewDeselectedEvent): void;}[] = [];
+    private itemViewDeselectedListeners: { (event: ItemViewDeselectedEvent): void; }[] = [];
 
-    private componentAddedListeners: {(event: ComponentAddedEvent): void;}[] = [];
+    private componentAddedListeners: { (event: ComponentAddedEvent): void; }[] = [];
 
-    private componentRemovedListeners: {(event: ComponentRemovedEvent): void;}[] = [];
+    private componentRemovedListeners: { (event: ComponentRemovedEvent): void; }[] = [];
 
-    private componentDuplicatedListeners: {(event: ComponentDuplicatedEvent): void;}[] = [];
+    private componentDuplicatedListeners: { (event: ComponentDuplicatedEvent): void; }[] = [];
 
-    private componentInspectedListeners: {(event: ComponentInspectedEvent): void;}[] = [];
+    private componentInspectedListeners: { (event: ComponentInspectedEvent): void; }[] = [];
 
-    private pageInspectedListeners: {(event: PageInspectedEvent): void;}[] = [];
+    private pageInspectedListeners: { (event: PageInspectedEvent): void; }[] = [];
 
-    private componentLoadedListeners: {(event: ComponentLoadedEvent): void;}[] = [];
+    private componentLoadedListeners: { (event: ComponentLoadedEvent): void; }[] = [];
 
-    private componentResetListeners: {(event: ComponentResetEvent): void;}[] = [];
+    private componentResetListeners: { (event: ComponentResetEvent): void; }[] = [];
 
-    private liveEditPageViewReadyListeners: {(event: LiveEditPageViewReadyEvent): void;}[] = [];
+    private liveEditPageViewReadyListeners: { (event: LiveEditPageViewReadyEvent): void; }[] = [];
 
-    private liveEditPageInitErrorListeners: {(event: LiveEditPageInitializationErrorEvent): void;}[] = [];
+    private liveEditPageInitErrorListeners: { (event: LiveEditPageInitializationErrorEvent): void; }[] = [];
 
-    private fragmentCreatedListeners: {(event: ComponentFragmentCreatedEvent): void;}[] = [];
+    private fragmentCreatedListeners: { (event: ComponentFragmentCreatedEvent): void; }[] = [];
 
-    private fragmentLoadedListeners: {(event: FragmentComponentReloadRequiredEvent): void;}[] = [];
+    private fragmentLoadedListeners: { (event: FragmentComponentReloadRequiredEvent): void; }[] = [];
 
-    private showWarningListeners: {(event: ShowWarningLiveEditEvent): void;}[] = [];
+    private showWarningListeners: { (event: ShowWarningLiveEditEvent): void; }[] = [];
 
-    private editContentListeners: {(event: EditContentEvent): void;}[] = [];
+    private editContentListeners: { (event: EditContentEvent): void; }[] = [];
 
-    private createHtmlAreaDialogListeners: {(event: CreateHtmlAreaDialogEvent): void;}[] = [];
+    private createHtmlAreaDialogListeners: { (event: CreateHtmlAreaDialogEvent): void; }[] = [];
 
     private static debug: boolean = false;
 
@@ -146,7 +143,7 @@ export class LiveEditPageProxy {
 
     private createPlaceholderIFrame(): api.dom.IFrameEl {
         const placeholderIFrame = new api.dom.IFrameEl('live-edit-frame-blank');
-        placeholderIFrame.setSrc(CONFIG.assetsUri + '/_blank.html');
+        placeholderIFrame.setSrc(CONFIG.assetsUri + '/page-editor/_blank.html');
 
         placeholderIFrame.onLoaded(() => this.handlePlaceholderIFrameLoadedEvent(placeholderIFrame));
 
@@ -194,11 +191,13 @@ export class LiveEditPageProxy {
     }
 
     public createDraggable(item: JQuery) {
-        this.liveEditWindow.api.liveedit.DragAndDrop.get().createDraggable(item);
+        this.pageView.createDraggable(item);
+        //this.liveEditWindow.DragAndDrop.get().createDraggable(item);
     }
 
     public destroyDraggable(item: JQuery) {
-        this.liveEditWindow.api.liveedit.DragAndDrop.get().destroyDraggable(item);
+        this.pageView.destroyDraggable(item);
+        //this.liveEditWindow.DragAndDrop.get().destroyDraggable(item);
     }
 
     public getDragMask(): api.ui.mask.DragMask {
@@ -260,7 +259,7 @@ export class LiveEditPageProxy {
     }
 
     public skipNextReloadConfirmation(skip: boolean) {
-        new api.liveedit.SkipLiveEditReloadConfirmationEvent(skip).fire(this.liveEditWindow);
+        new SkipLiveEditReloadConfirmationEvent(skip).fire(this.liveEditWindow);
     }
 
     public propagateEvent(event: api.event.Event) {
@@ -298,12 +297,12 @@ export class LiveEditPageProxy {
                 if (LiveEditPageProxy.debug) {
                     console.debug('LiveEditPageProxy.hanldeIframeLoadedEvent: initialize live edit at ' + new Date().toISOString());
                 }
-                new api.liveedit.InitializeLiveEditEvent(this.liveEditModel).fire(this.liveEditWindow);
+                new InitializeLiveEditEvent(this.liveEditModel).fire(this.liveEditWindow);
             } else {
                 if (LiveEditPageProxy.debug) {
                     console.debug('LiveEditPageProxy.handleIframeLoadedEvent: notify live edit ready at ' + new Date().toISOString());
                 }
-                this.notifyLiveEditPageViewReady(new api.liveedit.LiveEditPageViewReadyEvent());
+                this.notifyLiveEditPageViewReady(new LiveEditPageViewReadyEvent());
             }
         }
 
@@ -329,11 +328,17 @@ export class LiveEditPageProxy {
             success: (htmlAsString: string) => {
                 let newElement = api.dom.Element.fromString(htmlAsString);
                 let itemViewIdProducer = componentView.getItemViewIdProducer();
+                let itemViewFactory = componentView.getItemViewFactory();
 
-                let createViewConfig = new CreateItemViewConfig<RegionView,Component>().setItemViewProducer(
-                    itemViewIdProducer).setParentView(componentView.getParentItemView()).setData(componentView.getComponent()).setElement(
-                    newElement);
-                let newComponentView: ComponentView<Component> = componentView.getType().createView(createViewConfig);
+                let createViewConfig = new CreateItemViewConfig<RegionView, Component>()
+                    .setItemViewIdProducer(itemViewIdProducer)
+                    .setItemViewFactory(itemViewFactory)
+                    .setParentView(componentView.getParentItemView())
+                    .setData(componentView.getComponent())
+                    .setElement(newElement);
+
+                let newComponentView = <ComponentView<Component>>itemViewFactory.createView(componentView.getType(),
+                    createViewConfig);
 
                 componentView.replaceWith(newComponentView);
 
@@ -472,13 +477,13 @@ export class LiveEditPageProxy {
         CreateHtmlAreaDialogEvent.on(this.notifyLiveEditPageDialogCreate.bind(this), contextWindow);
     }
 
-    onLoaded(listener: {(): void;}) {
+    onLoaded(listener: { (): void; }) {
         this.loadedListeners.push(listener);
     }
 
-    unLoaded(listener: {(): void;}) {
+    unLoaded(listener: { (): void; }) {
         this.loadedListeners = this.loadedListeners
-            .filter(function (curr: {(): void;}) {
+            .filter(function (curr: { (): void; }) {
                 return curr !== listener;
             });
     }
@@ -501,11 +506,11 @@ export class LiveEditPageProxy {
         this.componentViewDragStartedListeners.forEach((listener) => listener(event));
     }
 
-    onComponentViewDragStopped(listener: {(event: ComponentViewDragStoppedEvent): void;}) {
+    onComponentViewDragStopped(listener: { (event: ComponentViewDragStoppedEvent): void; }) {
         this.componentViewDragStoppedListeners.push(listener);
     }
 
-    unComponentViewDragStopped(listener: {(event: ComponentViewDragStoppedEvent): void;}) {
+    unComponentViewDragStopped(listener: { (event: ComponentViewDragStoppedEvent): void; }) {
         this.componentViewDragStoppedListeners = this.componentViewDragStoppedListeners.filter((curr) => (curr !== listener));
     }
 
@@ -513,11 +518,11 @@ export class LiveEditPageProxy {
         this.componentViewDragStoppedListeners.forEach((listener) => listener(event));
     }
 
-    onComponentViewDragCanceled(listener: {(event: ComponentViewDragCanceledEvent): void;}) {
+    onComponentViewDragCanceled(listener: { (event: ComponentViewDragCanceledEvent): void; }) {
         this.componentViewDragCanceledListeners.push(listener);
     }
 
-    unComponentViewDragCanceled(listener: {(event: ComponentViewDragCanceledEvent): void;}) {
+    unComponentViewDragCanceled(listener: { (event: ComponentViewDragCanceledEvent): void; }) {
         this.componentViewDragCanceledListeners = this.componentViewDragCanceledListeners.filter((curr) => (curr !== listener));
     }
 
@@ -525,11 +530,11 @@ export class LiveEditPageProxy {
         this.componentViewDragCanceledListeners.forEach((listener) => listener(event));
     }
 
-    onComponentViewDragDropped(listener: {(event: ComponentViewDragDroppedEvent): void;}) {
+    onComponentViewDragDropped(listener: { (event: ComponentViewDragDroppedEvent): void; }) {
         this.componentViewDragDroppedListeners.push(listener);
     }
 
-    unComponentViewDragDropped(listener: {(event: ComponentViewDragDroppedEvent): void;}) {
+    unComponentViewDragDropped(listener: { (event: ComponentViewDragDroppedEvent): void; }) {
         this.componentViewDragDroppedListeners = this.componentViewDragDroppedListeners.filter((curr) => (curr !== listener));
     }
 
@@ -597,11 +602,11 @@ export class LiveEditPageProxy {
         this.pageTextModeStartedListeners.forEach((listener) => listener(event));
     }
 
-    onRegionSelected(listener: {(event: RegionSelectedEvent): void;}) {
+    onRegionSelected(listener: { (event: RegionSelectedEvent): void; }) {
         this.regionSelectedListeners.push(listener);
     }
 
-    unRegionSelected(listener: {(event: RegionSelectedEvent): void;}) {
+    unRegionSelected(listener: { (event: RegionSelectedEvent): void; }) {
         this.regionSelectedListeners = this.regionSelectedListeners.filter((curr) => (curr !== listener));
     }
 
@@ -609,11 +614,11 @@ export class LiveEditPageProxy {
         this.regionSelectedListeners.forEach((listener) => listener(event));
     }
 
-    onItemViewSelected(listener: {(event: ItemViewSelectedEvent): void;}) {
+    onItemViewSelected(listener: { (event: ItemViewSelectedEvent): void; }) {
         this.itemViewSelectedListeners.push(listener);
     }
 
-    unItemViewSelected(listener: {(event: ItemViewSelectedEvent): void;}) {
+    unItemViewSelected(listener: { (event: ItemViewSelectedEvent): void; }) {
         this.itemViewSelectedListeners = this.itemViewSelectedListeners.filter((curr) => (curr !== listener));
     }
 
@@ -621,11 +626,11 @@ export class LiveEditPageProxy {
         this.itemViewSelectedListeners.forEach((listener) => listener(event));
     }
 
-    onItemViewDeselected(listener: {(event: ItemViewDeselectedEvent): void;}) {
+    onItemViewDeselected(listener: { (event: ItemViewDeselectedEvent): void; }) {
         this.itemViewDeselectedListeners.push(listener);
     }
 
-    unItemViewDeselected(listener: {(event: ItemViewDeselectedEvent): void;}) {
+    unItemViewDeselected(listener: { (event: ItemViewDeselectedEvent): void; }) {
         this.itemViewDeselectedListeners = this.itemViewDeselectedListeners.filter((curr) => (curr !== listener));
     }
 
@@ -633,11 +638,11 @@ export class LiveEditPageProxy {
         this.itemViewDeselectedListeners.forEach((listener) => listener(event));
     }
 
-    onComponentAdded(listener: {(event: ComponentAddedEvent): void;}) {
+    onComponentAdded(listener: { (event: ComponentAddedEvent): void; }) {
         this.componentAddedListeners.push(listener);
     }
 
-    unComponentAdded(listener: {(event: ComponentAddedEvent): void;}) {
+    unComponentAdded(listener: { (event: ComponentAddedEvent): void; }) {
         this.componentAddedListeners = this.componentAddedListeners.filter((curr) => (curr !== listener));
     }
 
@@ -645,11 +650,11 @@ export class LiveEditPageProxy {
         this.componentAddedListeners.forEach((listener) => listener(event));
     }
 
-    onComponentRemoved(listener: {(event: ComponentRemovedEvent): void;}) {
+    onComponentRemoved(listener: { (event: ComponentRemovedEvent): void; }) {
         this.componentRemovedListeners.push(listener);
     }
 
-    unComponentRemoved(listener: {(event: ComponentRemovedEvent): void;}) {
+    unComponentRemoved(listener: { (event: ComponentRemovedEvent): void; }) {
         this.componentRemovedListeners = this.componentRemovedListeners.filter((curr) => (curr !== listener));
     }
 
@@ -657,11 +662,11 @@ export class LiveEditPageProxy {
         this.componentRemovedListeners.forEach((listener) => listener(event));
     }
 
-    onComponentDuplicated(listener: {(event: ComponentDuplicatedEvent): void;}) {
+    onComponentDuplicated(listener: { (event: ComponentDuplicatedEvent): void; }) {
         this.componentDuplicatedListeners.push(listener);
     }
 
-    unComponentDuplicated(listener: {(event: ComponentDuplicatedEvent): void;}) {
+    unComponentDuplicated(listener: { (event: ComponentDuplicatedEvent): void; }) {
         this.componentDuplicatedListeners = this.componentDuplicatedListeners.filter((curr) => (curr !== listener));
     }
 
@@ -669,11 +674,11 @@ export class LiveEditPageProxy {
         this.componentDuplicatedListeners.forEach((listener) => listener(event));
     }
 
-    onComponentInspected(listener: {(event: ComponentInspectedEvent): void;}) {
+    onComponentInspected(listener: { (event: ComponentInspectedEvent): void; }) {
         this.componentInspectedListeners.push(listener);
     }
 
-    unComponentInspected(listener: {(event: ComponentInspectedEvent): void;}) {
+    unComponentInspected(listener: { (event: ComponentInspectedEvent): void; }) {
         this.componentInspectedListeners = this.componentInspectedListeners.filter((curr) => (curr !== listener));
     }
 
@@ -681,11 +686,11 @@ export class LiveEditPageProxy {
         this.componentInspectedListeners.forEach((listener) => listener(event));
     }
 
-    onPageInspected(listener: {(event: PageInspectedEvent): void;}) {
+    onPageInspected(listener: { (event: PageInspectedEvent): void; }) {
         this.pageInspectedListeners.push(listener);
     }
 
-    unPageInspected(listener: {(event: PageInspectedEvent): void;}) {
+    unPageInspected(listener: { (event: PageInspectedEvent): void; }) {
         this.pageInspectedListeners = this.pageInspectedListeners.filter((curr) => (curr !== listener));
     }
 
@@ -693,11 +698,11 @@ export class LiveEditPageProxy {
         this.pageInspectedListeners.forEach((listener) => listener(event));
     }
 
-    onComponentLoaded(listener: {(event: ComponentLoadedEvent): void;}) {
+    onComponentLoaded(listener: { (event: ComponentLoadedEvent): void; }) {
         this.componentLoadedListeners.push(listener);
     }
 
-    unComponentLoaded(listener: {(event: ComponentLoadedEvent): void;}) {
+    unComponentLoaded(listener: { (event: ComponentLoadedEvent): void; }) {
         this.componentLoadedListeners = this.componentLoadedListeners.filter((curr) => (curr !== listener));
     }
 
@@ -705,11 +710,11 @@ export class LiveEditPageProxy {
         this.componentLoadedListeners.forEach((listener) => listener(event));
     }
 
-    onComponentReset(listener: {(event: ComponentResetEvent): void;}) {
+    onComponentReset(listener: { (event: ComponentResetEvent): void; }) {
         this.componentResetListeners.push(listener);
     }
 
-    unComponentReset(listener: {(event: ComponentResetEvent): void;}) {
+    unComponentReset(listener: { (event: ComponentResetEvent): void; }) {
         this.componentResetListeners = this.componentResetListeners.filter((curr) => (curr !== listener));
     }
 
@@ -717,11 +722,11 @@ export class LiveEditPageProxy {
         this.componentResetListeners.forEach((listener) => listener(event));
     }
 
-    onLiveEditPageViewReady(listener: {(event: LiveEditPageViewReadyEvent): void;}) {
+    onLiveEditPageViewReady(listener: { (event: LiveEditPageViewReadyEvent): void; }) {
         this.liveEditPageViewReadyListeners.push(listener);
     }
 
-    unLiveEditPageViewReady(listener: {(event: LiveEditPageViewReadyEvent): void;}) {
+    unLiveEditPageViewReady(listener: { (event: LiveEditPageViewReadyEvent): void; }) {
         this.liveEditPageViewReadyListeners = this.liveEditPageViewReadyListeners.filter((curr) => (curr !== listener));
     }
 
@@ -729,11 +734,11 @@ export class LiveEditPageProxy {
         this.liveEditPageViewReadyListeners.forEach((listener) => listener(event));
     }
 
-    onLiveEditPageInitializationError(listener: {(event: LiveEditPageInitializationErrorEvent): void;}) {
+    onLiveEditPageInitializationError(listener: { (event: LiveEditPageInitializationErrorEvent): void; }) {
         this.liveEditPageInitErrorListeners.push(listener);
     }
 
-    unLiveEditPageInitializationError(listener: {(event: LiveEditPageInitializationErrorEvent): void;}) {
+    unLiveEditPageInitializationError(listener: { (event: LiveEditPageInitializationErrorEvent): void; }) {
         this.liveEditPageInitErrorListeners = this.liveEditPageInitErrorListeners.filter((curr) => (curr !== listener));
     }
 
@@ -741,11 +746,11 @@ export class LiveEditPageProxy {
         this.liveEditPageInitErrorListeners.forEach((listener) => listener(event));
     }
 
-    onLiveEditPageDialogCreate(listener: {(event: CreateHtmlAreaDialogEvent): void;}) {
+    onLiveEditPageDialogCreate(listener: { (event: CreateHtmlAreaDialogEvent): void; }) {
         this.createHtmlAreaDialogListeners.push(listener);
     }
 
-    unLiveEditPageDialogCreate(listener: {(event: CreateHtmlAreaDialogEvent): void;}) {
+    unLiveEditPageDialogCreate(listener: { (event: CreateHtmlAreaDialogEvent): void; }) {
         this.createHtmlAreaDialogListeners = this.createHtmlAreaDialogListeners.filter((curr) => (curr !== listener));
     }
 
@@ -757,11 +762,11 @@ export class LiveEditPageProxy {
         new LiveEditPageDialogCreatedEvent(modalDialog, config).fire(this.liveEditWindow);
     }
 
-    onComponentFragmentCreated(listener: {(event: ComponentFragmentCreatedEvent): void;}) {
+    onComponentFragmentCreated(listener: { (event: ComponentFragmentCreatedEvent): void; }) {
         this.fragmentCreatedListeners.push(listener);
     }
 
-    unComponentFragmentCreated(listener: {(event: ComponentFragmentCreatedEvent): void;}) {
+    unComponentFragmentCreated(listener: { (event: ComponentFragmentCreatedEvent): void; }) {
         this.fragmentCreatedListeners = this.fragmentCreatedListeners.filter((curr) => (curr !== listener));
     }
 
@@ -769,11 +774,11 @@ export class LiveEditPageProxy {
         this.fragmentCreatedListeners.forEach((listener) => listener(event));
     }
 
-    onFragmentReloadRequired(listener: {(event: FragmentComponentReloadRequiredEvent): void;}) {
+    onFragmentReloadRequired(listener: { (event: FragmentComponentReloadRequiredEvent): void; }) {
         this.fragmentLoadedListeners.push(listener);
     }
 
-    unFragmentReloadRequired(listener: {(event: FragmentComponentReloadRequiredEvent): void;}) {
+    unFragmentReloadRequired(listener: { (event: FragmentComponentReloadRequiredEvent): void; }) {
         this.fragmentLoadedListeners = this.fragmentLoadedListeners.filter((curr) => (curr !== listener));
     }
 
@@ -781,11 +786,11 @@ export class LiveEditPageProxy {
         this.fragmentLoadedListeners.forEach((listener) => listener(event));
     }
 
-    onShowWarning(listener: {(event: ShowWarningLiveEditEvent): void;}) {
+    onShowWarning(listener: { (event: ShowWarningLiveEditEvent): void; }) {
         this.showWarningListeners.push(listener);
     }
 
-    unShowWarning(listener: {(event: ShowWarningLiveEditEvent): void;}) {
+    unShowWarning(listener: { (event: ShowWarningLiveEditEvent): void; }) {
         this.showWarningListeners = this.showWarningListeners.filter((curr) => (curr !== listener));
     }
 
@@ -793,11 +798,11 @@ export class LiveEditPageProxy {
         this.showWarningListeners.forEach((listener) => listener(event));
     }
 
-    onEditContent(listener: {(event: EditContentEvent): void;}) {
+    onEditContent(listener: { (event: EditContentEvent): void; }) {
         this.editContentListeners.push(listener);
     }
 
-    unEditContent(listener: {(event: EditContentEvent): void;}) {
+    unEditContent(listener: { (event: EditContentEvent): void; }) {
         this.editContentListeners = this.editContentListeners.filter((curr) => (curr !== listener));
     }
 

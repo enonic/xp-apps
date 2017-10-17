@@ -1,13 +1,14 @@
 import '../../../../../../api.ts';
 import {ComponentInspectionPanel, ComponentInspectionPanelConfig} from './ComponentInspectionPanel';
 import {ImageSelectorForm} from './ImageSelectorForm';
-
+import {ItemViewIconClassResolver} from '../../../../../../page-editor/ItemViewIconClassResolver';
+import {ImageComponentView} from '../../../../../../page-editor/image/ImageComponentView';
+import {LiveEditModel} from '../../../../../../page-editor/LiveEditModel';
 import ImageComponent = api.content.page.region.ImageComponent;
 import ContentSummary = api.content.ContentSummary;
 import ContentId = api.content.ContentId;
 import GetContentSummaryByIdRequest = api.content.resource.GetContentSummaryByIdRequest;
-import LiveEditModel = api.liveedit.LiveEditModel;
-import ImageComponentView = api.liveedit.image.ImageComponentView;
+import ContentTypeName = api.schema.content.ContentTypeName;
 import ComponentPropertyChangedEvent = api.content.page.region.ComponentPropertyChangedEvent;
 import Option = api.ui.selector.Option;
 import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
@@ -17,7 +18,8 @@ import ImageContentComboBox = api.content.image.ImageContentComboBox;
 import ContentSelectedOptionsView = api.content.ContentSelectedOptionsView;
 import ImageTreeSelectorItem = api.content.image.ImageTreeSelectorItem;
 
-export class ImageInspectionPanel extends ComponentInspectionPanel<ImageComponent> {
+export class ImageInspectionPanel
+    extends ComponentInspectionPanel<ImageComponent> {
 
     private imageComponent: ImageComponent;
 
@@ -35,7 +37,7 @@ export class ImageInspectionPanel extends ComponentInspectionPanel<ImageComponen
 
     constructor() {
         super(<ComponentInspectionPanelConfig>{
-            iconClass: api.liveedit.ItemViewIconClassResolver.resolveByType('image', 'icon-xlarge')
+            iconClass: ItemViewIconClassResolver.resolveByType('image', 'icon-xlarge')
         });
 
         this.imageSelector = ImageContentComboBox
