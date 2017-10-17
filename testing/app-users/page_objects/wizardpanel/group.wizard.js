@@ -78,6 +78,16 @@ var groupWizard = Object.create(wizard, {
                 });
         }
     },
+    isMemberOptionFilterInputDisplayed: {
+        value: function () {
+            return this.isVisible(this.memberOptionsFilterInput);
+        }
+    },
+    isRoleOptionFilterInputDisplayed: {
+        value: function () {
+            return this.isVisible(this.roleOptionsFilterInput);
+        }
+    },
     addRoles: {
         value: function (roleDisplayNames) {
             let result = Promise.resolve();

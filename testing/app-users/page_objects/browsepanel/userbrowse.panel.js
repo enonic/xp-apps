@@ -60,7 +60,9 @@ var userBrowsePanel = Object.create(page, {
 
     waitForPanelVisible: {
         value: function (ms) {
-            return this.waitForVisible(`${panel.toolbar}`, ms);
+            return this.waitForVisible(`${panel.toolbar}`, ms).catch(err=> {
+                throw new Error('User browse panel was not loaded in ' + ms);
+            });
         }
     },
     isItemDisplayed: {
@@ -93,6 +95,8 @@ var userBrowsePanel = Object.create(page, {
                 return this.waitForSpinnerNotVisible(3000);
             }).then(()=> {
                 return console.log('spinner is not visible')
+            }).catch(err=> {
+                throw new Error('browse panel, grid was not loaded in ' + ms);
             });
         }
     },
@@ -128,7 +132,7 @@ var userBrowsePanel = Object.create(page, {
     },
     clickOnDeleteButton: {
         value: function () {
-            return this.waitForEnabled(this.deleteButton, 1000).then(()=> {
+            return this.waitForEnabled(this.deleteButton, 2000).then(()=> {
                 return this.doClick(this.deleteButton);
             }).catch((err)=> {
                 throw new Error('Delete button is not enabled! ' + err);
@@ -175,21 +179,30 @@ var userBrowsePanel = Object.create(page, {
     },
     clickOnRowByName: {
         value: function (name) {
-            var displayNameXpath = panel.rowByName(name);
-            return this.waitForVisible(displayNameXpath, 3000).then(()=> {
-                return this.doClick(displayNameXpath);
+            var nameXpath = panel.rowByName(name);
+            return this.waitForVisible(nameXpath, 3000).then(()=> {
+                return this.doClick(nameXpath);
             }).catch(()=> {
                 throw Error('Row with the name ' + name + ' was not found')
             })
         }
     },
-    clickCheckboxAndSelectRowByDisplayName: {
+    waitForRowByNameVisible: {
         value: function (name) {
-            var displayNameXpath = panel.rowByName(name);
+            var nameXpath = panel.rowByName(name);
+            return this.waitForVisible(nameXpath, 3000)
+                .catch((err)=> {
+                    throw Error('Row with the name ' + name + ' is not visible after ' + '3000ms')
+                })
+        }
+    },
+    clickCheckboxAndSelectRowByDisplayName: {
+        value: function (displayName) {
+            var displayNameXpath = panel.rowByName(displayName);
             return this.waitForVisible(displayNameXpath, 2000).then(()=> {
                 return this.doClick(displayNameXpath);
             }).catch(()=> {
-                throw Error('Row with the name ' + name + ' was not found')
+                throw Error('Row with the displayName ' + displayName + ' was not found')
             })
         }
     },
