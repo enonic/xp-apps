@@ -167,6 +167,9 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends UserItem>
     }
 
     hasUnsavedChanges(): boolean {
+        if (!this.isRendered()) {
+            return false;
+        }
         const persisted = this.getPersistedItem();
         if (persisted) {
             return !this.isPersistedEqualsViewed();
