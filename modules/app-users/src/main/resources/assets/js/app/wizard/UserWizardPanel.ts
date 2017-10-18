@@ -193,6 +193,10 @@ export class UserWizardPanel extends PrincipalWizardPanel {
     }
 
     hasUnsavedChanges(): boolean {
+        if (!this.isRendered()) {
+            return false;
+        }
+        
         let persistedPrincipal = this.getPersistedItem();
         let email = this.userEmailWizardStepForm.getEmail();
         let memberships = this.membershipsWizardStepForm.getMemberships();
