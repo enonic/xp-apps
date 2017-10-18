@@ -54,8 +54,6 @@ export class PrincipalMembersWizardStepForm extends api.app.wizard.WizardStepFor
     }
 
     private selectMembers(): void {
-        this.principals.clearSelection();
-        this.principals.resetBaseValues();
 
         if (!!this.principal) {
             let value = this.getPrincipalMembers().map((key: PrincipalKey) => {
