@@ -29,7 +29,7 @@ describe('User Store saving and deleting spec', function () {
             }).then(()=> {
                 return userStoreWizard.waitForNotificationMessage();
             }).then(result=> {
-                assert.strictEqual(result, 'User store was created');
+                assert.strictEqual(result, 'User store was created', 'correct notification message should be displayed');
             })
         });
 
@@ -42,7 +42,7 @@ describe('User Store saving and deleting spec', function () {
                     return userStoreWizard.waitForErrorNotificationMessage();
                 }).then(result=> {
                     var msg = `User Store [` + userStore.displayName + `] could not be created. A User Store with that name already exists`
-                    assert.strictEqual(result, msg);
+                    assert.strictEqual(result, msg, 'expected notification message should be displayed');
                 })
         });
 
@@ -63,18 +63,18 @@ describe('User Store saving and deleting spec', function () {
         }).then(()=> {
             return userStoreWizard.waitForOpened();
         }).then(()=> userStoreWizard.getDescription()).then(result=> {
-            assert.strictEqual(result, userStore.description);
+            assert.strictEqual(result, userStore.description, 'actual description and expected should be equals');
         })
     });
 
     it(`GIVEN existing 'User Store'(no any users) WHEN it has been selected THEN Delete button should be enabled`, () => {
-        return userBrowsePanel.clickOnRowByName(userStore.displayName).pause(400).then(()=> {
-            //Delete should be enabled, because of the store has no any users
-            return expect(userBrowsePanel.isDeleteButtonEnabled()).to.eventually.be.true;
+        return userBrowsePanel.clickOnRowByName(userStore.displayName).pause(700).then(()=> {
+            return assert.eventually.equal(userBrowsePanel.isDeleteButtonEnabled(), true,
+                "'Delete' button should be enabled, because of no users are present in the store");
         }).then(()=> {
-            return expect(userBrowsePanel.isNewButtonEnabled()).to.eventually.be.true;
+            return assert.eventually.equal(userBrowsePanel.isNewButtonEnabled(), true, "'New' button should be enabled");
         }).then(()=> {
-            return expect(userBrowsePanel.isEditButtonEnabled()).to.eventually.be.true;
+            return assert.eventually.equal(userBrowsePanel.isEditButtonEnabled(), true, "'Edit' button should be enabled");
         });
     });
 
@@ -99,9 +99,9 @@ describe('User Store saving and deleting spec', function () {
         }).then(result=> {
             assert.isTrue(result, 'the user should not be present in the grid');
         }).then(()=> {
-            return testUtils.selectAndDeleteItem(userStore.name)
+            return testUtils.selectAndDeleteItem(userStore.displayName)
         }).then(()=> {
-            return userBrowsePanel.waitForItemNotDisplayed(userStore.name)
+            return userBrowsePanel.waitForItemNotDisplayed(userStore.displayName)
         });
     });
 

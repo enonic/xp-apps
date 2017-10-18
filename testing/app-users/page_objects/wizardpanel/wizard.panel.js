@@ -30,14 +30,29 @@ var wizardPanel = Object.create(page, {
             return this.waitForEnabled(this.saveButton, 1000);
         }
     },
+    waitForSaveButtonDisabled: {
+        value: function () {
+            return this.waitForDisabled(this.saveButton, 1000);
+        }
+    },
     typeDisplayName: {
         value: function (displayName) {
             return this.typeTextInInput(this.displayNameInput, displayName);
         }
     },
+    clearDisplayNameInput: {
+        value: function (displayName) {
+            return this.clearElement(this.displayNameInput);
+        }
+    },
     isDisplayNameInputVisible: {
         value: function () {
             return this.isVisible(this.displayNameInput);
+        }
+    },
+    isDescriptionInputDisplayed: {
+        value: function () {
+            return this.isVisible(this.descriptionInput);
         }
     },
     waitAndClickOnSave: {

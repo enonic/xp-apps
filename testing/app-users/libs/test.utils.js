@@ -18,6 +18,8 @@ module.exports = {
     xpTabs: {},
     findAndSelectItem: function (name) {
         return this.typeNameInFilterPanel(name).then(()=> {
+            return browsePanel.waitForRowByNameVisible(name);
+        }).then(()=> {
             return browsePanel.clickOnRowByName(name);
         });
     },
@@ -36,7 +38,7 @@ module.exports = {
         });
     },
     selectAndDeleteItem: function (name) {
-        return this.findAndSelectItem(name).then(()=> {
+        return this.findAndSelectItem(name).pause(500).then(()=> {
             return browsePanel.waitForDeleteButtonEnabled();
         }).then((result)=> {
             return browsePanel.clickOnDeleteButton();

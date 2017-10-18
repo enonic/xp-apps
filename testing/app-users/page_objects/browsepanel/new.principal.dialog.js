@@ -38,12 +38,16 @@ var newPrincipalDialog = Object.create(page, {
     },
     waitForOpened: {
         value: function () {
-            return this.waitForVisible(`${dialog.container}`, 3000);
+            return this.waitForVisible(`${dialog.container}`, 3000).catch(err=> {
+                throw new Error('NewPrincipal dialog was not loaded! ' + err);
+            });
         }
     },
     waitForClosed: {
         value: function () {
-            return this.waitForNotVisible(`${dialog.container}`, 3000);
+            return this.waitForNotVisible(`${dialog.container}`, 3000).catch(error=> {
+                throw new Error('New Principal Dialog was not closed');
+            });
         }
     },
     getNumberOfItems: {

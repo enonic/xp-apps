@@ -114,11 +114,6 @@ var userWizard = Object.create(wizard, {
             return this.getTextFromInput(this.descriptionInput);
         }
     },
-    waitForNewButtonEnabled: {
-        value: function () {
-            return this.waitForEnabled(this.newButton, 1000);
-        }
-    },
 });
 
 module.exports = userWizard;
