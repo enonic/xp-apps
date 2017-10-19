@@ -30,4 +30,3 @@ export class LiveEditPageDialogCreatedEvent
         api.event.Event.unbind(api.ClassHelper.getFullName(this), handler, contextWindow);
     }
 }
-

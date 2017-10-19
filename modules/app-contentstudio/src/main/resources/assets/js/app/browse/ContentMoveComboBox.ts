@@ -31,10 +31,10 @@ export class ContentMoveComboBox extends ContentComboBox {
 
         super(contentComboBoxBuilder);
         this.readonlyChecker = new MoveReadOnlyChecker();
-        
+
         this.getComboBox().getComboBoxDropdownGrid().setReadonlyChecker(this.readonlyChecker.isReadOnly.bind(this.readonlyChecker));
         this.optionsFactory.setReadonlyChecker(this.readonlyChecker.isReadOnly.bind(this.readonlyChecker));
-        
+
         this.onOptionDeselected(() => {
             this.getComboBox().getInput().reset();
         });

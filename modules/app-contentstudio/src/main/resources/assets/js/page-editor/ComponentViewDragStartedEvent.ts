@@ -25,4 +25,3 @@ export class ComponentViewDragStartedEvent
         Event.unbind(api.ClassHelper.getFullName(this), handler, contextWindow);
     }
 }
-

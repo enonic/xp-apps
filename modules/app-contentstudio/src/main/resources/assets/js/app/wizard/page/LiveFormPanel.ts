@@ -60,14 +60,9 @@ import LayoutComponent = api.content.page.region.LayoutComponent;
 import FragmentComponent = api.content.page.region.FragmentComponent;
 import ComponentPropertyChangedEvent = api.content.page.region.ComponentPropertyChangedEvent;
 import RenderingMode = api.rendering.RenderingMode;
-
-
 import HtmlAreaDialogShownEvent = api.util.htmlarea.dialog.CreateHtmlAreaDialogEvent;
 import HTMLAreaDialogHandler = api.util.htmlarea.dialog.HTMLAreaDialogHandler;
-
 import Panel = api.ui.panel.Panel;
-
-
 import ContentDeletedEvent = api.content.event.ContentDeletedEvent;
 import ContentUpdatedEvent = api.content.event.ContentUpdatedEvent;
 import BeforeContentSavedEvent = api.content.event.BeforeContentSavedEvent;

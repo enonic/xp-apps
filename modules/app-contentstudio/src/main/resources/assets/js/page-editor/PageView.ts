@@ -172,7 +172,7 @@ export class PageView
         ctrl.onTextEditModeChanged(textEditModeListener);
 
         this.onRemoved(event => {
-            ctrl.unTextEditModeChanged(textEditModeListener)
+            ctrl.unTextEditModeChanged(textEditModeListener);
         });
     }
 

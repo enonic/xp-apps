@@ -19,6 +19,4 @@ export class ImageComponentViewer
     resolveIconClass(object: api.content.page.region.ImageComponent): string {
         return ItemViewIconClassResolver.resolveByType('image');
     }
-
 }
-

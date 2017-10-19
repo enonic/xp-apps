@@ -328,7 +328,7 @@ export class ItemView
     }
 
     protected isDragging(): boolean {
-        throw "Should be overridden, typically DragAndDrop.get().isDragging()";
+        throw 'Should be overridden, typically DragAndDrop.get().isDragging()';
     }
 
     protected unbindMouseListeners() {
@@ -976,7 +976,7 @@ export class ItemView
     }
 
     protected getRegionView(): ItemView {
-        return this.getParentItemView()
+        return this.getParentItemView();
     }
 
     getPageView(): ItemView {

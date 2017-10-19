@@ -32,4 +32,3 @@ export class ComponentResetEvent
         Event.unbind(api.ClassHelper.getFullName(this), handler, contextWindow);
     }
 }
-

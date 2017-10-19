@@ -24,4 +24,3 @@ export class FragmentComponentReloadRequiredEvent
         Event.unbind(api.ClassHelper.getFullName(this), handler, contextWindow);
     }
 }
-

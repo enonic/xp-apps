@@ -8,10 +8,12 @@ import {LayoutPlaceholder} from './LayoutPlaceholder';
 import {ItemView} from '../ItemView';
 import {ItemType} from '../ItemType';
 import {RegionItemType} from '../RegionItemType';
+import {DragAndDrop} from '../DragAndDrop';
+import {RegionView} from '../RegionView';
+import {RegionViewBuilder} from '../RegionView';
 import Component = api.content.page.region.Component;
 import ComponentPath = api.content.page.region.ComponentPath;
 import LayoutComponent = api.content.page.region.LayoutComponent;
-
 
 export class LayoutComponentViewBuilder
     extends ComponentViewBuilder<LayoutComponent> {

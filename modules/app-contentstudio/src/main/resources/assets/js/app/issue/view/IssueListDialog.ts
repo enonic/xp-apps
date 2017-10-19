@@ -231,7 +231,7 @@ export class IssueListDialog
         return this.openIssuesPanel;
     }
 
-    onCreateButtonClicked(listener: (action) => void) {
+    onCreateButtonClicked(listener: (action: Action) => void) {
         return this.createAction.onExecuted(listener);
     }
 

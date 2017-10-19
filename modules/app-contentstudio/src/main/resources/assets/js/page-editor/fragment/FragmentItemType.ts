@@ -20,4 +20,3 @@ export class FragmentItemType
 }
 
 FragmentItemType.get();
-

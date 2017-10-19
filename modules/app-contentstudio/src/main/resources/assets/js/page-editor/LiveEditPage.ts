@@ -19,7 +19,6 @@ import {ComponentViewDragStoppedEvent} from './ComponentViewDraggingStoppedEvent
 import {DefaultItemViewFactory} from './ItemViewFactory';
 import Exception = api.Exception;
 
-
 declare const CONFIG;
 
 export class LiveEditPage {

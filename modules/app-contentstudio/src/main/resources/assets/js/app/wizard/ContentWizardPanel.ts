@@ -764,7 +764,7 @@ export class ContentWizardPanel
             if (templateUpdated && site && updatedContent.getPath().isDescendantOf(site.getPath())) {
                 return new ContentWizardDataLoader().loadDefaultModels(site, this.contentType.getContentTypeName()).then(
                     defaultModels => {
-                        this.defaultModels = defaultModels;     
+                        this.defaultModels = defaultModels;
                         return this.liveEditModel.init(defaultModels.getPageTemplate(), defaultModels.getPageDescriptor()).then(model => {
                             this.getLivePanel().setModel(this.liveEditModel);
                             return true;

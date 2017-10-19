@@ -30,4 +30,3 @@ export class TextItemType
 }
 
 TextItemType.get();
-

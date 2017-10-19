@@ -14,4 +14,3 @@ export class ItemViewIconClassResolver {
         return api.StyleHelper.getCommonIconCls(itemType.toLowerCase()) + (size ? ' ' + size : '');
     }
 }
-

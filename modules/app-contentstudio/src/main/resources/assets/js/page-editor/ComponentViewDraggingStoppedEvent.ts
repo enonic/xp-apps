@@ -25,4 +25,3 @@ export class ComponentViewDragStoppedEvent
         Event.unbind(api.ClassHelper.getFullName(this), handler, contextWindow);
     }
 }
-

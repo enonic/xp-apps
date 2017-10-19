@@ -23,4 +23,3 @@ export class PageSelectedEvent
         api.event.Event.unbind(api.ClassHelper.getFullName(this), handler, contextWindow);
     }
 }
-

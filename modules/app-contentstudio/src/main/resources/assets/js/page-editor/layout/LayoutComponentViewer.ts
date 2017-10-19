@@ -20,4 +20,3 @@ export class LayoutComponentViewer
         return ItemViewIconClassResolver.resolveByType('layout');
     }
 }
-

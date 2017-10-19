@@ -60,4 +60,3 @@ export class ContentBasedComponentView<COMPONENT extends Component>
         throw new Error('Must be implemented by inheritors');
     }
 }
-
