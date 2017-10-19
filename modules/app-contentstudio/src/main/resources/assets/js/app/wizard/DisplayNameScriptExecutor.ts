@@ -28,30 +28,6 @@ export class DisplayNameScriptExecutor implements api.app.wizard.DisplayNameGene
     }
 
     private safeEval(script: string, formView: api.form.FormView): string {
-
-        function $(...paths: string[]) {
-
-            let strValues: string [] = [];
-            let strValue = '';
-
-            paths.forEach((path: string) => {
-                strValue = formView.getData().getString(path);
-                if (!api.util.StringHelper.isBlank(strValue)) {
-                    strValues.push(strValue);
-                }
-            });
-
-            strValue = '';
-            strValues.forEach((s: string, index: number) => {
-                strValue += s;
-                if (index < strValues.length - 1) {
-                    strValue += ' ';
-                }
-            });
-
-            return strValue;
-        }
-
         let result = '';
 
         try {

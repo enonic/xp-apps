@@ -3,6 +3,7 @@ import {PreviewContentHandler} from './handler/PreviewContentHandler';
 import {ContentTreeGrid} from '../ContentTreeGrid';
 import {BasePreviewAction} from '../../action/BasePreviewAction';
 import i18n = api.util.i18n;
+import ContentSummary = api.content.ContentSummary;
 
 export class PreviewContentAction
     extends BasePreviewAction {

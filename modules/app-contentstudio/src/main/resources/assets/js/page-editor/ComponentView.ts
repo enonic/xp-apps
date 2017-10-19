@@ -179,19 +179,7 @@ export class ComponentView<COMPONENT extends Component>
         });
 
         this.initKeyBoardBindings();
-
-        // TODO: by task about using HTML5 DnD api (JVS 2014-06-23) - do not remove
-        //this.setDraggable(true);
-        //this.onDragStart(this.handleDragStart2.bind(this));
-        //this.onDrag(this.handleDrag.bind(this));
-        //this.onDragEnd(this.handleDragEnd.bind(this));
     }
-
-    //remove(): ComponentView {
-    //    super.remove();
-    //    this.unregisterComponentListeners(this.component);
-    //    return this;
-    //}
 
     private registerComponentListeners(component: COMPONENT) {
         component.onReset(this.resetListener);
@@ -519,30 +507,5 @@ export class ComponentView<COMPONENT extends Component>
 
     private skipInitOnAdd(): void {
         this.initOnAdd = false;
-    }
-
-    // TODO: by task about using HTML5 DnD api (JVS 2014-06-23) - do not remove
-    private handleDragStart2(event: DragEvent) {
-
-        if (event.target === this.getHTMLElement()) {
-            event.dataTransfer.effectAllowed = 'move';
-            //event.dataTransfer.setData('text/plain', 'This text may be dragged');
-            console.log('ComponentView[' + this.getItemId().toNumber() + '].handleDragStart', event, this.getHTMLElement());
-        }
-    }
-
-    // TODO: by task about using HTML5 DnD api (JVS 2014-06-23) - do not remove
-    private handleDrag(event: DragEvent) {
-        if (event.target === this.getHTMLElement()) {
-            console.log('ComponentView[' + this.getItemId().toNumber() + '].handleDrag', event, this.getHTMLElement());
-        }
-    }
-
-    // TODO: by task about using HTML5 DnD api (JVS 2014-06-23) - do not remove
-    private handleDragEnd(event: DragEvent) {
-        if (event.target === this.getHTMLElement()) {
-            console.log('ComponentView[' + this.getItemId().toNumber() + '].handleDragEnd', event, this.getHTMLElement());
-            //this.hideTooltip();
-        }
     }
 }

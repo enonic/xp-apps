@@ -45,7 +45,6 @@ import {FragmentComponentView} from '../../../page-editor/fragment/FragmentCompo
 import {FragmentComponentReloadRequiredEvent} from '../../../page-editor/FragmentComponentReloadRequiredEvent';
 import {ShowWarningLiveEditEvent} from '../../../page-editor/ShowWarningLiveEditEvent';
 import {PageUnloadedEvent} from '../../../page-editor/PageUnloadedEvent';
-import {Shader} from '../../../page-editor/Shader';
 import {ImageComponentView} from '../../../page-editor/image/ImageComponentView';
 import {PageModel} from '../../../page-editor/PageModel';
 import Content = api.content.Content;
@@ -692,10 +691,6 @@ export class LiveFormPanel
                 this.minimizeContentFormPanelIfNeeded();
             }, 200);
         });
-    }
-
-    private shade() {
-        Shader.get().shade(this);
     }
 
     private minimizeContentFormPanelIfNeeded() {

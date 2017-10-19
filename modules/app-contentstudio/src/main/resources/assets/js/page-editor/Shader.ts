@@ -112,12 +112,6 @@ export class Shader {
         });
     }
 
-    private notifyUnlockClicked(event: MouseEvent) {
-        this.unlockClickedListeners.forEach((listener) => {
-            listener(event);
-        });
-    }
-
     onMouseEnter(listener: (event: MouseEvent) => void) {
         this.mouseEnterListeners.push(listener);
     }
@@ -180,13 +174,6 @@ export class Shader {
         this.clickListeners.forEach((listener) => {
             listener(event);
         });
-    }
-
-    private handleUnlockClick(event: MouseEvent) {
-        event.stopPropagation();
-        event.preventDefault();
-
-        this.notifyUnlockClicked(event);
     }
 
     private handleClick(event: MouseEvent) {

@@ -18,26 +18,8 @@ export class ContentVersionViewer extends api.ui.Viewer<api.content.ContentVersi
         return span;
     }
 
-    private getCommentSpan(contentVersion: api.content.ContentVersion): api.dom.SpanEl {
-        if (contentVersion.comment.length === 0) {
-            return null;
-        }
-
-        let span = new api.dom.SpanEl('version-comment');
-        span.setHtml(contentVersion.comment);
-        return span;
-    }
-
     private getSubNameElements(contentVersion: api.content.ContentVersion): api.dom.Element[] {
-        let elements: api.dom.Element[] = [this.getModifierSpan(contentVersion)]/*,
-         commentSpan = this.getCommentSpan(contentVersion)*/;
-
-        /*          Uncomment to enable comments in version history
-         if (commentSpan) {
-         elements.push(new api.dom.BrEl(), commentSpan);
-         }
-         */
-        return elements;
+        return [this.getModifierSpan(contentVersion)];
     }
 
     setObject(contentVersion: api.content.ContentVersion, row?: number) {

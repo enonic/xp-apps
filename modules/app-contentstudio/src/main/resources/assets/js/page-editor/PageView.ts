@@ -627,11 +627,6 @@ export class PageView
         return !this.pageModel || this.pageModel.getMode() === PageMode.NO_CONTROLLER;
     }
 
-    private isContentEmpty() {
-        let content = this.liveEditModel.getContent();
-        return (!content || api.util.StringHelper.isEmpty(content.getDisplayName()));
-    }
-
     getName(): string {
         let pageTemplateDisplayName = api.content.page.PageTemplateDisplayName;
         if (this.pageModel.hasTemplate()) {

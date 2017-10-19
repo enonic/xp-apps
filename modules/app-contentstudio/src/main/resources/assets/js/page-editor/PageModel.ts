@@ -446,8 +446,6 @@ export class PageModel {
      * Return page descriptor depending on page mode
      */
     getDescriptor(): PageDescriptor {
-        let descriptor: PageDescriptor;
-
         if (!this.isPageTemplate()) {
             if (this.mode === PageMode.FORCED_TEMPLATE) {
                 return this.templateDescriptor;

@@ -16,7 +16,6 @@ import Content = api.content.Content;
 import ContentDeletedEvent = api.content.event.ContentDeletedEvent;
 import ContentUpdatedEvent = api.content.event.ContentUpdatedEvent;
 import HTMLAreaHelper = api.util.htmlarea.editor.HTMLAreaHelper;
-import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import ContentTypeName = api.schema.content.ContentTypeName;
 import i18n = api.util.i18n;
 
@@ -40,8 +39,6 @@ export class FragmentComponentView
     private fragmentContentLoadedListeners: { (event: FragmentComponentLoadedEvent): void }[];
 
     private fragmentLoadErrorListeners: { (event: FragmentLoadErrorEvent): void }[];
-
-    private editFragmentAction: api.ui.Action;
 
     private loaded: boolean = false;
 
@@ -164,23 +161,6 @@ export class FragmentComponentView
             this.fragmentContent = null;
             this.notifyFragmentContentLoaded();
         }
-    }
-
-    private addFragmentContextMenuActions(contentAndSummary: ContentSummaryAndCompareStatus) {
-        if (this.component.isEmpty()) {
-            return;
-        }
-
-        if (this.editFragmentAction) {
-            this.removeContextMenuAction(this.editFragmentAction);
-        }
-
-        this.editFragmentAction = new api.ui.Action(i18n('live.view.fragment.editnewtab')).onExecuted(() => {
-            this.deselect();
-            new api.content.event.EditContentEvent([contentAndSummary]).fire();
-        });
-
-        this.addContextMenuActions([this.editFragmentAction]);
     }
 
     private parseContentViews(parentElement?: api.dom.Element, parentType?: ItemType) {

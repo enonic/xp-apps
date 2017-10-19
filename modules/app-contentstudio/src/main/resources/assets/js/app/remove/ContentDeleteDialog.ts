@@ -213,7 +213,6 @@ export class ContentDeleteDialog
 
     private updateSubTitle() {
         let items = this.getItemList().getItems();
-        let count = items.length;
 
         if (!this.doAnyHaveChildren(items)) {
             super.setSubTitle('');

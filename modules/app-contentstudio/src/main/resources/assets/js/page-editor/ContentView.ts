@@ -3,7 +3,6 @@ import {ItemView, ItemViewBuilder} from './ItemView';
 import {PartComponentView} from './part/PartComponentView';
 import {ContentItemType} from './ContentItemType';
 import {ContentViewContextMenuTitle} from './ContentViewContextMenuTitle';
-import i18n = api.util.i18n;
 
 export class ContentViewBuilder {
 
@@ -46,22 +45,6 @@ export class ContentView
 
         this.setContextMenuTitle(new ContentViewContextMenuTitle(this));
 
-    }
-
-    private createContentContextMenuActions(): api.ui.Action[] {
-        let actions: api.ui.Action[] = [];
-
-        actions.push(this.createSelectParentAction());
-        actions.push(new api.ui.Action(i18n('action.insert')).onExecuted(() => {
-            // TODO
-        }));
-        actions.push(new api.ui.Action(i18n('action.view')).onExecuted(() => {
-            // TODO
-        }));
-        actions.push(new api.ui.Action(i18n('action.edit')).onExecuted(() => {
-            // TODO
-        }));
-        return actions;
     }
 
     isEmpty(): boolean {

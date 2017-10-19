@@ -12,7 +12,6 @@ export class ScheduleWizardStepForm
 
     private content: Content;
     private updateUnchangedOnly: boolean = false;
-    private ignorePropertyChange: boolean = false;
 
     private formView: FormView;
     private propertySet: PropertySet = new api.data.PropertyTree().getRoot();

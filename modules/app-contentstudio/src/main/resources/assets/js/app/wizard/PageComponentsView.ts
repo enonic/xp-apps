@@ -753,11 +753,6 @@ export class PageComponentsView
         }
     }
 
-    private sameRowClicked(clickedRow: number): boolean {
-        let currentlySelectedRow = this.tree.getGrid().getSelectedRows()[0];
-        return clickedRow === currentlySelectedRow;
-    }
-
     private highlightRow(rowElement: HTMLElement, selected: boolean): void {
         if (selected) {
             Highlighter.get().hide();
