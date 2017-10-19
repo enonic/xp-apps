@@ -1,14 +1,10 @@
 import '../../api.ts';
 import {MarketAppPanel} from './view/MarketAppPanel';
 import {ApplicationInput} from './view/ApplicationInput';
-
-import ApplicationKey = api.application.ApplicationKey;
 import FileUploadStartedEvent = api.ui.uploader.FileUploadStartedEvent;
 import FileUploadFailedEvent = api.ui.uploader.FileUploadFailedEvent;
 import ApplicationUploaderEl = api.application.ApplicationUploaderEl;
 import Application = api.application.Application;
-
-import DockedPanel = api.ui.panel.DockedPanel;
 import i18n = api.util.i18n;
 import DivEl = api.dom.DivEl;
 

@@ -6,8 +6,6 @@ import {ApplicationAppPanel} from './app/ApplicationAppPanel';
 import {InstallAppDialog} from './app/installation/InstallAppDialog';
 import {InstallAppPromptEvent} from './app/installation/InstallAppPromptEvent';
 
-import Application = api.application.Application;
-
 function getApplication(): api.app.Application {
     let application = new api.app.Application('applications', 'Applications', 'AM', CONFIG.appIconUrl);
     application.setPath(api.rest.Path.fromString('/'));

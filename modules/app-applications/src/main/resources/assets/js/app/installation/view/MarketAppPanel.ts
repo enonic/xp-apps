@@ -2,8 +2,6 @@ import '../../../api.ts';
 import {MarketAppsTreeGrid} from './MarketAppsTreeGrid';
 import {ApplicationInput} from './ApplicationInput';
 
-import Application = api.application.Application;
-
 export class MarketAppPanel extends api.ui.panel.Panel {
 
     private marketAppsTreeGrid: MarketAppsTreeGrid;
