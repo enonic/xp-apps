@@ -1,18 +1,13 @@
 import '../../api.ts';
 
-import User = api.security.User;
 import Principal = api.security.Principal;
-import PrincipalKey = api.security.PrincipalKey;
 import PrincipalType = api.security.PrincipalType;
 import PrincipalLoader = api.security.PrincipalLoader;
 import RoleKeys = api.security.RoleKeys;
 import FormItemBuilder = api.ui.form.FormItemBuilder;
-import Validators = api.ui.form.Validators;
 
 import PrincipalComboBox = api.ui.security.PrincipalComboBox;
 
-import DivEl = api.dom.DivEl;
-import LabelEl = api.dom.LabelEl;
 import i18n = api.util.i18n;
 
 export class UserMembershipsWizardStepForm extends api.app.wizard.WizardStepForm {
@@ -69,12 +64,6 @@ export class UserMembershipsWizardStepForm extends api.app.wizard.WizardStepForm
 
     private selectMembership(): void {
         if (!!this.principal && this.groupsLoaded && this.rolesLoaded) {
-
-            this.groups.clearSelection();
-            this.groups.resetBaseValues();
-
-            this.roles.clearSelection();
-            this.roles.resetBaseValues();
 
             let groups = this.principal.asUser().getMemberships().filter((el) => {
                 return el.isGroup();

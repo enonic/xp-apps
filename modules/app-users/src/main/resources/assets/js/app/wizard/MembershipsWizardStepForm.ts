@@ -98,18 +98,12 @@ export class MembershipsWizardStepForm extends api.app.wizard.WizardStepForm {
 
         if (this.principal && isGroupsReady) {
 
-           this.groups.clearSelection();
-            this.groups.resetBaseValues();
-
             const groups = this.getMembershipsFromPrincipal().filter(el => el.isGroup()).map(el => el.getKey().toString());
 
             this.groups.setValue(groups.join(';'));
         }
 
         if (this.principal && isRolesReady) {
-
-           this.roles.clearSelection();
-           this.roles.resetBaseValues();
 
             const roles = this.getMembershipsFromPrincipal().filter(el => el.isRole()).map(el => el.getKey().toString());
 
