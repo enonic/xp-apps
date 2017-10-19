@@ -383,8 +383,8 @@ export class ContentDropdownTreeGrid extends TreeGrid<ContentSummary> {
                                                      childNodePath: ContentPath): wemQ.Promise<TreeNode<ContentSummary>> {
         let deferred = wemQ.defer<TreeNode<ContentSummary>>();
 
-        let dateChangedHandler = (event: DataChangedEvent<ContentSummary>) => {
-            let childNode = this.doFindChildNodeByPath(node, childNodePath);
+        let dateChangedHandler = () => {
+            const childNode = this.doFindChildNodeByPath(node, childNodePath);
             if (childNode) {
                 this.unDataChanged(dateChangedHandler);
                 deferred.resolve(this.doFindChildNodeByPath(node, childNodePath));
@@ -393,12 +393,7 @@ export class ContentDropdownTreeGrid extends TreeGrid<ContentSummary> {
 
         this.onDataChanged(dateChangedHandler);
 
-        // check in case child was loaded between this method call and listener set
-        const childNode = this.doFindChildNodeByPath(node, childNodePath);
-        if (childNode) {
-            this.unDataChanged(dateChangedHandler);
-            deferred.resolve(this.doFindChildNodeByPath(node, childNodePath));
-        }
+        dateChangedHandler();
 
         return deferred.promise;
     }

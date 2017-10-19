@@ -39,15 +39,16 @@ export class DisplayNameScriptExecutor implements api.app.wizard.DisplayNameGene
         function $(...paths: string[]) {
 
             let strValues: string [] = [];
-            paths.forEach((path: string) => {
+            let strValue = '';
 
-                let strValue = formView.getData().getString(path);
+            paths.forEach((path: string) => {
+                strValue = formView.getData().getString(path);
                 if (!api.util.StringHelper.isBlank(strValue)) {
                     strValues.push(strValue);
                 }
             });
 
-            let strValue = '';
+            strValue = '';
             strValues.forEach((s: string, index: number) => {
                 strValue += s;
                 if (index < strValues.length - 1) {

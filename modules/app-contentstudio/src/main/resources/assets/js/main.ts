@@ -173,7 +173,6 @@ function preLoadApplication() {
     if (wizardParams) {
         clearFavicon();
 
-        let body = api.dom.Body.get();
         if (!body.isRendered() && !body.isRendering()) {
             dataPreloaded = true;
             // body is not rendered if the tab is in background
@@ -294,7 +293,6 @@ function startContentWizard(wizardParams: ContentWizardPanelParams, connectionDe
 }
 
 function startContentApplication(application: api.app.Application) {
-    let body = api.dom.Body.get();
     let appBar = new api.app.bar.AppBar(application);
     let appPanel = new ContentAppPanel(application.getPath());
 
@@ -344,7 +342,7 @@ function startContentApplication(application: api.app.Application) {
 
 preLoadApplication();
 
-let body = api.dom.Body.get();
+const body = api.dom.Body.get();
 let renderListener = () => {
     startApplication();
     body.unRendered(renderListener);

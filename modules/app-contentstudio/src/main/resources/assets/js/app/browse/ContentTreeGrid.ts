@@ -498,8 +498,8 @@ export class ContentTreeGrid
                                                      childNodePath: ContentPath): wemQ.Promise<TreeNode<ContentSummaryAndCompareStatus>> {
         let deferred = wemQ.defer<TreeNode<ContentSummaryAndCompareStatus>>();
 
-        let dateChangedHandler = (event: DataChangedEvent<ContentSummaryAndCompareStatus>) => {
-            let childNode = this.doFindChildNodeByPath(node, childNodePath);
+        let dateChangedHandler = () => {
+            const childNode = this.doFindChildNodeByPath(node, childNodePath);
             if (childNode) {
                 this.unDataChanged(dateChangedHandler);
                 deferred.resolve(this.doFindChildNodeByPath(node, childNodePath));
@@ -508,12 +508,7 @@ export class ContentTreeGrid
 
         this.onDataChanged(dateChangedHandler);
 
-        // check in case child was loaded between this method call and listener set
-        const childNode = this.doFindChildNodeByPath(node, childNodePath);
-        if (childNode) {
-            this.unDataChanged(dateChangedHandler);
-            deferred.resolve(this.doFindChildNodeByPath(node, childNodePath));
-        }
+        dateChangedHandler();
 
         return deferred.promise;
     }

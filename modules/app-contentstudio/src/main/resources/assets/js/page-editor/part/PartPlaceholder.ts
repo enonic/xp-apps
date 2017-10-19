@@ -29,10 +29,11 @@ export class PartPlaceholder
 
         this.appendChild(this.comboBox);
 
+        const partComponent = this.partComponentView.getComponent();
+
         this.comboBox.onOptionSelected((event: SelectedOptionEvent<PartDescriptor>) => {
             this.partComponentView.showLoadingSpinner();
             let descriptor: Descriptor = event.getSelectedOption().getOption().displayValue;
-            let partComponent: PartComponent = this.partComponentView.getComponent();
             partComponent.setDescriptor(descriptor.getKey(), descriptor);
         });
 
@@ -52,7 +53,6 @@ export class PartPlaceholder
 
         this.displayName = new api.dom.H3El('display-name');
         this.appendChild(this.displayName);
-        let partComponent = this.partComponentView.getComponent();
         if (partComponent && partComponent.getName()) {
             this.setDisplayName(partComponent.getName().toString());
         }

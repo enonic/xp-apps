@@ -666,7 +666,7 @@ export class ContentBrowsePanel
             .setDisplayName(content.getDisplayName()).setPath(content.getPath().toString())
             .setIconUrl(new ContentIconUrlResolver().setContent(content.getContentSummary()).resolve())
             .setRenderable(renderable);
-    };
+    }
 
     private forcePreviewRerender() {
         let previewItem = this.getBrowseItemPanel().getStatisticsItem();
