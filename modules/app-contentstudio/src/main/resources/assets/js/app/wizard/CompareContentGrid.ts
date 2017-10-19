@@ -1,11 +1,7 @@
 import '../../api.ts';
-
-import GridColumn = api.ui.grid.GridColumn;
 import GridColumnBuilder = api.ui.grid.GridColumnBuilder;
 
 import ContentResponse = api.content.resource.result.ContentResponse;
-import ContentSummary = api.content.ContentSummary;
-import ContentSummaryBuilder = api.content.ContentSummaryBuilder;
 import ContentSummaryViewer = api.content.ContentSummaryViewer;
 
 import TreeGrid = api.ui.treegrid.TreeGrid;

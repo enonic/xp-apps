@@ -3,8 +3,6 @@ import {ContentPublishPromptEvent} from '../ContentPublishPromptEvent';
 import {ContentTreeGrid} from '../ContentTreeGrid';
 
 import Action = api.ui.Action;
-import ContentSummary = api.content.ContentSummary;
-import PublishContentRequest = api.content.resource.PublishContentRequest;
 import i18n = api.util.i18n;
 
 export class PublishContentAction extends Action {

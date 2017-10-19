@@ -4,8 +4,6 @@ import {ContentPermissionsApplyEvent} from './ContentPermissionsApplyEvent';
 import AccessControlList = api.security.acl.AccessControlList;
 import AccessControlListView = api.ui.security.acl.AccessControlListView;
 import AccessControlEntryView = api.ui.security.acl.AccessControlEntryView;
-import AccessControlEntry = api.security.acl.AccessControlEntry;
-import Content = api.content.Content;
 
 import DivEl = api.dom.DivEl;
 import LabelEl = api.dom.LabelEl;

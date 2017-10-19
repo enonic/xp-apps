@@ -2,9 +2,7 @@ import '../../api.ts';
 import {ContentWizardActions} from './action/ContentWizardActions';
 
 import Action = api.ui.Action;
-import DialogButton = api.ui.dialog.DialogButton;
 import SpanEl = api.dom.SpanEl;
-import CompareStatus = api.content.CompareStatus;
 import PublishStatus = api.content.PublishStatus;
 import MenuButton = api.ui.button.MenuButton;
 import ActionButton = api.ui.button.ActionButton;

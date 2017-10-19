@@ -11,8 +11,6 @@ import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStat
 import StringHelper = api.util.StringHelper;
 import ResponsiveManager = api.ui.responsive.ResponsiveManager;
 import ResponsiveItem = api.ui.responsive.ResponsiveItem;
-import FoldButton = api.ui.toolbar.FoldButton;
-import CompareStatusFormatter = api.content.CompareStatusFormatter;
 
 export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatisticsPanel<api.content.ContentSummaryAndCompareStatus> {
 

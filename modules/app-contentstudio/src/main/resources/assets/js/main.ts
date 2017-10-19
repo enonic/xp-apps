@@ -31,7 +31,6 @@ import {ContentEventsListener} from './app/ContentEventsListener';
 import {ContentEventsProcessor} from './app/ContentEventsProcessor';
 import {IssueListDialog} from './app/issue/view/IssueListDialog';
 import {IssueServerEventsHandler} from './app/issue/event/IssueServerEventsHandler';
-import {CreateIssueDialog} from './app/issue/view/CreateIssueDialog';
 import {CreateIssuePromptEvent} from './app/browse/CreateIssuePromptEvent';
 import {IssueDialogsManager} from './app/issue/IssueDialogsManager';
 import {ShowIssuesDialogEvent} from './app/browse/ShowIssuesDialogEvent';

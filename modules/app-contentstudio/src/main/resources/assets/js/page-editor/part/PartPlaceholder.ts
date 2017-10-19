@@ -3,7 +3,6 @@ import {ItemViewPlaceholder} from '../ItemViewPlaceholder';
 import {PartComponentView} from './PartComponentView';
 import Descriptor = api.content.page.Descriptor;
 import SiteModel = api.content.site.SiteModel;
-import PartComponent = api.content.page.region.PartComponent;
 import PartDescriptor = api.content.page.region.PartDescriptor;
 import PartDescriptorComboBox = api.content.page.region.PartDescriptorComboBox;
 

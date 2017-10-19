@@ -1,7 +1,4 @@
 import '../../../api.ts';
-
-import Element = api.dom.Element;
-import LabelEl = api.dom.LabelEl;
 import LinkEl = api.dom.LinkEl;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 

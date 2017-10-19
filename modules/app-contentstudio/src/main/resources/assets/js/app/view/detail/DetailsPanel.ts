@@ -3,8 +3,6 @@ import {DetailsView} from './DetailsView';
 import {WidgetView} from './WidgetView';
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 
-import ContentVersionSetEvent = api.content.event.ActiveContentVersionSetEvent;
-
 export class DetailsPanel extends api.ui.panel.Panel {
 
     private sizeChangedListeners: {() : void}[] = [];

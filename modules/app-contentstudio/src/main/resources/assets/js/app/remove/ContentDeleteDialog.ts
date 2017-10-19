@@ -3,12 +3,8 @@ import {ContentDeleteDialogAction} from './ContentDeleteDialogAction';
 import {ConfirmContentDeleteDialog} from './ConfirmContentDeleteDialog';
 import {ProgressBarDialog, ProgressBarConfig} from '../dialog/ProgressBarDialog';
 import {ContentDeletePromptEvent} from '../browse/ContentDeletePromptEvent';
-
-import ContentSummary = api.content.ContentSummary;
 import CompareStatus = api.content.CompareStatus;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
-import DialogButton = api.ui.dialog.DialogButton;
-import ListBox = api.ui.selector.list.ListBox;
 import i18n = api.util.i18n;
 
 export class ContentDeleteDialog

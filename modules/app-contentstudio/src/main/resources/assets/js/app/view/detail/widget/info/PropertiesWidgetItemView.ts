@@ -4,7 +4,6 @@ import {WidgetItemView} from '../../WidgetItemView';
 import ContentSummary = api.content.ContentSummary;
 import DateTimeFormatter = api.ui.treegrid.DateTimeFormatter;
 import Application = api.application.Application;
-import ApplicationKey = api.application.ApplicationKey;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import i18n = api.util.i18n;
 

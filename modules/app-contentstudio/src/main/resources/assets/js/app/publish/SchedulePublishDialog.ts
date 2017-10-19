@@ -1,7 +1,4 @@
 import '../../api.ts';
-
-import DateTimePickerBuilder = api.ui.time.DateTimePickerBuilder;
-import DateTimePicker = api.ui.time.DateTimePicker;
 import AEl = api.dom.AEl;
 import i18n = api.util.i18n;
 

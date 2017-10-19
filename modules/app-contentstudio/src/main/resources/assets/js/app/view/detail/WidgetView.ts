@@ -2,10 +2,7 @@ import '../../../api.ts';
 import {DetailsView} from './DetailsView';
 import {WidgetItemView} from './WidgetItemView';
 import {ActiveDetailsPanelManager} from '../../view/detail/ActiveDetailsPanelManager';
-
-import ViewItem = api.app.view.ViewItem;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
-import RenderingMode = api.rendering.RenderingMode;
 import Widget = api.content.Widget;
 
 export class WidgetView extends api.dom.DivEl {

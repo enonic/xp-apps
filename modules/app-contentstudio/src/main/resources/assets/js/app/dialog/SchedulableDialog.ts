@@ -1,12 +1,5 @@
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
-import PublishContentRequest = api.content.resource.PublishContentRequest;
-import ResolvePublishDependenciesResult = api.content.resource.result.ResolvePublishDependenciesResult;
 import CompareStatus = api.content.CompareStatus;
-import ContentId = api.content.ContentId;
-import ListBox = api.ui.selector.list.ListBox;
-import LoadMask = api.ui.mask.LoadMask;
-import BrowseItem = api.app.browse.BrowseItem;
-import ContentSummaryAndCompareStatusViewer = api.content.ContentSummaryAndCompareStatusViewer;
 import {ProgressBarConfig, ProgressBarDialog} from './ProgressBarDialog';
 import {SchedulePublishDialog} from '../publish/SchedulePublishDialog';
 import DropdownButtonRow = api.ui.dialog.DropdownButtonRow;

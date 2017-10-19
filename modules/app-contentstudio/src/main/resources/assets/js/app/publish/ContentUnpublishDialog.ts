@@ -3,12 +3,9 @@ import {ProgressBarDialog, ProgressBarConfig} from '../dialog/ProgressBarDialog'
 import {ContentUnpublishPromptEvent} from '../browse/ContentUnpublishPromptEvent';
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
-import DialogButton = api.ui.dialog.DialogButton;
 import UnpublishContentRequest = api.content.resource.UnpublishContentRequest;
-import ResolvePublishDependenciesResult = api.content.resource.result.ResolvePublishDependenciesResult;
 import CompareStatus = api.content.CompareStatus;
 import ContentId = api.content.ContentId;
-import ListBox = api.ui.selector.list.ListBox;
 import i18n = api.util.i18n;
 
 export class ContentUnpublishDialog

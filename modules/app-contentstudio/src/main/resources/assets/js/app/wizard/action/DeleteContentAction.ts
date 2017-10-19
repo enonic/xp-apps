@@ -1,9 +1,6 @@
 import '../../../api.ts';
 import {ContentWizardPanel} from '../ContentWizardPanel';
 import {ContentDeletePromptEvent} from '../../browse/ContentDeletePromptEvent';
-
-import ContentId = api.content.ContentId;
-import ContentPath = api.content.ContentPath;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import i18n = api.util.i18n;
 
