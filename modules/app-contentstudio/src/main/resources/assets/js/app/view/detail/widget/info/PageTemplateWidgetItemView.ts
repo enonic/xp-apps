@@ -16,7 +16,6 @@ import PageMode = api.content.page.PageMode;
 import ContentTypeName = api.schema.content.ContentTypeName;
 import GetContentByIdRequest = api.content.resource.GetContentByIdRequest;
 import i18n = api.util.i18n;
-import GetDefaultPageTemplateRequest = api.content.page.GetDefaultPageTemplateRequest;
 
 export class PageTemplateWidgetItemView extends WidgetItemView {
 

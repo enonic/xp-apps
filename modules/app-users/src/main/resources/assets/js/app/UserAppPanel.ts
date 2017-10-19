@@ -21,7 +21,6 @@ import Principal = api.security.Principal;
 import PrincipalType = api.security.PrincipalType;
 import PrincipalKey = api.security.PrincipalKey;
 import UserStore = api.security.UserStore;
-import UserStoreKey = api.security.UserStoreKey;
 import ShowBrowsePanelEvent = api.app.ShowBrowsePanelEvent;
 import UserItem = api.security.UserItem;
 import i18n = api.util.i18n;

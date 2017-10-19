@@ -23,4 +23,3 @@ export class ComponentViewContextMenuTitle<COMPONENT extends Component>
     }
 
 }
-

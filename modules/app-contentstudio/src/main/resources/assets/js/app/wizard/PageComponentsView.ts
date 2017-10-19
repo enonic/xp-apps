@@ -19,9 +19,7 @@ import {ClickPosition} from '../../page-editor/ClickPosition';
 import {PageViewController} from '../../page-editor/PageViewController';
 import Content = api.content.Content;
 import TreeNode = api.ui.treegrid.TreeNode;
-
 import Mask = api.ui.mask.Mask;
-
 import ResponsiveManager = api.ui.responsive.ResponsiveManager;
 import ResponsiveItem = api.ui.responsive.ResponsiveItem;
 import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
@@ -29,7 +27,6 @@ import i18n = api.util.i18n;
 import Action = api.ui.Action;
 import KeyBinding = api.ui.KeyBinding;
 import ObjectHelper = api.ObjectHelper;
-
 
 export class PageComponentsView
     extends api.dom.DivEl {
@@ -754,11 +751,6 @@ export class PageComponentsView
         if (this.contextMenu && this.contextMenu.isVisible()) {
             this.contextMenu.hide();
         }
-    }
-
-    private sameRowClicked(clickedRow: number): boolean {
-        let currentlySelectedRow = this.tree.getGrid().getSelectedRows()[0];
-        return clickedRow === currentlySelectedRow;
     }
 
     private highlightRow(rowElement: HTMLElement, selected: boolean): void {

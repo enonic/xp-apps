@@ -450,12 +450,6 @@ export class RegionView
         });
     }
 
-    private notifyItemViewAddedForAll(itemViews: ItemView[]) {
-        itemViews.forEach((itemView: ItemView) => {
-            this.notifyItemViewAdded(itemView);
-        });
-    }
-
     private notifyItemViewAdded(itemView: ItemView, isNew: boolean = false) {
         let event = new ItemViewAddedEvent(itemView, isNew);
         this.itemViewAddedListeners.forEach((listener) => {
@@ -475,12 +469,6 @@ export class RegionView
 
     getRegionView(): RegionView {
         return this;
-    }
-
-    private notifyItemViewRemovedForAll(itemViews: ItemView[]) {
-        itemViews.forEach((itemView: ItemView) => {
-            this.notifyItemViewRemoved(itemView);
-        });
     }
 
     private notifyItemViewRemoved(itemView: ItemView) {
@@ -553,41 +541,5 @@ export class RegionView
 
     protected isDragging(): boolean {
         return DragAndDrop.get().isDragging();
-    }
-
-    // TODO: by task about using HTML5 DnD api (JVS 2014-06-23) - do not remove
-    private handleDragEnter(event: DragEvent) {
-        if (event.target === this.getHTMLElement()) {
-            console.log('ItemView.handleDragEnter', event, this.getHTMLElement());
-        }
-    }
-
-    // TODO: by task about using HTML5 DnD api (JVS 2014-06-23) - do not remove
-    private handleDragLeave(event: DragEvent) {
-        if (event.target === this.getHTMLElement()) {
-            console.log('ItemView.handleDragLeave', event, this.getHTMLElement());
-        }
-    }
-
-    // TODO: by task about using HTML5 DnD api (JVS 2014-06-23) - do not remove
-    private handleDragOver(event: DragEvent) {
-        //var itemId = ItemView.parseItemId(<HTMLElement>event.target);
-        if (event.target === this.getHTMLElement()) {
-            console.log('RegionView[' + this.toString() + '].handleDragOver: ', event.target, event.target);
-            event.preventDefault();
-        }
-    }
-
-    // TODO: by task about using HTML5 DnD api (JVS 2014-06-23) - do not remove
-    private handleDrop(event: DragEvent) {
-        if (event.target === this.getHTMLElement()) {
-            //var itemId = ItemView.parseItemId(<HTMLElement>event.target);
-            console.log('RegionView[' + this.toString() + '].handleDrop: ', event.target, this.getHTMLElement());
-
-            event.preventDefault();
-
-            let data = event.dataTransfer.getData('Text');
-            //event.target.appendChild(document.getElementById(data));
-        }
     }
 }

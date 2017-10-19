@@ -1,18 +1,11 @@
 import '../../api.ts';
-
-import User = api.security.User;
 import Principal = api.security.Principal;
-import PrincipalKey = api.security.PrincipalKey;
 import PrincipalType = api.security.PrincipalType;
 import PrincipalLoader = api.security.PrincipalLoader;
 import RoleKeys = api.security.RoleKeys;
 import FormItemBuilder = api.ui.form.FormItemBuilder;
-import Validators = api.ui.form.Validators;
 import PrincipalComboBox = api.ui.security.PrincipalComboBox;
-import FormItem = api.ui.form.FormItem;
 import Fieldset = api.ui.form.Fieldset;
-import LabelEl = api.dom.LabelEl;
-import DivEl = api.dom.DivEl;
 import i18n = api.util.i18n;
 
 export enum MembershipsType {
@@ -28,8 +21,6 @@ export class MembershipsWizardStepForm extends api.app.wizard.WizardStepForm {
     private roles: PrincipalComboBox;
 
     private principal: Principal;
-
-    private groupsLoaded: boolean;
 
     private rolesLoaded: boolean;
 
@@ -93,8 +84,8 @@ export class MembershipsWizardStepForm extends api.app.wizard.WizardStepForm {
     }
 
     private selectMembership(): void {
-        const isGroupsReady = this.type !== MembershipsType.ROLES //&& this.groupsLoaded;
-        const isRolesReady = this.type !== MembershipsType.GROUPS //&& this.rolesLoaded;
+        const isGroupsReady = this.type !== MembershipsType.ROLES; //&& this.groupsLoaded;
+        const isRolesReady = this.type !== MembershipsType.GROUPS; //&& this.rolesLoaded;
 
         if (this.principal && isGroupsReady) {
 

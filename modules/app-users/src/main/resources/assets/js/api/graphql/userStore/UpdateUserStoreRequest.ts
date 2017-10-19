@@ -28,6 +28,7 @@ export class UpdateUserStoreRequest
         return vars;
     }
 
+    // tslint:disable max-line-length
     getMutation(): string {
         return `mutation ($key: String!, $displayName: String!, $description: String, $authConfig: AuthConfigInput, $permissions: [UserStoreAccessControlInput]) {
             updateUserStore(key: $key, displayName: $displayName, description: $description, authConfig: $authConfig, permissions: $permissions) {
@@ -50,6 +51,7 @@ export class UpdateUserStoreRequest
             }
         }`;
     }
+    // tslint:enable max-line-length
 
     setKey(userStoreKey: UserStoreKey): UpdateUserStoreRequest {
         this.userStoreKey = userStoreKey;

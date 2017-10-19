@@ -45,7 +45,6 @@ import {FragmentComponentView} from '../../../page-editor/fragment/FragmentCompo
 import {FragmentComponentReloadRequiredEvent} from '../../../page-editor/FragmentComponentReloadRequiredEvent';
 import {ShowWarningLiveEditEvent} from '../../../page-editor/ShowWarningLiveEditEvent';
 import {PageUnloadedEvent} from '../../../page-editor/PageUnloadedEvent';
-import {Shader} from '../../../page-editor/Shader';
 import {ImageComponentView} from '../../../page-editor/image/ImageComponentView';
 import {PageModel} from '../../../page-editor/PageModel';
 import Content = api.content.Content;
@@ -60,14 +59,9 @@ import LayoutComponent = api.content.page.region.LayoutComponent;
 import FragmentComponent = api.content.page.region.FragmentComponent;
 import ComponentPropertyChangedEvent = api.content.page.region.ComponentPropertyChangedEvent;
 import RenderingMode = api.rendering.RenderingMode;
-
-
 import HtmlAreaDialogShownEvent = api.util.htmlarea.dialog.CreateHtmlAreaDialogEvent;
 import HTMLAreaDialogHandler = api.util.htmlarea.dialog.HTMLAreaDialogHandler;
-
 import Panel = api.ui.panel.Panel;
-
-
 import ContentDeletedEvent = api.content.event.ContentDeletedEvent;
 import ContentUpdatedEvent = api.content.event.ContentUpdatedEvent;
 import BeforeContentSavedEvent = api.content.event.BeforeContentSavedEvent;
@@ -697,10 +691,6 @@ export class LiveFormPanel
                 this.minimizeContentFormPanelIfNeeded();
             }, 200);
         });
-    }
-
-    private shade() {
-        Shader.get().shade(this);
     }
 
     private minimizeContentFormPanelIfNeeded() {

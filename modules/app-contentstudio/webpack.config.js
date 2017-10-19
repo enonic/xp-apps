@@ -1,4 +1,4 @@
-const RelativeErrorsWebpackPlugin = require('./util/relativeErrorsWebpackPlugin');
+const ErrorLoggerPlugin = require('error-logger-webpack-plugin');
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 
@@ -55,7 +55,7 @@ module.exports = {
         ]
     },
     plugins: [
-        RelativeErrorsWebpackPlugin,
+        new ErrorLoggerPlugin(),
         extractText,
         detectCirculars
     ],

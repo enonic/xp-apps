@@ -11,6 +11,8 @@ declare const CONFIG;
 // init should go before imports to correctly translate their static fields etc.
 api.util.i18nInit(CONFIG.messages);
 
+const body = api.dom.Body.get();
+
 import './api.ts';
 import {Router} from './app/Router';
 import {ContentAppPanel} from './app/ContentAppPanel';
@@ -31,16 +33,9 @@ import {ContentEventsListener} from './app/ContentEventsListener';
 import {ContentEventsProcessor} from './app/ContentEventsProcessor';
 import {IssueListDialog} from './app/issue/view/IssueListDialog';
 import {IssueServerEventsHandler} from './app/issue/event/IssueServerEventsHandler';
-import {CreateIssueDialog} from './app/issue/view/CreateIssueDialog';
 import {CreateIssuePromptEvent} from './app/browse/CreateIssuePromptEvent';
 import {IssueDialogsManager} from './app/issue/IssueDialogsManager';
 import {ShowIssuesDialogEvent} from './app/browse/ShowIssuesDialogEvent';
-
-/*
- module components {
- export var detailPanel: app.browse.ContentBrowseItemPanel;
- }
- */
 
 function getApplication(): api.app.Application {
     let application = new api.app.Application('content-studio', i18n('app.name'), i18n('app.abbr'), CONFIG.appIconUrl);
@@ -173,7 +168,6 @@ function preLoadApplication() {
     if (wizardParams) {
         clearFavicon();
 
-        let body = api.dom.Body.get();
         if (!body.isRendered() && !body.isRendering()) {
             dataPreloaded = true;
             // body is not rendered if the tab is in background
@@ -240,7 +234,7 @@ function startApplication() {
 
     ShowIssuesDialogEvent.on((event) => IssueDialogsManager.get().openListDialog());
 
-    let editPermissionsDialog = new EditPermissionsDialog();
+    new EditPermissionsDialog();
 
     application.setLoaded(true);
 
@@ -294,7 +288,6 @@ function startContentWizard(wizardParams: ContentWizardPanelParams, connectionDe
 }
 
 function startContentApplication(application: api.app.Application) {
-    let body = api.dom.Body.get();
     let appBar = new api.app.bar.AppBar(application);
     let appPanel = new ContentAppPanel(application.getPath());
 
@@ -338,13 +331,12 @@ function startContentApplication(application: api.app.Application) {
     });
 
     IssueListDialog.get();
-    let sortDialog = new SortContentDialog();
-    let moveDialog = new MoveContentDialog();
+    new SortContentDialog();
+    new MoveContentDialog();
 }
 
 preLoadApplication();
 
-let body = api.dom.Body.get();
 let renderListener = () => {
     startApplication();
     body.unRendered(renderListener);

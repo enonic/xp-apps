@@ -2,15 +2,8 @@ import '../../api.ts';
 
 import Content = api.content.Content;
 import PublishStatus = api.content.PublishStatus;
-import PrincipalType = api.security.PrincipalType;
-import PrincipalLoader = api.security.PrincipalLoader;
-import FormItemBuilder = api.ui.form.FormItemBuilder;
-import FormItem = api.ui.form.FormItem;
 import FormView = api.form.FormView;
 import PropertySet = api.data.PropertySet;
-import Validators = api.ui.form.Validators;
-import PrincipalComboBox = api.ui.security.PrincipalComboBox;
-import LocaleComboBox = api.ui.locale.LocaleComboBox;
 import WizardStepValidityChangedEvent = api.app.wizard.WizardStepValidityChangedEvent;
 import i18n = api.util.i18n;
 
@@ -19,7 +12,6 @@ export class ScheduleWizardStepForm
 
     private content: Content;
     private updateUnchangedOnly: boolean = false;
-    private ignorePropertyChange: boolean = false;
 
     private formView: FormView;
     private propertySet: PropertySet = new api.data.PropertyTree().getRoot();

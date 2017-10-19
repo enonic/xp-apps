@@ -2,12 +2,8 @@ import '../../../api.ts';
 import {PreviewContentHandler} from './handler/PreviewContentHandler';
 import {ContentTreeGrid} from '../ContentTreeGrid';
 import {BasePreviewAction} from '../../action/BasePreviewAction';
-
-import Action = api.ui.Action;
-import RenderingMode = api.rendering.RenderingMode;
-import ContentSummary = api.content.ContentSummary;
-import ContentId = api.content.ContentId;
 import i18n = api.util.i18n;
+import ContentSummary = api.content.ContentSummary;
 
 export class PreviewContentAction
     extends BasePreviewAction {

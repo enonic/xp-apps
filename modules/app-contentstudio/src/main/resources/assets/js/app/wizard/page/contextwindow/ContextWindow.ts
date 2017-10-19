@@ -6,13 +6,6 @@ import {BaseInspectionPanel} from './inspect/BaseInspectionPanel';
 import {EmulatorPanel} from './EmulatorPanel';
 import {InsertablesPanel} from './insert/InsertablesPanel';
 import {PageComponentsView} from '../../PageComponentsView';
-
-import PageTemplateKey = api.content.page.PageTemplateKey;
-import PageTemplate = api.content.page.PageTemplate;
-import PageDescriptor = api.content.page.PageDescriptor;
-import Region = api.content.page.region.Region;
-import ImageComponent = api.content.page.region.ImageComponent;
-import ImageComponentBuilder = api.content.page.region.ImageComponentBuilder;
 import ResponsiveManager = api.ui.responsive.ResponsiveManager;
 import ResponsiveItem = api.ui.responsive.ResponsiveItem;
 import i18n = api.util.i18n;

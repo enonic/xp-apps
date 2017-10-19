@@ -92,7 +92,7 @@ export class IssueDialogsManager {
         if (dialog.isVisible()) {
             dialog.getEl().focus();
         }
-    };
+    }
 
     openDetailsDialog(issue: Issue) {
         if (!this.listDialog.isVisible()) {

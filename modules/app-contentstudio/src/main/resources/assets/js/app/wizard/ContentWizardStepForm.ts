@@ -1,6 +1,4 @@
 import '../../api.ts';
-
-import ConfirmationDialog = api.ui.dialog.ConfirmationDialog;
 import Form = api.form.Form;
 import FormContext = api.form.FormContext;
 import FormView = api.form.FormView;

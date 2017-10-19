@@ -1,4 +1,4 @@
-const RelativeErrorsWebpackPlugin = require('./util/relativeErrorsWebpackPlugin');
+const ErrorLoggerPlugin = require('error-logger-webpack-plugin');
 
 module.exports = {
     entry: './src/main/resources/assets/js/main.ts',
@@ -14,7 +14,7 @@ module.exports = {
         ]
     },
     plugins: [
-        RelativeErrorsWebpackPlugin
+        new ErrorLoggerPlugin()
     ],
     devtool: 'source-map'
 };

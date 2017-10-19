@@ -5,9 +5,6 @@ import Principal = api.security.Principal;
 import EmailInput = api.ui.text.EmailInput;
 import FormItemBuilder = api.ui.form.FormItemBuilder;
 import Validators = api.ui.form.Validators;
-
-import DivEl = api.dom.DivEl;
-import LabelEl = api.dom.LabelEl;
 import i18n = api.util.i18n;
 
 export class UserEmailWizardStepForm

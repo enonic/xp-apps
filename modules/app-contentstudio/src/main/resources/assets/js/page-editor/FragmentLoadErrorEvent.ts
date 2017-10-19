@@ -24,4 +24,3 @@ export class FragmentLoadErrorEvent
         Event.unbind(api.ClassHelper.getFullName(this), handler, contextWindow);
     }
 }
-

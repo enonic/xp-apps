@@ -3,9 +3,7 @@ import '../../../api.ts';
 import ApplicationUploaderEl = api.application.ApplicationUploaderEl;
 import InputEl = api.dom.InputEl;
 import FileUploadStartedEvent = api.ui.uploader.FileUploadStartedEvent;
-import FileUploadCompleteEvent = api.ui.uploader.FileUploadCompleteEvent;
 import FileUploadFailedEvent = api.ui.uploader.FileUploadFailedEvent;
-import ApplicationInstallResult = api.application.ApplicationInstallResult;
 import Action = api.ui.Action;
 import Application = api.application.Application;
 

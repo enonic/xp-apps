@@ -7,25 +7,18 @@ import {NewContentEvent} from './NewContentEvent';
 import {FilterableItemsList} from './FilterableItemsList';
 
 import GetAllContentTypesRequest = api.schema.content.GetAllContentTypesRequest;
-import GetContentTypeByNameRequest = api.schema.content.GetContentTypeByNameRequest;
 import GetNearestSiteRequest = api.content.resource.GetNearestSiteRequest;
-import ContentName = api.content.ContentName;
 import Content = api.content.Content;
 import ContentPath = api.content.ContentPath;
-import ContentTypeName = api.schema.content.ContentTypeName;
 import ContentTypeSummary = api.schema.content.ContentTypeSummary;
-import ContentType = api.schema.content.ContentType;
 import Site = api.content.site.Site;
-import ApplicationKey = api.application.ApplicationKey;
 import FileUploadStartedEvent = api.ui.uploader.FileUploadStartedEvent;
-import UploadItem = api.ui.uploader.UploadItem;
 import ListContentByPathRequest = api.content.resource.ListContentByPathRequest;
 import LoadMask = api.ui.mask.LoadMask;
 import ContentResponse = api.content.resource.result.ContentResponse;
 import IsAuthenticatedRequest = api.security.auth.IsAuthenticatedRequest;
 import LoginResult = api.security.auth.LoginResult;
 import i18n = api.util.i18n;
-import RoleKeys = api.security.RoleKeys;
 
 export class NewContentDialog extends api.ui.dialog.ModalDialog {
 

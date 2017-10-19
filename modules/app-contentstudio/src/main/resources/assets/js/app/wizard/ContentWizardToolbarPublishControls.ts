@@ -2,10 +2,7 @@ import '../../api.ts';
 import {ContentWizardActions} from './action/ContentWizardActions';
 
 import Action = api.ui.Action;
-import DialogButton = api.ui.dialog.DialogButton;
 import SpanEl = api.dom.SpanEl;
-import CompareStatus = api.content.CompareStatus;
-import PublishStatus = api.content.PublishStatus;
 import MenuButton = api.ui.button.MenuButton;
 import ActionButton = api.ui.button.ActionButton;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
@@ -104,10 +101,6 @@ export class ContentWizardToolbarPublishControls
 
     public isPendingDelete(): boolean {
         return this.content.isPendingDelete();
-    }
-
-    private getPublishStatus(): PublishStatus {
-        return this.content ? this.content.getPublishStatus() : null;
     }
 
     public enableActionsForExisting(existing: api.content.Content) {

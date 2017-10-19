@@ -4,8 +4,6 @@ import {PrincipalWizardPanelParams} from './PrincipalWizardPanelParams';
 import {RoleMembersWizardStepForm} from './RoleMembersWizardStepForm';
 import {CreateRoleRequest} from '../../api/graphql/principal/role/CreateRoleRequest';
 import {UpdateRoleRequest} from '../../api/graphql/principal/role/UpdateRoleRequest';
-
-import Role = api.security.Role;
 import RoleBuilder = api.security.RoleBuilder;
 
 import Principal = api.security.Principal;

@@ -1,8 +1,5 @@
 import '../../api.ts';
 
-import Button = api.ui.button.Button;
-import CloseButton = api.ui.button.CloseButton;
-
 export interface ThumbnailUploaderElConfig extends api.ui.uploader.UploaderElConfig {
 
 }

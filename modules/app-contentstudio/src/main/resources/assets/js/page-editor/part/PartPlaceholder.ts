@@ -3,7 +3,6 @@ import {ItemViewPlaceholder} from '../ItemViewPlaceholder';
 import {PartComponentView} from './PartComponentView';
 import Descriptor = api.content.page.Descriptor;
 import SiteModel = api.content.site.SiteModel;
-import PartComponent = api.content.page.region.PartComponent;
 import PartDescriptor = api.content.page.region.PartDescriptor;
 import PartDescriptorComboBox = api.content.page.region.PartDescriptorComboBox;
 
@@ -29,10 +28,11 @@ export class PartPlaceholder
 
         this.appendChild(this.comboBox);
 
+        const partComponent = this.partComponentView.getComponent();
+
         this.comboBox.onOptionSelected((event: SelectedOptionEvent<PartDescriptor>) => {
             this.partComponentView.showLoadingSpinner();
             let descriptor: Descriptor = event.getSelectedOption().getOption().displayValue;
-            let partComponent: PartComponent = this.partComponentView.getComponent();
             partComponent.setDescriptor(descriptor.getKey(), descriptor);
         });
 
@@ -52,7 +52,6 @@ export class PartPlaceholder
 
         this.displayName = new api.dom.H3El('display-name');
         this.appendChild(this.displayName);
-        let partComponent = this.partComponentView.getComponent();
         if (partComponent && partComponent.getName()) {
             this.setDisplayName(partComponent.getName().toString());
         }

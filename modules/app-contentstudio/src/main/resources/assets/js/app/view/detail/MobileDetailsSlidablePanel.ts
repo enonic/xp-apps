@@ -3,8 +3,6 @@ import {SlidablePanel, SlidablePanelBuilder, SLIDE_FROM} from './SlidablePanel';
 import {DetailsView} from './DetailsView';
 import {DETAILS_PANEL_TYPE} from './DetailsPanel';
 
-import ResponsiveManager = api.ui.responsive.ResponsiveManager;
-
 export class MobileDetailsPanel extends SlidablePanel {
 
     constructor(detailsView: DetailsView) {

@@ -1,7 +1,6 @@
 import './../../api.ts';
 import {ComponentItemType} from '../ComponentItemType';
 
-
 export class LayoutItemType
     extends ComponentItemType {
 

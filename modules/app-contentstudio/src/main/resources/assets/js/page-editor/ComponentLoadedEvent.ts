@@ -31,4 +31,3 @@ export class ComponentLoadedEvent
         Event.unbind(api.ClassHelper.getFullName(this), handler, contextWindow);
     }
 }
-

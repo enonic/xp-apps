@@ -105,7 +105,7 @@ module.exports = {
     delete: function(keys) {
         // convert keys to paths because userstores and roles
         // can't have custom ids and thus be deleted by keys
-        var deletedIds = common.delete(common.keysToPaths(keys));
+        common.delete(common.keysToPaths(keys));
 
         // TODO: find which keys could not be deleted with reasons instead of returning all
         keys.forEach(function(key) {

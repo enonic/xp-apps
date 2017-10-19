@@ -60,4 +60,3 @@ export class LayoutPlaceholder
         this.comboBox.hide();
     }
 }
-

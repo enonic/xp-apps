@@ -19,6 +19,4 @@ export class FragmentComponentViewer
     resolveIconClass(object: api.content.page.region.FragmentComponent): string {
         return ItemViewIconClassResolver.resolveByType('fragment');
     }
-
 }
-

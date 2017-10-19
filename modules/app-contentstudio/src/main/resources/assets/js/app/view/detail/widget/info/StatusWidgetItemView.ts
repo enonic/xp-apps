@@ -3,8 +3,6 @@ import {WidgetItemView} from '../../WidgetItemView';
 
 import CompareStatus = api.content.CompareStatus;
 import PublishStatus = api.content.PublishStatus;
-import CompareStatusFormatter = api.content.CompareStatusFormatter;
-import PublishStatusFormatter = api.content.PublishStatusFormatter;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 
 export class StatusWidgetItemView extends WidgetItemView {

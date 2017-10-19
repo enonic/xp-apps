@@ -2,9 +2,6 @@ import '../../api.ts';
 import AppBarTabId = api.app.bar.AppBarTabId;
 import ContentTypeName = api.schema.content.ContentTypeName;
 import ContentId = api.content.ContentId;
-import Content = api.content.Content;
-import ContentBuilder = api.content.ContentBuilder;
-import Path = api.rest.Path;
 import Application = api.app.Application;
 
 export class ContentWizardPanelParams {

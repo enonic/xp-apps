@@ -3,7 +3,6 @@ import {UserStoreWizardPanelParams} from './UserStoreWizardPanelParams';
 import {GetUserStoreByKeyRequest} from '../../api/graphql/userStore/GetUserStoreByKeyRequest';
 
 import UserStore = api.security.UserStore;
-import UserStoreKey = api.security.UserStoreKey;
 
 export class UserStoreWizardDataLoader {
 

@@ -25,4 +25,3 @@ export class ComponentInspectedEvent
         Event.unbind(api.ClassHelper.getFullName(this), handler, contextWindow);
     }
 }
-

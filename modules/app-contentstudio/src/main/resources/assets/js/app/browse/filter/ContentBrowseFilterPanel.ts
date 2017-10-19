@@ -132,24 +132,30 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
     }
 
     private searchDataAndHandleResponse(contentQuery: ContentQuery): wemQ.Promise<void>  {
-        return new ContentQueryRequest<ContentSummaryJson,ContentSummary>(contentQuery).setExpand(api.rest.Expand.SUMMARY).sendAndParse().then(
-            (contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
+        return new ContentQueryRequest<ContentSummaryJson,ContentSummary>(contentQuery)
+            .setExpand(api.rest.Expand.SUMMARY)
+            .sendAndParse()
+            .then((contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
                 this.handleDataSearchResult(contentQuery, contentQueryResult);
-            }).catch((reason: any) => {
-            api.DefaultErrorHandler.handle(reason);
+            })
+            .catch((reason: any) => {
+                api.DefaultErrorHandler.handle(reason);
         });
     }
 
     private refreshDataAndHandleResponse(contentQuery: ContentQuery): wemQ.Promise<void>  {
-        return new ContentQueryRequest<ContentSummaryJson,ContentSummary>(contentQuery).setExpand(api.rest.Expand.SUMMARY).sendAndParse().then(
-            (contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
+        return new ContentQueryRequest<ContentSummaryJson,ContentSummary>(contentQuery)
+            .setExpand(api.rest.Expand.SUMMARY)
+            .sendAndParse()
+            .then((contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
                 if (contentQueryResult.getMetadata().getTotalHits() > 0) {
                     this.handleDataSearchResult(contentQuery, contentQueryResult);
                 } else {
                     this.handleNoSearchResultOnRefresh(contentQuery);
                 }
-            }).catch((reason: any) => {
-            api.DefaultErrorHandler.handle(reason);
+            })
+            .catch((reason: any) => {
+                api.DefaultErrorHandler.handle(reason);
         });
     }
 

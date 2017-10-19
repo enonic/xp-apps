@@ -437,18 +437,20 @@ export class ContentWizardPanel
                 this.updateButtonsState();
             });
 
+            const thumbnailUploader = this.getFormIcon();
+
             this.onValidityChanged((event: api.ValidityChangedEvent) => {
                 let isThisValid = this.isValid(); // event.isValid() = false will prevent the call to this.isValid()
                 this.isContentFormValid = isThisValid;
-                let thumbnailUploader = this.getFormIcon();
-                thumbnailUploader.toggleClass('invalid', !isThisValid);
+                if (thumbnailUploader) {
+                    thumbnailUploader.toggleClass('invalid', !isThisValid);
+                }
                 this.getContentWizardToolbarPublishControls().setContentCanBePublished(this.checkContentCanBePublished());
                 if (!this.formState.isNew()) {
                     this.displayValidationErrors(!(isThisValid && event.isValid()));
                 }
             });
 
-            let thumbnailUploader = this.getFormIcon();
             if (thumbnailUploader) {
                 thumbnailUploader.setEnabled(!this.contentType.isImage());
                 thumbnailUploader.onFileUploaded(this.onFileUploaded.bind(this));
@@ -764,7 +766,7 @@ export class ContentWizardPanel
             if (templateUpdated && site && updatedContent.getPath().isDescendantOf(site.getPath())) {
                 return new ContentWizardDataLoader().loadDefaultModels(site, this.contentType.getContentTypeName()).then(
                     defaultModels => {
-                        this.defaultModels = defaultModels;     
+                        this.defaultModels = defaultModels;
                         return this.liveEditModel.init(defaultModels.getPageTemplate(), defaultModels.getPageDescriptor()).then(model => {
                             this.getLivePanel().setModel(this.liveEditModel);
                             return true;

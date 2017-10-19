@@ -40,4 +40,3 @@ export class ComponentFragmentCreatedEvent
         Event.unbind(api.ClassHelper.getFullName(this), handler, contextWindow);
     }
 }
-

@@ -109,10 +109,6 @@ export class ItemViewContextMenu
         return this.menu;
     }
 
-    private getOrientation(): ItemViewContextMenuOrientation {
-        return this.orientation;
-    }
-
     private setOrientation(orientation: ItemViewContextMenuOrientation) {
         if (this.orientation !== orientation) {
             this.orientation = orientation;

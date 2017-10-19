@@ -3,10 +3,6 @@ import {PrincipalWizardPanelParams} from './PrincipalWizardPanelParams';
 import {GetPrincipalByKeyRequest} from '../../api/graphql/principal/GetPrincipalByKeyRequest';
 
 import Principal = api.security.Principal;
-import PrincipalKey = api.security.PrincipalKey;
-import PrincipalType = api.security.PrincipalType;
-import UserStore = api.security.UserStore;
-import WizardPanelParams = api.app.wizard.WizardPanelParams;
 
 export class PrincipalWizardDataLoader {
 

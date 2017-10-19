@@ -6,10 +6,8 @@ import {OpenSortDialogEvent} from './browse/OpenSortDialogEvent';
 import {MoveContentEvent} from './browse/MoveContentEvent';
 import {OpenMoveDialogEvent} from './browse/OpenMoveDialogEvent';
 import AppBarTabId = api.app.bar.AppBarTabId;
-import Content = api.content.Content;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import ContentUpdatedEvent = api.content.event.ContentUpdatedEvent;
-import ShowBrowsePanelEvent = api.app.ShowBrowsePanelEvent;
 import i18n = api.util.i18n;
 
 export class ContentEventsProcessor {

@@ -4,7 +4,6 @@ import {ApplicationBrowseActions} from '../browse/ApplicationBrowseActions';
 import ContentTypeSummary = api.schema.content.ContentTypeSummary;
 import Mixin = api.schema.mixin.Mixin;
 import RelationshipType = api.schema.relationshiptype.RelationshipType;
-import RelationshipTypeName = api.schema.relationshiptype.RelationshipTypeName;
 import PageDescriptor = api.content.page.PageDescriptor;
 import PartDescriptor = api.content.page.region.PartDescriptor;
 import LayoutDescriptor = api.content.page.region.LayoutDescriptor;

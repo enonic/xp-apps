@@ -1,13 +1,11 @@
 import {GraphQlRequest} from '../../GraphQlRequest';
 import PrincipalKey = api.security.PrincipalKey;
-import User = api.security.User;
 
 export class UpdatePasswordRequest
     extends GraphQlRequest<any, Boolean> {
 
     private key: PrincipalKey;
     private password: string;
-
 
     setKey(key: PrincipalKey): UpdatePasswordRequest {
         this.key = key;

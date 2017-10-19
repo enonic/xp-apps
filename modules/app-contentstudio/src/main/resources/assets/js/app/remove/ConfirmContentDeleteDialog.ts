@@ -107,14 +107,4 @@ export class ConfirmContentDeleteDialog
     private isCorrectNumberEntered(): boolean {
         return this.input.getValue() === this.deleteConfig.totalItemsToDelete.toString();
     }
-
-    private enableActions() {
-        this.confirmDeleteAction.setEnabled(true);
-        this.getCancelAction().setEnabled(true);
-    }
-
-    private disableActions() {
-        this.confirmDeleteAction.setEnabled(false);
-        this.getCancelAction().setEnabled(false);
-    }
 }

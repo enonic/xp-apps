@@ -3,10 +3,15 @@ plugins {
     id 'maven'
     id 'com.enonic.defaults' version '1.0.3'
     id 'com.enonic.xp.app' version '1.0.13'
-    id "com.moowork.gulp" version "1.1.1"
 }
 
 apply from: "$rootDir/gradle/defaults.gradle"
+
+app {
+    name = 'com.enonic.xp.app.main'
+    displayName = 'Admin Main App'
+    systemApp = true
+}
 
 dependencies {
     compile "${group}:admin-api:${version}"
@@ -17,27 +22,21 @@ dependencies {
     include "com.enonic.lib:lib-admin-ui:${libAdminUiVersion}"
 }
 
-app {
-    name = 'com.enonic.xp.app.main'
-    displayName = 'Admin Main App'
-    systemApp = true
-}
-
 node {
     download = true
     version = '6.9.2'
 }
 
-task gulpAll( type: GulpTask, dependsOn: npmInstall ) {
-    description = 'Build UI resources (css, etc).'
-    inputs.dir 'src/main/resources'
-    outputs.dir 'build/resources/main'
-    args = ['all']
+task webpack( type: NodeTask, dependsOn: npmInstall ) {
+    description = 'Build UI resources (ts, css, etc).'
+    inputs.dir 'src/main'
+    outputs.dir "${buildDir}/resources/main"
+    script = file( './node_modules/webpack/bin/webpack' )
 }
 
 task cleanNode( type: Delete ) {
     delete 'node_modules'
 }
 
-jar.dependsOn += gulpAll
+jar.dependsOn += webpack
 jar.outputs.dir "${buildDir}/resources/main"

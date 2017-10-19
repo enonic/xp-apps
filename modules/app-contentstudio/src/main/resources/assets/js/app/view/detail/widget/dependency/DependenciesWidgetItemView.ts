@@ -5,7 +5,6 @@ import {ToggleSearchPanelWithDependenciesEvent} from '../../../../browse/ToggleS
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import ContentDependencyJson = api.content.json.ContentDependencyJson;
-import ContentDependencyGroupJson = api.content.json.ContentDependencyGroupJson;
 import ActionButton = api.ui.button.ActionButton;
 import Action = api.ui.Action;
 import NamesAndIconViewSize = api.app.NamesAndIconViewSize;

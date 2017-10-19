@@ -5,4 +5,3 @@ export enum ItemViewContextMenuPosition {
     BOTTOM,
     NONE
 }
-

@@ -32,4 +32,3 @@ export class PageItemType
 }
 
 PageItemType.get();
-

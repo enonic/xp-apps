@@ -10,7 +10,7 @@ export class GraphQlRequest<RAW_JSON_TYPE, PARSED_TYPE> {
         this.path = Path.fromString(window['CONFIG'] && window['CONFIG']['graphQlUrl']);
     }
 
-    private getParams(query, mutation): Object {
+    private getParams(query: string, mutation: string): Object {
         let params: any = {};
         if (!StringHelper.isEmpty(query)) {
             params['query'] = query;

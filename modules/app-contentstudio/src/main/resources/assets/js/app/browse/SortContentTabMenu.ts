@@ -3,7 +3,6 @@ import {SortContentTabMenuItem} from './SortContentTabMenuItem';
 import {SortContentTabMenuItems} from './SortContentTabMenuItems';
 
 import ChildOrder = api.content.order.ChildOrder;
-import ContentSummary = api.content.ContentSummary;
 import DropdownHandle = api.ui.button.DropdownHandle;
 import ArrayHelper = api.util.ArrayHelper;
 import KeyHelper = api.ui.KeyHelper;

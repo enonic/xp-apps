@@ -20,4 +20,3 @@ export class PartItemType
 }
 
 PartItemType.get();
-

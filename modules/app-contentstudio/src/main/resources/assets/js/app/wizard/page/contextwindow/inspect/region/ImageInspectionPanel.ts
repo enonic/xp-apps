@@ -8,7 +8,6 @@ import ImageComponent = api.content.page.region.ImageComponent;
 import ContentSummary = api.content.ContentSummary;
 import ContentId = api.content.ContentId;
 import GetContentSummaryByIdRequest = api.content.resource.GetContentSummaryByIdRequest;
-import ContentTypeName = api.schema.content.ContentTypeName;
 import ComponentPropertyChangedEvent = api.content.page.region.ComponentPropertyChangedEvent;
 import Option = api.ui.selector.Option;
 import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;

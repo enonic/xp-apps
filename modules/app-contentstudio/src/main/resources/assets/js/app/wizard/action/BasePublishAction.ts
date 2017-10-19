@@ -1,11 +1,7 @@
 import '../../../api.ts';
 import {ContentWizardPanel} from '../ContentWizardPanel';
-
-import Content = api.content.Content;
-import ContentId = api.content.ContentId;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import DefaultErrorHandler = api.DefaultErrorHandler;
-import i18n = api.util.i18n;
 
 export interface BasePublishActionConfig {
     wizard: ContentWizardPanel;

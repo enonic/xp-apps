@@ -1,40 +1,22 @@
 import '../../../api.ts';
 import {MarketAppViewer} from './MarketAppViewer';
 import {ApplicationInput} from './../view/ApplicationInput';
-
 import Element = api.dom.Element;
 import ElementHelper = api.dom.ElementHelper;
 import ElementFromHelperBuilder = api.dom.ElementFromHelperBuilder;
-
-import GridColumn = api.ui.grid.GridColumn;
 import GridColumnBuilder = api.ui.grid.GridColumnBuilder;
-
 import TreeGrid = api.ui.treegrid.TreeGrid;
 import TreeNode = api.ui.treegrid.TreeNode;
 import TreeGridBuilder = api.ui.treegrid.TreeGridBuilder;
-import DateTimeFormatter = api.ui.treegrid.DateTimeFormatter;
-import TreeGridContextMenu = api.ui.treegrid.TreeGridContextMenu;
-
-import ContentResponse = api.content.resource.result.ContentResponse;
-import ContentSummary = api.content.ContentSummary;
-import ContentSummaryBuilder = api.content.ContentSummaryBuilder;
-import ContentSummaryViewer = api.content.ContentSummaryViewer;
-import ContentSummaryAndCompareStatusFetcher = api.content.resource.ContentSummaryAndCompareStatusFetcher;
-
-import CompareStatus = api.content.CompareStatus;
-
 import MarketApplication = api.application.MarketApplication;
 import Application = api.application.Application;
 import MarketAppStatus = api.application.MarketAppStatus;
 import MarketAppStatusFormatter = api.application.MarketAppStatusFormatter;
-
 import ApplicationEvent = api.application.ApplicationEvent;
 import ApplicationEventType = api.application.ApplicationEventType;
-
 import MarketApplicationsFetcher = api.application.MarketApplicationsFetcher;
 import MarketApplicationResponse = api.application.MarketApplicationResponse;
 import MarketApplicationBuilder = api.application.MarketApplicationBuilder;
-import ProgressBar = api.ui.ProgressBar;
 import i18n = api.util.i18n;
 
 declare var CONFIG;

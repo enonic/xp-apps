@@ -3,7 +3,6 @@ import {ContentPreviewPathChangedEvent} from './ContentPreviewPathChangedEvent';
 
 import RenderingMode = api.rendering.RenderingMode;
 import ViewItem = api.app.view.ViewItem;
-import ContentSummary = api.content.ContentSummary;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import UriHelper = api.util.UriHelper;
 import ContentTypeName = api.schema.content.ContentTypeName;

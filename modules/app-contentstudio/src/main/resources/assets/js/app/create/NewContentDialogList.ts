@@ -2,8 +2,6 @@ import '../../api.ts';
 import {NewContentDialogItemSelectedEvent} from './NewContentDialogItemSelectedEvent';
 import {NewContentDialogListItem} from './NewContentDialogListItem';
 
-import ContentTypeSummary = api.schema.content.ContentTypeSummary;
-
 export class NewContentDialogList extends api.ui.selector.list.ListBox<NewContentDialogListItem> {
 
     private selectedListeners: {(event: NewContentDialogItemSelectedEvent):void}[] = [];

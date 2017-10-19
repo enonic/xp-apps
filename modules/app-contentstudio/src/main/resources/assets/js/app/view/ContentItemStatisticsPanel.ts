@@ -1,9 +1,6 @@
 import '../../api.ts';
 import {ContentItemPreviewPanel} from './ContentItemPreviewPanel';
 
-import Panel = api.ui.panel.Panel;
-import TabMenuItemBuilder = api.ui.tab.TabMenuItemBuilder;
-
 export class ContentItemStatisticsPanel extends api.app.view.ItemStatisticsPanel<api.content.ContentSummaryAndCompareStatus> {
 
     private previewPanel: ContentItemPreviewPanel;

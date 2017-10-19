@@ -352,4 +352,3 @@ export class LiveEditModelInitializer {
         return deferred.promise;
     }
 }
-

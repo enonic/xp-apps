@@ -4,7 +4,6 @@ import UserStore = api.security.UserStore;
 import User = api.security.User;
 import Group = api.security.Group;
 import Role = api.security.Role;
-import i18n = api.util.i18n;
 
 export class UserTypesTreeGridItemViewer extends api.ui.NamesAndIconViewer<UserTypeTreeGridItem> {
 

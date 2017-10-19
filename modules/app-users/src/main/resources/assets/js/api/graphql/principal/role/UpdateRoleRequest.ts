@@ -46,6 +46,7 @@ export class UpdateRoleRequest
         return vars;
     }
 
+    // tslint:disable max-line-length
     getMutation(): string {
         return `mutation ($key: String!, $displayName: String!, $description: String!, $addMembers: [String], $removeMembers: [String]) {
             updateRole(key: $key, displayName: $displayName, description: $description, addMembers: $addMembers, removeMembers: $removeMembers) {
@@ -56,10 +57,10 @@ export class UpdateRoleRequest
             }
         }`;
     }
+    // tslint:enable max-line-length
 
     sendAndParse(): wemQ.Promise<Role> {
         return this.mutate().then(json => Role.fromJson(json.updateRole));
     }
 
 }
-

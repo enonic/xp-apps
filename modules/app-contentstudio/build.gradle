@@ -3,7 +3,6 @@ plugins {
     id 'maven'
     id 'com.enonic.defaults' version '1.0.3'
     id 'com.enonic.xp.app' version '1.0.13'
-    id "com.moowork.node" version "1.1.1"
 }
 
 apply from: "$rootDir/gradle/defaults.gradle"
@@ -29,7 +28,13 @@ node {
     version = '6.9.2'
 }
 
-task webpack( type: NodeTask, dependsOn: npmInstall ) {
+task lint( type: NpmTask, dependsOn: npmInstall ) {
+    args = ['run', 'lint']
+    inputs.files fileTree( dir: 'modules', include: '**/src/main/**.*' )
+    outputs.dir file('gradle')
+}
+
+task webpack( type: NodeTask, dependsOn: lint ) {
     description = 'Build UI resources (ts, css, etc).'
     inputs.dir 'src/main'
     outputs.dir "${buildDir}/resources/main"

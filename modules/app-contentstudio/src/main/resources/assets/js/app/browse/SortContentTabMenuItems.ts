@@ -3,7 +3,6 @@ import {SortContentTabMenuItem, SortContentTabMenuItemBuilder} from './SortConte
 
 import ChildOrder = api.content.order.ChildOrder;
 import QueryField = api.query.QueryField;
-import FieldOrderExpr = api.content.order.FieldOrderExpr;
 import FieldOrderExprBuilder = api.content.order.FieldOrderExprBuilder;
 import i18n = api.util.i18n;
 

@@ -1,6 +1,5 @@
 import '../../api.ts';
 
-import Viewer = api.ui.Viewer;
 import TreeGrid = api.ui.treegrid.TreeGrid;
 import TreeNode = api.ui.treegrid.TreeNode;
 import TreeGridBuilder = api.ui.treegrid.TreeGridBuilder;
@@ -14,7 +13,6 @@ import ContentSummaryAndCompareStatusFetcher = api.content.resource.ContentSumma
 
 import ResponsiveItem = api.ui.responsive.ResponsiveItem;
 import ContentId = api.content.ContentId;
-import DataChangedEvent = api.ui.treegrid.DataChangedEvent;
 
 import ContentQueryResult = api.content.resource.result.ContentQueryResult;
 import ContentSummaryJson = api.content.json.ContentSummaryJson;
@@ -85,45 +83,6 @@ export class ContentDropdownTreeGrid extends TreeGrid<ContentSummary> {
                 updateColumnsHandler(item.isRangeSizeChanged());
             }
         });
-
-        /*
-         * Filter (search) events.
-         */
-        /*ContentBrowseSearchEvent.on((event) => {
-         let contentQueryResult = <ContentQueryResult<ContentSummary,ContentSummaryJson>>event.getContentQueryResult();
-         let contentSummaries = contentQueryResult.getContents();
-         let compareRequest = CompareContentRequest.fromContentSummaries(contentSummaries);
-         this.filterQuery = event.getContentQuery();
-         compareRequest.sendAndParse().then((compareResults: CompareContentResults) => {
-         let contents: ContentSummary[] = ContentSummaryAndCompareStatusFetcher.updateCompareStatus(contentSummaries,
-         compareResults);
-         ContentSummaryAndCompareStatusFetcher.updateReadOnly(contents).then(() => {
-         let metadata = contentQueryResult.getMetadata();
-         if (metadata.getTotalHits() > metadata.getHits()) {
-         contents.push(new ContentSummary());
-         }
-         this.filter(contents);
-         this.getRoot().getCurrentRoot().setMaxChildren(metadata.getTotalHits());
-         this.notifyLoaded();
-         });
-
-         }).catch((reason: any) => {
-         api.DefaultErrorHandler.handle(reason);
-         }).done();
-         });
-         */
-
-        /*
-         ContentBrowseResetEvent.on((event) => {
-         this.resetFilter();
-         });
-         ContentBrowseRefreshEvent.on((event) => {
-         this.notifyLoaded();
-         });
-         ContentVersionSetEvent.on((event: ContentVersionSetEvent) => {
-         this.updateContentNode(event.getContentId());
-         });
-         */
     }
 
     isEmptyNode(node: TreeNode<ContentSummary>): boolean {
@@ -212,26 +171,6 @@ export class ContentDropdownTreeGrid extends TreeGrid<ContentSummary> {
                     return contentQueryResult.getContents().map((content => content.getContentId()));
                 });
         }
-    }
-
-    private fetchChildrenData(parentNode: TreeNode<ContentSummary>): wemQ.Promise<ContentSummary[]> {
-        return this.fetchChildren(parentNode);
-    }
-
-    deleteNodes(dataList: ContentSummary[]): void {
-        /*let root = this.getRoot().getCurrentRoot();
-         let node: TreeNode<ContentSummary>;
-
-         // Do not remove the items, that is not new and switched to 'PENDING_DELETE'
-         dataList = dataList.filter((data) => {
-         node = root.findNode(this.getDataId(data));
-         if (node.getData().getCompareStatus() !== CompareStatus.NEW) {
-         node.clearViewers();
-         return false;
-         }
-         return true;
-         });*/
-        super.deleteNodes(dataList);
     }
 
     refreshNodeData(parentNode: TreeNode<ContentSummary>): wemQ.Promise<TreeNode<ContentSummary>> {
@@ -383,8 +322,8 @@ export class ContentDropdownTreeGrid extends TreeGrid<ContentSummary> {
                                                      childNodePath: ContentPath): wemQ.Promise<TreeNode<ContentSummary>> {
         let deferred = wemQ.defer<TreeNode<ContentSummary>>();
 
-        let dateChangedHandler = (event: DataChangedEvent<ContentSummary>) => {
-            let childNode = this.doFindChildNodeByPath(node, childNodePath);
+        let dateChangedHandler = () => {
+            const childNode = this.doFindChildNodeByPath(node, childNodePath);
             if (childNode) {
                 this.unDataChanged(dateChangedHandler);
                 deferred.resolve(this.doFindChildNodeByPath(node, childNodePath));
@@ -393,12 +332,7 @@ export class ContentDropdownTreeGrid extends TreeGrid<ContentSummary> {
 
         this.onDataChanged(dateChangedHandler);
 
-        // check in case child was loaded between this method call and listener set
-        const childNode = this.doFindChildNodeByPath(node, childNodePath);
-        if (childNode) {
-            this.unDataChanged(dateChangedHandler);
-            deferred.resolve(this.doFindChildNodeByPath(node, childNodePath));
-        }
+        dateChangedHandler();
 
         return deferred.promise;
     }

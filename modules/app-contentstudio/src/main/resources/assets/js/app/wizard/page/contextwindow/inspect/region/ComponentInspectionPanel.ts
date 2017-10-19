@@ -5,7 +5,6 @@ import {ComponentView} from '../../../../../../page-editor/ComponentView';
 import Component = api.content.page.region.Component;
 import ContentFormContext = api.content.form.ContentFormContext;
 
-
 export interface ComponentInspectionPanelConfig {
 
     iconClass: string;

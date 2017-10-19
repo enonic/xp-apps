@@ -5,7 +5,6 @@ import ContentSummaryAndCompareStatusViewer = api.content.ContentSummaryAndCompa
 import BrowseItem = api.app.browse.BrowseItem;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import Tooltip = api.ui.Tooltip;
-import ObjectHelper = api.ObjectHelper;
 import i18n = api.util.i18n;
 import ArrayHelper = api.util.ArrayHelper;
 

@@ -22,7 +22,7 @@ export class CreateUserStoreRequest
             authConfig = {
                 applicationKey: this.authConfig.getApplicationKey().toString(),
                 config: this.authConfig.getConfig() ? JSON.stringify(this.authConfig.getConfig().toJson()) : undefined
-            }
+            };
         }
 
         vars['key'] = this.userStoreKey.toString();
@@ -33,6 +33,7 @@ export class CreateUserStoreRequest
         return vars;
     }
 
+    // tslint:disable max-line-length
     getMutation(): string {
         return `mutation ($key: String!, $displayName: String!, $description: String, $authConfig: AuthConfigInput, $permissions: [UserStoreAccessControlInput]) {
             createUserStore(key: $key, displayName: $displayName, description: $description, authConfig: $authConfig, permissions: $permissions) {
@@ -55,6 +56,7 @@ export class CreateUserStoreRequest
             }
         }`;
     }
+    // tslint:enable max-line-length
 
     setKey(userStoreKey: UserStoreKey): CreateUserStoreRequest {
         this.userStoreKey = userStoreKey;

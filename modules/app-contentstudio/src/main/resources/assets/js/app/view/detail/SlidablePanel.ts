@@ -2,8 +2,6 @@ import '../../../api.ts';
 import {DetailsPanel} from './DetailsPanel';
 import {DetailsView} from './DetailsView';
 
-import ContentVersionSetEvent = api.content.event.ActiveContentVersionSetEvent;
-
 export class SlidablePanel extends DetailsPanel {
 
     private slideInFunction: () => void;

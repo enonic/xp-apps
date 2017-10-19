@@ -11,7 +11,8 @@ import {RegionItemType} from '../RegionItemType';
 import Component = api.content.page.region.Component;
 import ComponentPath = api.content.page.region.ComponentPath;
 import LayoutComponent = api.content.page.region.LayoutComponent;
-
+import {DragAndDrop} from '../DragAndDrop';
+import {RegionView, RegionViewBuilder} from '../RegionView';
 
 export class LayoutComponentViewBuilder
     extends ComponentViewBuilder<LayoutComponent> {
@@ -196,6 +197,3 @@ export class LayoutComponentView
         }
     }
 }
-
-import {DragAndDrop} from '../DragAndDrop';
-import {RegionView, RegionViewBuilder} from '../RegionView';

@@ -1,12 +1,5 @@
 import '../../api.ts';
 
-import PropertyPath = api.data.PropertyPath;
-import Property = api.data.Property;
-import Value = api.data.Value;
-import ValueType = api.data.ValueType;
-import ValueTypes = api.data.ValueTypes;
-import PropertyTree = api.data.PropertyTree;
-
 export class DisplayNameScriptExecutor implements api.app.wizard.DisplayNameGenerator {
 
     private formView: api.form.FormView;
@@ -35,29 +28,6 @@ export class DisplayNameScriptExecutor implements api.app.wizard.DisplayNameGene
     }
 
     private safeEval(script: string, formView: api.form.FormView): string {
-
-        function $(...paths: string[]) {
-
-            let strValues: string [] = [];
-            paths.forEach((path: string) => {
-
-                let strValue = formView.getData().getString(path);
-                if (!api.util.StringHelper.isBlank(strValue)) {
-                    strValues.push(strValue);
-                }
-            });
-
-            let strValue = '';
-            strValues.forEach((s: string, index: number) => {
-                strValue += s;
-                if (index < strValues.length - 1) {
-                    strValue += ' ';
-                }
-            });
-
-            return strValue;
-        }
-
         let result = '';
 
         try {

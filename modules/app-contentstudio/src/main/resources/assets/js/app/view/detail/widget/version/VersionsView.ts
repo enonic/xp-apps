@@ -15,7 +15,6 @@ export class VersionsView
     private activeVersion: ContentVersion;
 
     private static branchMaster: string = 'master';
-    private static branchDraft: string = 'draft';
 
     constructor() {
         super('all-content-versions');

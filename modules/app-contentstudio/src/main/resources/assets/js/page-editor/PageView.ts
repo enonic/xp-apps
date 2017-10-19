@@ -172,7 +172,7 @@ export class PageView
         ctrl.onTextEditModeChanged(textEditModeListener);
 
         this.onRemoved(event => {
-            ctrl.unTextEditModeChanged(textEditModeListener)
+            ctrl.unTextEditModeChanged(textEditModeListener);
         });
     }
 
@@ -625,11 +625,6 @@ export class PageView
 
     isEmpty(): boolean {
         return !this.pageModel || this.pageModel.getMode() === PageMode.NO_CONTROLLER;
-    }
-
-    private isContentEmpty() {
-        let content = this.liveEditModel.getContent();
-        return (!content || api.util.StringHelper.isEmpty(content.getDisplayName()));
     }
 
     getName(): string {

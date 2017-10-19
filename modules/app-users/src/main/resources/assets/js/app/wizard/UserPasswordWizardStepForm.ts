@@ -1,13 +1,8 @@
 import '../../api.ts';
 import {OpenChangePasswordDialogEvent} from './OpenChangePasswordDialogEvent';
-
-import User = api.security.User;
 import Principal = api.security.Principal;
 
 import PasswordGenerator = api.ui.text.PasswordGenerator;
-
-import DivEl = api.dom.DivEl;
-import LabelEl = api.dom.LabelEl;
 import FormItemBuilder = api.ui.form.FormItemBuilder;
 import Validators = api.ui.form.Validators;
 import FormItem = api.ui.form.FormItem;

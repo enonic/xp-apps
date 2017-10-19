@@ -23,4 +23,3 @@ export class PageUnloadedEvent
         api.event.Event.unbind(api.ClassHelper.getFullName(this), handler, contextWindow);
     }
 }
-

@@ -3,8 +3,6 @@ import {WidgetView} from './WidgetView';
 import {DetailsView} from './DetailsView';
 
 import Dropdown = api.ui.selector.dropdown.Dropdown;
-import DropdownConfig = api.ui.selector.dropdown.DropdownConfig;
-import Option = api.ui.selector.Option;
 import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
 
 export class WidgetsSelectionRow extends api.dom.DivEl {

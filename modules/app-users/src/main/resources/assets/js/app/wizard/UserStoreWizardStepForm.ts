@@ -1,8 +1,4 @@
-import Principal = api.security.Principal;
-import FormItemBuilder = api.ui.form.FormItemBuilder;
 
-import DivEl = api.dom.DivEl;
-import LabelEl = api.dom.LabelEl;
 import i18n = api.util.i18n;
 import SecurityFormContext = api.security.form.SecurityFormContext;
 

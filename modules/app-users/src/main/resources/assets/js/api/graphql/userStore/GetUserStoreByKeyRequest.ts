@@ -2,7 +2,6 @@ import UserStore = api.security.UserStore;
 import UserStoreJson = api.security.UserStoreJson;
 import {GraphQlRequest} from '../GraphQlRequest';
 import UserStoreKey = api.security.UserStoreKey;
-import User = api.security.User;
 
 export class GetUserStoreByKeyRequest
     extends GraphQlRequest<any, UserStore> {

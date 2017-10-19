@@ -20,4 +20,3 @@ export class PartComponentViewer
         return ItemViewIconClassResolver.resolveByType('part');
     }
 }
-
