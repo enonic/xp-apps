@@ -39,6 +39,14 @@ export class FragmentOptionDataLoader
         return new FragmentOptionDataRequest();
     }
 
+    isPartiallyLoaded(): boolean {
+        return this.request.isPartiallyLoaded();
+    }
+
+    resetParams() {
+        this.request.resetParams();
+    }
+
     setParentSitePath(parentSitePath: string): FragmentOptionDataLoader {
         this.request.setParentSitePath(parentSitePath);
         this.request.setQueryExpr();
