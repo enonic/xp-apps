@@ -3,7 +3,6 @@ import {ContentTreeGridActions} from './action/ContentTreeGridActions';
 import {MenuButtonProgressBarManager} from './MenuButtonProgressBarManager';
 
 import MenuButton = api.ui.button.MenuButton;
-import ProgressBar = api.ui.ProgressBar;
 
 export class ContentPublishMenuButton extends MenuButton {
 

@@ -4,11 +4,7 @@ import {ContentTreeGridActions} from './action/ContentTreeGridActions';
 import {TreeNodesOfContentPath} from './TreeNodesOfContentPath';
 import {TreeNodeParentOfContent} from './TreeNodeParentOfContent';
 
-import Element = api.dom.Element;
 import ElementHelper = api.dom.ElementHelper;
-
-import GridColumn = api.ui.grid.GridColumn;
-import GridColumnBuilder = api.ui.grid.GridColumnBuilder;
 
 import TreeGrid = api.ui.treegrid.TreeGrid;
 import TreeNode = api.ui.treegrid.TreeNode;
@@ -20,10 +16,9 @@ import ContentResponse = api.content.resource.result.ContentResponse;
 import ContentSummary = api.content.ContentSummary;
 import ContentPath = api.content.ContentPath;
 import ContentSummaryBuilder = api.content.ContentSummaryBuilder;
-import ContentSummaryAndCompareStatusViewer = api.content.ContentSummaryAndCompareStatusViewer;
+import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import CompareContentRequest = api.content.resource.CompareContentRequest;
 import CompareContentResults = api.content.resource.result.CompareContentResults;
-import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import ContentSummaryAndCompareStatusFetcher = api.content.resource.ContentSummaryAndCompareStatusFetcher;
 
 import ContentVersionSetEvent = api.content.event.ActiveContentVersionSetEvent;
@@ -34,11 +29,8 @@ import ContentQueryRequest = api.content.resource.ContentQueryRequest;
 
 import CompareStatus = api.content.CompareStatus;
 
-import ResponsiveItem = api.ui.responsive.ResponsiveItem;
 import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
-import ContentIds = api.content.ContentIds;
 import ContentId = api.content.ContentId;
-import DataChangedEvent = api.ui.treegrid.DataChangedEvent;
 import BrowseFilterResetEvent = api.app.browse.filter.BrowseFilterResetEvent;
 import BrowseFilterRefreshEvent = api.app.browse.filter.BrowseFilterRefreshEvent;
 import BrowseFilterSearchEvent = api.app.browse.filter.BrowseFilterSearchEvent;
@@ -294,10 +286,6 @@ export class ContentTreeGrid
                     return contentQueryResult.getContents().map((content => content.getContentId()));
                 });
         }
-    }
-
-    private fetchChildrenData(parentNode: TreeNode<ContentSummaryAndCompareStatus>): wemQ.Promise<ContentSummaryAndCompareStatus[]> {
-        return this.fetchChildren(parentNode);
     }
 
     deleteNodes(dataList: ContentSummaryAndCompareStatus[]): void {

@@ -5,10 +5,7 @@ import {SortContentTabMenu} from './SortContentTabMenu';
 import {ContentGridDragHandler} from './ContentGridDragHandler';
 import {OpenSortDialogEvent} from './OpenSortDialogEvent';
 
-import TreeNode = api.ui.treegrid.TreeNode;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
-import Element = api.dom.Element;
-import ContentSummary = api.content.ContentSummary;
 import ChildOrder = api.content.order.ChildOrder;
 import TabMenuItemBuilder = api.ui.tab.TabMenuItemBuilder;
 import DialogButton = api.ui.dialog.DialogButton;

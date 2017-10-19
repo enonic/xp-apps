@@ -2,7 +2,6 @@ import '../../api.ts';
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import AccessControlList = api.security.acl.AccessControlList;
-import ViewItem = api.app.view.ViewItem;
 
 export class ContentBrowseItem extends api.app.browse.BrowseItem<api.content.ContentSummaryAndCompareStatus> {
 

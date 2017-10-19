@@ -1,6 +1,5 @@
 import '../../api.ts';
 
-import MenuButton = api.ui.button.MenuButton;
 import ProgressBar = api.ui.ProgressBar;
 
 export class MenuButtonProgressBarManager {

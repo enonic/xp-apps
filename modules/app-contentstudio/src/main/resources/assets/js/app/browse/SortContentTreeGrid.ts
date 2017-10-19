@@ -1,27 +1,15 @@
 import '../../api.ts';
 
-import Element = api.dom.Element;
-import ElementHelper = api.dom.ElementHelper;
-
-import GridColumn = api.ui.grid.GridColumn;
-import GridColumnBuilder = api.ui.grid.GridColumnBuilder;
-
 import TreeGrid = api.ui.treegrid.TreeGrid;
 import TreeNode = api.ui.treegrid.TreeNode;
 import TreeGridBuilder = api.ui.treegrid.TreeGridBuilder;
 import DateTimeFormatter = api.ui.treegrid.DateTimeFormatter;
-import TreeGridContextMenu = api.ui.treegrid.TreeGridContextMenu;
 
 import ContentResponse = api.content.resource.result.ContentResponse;
-import ContentSummary = api.content.ContentSummary;
-import ContentSummaryBuilder = api.content.ContentSummaryBuilder;
 import ContentSummaryViewer = api.content.ContentSummaryViewer;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import ContentSummaryAndCompareStatusFetcher = api.content.resource.ContentSummaryAndCompareStatusFetcher;
 import ChildOrder = api.content.order.ChildOrder;
-
-import CompareStatus = api.content.CompareStatus;
-import CompareStatusFormatter = api.content.CompareStatusFormatter;
 
 export class SortContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
 
@@ -58,18 +46,6 @@ export class SortContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus
         );
 
         this.getOptions().setHeight('100%');
-    }
-
-    private dragFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {
-        let wrapper = new api.dom.SpanEl();
-
-        if (!api.util.StringHelper.isBlank(value)) {
-            wrapper.getEl().setTitle(value);
-        }
-
-        let icon = new api.dom.DivEl(api.StyleHelper.getCommonIconCls('menu') + ' drag-icon');
-        wrapper.getEl().setInnerHtml(icon.toString(), false);
-        return wrapper.toString();
     }
 
     public static nameFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {

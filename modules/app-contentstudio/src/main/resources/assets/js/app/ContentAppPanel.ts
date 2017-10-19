@@ -2,23 +2,15 @@ import '../api.ts';
 import {ViewContentEvent} from './browse/ViewContentEvent';
 import {ContentBrowsePanel} from './browse/ContentBrowsePanel';
 import {NewContentEvent} from './create/NewContentEvent';
-import {IssueDetailsDialog} from './issue/view/IssueDetailsDialog';
 import {GetIssueRequest} from './issue/resource/GetIssueRequest';
 import {Issue} from './issue/Issue';
+import {IssueDialogsManager} from './issue/IssueDialogsManager';
 
-import ContentSummary = api.content.ContentSummary;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import Content = api.content.Content;
 import ContentId = api.content.ContentId;
-import ContentNamedEvent = api.content.event.ContentNamedEvent;
-import ContentUpdatedEvent = api.content.event.ContentUpdatedEvent;
-import AppBarTabId = api.app.bar.AppBarTabId;
-import AppBarTabMenuItem = api.app.bar.AppBarTabMenuItem;
-import AppBarTabMenuItemBuilder = api.app.bar.AppBarTabMenuItemBuilder;
 import ShowBrowsePanelEvent = api.app.ShowBrowsePanelEvent;
-import UriHelper = api.util.UriHelper;
 import AppPanel = api.app.AppPanel;
-import {IssueDialogsManager} from './issue/IssueDialogsManager';
 
 export class ContentAppPanel extends AppPanel<ContentSummaryAndCompareStatus> {
 

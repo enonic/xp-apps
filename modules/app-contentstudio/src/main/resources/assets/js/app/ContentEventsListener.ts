@@ -6,10 +6,6 @@ import {MoveContentEvent} from './browse/MoveContentEvent';
 import {ContentEventsProcessor} from './ContentEventsProcessor';
 import EditContentEvent = api.content.event.EditContentEvent;
 import ContentUpdatedEvent = api.content.event.ContentUpdatedEvent;
-import ShowBrowsePanelEvent = api.app.ShowBrowsePanelEvent;
-import AppBarTabId = api.app.bar.AppBarTabId;
-import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
-import Content = api.content.Content;
 
 export class ContentEventsListener {
 

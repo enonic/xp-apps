@@ -17,6 +17,8 @@ import HTMLAreaHelper = api.util.htmlarea.editor.HTMLAreaHelper;
 import ModalDialog = api.util.htmlarea.dialog.ModalDialog;
 import Promise = Q.Promise;
 import i18n = api.util.i18n;
+import {DragAndDrop} from '../DragAndDrop';
+import {PageView} from '../PageView';
 
 export class TextComponentViewBuilder
     extends ComponentViewBuilder<TextComponent> {
@@ -508,6 +510,3 @@ export class TextComponentView
         return wemjq(this.getHTMLElement()).text().trim();
     }
 }
-
-import {DragAndDrop} from '../DragAndDrop';
-import {PageView} from '../PageView';
