@@ -3,28 +3,14 @@ import {UserTypeTreeGridItem, UserTypeTreeGridItemBuilder} from './UserTypeTreeG
 import {UserItemTypesRowFormatter} from './UserItemTypesRowFormatter';
 import {NewPrincipalEvent} from '../browse/NewPrincipalEvent';
 import {UserTreeGridItemBuilder, UserTreeGridItemType} from '../browse/UserTreeGridItem';
-
-import GridColumn = api.ui.grid.GridColumn;
-import GridColumnBuilder = api.ui.grid.GridColumnBuilder;
 import TreeGrid = api.ui.treegrid.TreeGrid;
 import TreeNode = api.ui.treegrid.TreeNode;
 import TreeGridBuilder = api.ui.treegrid.TreeGridBuilder;
-import DateTimeFormatter = api.ui.treegrid.DateTimeFormatter;
-import TreeGridContextMenu = api.ui.treegrid.TreeGridContextMenu;
 import ListUserStoresRequest = api.security.ListUserStoresRequest;
-import FindPrincipalsRequest = api.security.FindPrincipalsRequest;
-import UserStoreListResult = api.security.UserStoreListResult;
-import UserStoreJson = api.security.UserStoreJson;
-import Principal = api.security.Principal;
 import PrincipalKey = api.security.PrincipalKey;
 import UserStore = api.security.UserStore;
 import PrincipalType = api.security.PrincipalType;
 import UserStoreKey = api.security.UserStoreKey;
-import BrowseFilterResetEvent = api.app.browse.filter.BrowseFilterResetEvent;
-import BrowseFilterSearchEvent = api.app.browse.filter.BrowseFilterSearchEvent;
-import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
-import PrincipalBuilder = api.security.PrincipalBuilder;
-import UserItemBuilder = api.security.UserItemBuilder;
 import UserStoreBuilder = api.security.UserStoreBuilder;
 import UserBuilder = api.security.UserBuilder;
 import GroupBuilder = api.security.GroupBuilder;
@@ -33,7 +19,6 @@ import i18n = api.util.i18n;
 import Role = api.security.Role;
 import User = api.security.User;
 import Group = api.security.Group;
-import ElementHelper = api.dom.ElementHelper;
 import ResponsiveManager = api.ui.responsive.ResponsiveManager;
 import IsAuthenticatedRequest = api.security.auth.IsAuthenticatedRequest;
 

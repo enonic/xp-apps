@@ -7,7 +7,6 @@ import FormItemBuilder = api.ui.form.FormItemBuilder;
 import Validators = api.ui.form.Validators;
 
 import DivEl = api.dom.DivEl;
-import LabelEl = api.dom.LabelEl;
 import i18n = api.util.i18n;
 
 export class SecurityWizardStepForm extends api.app.wizard.WizardStepForm {

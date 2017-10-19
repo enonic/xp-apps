@@ -32,7 +32,6 @@ export class UserBrowsePanel
 
             if (singleSelection && selection[0].getData().getType() !== UserTreeGridItemType.USER_STORE) {
                 const userItem = selection[0].getData();
-                let type;
 
                 switch (userItem.getType()) {
                 case UserTreeGridItemType.USERS:
@@ -168,24 +167,5 @@ export class UserBrowsePanel
             return 'icon-folder icon-large';
         }
 
-    }
-
-    private convertUserItemsToUserTreeGridItems(principals: api.security.Principal[],
-                                                userStores: api.security.UserStore[]): UserTreeGridItem[] {
-        let userTreeGridItems: UserTreeGridItem[] = [];
-
-        if (principals) {
-            userTreeGridItems = userTreeGridItems.concat(principals.map((principal) => {
-                return UserTreeGridItem.fromPrincipal(principal);
-            }));
-        }
-
-        if (userStores) {
-            userTreeGridItems = userTreeGridItems.concat(userStores.map((userStore) => {
-                return UserTreeGridItem.fromUserStore(userStore);
-            }));
-        }
-
-        return userTreeGridItems;
     }
 }

@@ -5,7 +5,6 @@ import {DeleteUserStoreRequest} from '../../../api/graphql/userStore/DeleteUserS
 import UserStore = api.security.UserStore;
 import Principal = api.security.Principal;
 import UserItem = api.security.UserItem;
-import ConfirmationDialog = api.ui.dialog.ConfirmationDialog;
 import DeletePrincipalResult = api.security.DeletePrincipalResult;
 import DeleteUserStoreResult = api.security.DeleteUserStoreResult;
 import i18n = api.util.i18n;

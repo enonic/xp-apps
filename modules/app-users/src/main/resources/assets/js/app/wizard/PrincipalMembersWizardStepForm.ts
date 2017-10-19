@@ -1,6 +1,4 @@
 import '../../api.ts';
-
-import Role = api.security.Role;
 import Principal = api.security.Principal;
 import PrincipalKey = api.security.PrincipalKey;
 import PrincipalType = api.security.PrincipalType;
@@ -8,9 +6,6 @@ import PrincipalLoader = api.security.PrincipalLoader;
 import FormItemBuilder = api.ui.form.FormItemBuilder;
 
 import PrincipalComboBox = api.ui.security.PrincipalComboBox;
-
-import DivEl = api.dom.DivEl;
-import LabelEl = api.dom.LabelEl;
 import i18n = api.util.i18n;
 
 export class PrincipalMembersWizardStepForm extends api.app.wizard.WizardStepForm {

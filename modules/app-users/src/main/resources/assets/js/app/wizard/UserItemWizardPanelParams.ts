@@ -1,5 +1,4 @@
 import '../../api.ts';
-import Principal = api.security.Principal;
 import UserItem = api.security.UserItem;
 
 export class UserItemWizardPanelParams<USER_ITEM_TYPE extends UserItem> {

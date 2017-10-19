@@ -11,7 +11,6 @@ export class SyncPrincipalAction extends Action {
         super(i18n('action.sync'));
         this.setEnabled(false);
         this.onExecuted(() => {
-            let principals: UserTreeGridItem[] = grid.getSelectedDataList();
             grid.getSelectedDataList().forEach((elem) => {
                 this.sync(elem);
             });

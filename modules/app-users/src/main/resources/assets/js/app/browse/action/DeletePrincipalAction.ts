@@ -5,8 +5,6 @@ import {DeletePrincipalRequest} from '../../../api/graphql/principal/DeletePrinc
 
 import Action = api.ui.Action;
 import DeletePrincipalResult = api.security.DeletePrincipalResult;
-import ConfirmationDialog = api.ui.dialog.ConfirmationDialog;
-import DeleteUserStoreResult = api.security.DeleteUserStoreResult;
 import i18n = api.util.i18n;
 
 export class DeletePrincipalAction

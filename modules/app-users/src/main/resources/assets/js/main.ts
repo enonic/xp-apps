@@ -51,7 +51,7 @@ function startApplication() {
 
     api.util.AppHelper.preventDragRedirect();
 
-    let changePasswordDialog = new ChangeUserPasswordDialog();
+    new ChangeUserPasswordDialog();
     application.setLoaded(true);
 
     let serverEventsListener = new api.app.ServerEventsListener([application]);
