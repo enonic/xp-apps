@@ -19,13 +19,39 @@ import {ShowContentFormEvent} from '../ShowContentFormEvent';
 import {SaveAsTemplateAction} from '../action/SaveAsTemplateAction';
 import {ShowLiveEditEvent} from '../ShowLiveEditEvent';
 import {ShowSplitEditEvent} from '../ShowSplitEditEvent';
+import {LiveEditModel} from '../../../page-editor/LiveEditModel';
+import {PageView} from '../../../page-editor/PageView';
+import {ComponentView} from '../../../page-editor/ComponentView';
+import {LiveEditPageViewReadyEvent} from '../../../page-editor/LiveEditPageViewReadyEvent';
+import {LiveEditPageInitializationErrorEvent} from '../../../page-editor/LiveEditPageInitializationErrorEvent';
+import {PartComponentView} from '../../../page-editor/part/PartComponentView';
+import {LayoutComponentView} from '../../../page-editor/layout/LayoutComponentView';
+import {PageLockedEvent} from '../../../page-editor/PageLockedEvent';
+import {PageUnlockedEvent} from '../../../page-editor/PageUnlockedEvent';
+import {RegionView} from '../../../page-editor/RegionView';
+import {PageSelectedEvent} from '../../../page-editor/PageSelectedEvent';
+import {RegionSelectedEvent} from '../../../page-editor/RegionSelectedEvent';
+import {ItemViewSelectedEvent} from '../../../page-editor/ItemViewSelectedEvent';
+import {ItemViewDeselectedEvent} from '../../../page-editor/ItemViewDeselectedEvent';
+import {ComponentAddedEvent} from '../../../page-editor/ComponentAddedEvent';
+import {TextComponentView} from '../../../page-editor/text/TextComponentView';
+import {ComponentRemovedEvent} from '../../../page-editor/ComponentRemovedEvent';
+import {ComponentViewDragDroppedEvent} from '../../../page-editor/ComponentViewDragDroppedEventEvent';
+import {ComponentDuplicatedEvent} from '../../../page-editor/ComponentDuplicatedEvent';
+import {ComponentInspectedEvent} from '../../../page-editor/ComponentInspectedEvent';
+import {PageInspectedEvent} from '../../../page-editor/PageInspectedEvent';
+import {ComponentFragmentCreatedEvent} from '../../../page-editor/ComponentFragmentCreatedEvent';
+import {FragmentComponentView} from '../../../page-editor/fragment/FragmentComponentView';
+import {FragmentComponentReloadRequiredEvent} from '../../../page-editor/FragmentComponentReloadRequiredEvent';
+import {ShowWarningLiveEditEvent} from '../../../page-editor/ShowWarningLiveEditEvent';
+import {PageUnloadedEvent} from '../../../page-editor/PageUnloadedEvent';
+import {Shader} from '../../../page-editor/Shader';
+import {ImageComponentView} from '../../../page-editor/image/ImageComponentView';
+import {PageModel} from '../../../page-editor/PageModel';
 import Content = api.content.Content;
 import ContentTypeName = api.schema.content.ContentTypeName;
 import Page = api.content.page.Page;
 import PageMode = api.content.page.PageMode;
-import PageModel = api.content.page.PageModel;
-import LiveEditModel = api.liveedit.LiveEditModel;
-
 import Component = api.content.page.region.Component;
 import ImageComponent = api.content.page.region.ImageComponent;
 import DescriptorBasedComponent = api.content.page.region.DescriptorBasedComponent;
@@ -34,37 +60,16 @@ import LayoutComponent = api.content.page.region.LayoutComponent;
 import FragmentComponent = api.content.page.region.FragmentComponent;
 import ComponentPropertyChangedEvent = api.content.page.region.ComponentPropertyChangedEvent;
 import RenderingMode = api.rendering.RenderingMode;
-import RegionView = api.liveedit.RegionView;
-import ComponentView = api.liveedit.ComponentView;
-import PageView = api.liveedit.PageView;
-import ImageComponentView = api.liveedit.image.ImageComponentView;
-import PartComponentView = api.liveedit.part.PartComponentView;
-import LayoutComponentView = api.liveedit.layout.LayoutComponentView;
-import TextComponentView = api.liveedit.text.TextComponentView;
-import FragmentComponentView = api.liveedit.fragment.FragmentComponentView;
-import ComponentViewDragDroppedEvent = api.liveedit.ComponentViewDragDroppedEvent;
-import PageSelectedEvent = api.liveedit.PageSelectedEvent;
-import RegionSelectedEvent = api.liveedit.RegionSelectedEvent;
-import ItemViewSelectedEvent = api.liveedit.ItemViewSelectedEvent;
-import ItemViewDeselectedEvent = api.liveedit.ItemViewDeselectedEvent;
-import ComponentInspectedEvent = api.liveedit.ComponentInspectedEvent;
-import PageInspectedEvent = api.liveedit.PageInspectedEvent;
-import ComponentAddedEvent = api.liveedit.ComponentAddedEvent;
-import ComponentRemovedEvent = api.liveedit.ComponentRemovedEvent;
-import ComponentDuplicatedEvent = api.liveedit.ComponentDuplicatedEvent;
-import LiveEditPageInitializationErrorEvent = api.liveedit.LiveEditPageInitializationErrorEvent;
-import ComponentFragmentCreatedEvent = api.liveedit.ComponentFragmentCreatedEvent;
-import ShowWarningLiveEditEvent = api.liveedit.ShowWarningLiveEditEvent;
+
 
 import HtmlAreaDialogShownEvent = api.util.htmlarea.dialog.CreateHtmlAreaDialogEvent;
 import HTMLAreaDialogHandler = api.util.htmlarea.dialog.HTMLAreaDialogHandler;
 
 import Panel = api.ui.panel.Panel;
-import LiveEditPageViewReadyEvent = api.liveedit.LiveEditPageViewReadyEvent;
+
 
 import ContentDeletedEvent = api.content.event.ContentDeletedEvent;
 import ContentUpdatedEvent = api.content.event.ContentUpdatedEvent;
-import FragmentComponentReloadRequiredEvent = api.liveedit.FragmentComponentReloadRequiredEvent;
 import BeforeContentSavedEvent = api.content.event.BeforeContentSavedEvent;
 import ComponentPath = api.content.page.region.ComponentPath;
 import i18n = api.util.i18n;
@@ -478,7 +483,7 @@ export class LiveFormPanel
             RenderingMode.EDIT,
             api.content.Branch.DRAFT);
 
-        this.contentWizardPanel.saveChangesWithoutValidation().then(() => {
+        this.contentWizardPanel.saveChangesWithoutValidation(false).then(() => {
             this.pageSkipReload = false;
             componentView.showLoadingSpinner();
             return this.liveEditPageProxy.loadComponent(componentView, componentUrl);
@@ -503,11 +508,11 @@ export class LiveFormPanel
     }
 
     private liveEditListen() {
-        this.liveEditPageProxy.onPageLocked((event: api.liveedit.PageLockedEvent) => {
+        this.liveEditPageProxy.onPageLocked((event: PageLockedEvent) => {
             this.inspectPage();
         });
 
-        this.liveEditPageProxy.onPageUnlocked((event: api.liveedit.PageUnlockedEvent) => {
+        this.liveEditPageProxy.onPageUnlocked((event: PageUnlockedEvent) => {
             //this.contextWindow.clearSelection();
             this.minimizeContentFormPanelIfNeeded();
         });
@@ -537,7 +542,7 @@ export class LiveFormPanel
             }
         };
 
-        this.liveEditPageProxy.onLiveEditPageViewReady((event: api.liveedit.LiveEditPageViewReadyEvent) => {
+        this.liveEditPageProxy.onLiveEditPageViewReady((event: LiveEditPageViewReadyEvent) => {
             this.pageView = event.getPageView();
             if (this.pageView) {
                 this.insertablesPanel.setPageView(this.pageView);
@@ -677,7 +682,7 @@ export class LiveFormPanel
             this.contentWizardPanel.showForm();
         });
 
-        this.liveEditPageProxy.onPageUnloaded((event: api.liveedit.PageUnloadedEvent) => {
+        this.liveEditPageProxy.onPageUnloaded((event: PageUnloadedEvent) => {
             this.contentWizardPanel.close();
         });
 
@@ -695,7 +700,7 @@ export class LiveFormPanel
     }
 
     private shade() {
-        api.liveedit.Shader.get().shade(this);
+        Shader.get().shade(this);
     }
 
     private minimizeContentFormPanelIfNeeded() {

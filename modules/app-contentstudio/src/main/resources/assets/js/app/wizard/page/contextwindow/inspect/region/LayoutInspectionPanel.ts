@@ -4,30 +4,21 @@ import {
     DescriptorBasedComponentInspectionPanelConfig
 } from './DescriptorBasedComponentInspectionPanel';
 import {DescriptorBasedDropdownForm} from './DescriptorBasedDropdownForm';
-
-import Content = api.content.Content;
-import SiteModel = api.content.site.SiteModel;
-import LiveEditModel = api.liveedit.LiveEditModel;
+import {LayoutComponentView} from '../../../../../../page-editor/layout/LayoutComponentView';
+import {ItemViewIconClassResolver} from '../../../../../../page-editor/ItemViewIconClassResolver';
 import LayoutDescriptor = api.content.page.region.LayoutDescriptor;
 import DescriptorKey = api.content.page.DescriptorKey;
-import DescriptorByDisplayNameComparator = api.content.page.DescriptorByDisplayNameComparator;
 import LayoutComponent = api.content.page.region.LayoutComponent;
 import DescriptorBasedComponent = api.content.page.region.DescriptorBasedComponent;
 import ComponentPropertyChangedEvent = api.content.page.region.ComponentPropertyChangedEvent;
 import GetLayoutDescriptorByKeyRequest = api.content.page.region.GetLayoutDescriptorByKeyRequest;
-import GetLayoutDescriptorsByApplicationsRequest = api.content.page.region.GetLayoutDescriptorsByApplicationsRequest;
-import Descriptor = api.content.page.Descriptor;
-import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
-import LayoutDescriptorLoader = api.content.page.region.LayoutDescriptorLoader;
-import LayoutDescriptorBuilder = api.content.page.region.LayoutDescriptorBuilder;
 import LayoutDescriptorDropdown = api.content.page.region.LayoutDescriptorDropdown;
 import Option = api.ui.selector.Option;
-import SelectedOption = api.ui.selector.combobox.SelectedOption;
 import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
-import LayoutComponentView = api.liveedit.layout.LayoutComponentView;
 import i18n = api.util.i18n;
 
-export class LayoutInspectionPanel extends DescriptorBasedComponentInspectionPanel<LayoutComponent, LayoutDescriptor> {
+export class LayoutInspectionPanel
+    extends DescriptorBasedComponentInspectionPanel<LayoutComponent, LayoutDescriptor> {
 
     private layoutView: LayoutComponentView;
 
@@ -43,7 +34,7 @@ export class LayoutInspectionPanel extends DescriptorBasedComponentInspectionPan
 
     constructor() {
         super(<DescriptorBasedComponentInspectionPanelConfig>{
-            iconClass: api.liveedit.ItemViewIconClassResolver.resolveByType('layout', 'icon-xlarge')
+            iconClass: ItemViewIconClassResolver.resolveByType('layout', 'icon-xlarge')
         });
     }
 
@@ -72,7 +63,7 @@ export class LayoutInspectionPanel extends DescriptorBasedComponentInspectionPan
     }
 
     protected reloadDescriptorsOnApplicationChange() {
-        if(this.selector) {
+        if (this.selector) {
             this.selector.loadDescriptors(this.liveEditModel.getSiteModel().getApplicationKeys());
         }
     }

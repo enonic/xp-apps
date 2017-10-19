@@ -1,11 +1,12 @@
 /**
  * Created by on 5/30/2017.
  */
-var page = require('../page')
+var page = require('../page');
+var elements = require('../../libs/elements');
 var wizard = {
     displayNameInput: `//input[contains(@name,'displayName')]`,
-    saveButton: `//button[contains(@id,'ActionButton')]//span[text()='Save']`,
-    deleteButton: `//button[contains(@id,'ActionButton')]//span[text()='Delete']`,
+    saveButton: `//button[contains(@id,'ActionButton') and child::span[text()='Save']]`,
+    deleteButton: `//button[contains(@id,'ActionButton')) and child::span[text()='Delete']`,
 }
 var wizardPanel = Object.create(page, {
 
@@ -29,22 +30,90 @@ var wizardPanel = Object.create(page, {
             return this.waitForEnabled(this.saveButton, 1000);
         }
     },
+    waitForSaveButtonDisabled: {
+        value: function () {
+            return this.waitForDisabled(this.saveButton, 1000);
+        }
+    },
     typeDisplayName: {
         value: function (displayName) {
             return this.typeTextInInput(this.displayNameInput, displayName);
         }
     },
-
-    waitAndClickOnSave: {
-        value: function () {
-            return this.waitForSaveButtonEnabled().then(()=> this.doClick(this.saveButton)).pause(500);
+    clearDisplayNameInput: {
+        value: function (displayName) {
+            return this.clearElement(this.displayNameInput);
         }
     },
+    isDisplayNameInputVisible: {
+        value: function () {
+            return this.isVisible(this.displayNameInput);
+        }
+    },
+    isDescriptionInputDisplayed: {
+        value: function () {
+            return this.isVisible(this.descriptionInput);
+        }
+    },
+    waitAndClickOnSave: {
+        value: function () {
+            return this.waitForSaveButtonEnabled().then((result)=> {
+                if (result) {
+                    return this.doClick(this.saveButton);
+                } else {
+                    throw new Error(`Save button is not enabled!`);
+                }
+
+            }).catch(err=> {
+                throw new Error(`Save button is not enabled!` + err);
+            })
+        }
+    },
+   
     doClickOnDelete: {
         value: function () {
-            this.doClick(this.deleteButton);
+            return this.doClick(this.deleteButton);
+        }
+    },
+    isItemInvalid: {
+        value: function (displayName) {
+            let selector = elements.tabItemByDisplayName(displayName);
+            return this.getBrowser().getAttribute(selector, 'class').then(result=> {
+                return result.includes("invalid");
+            }).catch(err=> {
+                throw new Error('tabItem: ' + err);
+            });
+        }
+    },
+    waitUntilInvalidIconAppears: {
+        value: function (displayName) {
+            let selector = elements.tabItemByDisplayName(displayName);
+            return this.getBrowser().waitUntil(()=> {
+                return this.getBrowser().getAttribute(selector, 'class').then(result=> {
+                    return result.includes('invalid');
+                });
+            }, 2000).then(()=> {
+                return true;
+            }).catch((err)=> {
+                throw new Error(err);
+            });
+        }
+    },
+    waitUntilInvalidIconDisappears: {
+        value: function (displayName) {
+            let selector = elements.tabItemByDisplayName(displayName);
+            return this.getBrowser().waitUntil(()=> {
+                return this.getBrowser().getAttribute(selector, 'class').then(result=> {
+                    return !result.includes('invalid');
+                })
+            }, 2000).then(()=> {
+                return true;
+            }).catch((err)=> {
+                throw new Error(err);
+            });
         }
     }
+
 });
 module.exports = wizardPanel;
 

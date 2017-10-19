@@ -12,6 +12,7 @@ import StringHelper = api.util.StringHelper;
 import ResponsiveManager = api.ui.responsive.ResponsiveManager;
 import ResponsiveItem = api.ui.responsive.ResponsiveItem;
 import FoldButton = api.ui.toolbar.FoldButton;
+import CompareStatusFormatter = api.content.CompareStatusFormatter;
 
 export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatisticsPanel<api.content.ContentSummaryAndCompareStatus> {
 
@@ -24,6 +25,8 @@ export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatistic
     private detailsToggleButton: MobileDetailsPanelToggleButton;
 
     private foldButton: MobilePreviewFoldButton;
+
+    private slideOutListeners: { (): void }[] = [];
 
     constructor(browseActions: ContentTreeGridActions, detailsView: DetailsView) {
         super('mobile-content-item-statistics-panel');
@@ -62,12 +65,12 @@ export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatistic
         serverEvents.onContentPublished(reloadItemPublishStateChange);
         serverEvents.onContentUnpublished(reloadItemPublishStateChange);
 
-        this.onRendered(() => {
-            this.slideAllOut();
-        });
+        this.onRendered(() => this.slideAllOut(true));
 
         ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
-            this.slideAllOut();
+            if (this.detailsPanel.isSlidedIn()) {
+                this.slideAllOut();
+            }
         });
     }
 
@@ -129,7 +132,7 @@ export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatistic
             this.detailsPanel.setItem(!!item ? item.getModel() : null);
             if (item) {
                 this.setName(this.makeDisplayName(item));
-                this.setStatus(this.makeCompareStatus(item));
+                this.setStatus(item.getModel());
             }
         }
     }
@@ -139,10 +142,6 @@ export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatistic
         return StringHelper.isEmpty(item.getDisplayName())
             ? api.content.ContentUnnamed.prettifyUnnamed(localName)
             : item.getDisplayName();
-    }
-
-    private makeCompareStatus(item: ViewItem<ContentSummaryAndCompareStatus>): string {
-        return api.content.CompareStatusFormatter.formatStatusFromContent(item.getModel());
     }
 
     getDetailsPanel(): MobileDetailsPanel {
@@ -157,28 +156,43 @@ export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatistic
         this.headerLabel.setHtml(name);
     }
 
-    private setStatus(status: string) {
+    private setStatus(content: ContentSummaryAndCompareStatus) {
         this.subHeaderLabel.getHTMLElement().setAttribute('class', '');
-        this.subHeaderLabel.addClass(status.toLowerCase().replace(' ', '-'));
-        this.subHeaderLabel.setHtml(status);
+        this.subHeaderLabel.addClass(content.getStatusClass());
+        this.subHeaderLabel.setHtml(content.getStatusText());
     }
 
-    slideAllOut() {
-        this.slideOut();
+    slideAllOut(silent?: boolean) {
+        this.slideOut(silent);
         this.detailsPanel.slideOut();
         this.detailsToggleButton.removeClass('expanded');
     }
 
     // hide
-    slideOut() {
+    slideOut(silent?: boolean) {
         this.getEl().setRightPx(-this.getEl().getWidthWithBorder());
         api.dom.Body.get().getHTMLElement().classList.remove('mobile-statistics-panel');
+        if (!silent) {
+            this.notifySlideOut();
+        }
     }
 
     // show
     slideIn() {
         api.dom.Body.get().getHTMLElement().classList.add('mobile-statistics-panel');
         this.getEl().setRightPx(0);
+    }
+
+    onSlideOut(listener: () => void) {
+        this.slideOutListeners.push(listener);
+    }
+
+    unSlideOut(listener: () => void) {
+        this.slideOutListeners = this.slideOutListeners.filter(curr => curr != listener);
+    }
+
+    notifySlideOut() {
+        this.slideOutListeners.forEach(curr => curr());
     }
 
     private calcAndSetDetailsPanelTopOffset() {

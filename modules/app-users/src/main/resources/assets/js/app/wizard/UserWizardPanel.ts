@@ -2,16 +2,13 @@ import '../../api.ts';
 import {PrincipalWizardPanel} from './PrincipalWizardPanel';
 import {UserEmailWizardStepForm} from './UserEmailWizardStepForm';
 import {UserPasswordWizardStepForm} from './UserPasswordWizardStepForm';
-import {MembershipsWizardStepForm, MembershipsType} from './MembershipsWizardStepForm';
+import {MembershipsType, MembershipsWizardStepForm} from './MembershipsWizardStepForm';
 import {PrincipalWizardPanelParams} from './PrincipalWizardPanelParams';
 import {CreateUserRequest} from '../../api/graphql/principal/user/CreateUserRequest';
 import {UpdateUserRequest} from '../../api/graphql/principal/user/UpdateUserRequest';
-
-import User = api.security.User;
 import UserBuilder = api.security.UserBuilder;
 import Principal = api.security.Principal;
 import PrincipalKey = api.security.PrincipalKey;
-import UserStoreKey = api.security.UserStoreKey;
 import ConfirmationDialog = api.ui.dialog.ConfirmationDialog;
 import WizardStep = api.app.wizard.WizardStep;
 import ArrayHelper = api.util.ArrayHelper;
@@ -32,14 +29,15 @@ export class UserWizardPanel extends PrincipalWizardPanel {
 
     saveChanges(): wemQ.Promise<Principal> {
         if (!this.isRendered() ||
-            (this.userEmailWizardStepForm.isValid()
-             && (this.getPersistedItem() || this.userPasswordWizardStepForm.isValid()))) {
+            (this.userEmailWizardStepForm.isValid() && (this.getPersistedItem() || this.userPasswordWizardStepForm.isValid()))) {
 
             return super.saveChanges();
         } else {
-            this.showErrors();
-
-            return wemQ<Principal>(null);
+            return wemQ.fcall(() => {
+                // throw errors, if present
+                this.showErrors();
+                return null;
+            });
         }
     }
 
@@ -104,6 +102,10 @@ export class UserWizardPanel extends PrincipalWizardPanel {
             api.notify.showFeedback(i18n('notify.create.user'));
             this.notifyPrincipalNamed(principal);
 
+            this.membershipsWizardStepForm.layout(principal);
+            this.userEmailWizardStepForm.layout(principal);
+            this.userPasswordWizardStepForm.layout(principal);
+
             return principal;
         });
     }
@@ -129,6 +131,8 @@ export class UserWizardPanel extends PrincipalWizardPanel {
         return super.updatePersistedItem().then((principal: Principal) => {
             //remove after users event handling is configured and layout is updated on receiving upd from server
             this.membershipsWizardStepForm.layout(principal);
+            this.userEmailWizardStepForm.layout(principal);
+            this.userPasswordWizardStepForm.layout(principal);
             return principal;
         });
     }
@@ -164,6 +168,35 @@ export class UserWizardPanel extends PrincipalWizardPanel {
             .build();
     }
 
+    private showErrors() {
+        if (!this.userEmailWizardStepForm.isValid()) {
+            this.showEmailErrors();
+        }
+
+        if (!(this.getPersistedItem() || this.userPasswordWizardStepForm.isValid())) {
+            this.showPasswordErrors();
+        }
+    }
+
+    private showEmailErrors() {
+        let formEmail = this.userEmailWizardStepForm.getEmail();
+        if (api.util.StringHelper.isEmpty(formEmail)) {
+            throw i18n('notify.empty.email');
+        } else if (!this.userEmailWizardStepForm.isValid()) {
+            throw i18n('notify.invalid.email');
+        }
+
+    }
+
+    private showPasswordErrors() {
+        let password = this.userPasswordWizardStepForm.getPassword();
+        if (api.util.StringHelper.isEmpty(password)) {
+            throw i18n('notify.empty.password');
+        } else if (!this.userEmailWizardStepForm.isValid()) {
+            throw i18n('notify.invalid.password');
+        }
+    }
+
     isPersistedEqualsViewed(): boolean {
         let persistedPrincipal = this.getPersistedItem().asUser();
         let viewedPrincipal = this.assembleViewedItem().asUser();
@@ -190,47 +223,16 @@ export class UserWizardPanel extends PrincipalWizardPanel {
         return viewedPrincipal.equals(persistedPrincipal);
     }
 
-    hasUnsavedChanges(): boolean {
-        let persistedPrincipal = this.getPersistedItem();
-        let email = this.userEmailWizardStepForm.getEmail();
-        let memberships = this.membershipsWizardStepForm.getMemberships();
-        if (persistedPrincipal == null) {
-            let wizardHeader = this.getWizardHeader();
-            return wizardHeader.getName() !== '' ||
-                   wizardHeader.getDisplayName() !== '' ||
-                   (!!email && email !== '') ||
-                   (!!memberships && memberships.length !== 0);
-        } else {
-            return !this.isPersistedEqualsViewed();
-        }
-    }
+    isNewChanged(): boolean {
+        const wizardHeader = this.getWizardHeader();
+        const email = this.userEmailWizardStepForm.getEmail();
+        const password = this.userPasswordWizardStepForm.getPassword();
+        const memberships = this.membershipsWizardStepForm.getMemberships();
 
-    private showErrors() {
-        if (!this.userEmailWizardStepForm.isValid()) {
-            this.showEmailErrors();
-        }
-
-        if (!(this.getPersistedItem() || this.userPasswordWizardStepForm.isValid())) {
-            this.showPasswordErrors();
-        }
-    }
-
-    private showEmailErrors() {
-        let formEmail = this.userEmailWizardStepForm.getEmail();
-        if (api.util.StringHelper.isEmpty(formEmail)) {
-            api.notify.showError(i18n('notify.empty.email'));
-        } else if (!this.userEmailWizardStepForm.isValid()) {
-            api.notify.showError(i18n('notify.invalid.email'));
-        }
-
-    }
-
-    private showPasswordErrors() {
-        let password = this.userPasswordWizardStepForm.getPassword();
-        if (api.util.StringHelper.isEmpty(password)) {
-            api.notify.showError(i18n('notify.empty.password'));
-        } else if (!this.userEmailWizardStepForm.isValid()) {
-            api.notify.showError(i18n('notify.invalid.password'));
-        }
+        return wizardHeader.getName() !== '' ||
+               wizardHeader.getDisplayName() !== '' ||
+               (!!email && email !== '') ||
+               (!!password && password !== '') ||
+               (!!memberships && memberships.length !== 0);
     }
 }

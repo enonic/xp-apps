@@ -1,17 +1,15 @@
 var common = require('./common');
 var principals = require('./principals');
+var authLib = require('/lib/xp/auth');
 
 exports.create = function createRole(params) {
     var key = common.required(params, 'key');
     var name = common.nameFromKey(key);
 
-    var createdRole = common.create({
-        _parentPath: '/identity/roles',
-        _name: name,
-        key: key, // TODO: save key to a separate field because we can't save it as id
+    var createdRole = authLib.createRole({
+        name: name,
         displayName: common.required(params, 'displayName'),
-        description: params.description,
-        principalType: principals.Type.ROLE
+        description: params.description
     });
 
     var members = params.members;
@@ -27,8 +25,8 @@ exports.create = function createRole(params) {
 exports.update = function updateRole(params) {
     var key = common.required(params, 'key');
 
-    var updatedRole = common.update({
-        key: '/identity/roles/' + common.nameFromKey(key),
+    var modifiedRole = authLib.modifyRole({
+        key: key,
         editor: function(role) {
             var newRole = role;
             newRole.displayName = params.displayName;
@@ -39,9 +37,9 @@ exports.update = function updateRole(params) {
 
     principals.updateMembers(key, params.addMembers, params.removeMembers);
 
-    populateMembers(updatedRole);
+    populateMembers(modifiedRole);
 
-    return updatedRole;
+    return modifiedRole;
 };
 
 function populateMembers(role) {

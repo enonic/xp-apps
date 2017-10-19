@@ -1,11 +1,12 @@
 import '../../../../../../api.ts';
 import {BaseInspectionPanel} from '../BaseInspectionPanel';
-
+import {ItemViewIconClassResolver} from '../../../../../../page-editor/ItemViewIconClassResolver';
+import {TextComponentView} from '../../../../../../page-editor/text/TextComponentView';
+import {TextComponentViewer} from '../../../../../../page-editor/text/TextComponentViewer';
 import TextComponent = api.content.page.region.TextComponent;
-import TextComponentView = api.liveedit.text.TextComponentView;
-import TextComponentViewer = api.liveedit.text.TextComponentViewer;
 
-export class TextInspectionPanel extends BaseInspectionPanel {
+export class TextInspectionPanel
+    extends BaseInspectionPanel {
 
     private namesAndIcon: api.app.NamesAndIconView;
 
@@ -14,7 +15,7 @@ export class TextInspectionPanel extends BaseInspectionPanel {
 
         this.namesAndIcon =
             new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.medium)).setIconClass(
-                api.liveedit.ItemViewIconClassResolver.resolveByType('text'));
+                ItemViewIconClassResolver.resolveByType('text'));
 
         this.appendChild(this.namesAndIcon);
     }

@@ -2,34 +2,34 @@ import '../../api.ts';
 import {LiveEditPageProxy} from './page/LiveEditPageProxy';
 import {PageComponentsTreeGrid} from './PageComponentsTreeGrid';
 import {SaveAsTemplateAction} from './action/SaveAsTemplateAction';
-
-import ItemViewSelectedEvent = api.liveedit.ItemViewSelectedEvent;
-import ItemViewDeselectedEvent = api.liveedit.ItemViewDeselectedEvent;
-import ComponentAddedEvent = api.liveedit.ComponentAddedEvent;
-import ComponentRemovedEvent = api.liveedit.ComponentRemovedEvent;
-import ComponentLoadedEvent = api.liveedit.ComponentLoadedEvent;
-import ComponentResetEvent = api.liveedit.ComponentResetEvent;
-
+import {PageView} from '../../page-editor/PageView';
+import {ItemViewContextMenu} from '../../page-editor/ItemViewContextMenu';
+import {Highlighter} from '../../page-editor/Highlighter';
+import {ItemViewSelectedEvent} from '../../page-editor/ItemViewSelectedEvent';
+import {ItemViewDeselectedEvent} from '../../page-editor/ItemViewDeselectedEvent';
+import {ComponentAddedEvent} from '../../page-editor/ComponentAddedEvent';
+import {TextComponentView} from '../../page-editor/text/TextComponentView';
+import {FragmentComponentView} from '../../page-editor/fragment/FragmentComponentView';
+import {ComponentRemovedEvent} from '../../page-editor/ComponentRemovedEvent';
+import {ComponentLoadedEvent} from '../../page-editor/ComponentLoadedEvent';
+import {ComponentResetEvent} from '../../page-editor/ComponentResetEvent';
+import {ItemView} from '../../page-editor/ItemView';
+import {ComponentView} from '../../page-editor/ComponentView';
+import {ClickPosition} from '../../page-editor/ClickPosition';
+import {PageViewController} from '../../page-editor/PageViewController';
 import Content = api.content.Content;
-import TreeGrid = api.ui.treegrid.TreeGrid;
 import TreeNode = api.ui.treegrid.TreeNode;
-import PageView = api.liveedit.PageView;
-import ItemView = api.liveedit.ItemView;
-import TextComponentView = api.liveedit.text.TextComponentView;
-import FragmentComponentView = api.liveedit.fragment.FragmentComponentView;
 
 import Mask = api.ui.mask.Mask;
-import Highlighter = api.liveedit.Highlighter;
 
 import ResponsiveManager = api.ui.responsive.ResponsiveManager;
 import ResponsiveItem = api.ui.responsive.ResponsiveItem;
 import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
 import i18n = api.util.i18n;
 import Action = api.ui.Action;
-import Permission = api.security.acl.Permission;
 import KeyBinding = api.ui.KeyBinding;
 import ObjectHelper = api.ObjectHelper;
-import ComponentView = api.liveedit.ComponentView;
+
 
 export class PageComponentsView
     extends api.dom.DivEl {
@@ -37,7 +37,7 @@ export class PageComponentsView
     private content: Content;
     private pageView: PageView;
     private liveEditPage: LiveEditPageProxy;
-    private contextMenu: api.liveedit.ItemViewContextMenu;
+    private contextMenu: ItemViewContextMenu;
 
     private responsiveItem: ResponsiveItem;
 
@@ -484,7 +484,7 @@ export class PageComponentsView
             const selectedNode = this.tree.getSelectedNodes()[0];
             const itemView = selectedNode ? selectedNode.getData() : null;
 
-            if(itemView) {
+            if (itemView) {
                 if (ObjectHelper.iFrameSafeInstanceOf(itemView, ComponentView)) {
                     itemView.deselect();
                     itemView.remove();
@@ -674,14 +674,14 @@ export class PageComponentsView
         return cellNumber === 1;
     }
 
-    private showContextMenu(row: number, clickPosition: api.liveedit.Position) {
+    private showContextMenu(row: number, clickPosition: ClickPosition) {
         let node = this.tree.getGrid().getDataView().getItem(row);
         let itemView: ItemView;
-        let pageView: api.liveedit.PageView;
+        let pageView: PageView;
 
         if (node) {
             itemView = node.getData();
-            pageView = itemView.getPageView();
+            pageView = <PageView>itemView.getPageView();
         } else {
             pageView = this.pageView;
         }
@@ -694,14 +694,14 @@ export class PageComponentsView
         }
 
         if (!this.contextMenu) {
-            this.contextMenu = new api.liveedit.ItemViewContextMenu(null, contextMenuActions, false, false);
+            this.contextMenu = new ItemViewContextMenu(null, contextMenuActions, false, false);
             this.contextMenu.onHidden(this.removeMenuOpenStyleFromMenuIcon.bind(this));
         } else {
             this.contextMenu.setActions(contextMenuActions);
         }
 
         this.contextMenu.getMenu().onBeforeAction((action: Action) => {
-            this.pageView.setDisabledContextMenu(true);
+            PageViewController.get().setContextMenuDisabled(true);
             if (action.hasParentAction() && action.getParentAction().getLabel() === i18n('field.insert')) {
                 this.notifyBeforeInsertAction();
             }
@@ -711,7 +711,7 @@ export class PageComponentsView
             this.hidePageComponentsIfInMobileView(action);
 
             setTimeout(() => {
-                this.pageView.setDisabledContextMenu(false);
+                PageViewController.get().setContextMenuDisabled(false);
                 this.contextMenu.getMenu().clearActionListeners();
                 if (this.getHTMLElement().offsetHeight === 0) { // if PCV not visible, for example fragment created, hide highlighter
                     Highlighter.get().hide();

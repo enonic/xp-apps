@@ -1,8 +1,14 @@
 import '../../api.ts';
 import {PageComponentsItemViewer} from './PageComponentsItemViewer';
 import {PageComponentsGridDragHandler} from './PageComponentsGridDragHandler';
-
-import GridColumn = api.ui.grid.GridColumn;
+import {ItemView} from '../../page-editor/ItemView';
+import {PageView} from '../../page-editor/PageView';
+import {RegionView} from '../../page-editor/RegionView';
+import {ItemViewId} from '../../page-editor/ItemViewId';
+import {PageItemType} from '../../page-editor/PageItemType';
+import {RegionItemType} from '../../page-editor/RegionItemType';
+import {LayoutItemType} from '../../page-editor/layout/LayoutItemType';
+import {LayoutComponentView} from '../../page-editor/layout/LayoutComponentView';
 import GridColumnBuilder = api.ui.grid.GridColumnBuilder;
 import GridOptionsBuilder = api.ui.grid.GridOptionsBuilder;
 
@@ -10,18 +16,12 @@ import TreeGrid = api.ui.treegrid.TreeGrid;
 import TreeNode = api.ui.treegrid.TreeNode;
 import TreeGridBuilder = api.ui.treegrid.TreeGridBuilder;
 
-import ItemView = api.liveedit.ItemView;
-import PageView = api.liveedit.PageView;
-import PageItemType = api.liveedit.PageItemType;
-import RegionItemType = api.liveedit.RegionItemType;
-import RegionView = api.liveedit.RegionView;
-import LayoutItemType = api.liveedit.layout.LayoutItemType;
-import LayoutComponentView = api.liveedit.layout.LayoutComponentView;
 import Content = api.content.Content;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import i18n = api.util.i18n;
 
-export class PageComponentsTreeGrid extends TreeGrid<ItemView> {
+export class PageComponentsTreeGrid
+    extends TreeGrid<ItemView> {
 
     private pageView: PageView;
     private content: Content;
@@ -122,7 +122,7 @@ export class PageComponentsTreeGrid extends TreeGrid<ItemView> {
 
     fetch(node: TreeNode<ItemView>, dataId?: string): Q.Promise<ItemView> {
         let deferred = wemQ.defer<ItemView>();
-        let itemViewId = dataId ? new api.liveedit.ItemViewId(parseInt(dataId, 10)) : node.getData().getItemId();
+        let itemViewId = dataId ? new ItemViewId(parseInt(dataId, 10)) : node.getData().getItemId();
         deferred.resolve(this.pageView.getItemViewById(itemViewId));
         return deferred.promise;
     }

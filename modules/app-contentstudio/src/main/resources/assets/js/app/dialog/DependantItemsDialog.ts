@@ -1,16 +1,11 @@
 import '../../api.ts';
 import {StatusSelectionItem} from './StatusSelectionItem';
 import {DependantItemViewer} from './DependantItemViewer';
-
-import ContentSummary = api.content.ContentSummary;
-import ContentIds = api.content.ContentIds;
 import ContentId = api.content.ContentId;
 import GetDescendantsOfContents = api.content.resource.GetDescendantsOfContentsRequest;
-import ContentSummaryAndCompareStatusFetcher = api.content.resource.ContentSummaryAndCompareStatusFetcher;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import CompareStatus = api.content.CompareStatus;
 import BrowseItem = api.app.browse.BrowseItem;
-import SelectionItem = api.app.browse.SelectionItem;
 import ListBox = api.ui.selector.list.ListBox;
 import LoadMask = api.ui.mask.LoadMask;
 import DialogButton = api.ui.dialog.DialogButton;
@@ -305,9 +300,11 @@ export class DialogItemList extends ListBox<ContentSummaryAndCompareStatus> {
 
         itemViewer.setObject(item);
 
-        let browseItem = new BrowseItem<ContentSummaryAndCompareStatus>(item).setId(item.getId()).setDisplayName(
-            item.getDisplayName()).setPath(item.getPath().toString()).setIconUrl(
-            new api.content.util.ContentIconUrlResolver().setContent(item.getContentSummary()).resolve());
+        let browseItem = <BrowseItem<ContentSummaryAndCompareStatus>>new BrowseItem<ContentSummaryAndCompareStatus>(item)
+            .setId(item.getId())
+            .setDisplayName(item.getDisplayName())
+            .setPath(item.getPath().toString())
+            .setIconUrl(new api.content.util.ContentIconUrlResolver().setContent(item.getContentSummary()).resolve());
 
         let statusItem = this.createSelectionItem(itemViewer, browseItem);
 
@@ -347,9 +344,11 @@ export class DialogDependantList extends ListBox<ContentSummaryAndCompareStatus>
 
         dependantViewer.setObject(item);
 
-        let browseItem = new BrowseItem<ContentSummaryAndCompareStatus>(item).setId(item.getId()).setDisplayName(
-            item.getDisplayName()).setPath(item.getPath().toString()).setIconUrl(
-            new api.content.util.ContentIconUrlResolver().setContent(item.getContentSummary()).resolve());
+        let browseItem = <BrowseItem<ContentSummaryAndCompareStatus>>new BrowseItem<ContentSummaryAndCompareStatus>(item)
+            .setId(item.getId())
+            .setDisplayName(item.getDisplayName())
+            .setPath(item.getPath().toString())
+            .setIconUrl(new api.content.util.ContentIconUrlResolver().setContent(item.getContentSummary()).resolve());
 
         let selectionItem = new StatusSelectionItem(dependantViewer, browseItem);
 

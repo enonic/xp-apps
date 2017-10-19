@@ -7,18 +7,12 @@ import {Router} from '../Router';
 import {UserStoreWizardDataLoader} from './UserStoreWizardDataLoader';
 import {CreateUserStoreRequest} from '../../api/graphql/userStore/CreateUserStoreRequest';
 import {UpdateUserStoreRequest} from '../../api/graphql/userStore/UpdateUserStoreRequest';
-
 import UserStore = api.security.UserStore;
 import UserStoreKey = api.security.UserStoreKey;
-import UserStoreNamedEvent = api.security.UserStoreNamedEvent;
 import UserStoreBuilder = api.security.UserStoreBuilder;
 
-import ResponsiveManager = api.ui.responsive.ResponsiveManager;
-import ResponsiveItem = api.ui.responsive.ResponsiveItem;
 import WizardStep = api.app.wizard.WizardStep;
 import FormIcon = api.app.wizard.FormIcon;
-import WizardHeaderWithDisplayNameAndName = api.app.wizard.WizardHeaderWithDisplayNameAndName;
-import WizardHeaderWithDisplayNameAndNameBuilder = api.app.wizard.WizardHeaderWithDisplayNameAndNameBuilder;
 import i18n = api.util.i18n;
 
 export class UserStoreWizardPanel
@@ -150,19 +144,6 @@ export class UserStoreWizardPanel
         });
     }
 
-    hasUnsavedChanges(): boolean {
-        let persistedUserStore: UserStore = this.getPersistedItem();
-        if (persistedUserStore == null) {
-            let wizardHeader = this.getWizardHeader();
-            return wizardHeader.getName() !== '' ||
-                   wizardHeader.getDisplayName() !== '' ||
-                   !this.permissionsWizardStepForm.getPermissions().equals(this.defaultUserStore.getPermissions());
-        } else {
-            let viewedUserStore = this.assembleViewedUserStore();
-            return !persistedUserStore.equals(viewedUserStore);
-        }
-    }
-
     private assembleViewedUserStore(): UserStore {
         return <UserStore>new UserStoreBuilder().setAuthConfig(
             this.userStoreWizardStepForm.getAuthConfig()).setPermissions(this.permissionsWizardStepForm.getPermissions()).setKey(
@@ -252,6 +233,21 @@ export class UserStoreWizardPanel
                 this.wizardActions.getDeleteAction().setEnabled(result);
             });
         }
+    }
+
+    isPersistedEqualsViewed(): boolean {
+        const viewedPrincipal = this.assembleViewedUserStore();
+        return viewedPrincipal.equals(this.getPersistedItem());
+    }
+
+    isNewChanged(): boolean {
+        const wizardHeader = this.getWizardHeader();
+        const authConfig = this.userStoreWizardStepForm.getAuthConfig();
+        return wizardHeader.getName() !== '' ||
+               wizardHeader.getDisplayName() !== '' ||
+               this.userStoreWizardStepForm.getDescription() !== this.defaultUserStore.getDescription() ||
+               !(!authConfig || authConfig.equals(this.defaultUserStore.getAuthConfig())) ||
+               !this.permissionsWizardStepForm.getPermissions().equals(this.defaultUserStore.getPermissions());
     }
 
 }

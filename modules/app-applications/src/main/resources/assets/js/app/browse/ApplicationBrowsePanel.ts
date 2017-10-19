@@ -6,7 +6,6 @@ import {ApplicationBrowseItemPanel} from './ApplicationBrowseItemPanel';
 import {StopApplicationEvent} from './StopApplicationEvent';
 import {StartApplicationEvent} from './StartApplicationEvent';
 import {UninstallApplicationEvent} from './UninstallApplicationEvent';
-
 import ApplicationKey = api.application.ApplicationKey;
 import Application = api.application.Application;
 import TreeNode = api.ui.treegrid.TreeNode;
@@ -20,14 +19,10 @@ import i18n = api.util.i18n;
 
 export class ApplicationBrowsePanel extends api.app.browse.BrowsePanel<Application> {
 
-    private applicationIconUrl: string;
-
     protected treeGrid: ApplicationTreeGrid;
 
     constructor() {
         super();
-
-        this.applicationIconUrl = api.util.UriHelper.getAdminUri('common/images/icons/icoMoon/128x128/puzzle.png');
 
         this.registerEvents();
     }
@@ -46,6 +41,15 @@ export class ApplicationBrowsePanel extends api.app.browse.BrowsePanel<Applicati
         return new ApplicationBrowseItemPanel();
     }
 
+    treeNodeToBrowseItem(node: TreeNode<Application>): BrowseItem<Application>|null {
+        const data = node ? node.getData() : null;
+        return !data ? null : <BrowseItem<Application>>new BrowseItem<Application>(data)
+            .setId(data.getId())
+            .setDisplayName(data.getDisplayName())
+            .setPath(data.getName())
+            .setIconUrl(data.getIconUrl());
+    }
+
     treeNodesToBrowseItems(nodes: TreeNode<Application>[]): BrowseItem<Application>[] {
         let browseItems: BrowseItem<Application>[] = [];
 
@@ -58,10 +62,10 @@ export class ApplicationBrowsePanel extends api.app.browse.BrowsePanel<Applicati
                 }
             }
             if (i === index) {
-                let applicationEl = node.getData();
-                let item = new BrowseItem<Application>(applicationEl).setId(applicationEl.getId()).setDisplayName(
-                    applicationEl.getDisplayName()).setPath(applicationEl.getName()).setIconUrl(this.applicationIconUrl);
-                browseItems.push(item);
+                const item = this.treeNodeToBrowseItem(node);
+                if (item) {
+                    browseItems.push(item);
+                }
             }
         });
         return browseItems;

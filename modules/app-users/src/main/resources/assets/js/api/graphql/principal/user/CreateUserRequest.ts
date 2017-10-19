@@ -72,7 +72,13 @@ export class CreateUserRequest
     // tslint:enable max-line-length
 
     sendAndParse(): wemQ.Promise<User> {
-        return this.mutate().then(json => User.fromJson(json.createUser));
+        return this.mutate().then(json => this.fromJson(json.createUser, json.error));
     }
 
+    fromJson(user: UserJson, error: string): User {
+        if (!user || error) {
+            throw error;
+        }
+        return User.fromJson(user);
+    }
 }

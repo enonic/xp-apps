@@ -1,8 +1,10 @@
 import '../../../../../api.ts';
 import {BaseInspectionPanel} from './BaseInspectionPanel';
+import {ItemViewIconClassResolver} from '../../../../../page-editor/ItemViewIconClassResolver';
 import i18n = api.util.i18n;
 
-export class ContentInspectionPanel extends BaseInspectionPanel {
+export class ContentInspectionPanel
+    extends BaseInspectionPanel {
 
     private content: api.content.Content;
 
@@ -13,7 +15,7 @@ export class ContentInspectionPanel extends BaseInspectionPanel {
 
         this.namesAndIcon =
             new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.medium)).setIconClass(
-                api.liveedit.ItemViewIconClassResolver.resolveByType('content', 'icon-xlarge'));
+                ItemViewIconClassResolver.resolveByType('content', 'icon-xlarge'));
 
         this.appendChild(this.namesAndIcon);
     }

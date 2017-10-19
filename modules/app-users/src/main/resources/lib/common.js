@@ -115,13 +115,10 @@ exports.createQueryByField = function(field, values) {
     if (!values || !field) {
         return null;
     }
-    var clause = String(field);
     if (values instanceof Array) {
-        clause += ' IN (' + serializeValues(values) + ')';
-    } else {
-        clause += '=' + serializeValue(values);
+        return String(field) + ' IN (' + serializeValues(values) + ')';
     }
-    return clause;
+    return String(field) + '=' + serializeValue(values);
 };
 
 function serializeValues(values) {

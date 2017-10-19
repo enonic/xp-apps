@@ -84,7 +84,6 @@
     margin: 0 18px 50px -15px;
 
     img {
-      height: 135px;
       margin: 12px 10px 10px 10px;
     }
   }
@@ -339,13 +338,13 @@
       width: 100%;
 
       button {
-        width: 130px;
         height: 36px;
         text-align: center;
         margin-left: 0px;
 
         span {
           font-weight: bold;
+          white-space: nowrap;
         }
 
         &:first-child {
@@ -391,4 +390,20 @@
 
 .notification-container {
   z-index: 2500;
+}
+
+body {
+  &._0-240, &._240-360, &._360-540, &._540-720 {
+    .xp-about-dialog {
+      .cancel-button-top {
+
+        background-color: rgba(0, 0, 0, 0.8);
+
+        &:before, &:after {
+          background-color: #fff;
+        }
+
+      }
+    }
+  }
 }

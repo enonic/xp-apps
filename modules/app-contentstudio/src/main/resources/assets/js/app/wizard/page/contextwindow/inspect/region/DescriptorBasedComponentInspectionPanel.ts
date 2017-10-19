@@ -1,22 +1,18 @@
 import '../../../../../../api.ts';
 import {ComponentInspectionPanel, ComponentInspectionPanelConfig} from './ComponentInspectionPanel';
-
+import {LiveEditModel} from '../../../../../../page-editor/LiveEditModel';
 import FormView = api.form.FormView;
 import DescriptorBasedComponent = api.content.page.region.DescriptorBasedComponent;
-import DescriptorKey = api.content.page.DescriptorKey;
 import Descriptor = api.content.page.Descriptor;
-import LiveEditModel = api.liveedit.LiveEditModel;
-import SiteModel = api.content.site.SiteModel;
 import DescriptorBasedDropdown = api.content.page.region.DescriptorBasedDropdown;
-import GetLayoutDescriptorsByApplicationsRequest = api.content.page.region.GetLayoutDescriptorsByApplicationsRequest;
-import GetPartDescriptorsByApplicationsRequest = api.content.page.region.GetPartDescriptorsByApplicationsRequest;
 
-export interface DescriptorBasedComponentInspectionPanelConfig extends ComponentInspectionPanelConfig {
+export interface DescriptorBasedComponentInspectionPanelConfig
+    extends ComponentInspectionPanelConfig {
 
 }
 
 export class DescriptorBasedComponentInspectionPanel<COMPONENT extends DescriptorBasedComponent, DESCRIPTOR extends Descriptor>
-extends ComponentInspectionPanel<COMPONENT> {
+    extends ComponentInspectionPanel<COMPONENT> {
 
     private formView: FormView;
 

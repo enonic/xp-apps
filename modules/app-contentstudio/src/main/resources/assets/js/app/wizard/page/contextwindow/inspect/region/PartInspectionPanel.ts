@@ -4,26 +4,22 @@ import {
     DescriptorBasedComponentInspectionPanelConfig
 } from './DescriptorBasedComponentInspectionPanel';
 import {DescriptorBasedDropdownForm} from './DescriptorBasedDropdownForm';
-
-import SiteModel = api.content.site.SiteModel;
+import {PartComponentView} from '../../../../../../page-editor/part/PartComponentView';
+import {ItemViewIconClassResolver} from '../../../../../../page-editor/ItemViewIconClassResolver';
 import PartDescriptor = api.content.page.region.PartDescriptor;
-import PartDescriptorLoader = api.content.page.region.PartDescriptorLoader;
-import GetPartDescriptorsByApplicationsRequest = api.content.page.region.GetPartDescriptorsByApplicationsRequest;
 import GetPartDescriptorByKeyRequest = api.content.page.region.GetPartDescriptorByKeyRequest;
 import PartComponent = api.content.page.region.PartComponent;
 import PartDescriptorDropdown = api.content.page.region.PartDescriptorDropdown;
 import DescriptorBasedComponent = api.content.page.region.DescriptorBasedComponent;
 import ComponentPropertyChangedEvent = api.content.page.region.ComponentPropertyChangedEvent;
 import DescriptorKey = api.content.page.DescriptorKey;
-import Descriptor = api.content.page.Descriptor;
-import PartComponentView = api.liveedit.part.PartComponentView;
-import LiveEditModel = api.liveedit.LiveEditModel;
+
 import Option = api.ui.selector.Option;
-import SelectedOption = api.ui.selector.combobox.SelectedOption;
 import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
 import i18n = api.util.i18n;
 
-export class PartInspectionPanel extends DescriptorBasedComponentInspectionPanel<PartComponent, PartDescriptor> {
+export class PartInspectionPanel
+    extends DescriptorBasedComponentInspectionPanel<PartComponent, PartDescriptor> {
 
     private partView: PartComponentView;
 
@@ -39,7 +35,7 @@ export class PartInspectionPanel extends DescriptorBasedComponentInspectionPanel
 
     constructor() {
         super(<DescriptorBasedComponentInspectionPanelConfig>{
-            iconClass: api.liveedit.ItemViewIconClassResolver.resolveByType('part', 'icon-xlarge')
+            iconClass: ItemViewIconClassResolver.resolveByType('part', 'icon-xlarge')
         });
     }
 
@@ -67,7 +63,7 @@ export class PartInspectionPanel extends DescriptorBasedComponentInspectionPanel
     }
 
     protected reloadDescriptorsOnApplicationChange() {
-        if(this.selector) {
+        if (this.selector) {
             this.selector.loadDescriptors(this.liveEditModel.getSiteModel().getApplicationKeys());
         }
     }

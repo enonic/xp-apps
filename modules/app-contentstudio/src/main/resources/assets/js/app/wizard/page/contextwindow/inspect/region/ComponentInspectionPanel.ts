@@ -1,18 +1,18 @@
 import '../../../../../../api.ts';
 import {BaseInspectionPanel} from '../BaseInspectionPanel';
-
+import {LiveEditModel} from '../../../../../../page-editor/LiveEditModel';
+import {ComponentView} from '../../../../../../page-editor/ComponentView';
 import Component = api.content.page.region.Component;
-import ComponentName = api.content.page.region.ComponentName;
-import ComponentView = api.liveedit.ComponentView;
 import ContentFormContext = api.content.form.ContentFormContext;
-import LiveEditModel = api.liveedit.LiveEditModel;
+
 
 export interface ComponentInspectionPanelConfig {
 
     iconClass: string;
 }
 
-export abstract class ComponentInspectionPanel<COMPONENT extends Component> extends BaseInspectionPanel {
+export abstract class ComponentInspectionPanel<COMPONENT extends Component>
+    extends BaseInspectionPanel {
 
     liveEditModel: LiveEditModel;
 

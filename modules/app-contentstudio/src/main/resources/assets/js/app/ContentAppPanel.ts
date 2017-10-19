@@ -18,6 +18,7 @@ import AppBarTabMenuItemBuilder = api.app.bar.AppBarTabMenuItemBuilder;
 import ShowBrowsePanelEvent = api.app.ShowBrowsePanelEvent;
 import UriHelper = api.util.UriHelper;
 import AppPanel = api.app.AppPanel;
+import {IssueDialogsManager} from './issue/IssueDialogsManager';
 
 export class ContentAppPanel extends AppPanel<ContentSummaryAndCompareStatus> {
 
@@ -61,7 +62,7 @@ export class ContentAppPanel extends AppPanel<ContentSummaryAndCompareStatus> {
             if (id) {
                 new GetIssueRequest(id).sendAndParse().then(
                     (issue: Issue) => {
-                        IssueDetailsDialog.get().setIssue(issue).open();
+                        IssueDialogsManager.get().openDetailsDialog(issue);
                     });
             }
             break;

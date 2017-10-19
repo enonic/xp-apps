@@ -21,20 +21,13 @@ export class PrincipalMembersWizardStepForm extends api.app.wizard.WizardStepFor
 
     private loader: PrincipalLoader;
 
-    constructor(loadedHandler?: Function) {
+    constructor() {
         super();
 
-        loadedHandler = loadedHandler || (() => { /* empty */ });
         this.loader =
             new PrincipalLoader().setAllowedTypes([PrincipalType.GROUP, PrincipalType.USER]).skipPrincipals([PrincipalKey.ofAnonymous()]);
 
         this.principals = PrincipalComboBox.create().setLoader(this.loader).build();
-        let handler = () => {
-            this.selectMembers();
-            loadedHandler();
-            this.principals.unLoaded(handler);
-        };
-        this.principals.onLoaded(handler);
 
         let principalsFormItem = new FormItemBuilder(this.principals).setLabel(i18n('field.members')).build();
 
@@ -61,16 +54,13 @@ export class PrincipalMembersWizardStepForm extends api.app.wizard.WizardStepFor
     }
 
     private selectMembers(): void {
+
         if (!!this.principal) {
-            let principalKeys = this.getPrincipalMembers().map((key: PrincipalKey) => {
+            let value = this.getPrincipalMembers().map((key: PrincipalKey) => {
                 return key.toString();
-            });
-            let selected = this.principals.getDisplayValues().filter((principal: Principal) => {
-                return principalKeys.indexOf(principal.getKey().toString()) >= 0;
-            });
-            selected.forEach((selection) => {
-                this.principals.select(selection);
-            });
+            }).join(';');
+
+            this.principals.setValue(value);
         }
     }
 

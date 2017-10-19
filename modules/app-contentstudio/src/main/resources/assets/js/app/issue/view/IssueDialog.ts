@@ -227,9 +227,7 @@ export abstract class IssueDialog extends DependantItemsDialog {
     }
 
     protected createDependantList(): PublishDialogDependantList {
-        let dependants = new PublishDialogDependantList();
-
-        return dependants;
+        return new PublishDialogDependantList();
     }
 
     protected getDependantList(): PublishDialogDependantList {

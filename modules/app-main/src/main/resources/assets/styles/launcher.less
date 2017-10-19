@@ -223,10 +223,13 @@ body.mobile-statistics-panel {
     background-color: rgba(255, 255, 255, 0.1);
     color: @admin-white;
     font-size: 14px;
+    box-sizing: border-box;
+    padding-top: 11px;
+    padding-right: @panel-indent;
 
     .user-info {
       vertical-align: middle;
-      padding: 11px 15px 0 0;
+      padding-right: 15px;
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
@@ -236,9 +239,8 @@ body.mobile-statistics-panel {
       }
     }
     .user-logout {
-      display: table-cell;
+      float: right;
       vertical-align: middle;
-      width: 100px;
 
       a {
         color: @admin-white;
@@ -256,7 +258,6 @@ body.mobile-statistics-panel {
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
-      width: 160px;
       line-height: 22px;
     }
   }

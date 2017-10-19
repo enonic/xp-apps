@@ -1,11 +1,13 @@
 import Panel = api.ui.panel.Panel;
-import {IssueList} from './IssueList';
-import {IssueStatus} from '../IssueStatus';
 import Checkbox = api.ui.Checkbox;
 import DivEl = api.dom.DivEl;
 import i18n = api.util.i18n;
+import {IssueList} from './IssueList';
+import {IssueStatus} from '../IssueStatus';
+import {IssueWithAssignees} from '../IssueWithAssignees';
 
-export class IssuesPanel extends Panel {
+export class IssuesPanel
+    extends Panel {
 
     private issueStatus: IssueStatus;
 
@@ -14,6 +16,8 @@ export class IssuesPanel extends Panel {
     private assignedToMeCheckbox: Checkbox;
 
     private myIssuesCheckbox: Checkbox;
+
+    private issueSelectedListeners: { (issue: IssueWithAssignees): void }[] = [];
 
     constructor(issueStatus: IssueStatus) {
         super(IssueStatus[issueStatus]);
@@ -24,6 +28,8 @@ export class IssuesPanel extends Panel {
 
     private initElements() {
         this.issuesList = new IssueList(this.issueStatus);
+        this.issuesList.onIssueSelected(issue => this.notifyIssueSelected(issue));
+
         this.myIssuesCheckbox = this.createMyIssuesCheckbox();
         this.assignedToMeCheckbox = this.createAssignedToMeCheckbox();
     }
@@ -35,6 +41,18 @@ export class IssuesPanel extends Panel {
             this.appendChild(this.issuesList);
             return rendered;
         });
+    }
+
+    private notifyIssueSelected(issue: IssueWithAssignees) {
+        this.issueSelectedListeners.forEach(listener => listener(issue));
+    }
+
+    public onIssueSelected(listener: (issue: IssueWithAssignees) => void) {
+        this.issueSelectedListeners.push(listener);
+    }
+
+    public unIssueSelected(listener: (issue: IssueWithAssignees) => void) {
+        this.issueSelectedListeners = this.issueSelectedListeners.filter(curr => curr !== listener);
     }
 
     public getItemCount(): number {

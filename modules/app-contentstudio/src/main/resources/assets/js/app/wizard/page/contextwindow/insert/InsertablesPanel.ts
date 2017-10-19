@@ -6,10 +6,9 @@ import {InsertablesGrid} from './InsertablesGrid';
 import {Insertables} from './Insertables';
 import {PageComponentsView} from '../../../PageComponentsView';
 import {SaveAsTemplateAction} from '../../../action/SaveAsTemplateAction';
-
+import {PageView} from '../../../../../page-editor/PageView';
+import {LiveEditPageViewReadyEvent} from '../../../../../page-editor/LiveEditPageViewReadyEvent';
 import DragHelper = api.ui.DragHelper;
-import PageView = api.liveedit.PageView;
-import LiveEditPageViewReadyEvent = api.liveedit.LiveEditPageViewReadyEvent;
 import Content = api.content.Content;
 import PageMode = api.content.page.PageMode;
 import i18n = api.util.i18n;
@@ -23,7 +22,8 @@ export interface ComponentTypesPanelConfig {
     saveAsTemplateAction: SaveAsTemplateAction;
 }
 
-export class InsertablesPanel extends api.ui.panel.Panel {
+export class InsertablesPanel
+    extends api.ui.panel.Panel {
 
     private liveEditPageProxy: LiveEditPageProxy;
 
@@ -31,7 +31,7 @@ export class InsertablesPanel extends api.ui.panel.Panel {
 
     private insertablesDataView: api.ui.grid.DataView<Insertable>;
 
-    private hideContextWindowRequestListeners: {(): void;}[] = [];
+    private hideContextWindowRequestListeners: { (): void; }[] = [];
 
     private pageView: PageView;
 
@@ -90,7 +90,7 @@ export class InsertablesPanel extends api.ui.panel.Panel {
         return this.componentsView;
     }
 
-    setPageView(pageView: api.liveedit.PageView) {
+    setPageView(pageView: PageView) {
         this.componentsView.setPageView(pageView);
     }
 
@@ -227,13 +227,13 @@ export class InsertablesPanel extends api.ui.panel.Panel {
         this.notifyHideContextWindowRequest();
     }
 
-    onHideContextWindowRequest(listener: {(): void;}) {
+    onHideContextWindowRequest(listener: { (): void; }) {
         this.hideContextWindowRequestListeners.push(listener);
     }
 
-    unHideContextWindowRequest(listener: {(): void;}) {
+    unHideContextWindowRequest(listener: { (): void; }) {
         this.hideContextWindowRequestListeners = this.hideContextWindowRequestListeners
-            .filter(function (curr: {(): void;}) {
+            .filter(function (curr: { (): void; }) {
                 return curr !== listener;
             });
     }

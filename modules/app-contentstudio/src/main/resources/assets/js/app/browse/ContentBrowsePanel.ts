@@ -21,7 +21,6 @@ import {ContentPublishMenuButton} from './ContentPublishMenuButton';
 import {TreeNodeParentOfContent} from './TreeNodeParentOfContent';
 import {TreeNodesOfContentPath} from './TreeNodesOfContentPath';
 import {ShowIssuesDialogButton} from '../issue/view/ShowIssuesDialogButton';
-
 import TreeNode = api.ui.treegrid.TreeNode;
 import BrowseItem = api.app.browse.BrowseItem;
 import UploadItem = api.ui.uploader.UploadItem;
@@ -36,12 +35,11 @@ import DataChangedEvent = api.ui.treegrid.DataChangedEvent;
 import ContentSummaryAndCompareStatusFetcher = api.content.resource.ContentSummaryAndCompareStatusFetcher;
 import TreeGridItemClickedEvent = api.ui.treegrid.TreeGridItemClickedEvent;
 import GetContentByIdRequest = api.content.resource.GetContentByIdRequest;
-import ActionButton = api.ui.button.ActionButton;
-import SelectionOnClickType = api.ui.treegrid.SelectionOnClickType;
 import ContentIconUrlResolver = api.content.util.ContentIconUrlResolver;
 import IsRenderableRequest = api.content.page.IsRenderableRequest;
 
-export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummaryAndCompareStatus> {
+export class ContentBrowsePanel
+    extends api.app.browse.BrowsePanel<ContentSummaryAndCompareStatus> {
 
     protected treeGrid: ContentTreeGrid;
     protected browseToolbar: ContentBrowseToolbar;
@@ -86,8 +84,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
             if (event.getType() === 'updated') {
                 let browseItems = this.treeNodesToBrowseItems(event.getTreeNodes());
                 this.getBrowseItemPanel().updateItems(browseItems);
-                this.getBrowseActions().updateActionsEnabledState(
-                    this.treeNodesToBrowseItems(this.treeGrid.getRoot().getFullSelection()));
+                this.getBrowseActions().updateActionsEnabledState(this.treeNodesToBrowseItems(this.treeGrid.getRoot().getFullSelection()));
             }
         });
 
@@ -192,15 +189,15 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
             if (ResponsiveRanges._540_720.isFitOrBigger(item.getOldRangeValue())) {
                 contentPublishMenuButton.maximize();
                 if (item.isInRangeOrSmaller(ResponsiveRanges._360_540)) {
+                    ActiveDetailsPanelManager.setActiveDetailsPanel(this.mobileContentItemStatisticsPanel.getDetailsPanel());
                     nonMobileDetailsPanelsManager.hideActivePanel(true);
                 } else {
                     nonMobileDetailsPanelsManager.setActivePanel();
-                    this.mobileContentItemStatisticsPanel.slideAllOut();
+                    this.mobileContentItemStatisticsPanel.slideAllOut(true);
                 }
-                this.treeGrid.setSelectionOnClick(SelectionOnClickType.HIGHLIGHT);
             } else {
                 contentPublishMenuButton.minimize();
-                this.treeGrid.setSelectionOnClick(SelectionOnClickType.NONE);
+                ActiveDetailsPanelManager.setActiveDetailsPanel(this.mobileContentItemStatisticsPanel.getDetailsPanel());
             }
         });
     }
@@ -236,9 +233,12 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
     private initItemStatisticsPanelForMobile(detailsView: DetailsView) {
         this.mobileContentItemStatisticsPanel = new MobileContentItemStatisticsPanel(this.getBrowseActions(), detailsView);
 
+        // selection opens detail panel in mobile mode, so deselect it when returning back to grid
+        this.mobileContentItemStatisticsPanel.onSlideOut(() => this.treeGrid.deselectAll());
+
         const updateMobilePanel = (content: ContentSummaryAndCompareStatus, changed: boolean) => {
             if (changed) {
-                const item = this.toBrowseItem(content, null).toViewItem();
+                const item = this.toBrowseItem(content, null);
 
                 this.mobileContentItemStatisticsPanel.getPreviewPanel().showMask();
                 this.mobileContentItemStatisticsPanel.setItem(item);
@@ -247,9 +247,9 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
                     this.mobileContentItemStatisticsPanel.getPreviewPanel().setBlankFrame();
                     this.mobileContentItemStatisticsPanel.getPreviewPanel().showMask();
                     new IsRenderableRequest(content.getContentId()).sendAndParse().then((renderable: boolean) => {
-                            item.setRenderable(renderable);
-                            this.mobileContentItemStatisticsPanel.getPreviewPanel().setItem(item);
-                        });
+                        item.setRenderable(renderable);
+                        this.mobileContentItemStatisticsPanel.getPreviewPanel().setItem(item);
+                    });
                 }, 300);
             }
         };
@@ -289,13 +289,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
             nodes = [this.treeGrid.getFirstSelectedOrHighlightedNode()];
         }
 
-        let browseItems: BrowseItem<ContentSummaryAndCompareStatus>[] = this.treeNodesToBrowseItems(nodes);
-
-        return (browseItems.length > 0) ? browseItems[0] : null;
-    }
-
-    private isSomethingSelected(): boolean {
-        return !!this.getFirstSelectedOrHighlightedBrowseItem();
+        return this.treeNodeToBrowseItem(nodes[0]);
     }
 
     private isMobileMode(): boolean {
@@ -310,24 +304,31 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         }
     }
 
+    treeNodeToBrowseItem(node: TreeNode<ContentSummaryAndCompareStatus>): ContentBrowseItem|null {
+        const data = node ? node.getData() : null;
+        return (!data || !data.getContentSummary()) ? null : <ContentBrowseItem>new ContentBrowseItem(data)
+            .setId(data.getId())
+            .setDisplayName(data.getContentSummary().getDisplayName())
+            .setPath(data.getContentSummary().getPath().toString())
+            .setIconUrl(new ContentIconUrlResolver().setContent(data.getContentSummary()).resolve());
+    }
+
     treeNodesToBrowseItems(nodes: TreeNode<ContentSummaryAndCompareStatus>[]): ContentBrowseItem[] {
         let browseItems: ContentBrowseItem[] = [];
 
         // do not proceed duplicated content. still, it can be selected
         nodes.forEach((node: TreeNode<ContentSummaryAndCompareStatus>, index: number) => {
             let i = 0;
+            // Take last in a sequence with the same id
             for (; i <= index; i++) {
                 if (nodes[i].getData().getId() === node.getData().getId()) {
                     break;
                 }
             }
             if (i === index) {
-                let data = node.getData();
-                if (!!data && !!data.getContentSummary()) {
-                    let item = new ContentBrowseItem(data).setId(data.getId()).setDisplayName(
-                        data.getContentSummary().getDisplayName()).setPath(data.getContentSummary().getPath().toString()).setIconUrl(
-                        new api.content.util.ContentIconUrlResolver().setContent(data.getContentSummary()).resolve());
-                    browseItems.push(<ContentBrowseItem> item);
+                const item = this.treeNodeToBrowseItem(node);
+                if (item) {
+                    browseItems.push(item);
                 }
             }
         });
@@ -660,7 +661,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
     }
 
     private toBrowseItem(content: ContentSummaryAndCompareStatus, renderable: boolean): BrowseItem<ContentSummaryAndCompareStatus> {
-        return new BrowseItem<ContentSummaryAndCompareStatus>(content)
+        return <BrowseItem<ContentSummaryAndCompareStatus>>new BrowseItem<ContentSummaryAndCompareStatus>(content)
             .setId(content.getId())
             .setDisplayName(content.getDisplayName()).setPath(content.getPath().toString())
             .setIconUrl(new ContentIconUrlResolver().setContent(content.getContentSummary()).resolve())

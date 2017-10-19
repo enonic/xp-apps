@@ -1,22 +1,23 @@
 import '../../api.ts';
-
+import {ItemView} from '../../page-editor/ItemView';
+import {Highlighter} from '../../page-editor/Highlighter';
+import {ComponentView} from '../../page-editor/ComponentView';
+import {ItemViewContextMenuPosition} from '../../page-editor/ItemViewContextMenuPosition';
+import {RegionView} from '../../page-editor/RegionView';
+import {LayoutComponentView} from '../../page-editor/layout/LayoutComponentView';
+import {FragmentComponentView} from '../../page-editor/fragment/FragmentComponentView';
+import {PageView} from '../../page-editor/PageView';
 import GridDragHandler = api.ui.grid.GridDragHandler;
 import TreeNode = api.ui.treegrid.TreeNode;
 import DragEventData = api.ui.grid.DragEventData;
-import RegionView = api.liveedit.RegionView;
-import ItemView = api.liveedit.ItemView;
-import PageView = api.liveedit.PageView;
-import ComponentView = api.liveedit.ComponentView;
-import LayoutComponentView = api.liveedit.layout.LayoutComponentView;
-import FragmentComponentView = api.liveedit.fragment.FragmentComponentView;
 import Component = api.content.page.region.Component;
 
 import DragHelper = api.ui.DragHelper;
 import ElementHelper = api.dom.ElementHelper;
 import Element = api.dom.Element;
-import TreeGrid = api.ui.treegrid.TreeGrid;
 
-export class PageComponentsGridDragHandler extends GridDragHandler<ItemView> {
+export class PageComponentsGridDragHandler
+    extends GridDragHandler<ItemView> {
 
     protected handleDragInit(e: DragEvent, dd: DragEventData) {
         let row = this.getRowByTarget(new ElementHelper(<HTMLElement>e.target));
@@ -33,7 +34,7 @@ export class PageComponentsGridDragHandler extends GridDragHandler<ItemView> {
         super.handleDragStart();
 
         api.ui.mask.BodyMask.get().show();
-        api.liveedit.Highlighter.get().hide();
+        Highlighter.get().hide();
         this.getDraggableItem().getChildren().forEach((childEl: api.dom.Element) => {
             childEl.removeClass('selected');
         });
@@ -121,7 +122,7 @@ export class PageComponentsGridDragHandler extends GridDragHandler<ItemView> {
 
         (<ComponentView<Component>>item.getData()).moveToRegion(<RegionView>newParent.getData(), insertIndex, true);
 
-        item.getData().select(null, api.liveedit.ItemViewContextMenuPosition.NONE);
+        item.getData().select(null, ItemViewContextMenuPosition.NONE);
         this.contentGrid.refresh();
 
         return data[regionPosition];
@@ -191,17 +192,17 @@ export class PageComponentsGridDragHandler extends GridDragHandler<ItemView> {
         const calcLevel = data[parentPosition - 1].calcLevel();
 
         const isFirstChildPosition = ( current ? previous.calcLevel() < current.calcLevel() : false)
-                                   || (api.ObjectHelper.iFrameSafeInstanceOf(previous.getData(), RegionView));
+                                     || (api.ObjectHelper.iFrameSafeInstanceOf(previous.getData(), RegionView));
 
         let parentComponentNode;
         let parentComponentView;
 
         const check = (view, node) => {
             return !( api.ObjectHelper.iFrameSafeInstanceOf(view, RegionView)
-                     // lets drag items inside the 'main' region between layouts
-                     || (api.ObjectHelper.iFrameSafeInstanceOf(view, LayoutComponentView)
-                         && (node.isExpanded() && node.getChildren().length > 0) )
-                     || api.ObjectHelper.iFrameSafeInstanceOf(view, PageView))
+                   // lets drag items inside the 'main' region between layouts
+                   || (api.ObjectHelper.iFrameSafeInstanceOf(view, LayoutComponentView)
+                       && (node.isExpanded() && node.getChildren().length > 0) )
+                   || api.ObjectHelper.iFrameSafeInstanceOf(view, PageView))
                    || (node.calcLevel() >= calcLevel && !isFirstChildPosition);
         };
 
@@ -217,7 +218,7 @@ export class PageComponentsGridDragHandler extends GridDragHandler<ItemView> {
 
         } while (check(parentComponentView, parentComponentNode));
 
-        return { parentPosition: parentPosition, insertIndex: insertIndex };
+        return {parentPosition: parentPosition, insertIndex: insertIndex};
     }
 
     private getRowByTarget(el: ElementHelper): ElementHelper {

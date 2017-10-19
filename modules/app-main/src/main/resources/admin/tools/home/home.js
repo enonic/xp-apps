@@ -21,14 +21,14 @@ exports.get = function () {
         docLinkPrefix += versionParts[0] + '.' + versionParts[1];
     }
 
-    var locale = admin.getLocale();
+    var locales = admin.getLocales();
     var dashboardIcons = [{
         src: infoIconUrl,
         cls: 'xp-about',
         caption: i18n.localize({
             key: 'home.dashboard.about',
             bundles: ['admin/i18n/common'],
-            locale: locale
+            locale: locales
         })
     }, {
         src: docsIconUrl,
@@ -46,7 +46,7 @@ exports.get = function () {
         caption: i18n.localize({
             key: 'home.dashboard.market',
             bundles: ['admin/i18n/common'],
-            locale: locale
+            locale: locales
         }),
         link: 'https://market.enonic.com/'
     }];
@@ -59,7 +59,7 @@ exports.get = function () {
             caption: i18n.localize({
                 key: 'home.dashboard.tour',
                 bundles: ['admin/i18n/common'],
-                locale: locale
+                locale: locales
             })
         });
     }

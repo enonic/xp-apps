@@ -6,16 +6,16 @@ import ContentPath = api.content.ContentPath;
 import ContentType = api.schema.content.ContentType;
 import GetContentTypeByNameRequest = api.schema.content.GetContentTypeByNameRequest;
 import ContentSummary = api.content.ContentSummary;
-import ContentResponse = api.content.resource.result.ContentResponse;
 import ContentIds = api.content.ContentIds;
 import MoveContentResult = api.content.resource.result.MoveContentResult;
 import MoveContentResultFailure = api.content.resource.result.MoveContentResultFailure;
 import ConfirmationDialog = api.ui.dialog.ConfirmationDialog;
 import TreeNode = api.ui.treegrid.TreeNode;
 import i18n = api.util.i18n;
-import ContentAndStatusTreeSelectorItem = api.content.resource.ContentAndStatusTreeSelectorItem;
+import ContentTreeSelectorItem = api.content.resource.ContentTreeSelectorItem;
 
-export class MoveContentDialog extends api.ui.dialog.ModalDialog {
+export class MoveContentDialog
+    extends api.ui.dialog.ModalDialog {
 
     private destinationSearchInput: ContentMoveComboBox;
 
@@ -64,14 +64,13 @@ export class MoveContentDialog extends api.ui.dialog.ModalDialog {
 
             const contents = event.getContentSummaries();
 
-            const allContentTypes = contents.map((content)=> content.getType());
+            const allContentTypes = contents.map((content) => content.getType());
             const contentTypes = api.util.ArrayHelper.removeDuplicates(allContentTypes, (ct) => ct.toString());
-            const contentTypeRequests = contentTypes.map((contentType)=> new GetContentTypeByNameRequest(contentType).sendAndParse());
+            const contentTypeRequests = contentTypes.map((contentType) => new GetContentTypeByNameRequest(contentType).sendAndParse());
 
             const deferred = wemQ.defer<ContentType[]>();
             wemQ.all(contentTypeRequests).spread((...filterContentTypes: ContentType[]) => {
                 this.destinationSearchInput.setFilterContents(contents);
-                this.destinationSearchInput.setFilterContentTypes(filterContentTypes);
                 this.contentPathSubHeader.setHtml(contents.length === 1 ? contents[0].getPath().toString() : '');
                 this.open();
                 deferred.resolve(filterContentTypes);
@@ -114,9 +113,10 @@ export class MoveContentDialog extends api.ui.dialog.ModalDialog {
 
     private checkContentWillMoveOutOfSite(): boolean {
         let result = false;
-        const targetContent = this.getParentContent();
-        const targetContentSite = targetContent ? (targetContent.isSite() ? targetContent : this.getParentSite(targetContent)) : null;
-
+        const targetContent: ContentTreeSelectorItem = this.getParentContentItem();
+        const targetContentSite: ContentSummary = targetContent
+            ? (targetContent.isSite() ? targetContent.getContent() : this.getParentSite(targetContent.getContent()))
+            : null;
         for (let i = 0; i < this.movedContentSummaries.length; i++) {
             let content = this.movedContentSummaries[i];
             let contentParentSite = content.isSite() ? null : this.getParentSite(content);
@@ -147,7 +147,7 @@ export class MoveContentDialog extends api.ui.dialog.ModalDialog {
     }
 
     private moveContent() {
-        const parentContent = this.getParentContent();
+        const parentContent: ContentTreeSelectorItem = this.getParentContentItem();
         let parentRoot = (!!parentContent) ? parentContent.getPath() : ContentPath.ROOT;
         let contentIds = ContentIds.create().fromContentIds(this.movedContentSummaries.map(summary => summary.getContentId())).build();
 
@@ -162,7 +162,7 @@ export class MoveContentDialog extends api.ui.dialog.ModalDialog {
                 } else {
                     api.notify.showFeedback(i18n('notify.item.moved', response.getMoved()[0]));
                 }
-            } else if(response.getMoveFailures().length == 0) {
+            } else if (response.getMoveFailures().length == 0) {
                 api.notify.showWarning(i18n('notify.item.nothingToMove'));
             }
 
@@ -172,16 +172,15 @@ export class MoveContentDialog extends api.ui.dialog.ModalDialog {
             if (this.isVisible()) {
                 this.close();
             }
-        }).catch((reason)=> {
+        }).catch((reason) => {
             api.notify.showWarning(reason.getMessage());
             this.close();
-            this.destinationSearchInput.deselect(this.getParentContent());
+            this.destinationSearchInput.deselect(this.getParentContentItem());
         }).done();
     }
 
-    private getParentContent(): api.content.ContentSummary {
-        const selected = this.destinationSearchInput.getSelectedDisplayValues()[0];
-        return selected != null ? selected.getContent() : null;
+    private getParentContentItem(): ContentTreeSelectorItem {
+        return this.destinationSearchInput.getSelectedDisplayValues()[0];
     }
 
     show() {

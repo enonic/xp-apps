@@ -3,8 +3,10 @@ var authLib = require('/lib/xp/auth');
 
 module.exports = {
     getByKeys: function(keys, includeMemberships) {
+        var noKeys = keys == null || (keys instanceof Array && keys.length === 0);
+
         // users and groups have their keys as _id, but roles have them stored as key
-        var principals = common.queryAll({
+        var principals = noKeys ? [] : common.queryAll({
             query:
                 common.createQueryByField('_id', keys) +
                 ' OR ' +
@@ -23,7 +25,8 @@ module.exports = {
                 }
             });
         }
-        return common.singleOrArray(principals);
+
+        return keys instanceof Array ? principals : common.singleOrArray(principals);
     },
     getMemberships: function(key) {
         return authLib.getMemberships(key);

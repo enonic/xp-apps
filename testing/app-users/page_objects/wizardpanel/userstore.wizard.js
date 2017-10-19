@@ -9,6 +9,11 @@ var userStoreWizard = Object.create(wizard, {
             return `${panel.container}//input[contains(@name,'description')]`;
         }
     },
+    descriptionInput: {
+        get: function () {
+            return `${panel.container}//input[contains(@name,'description')]`;
+        }
+    },
     typeData: {
         value: function (data) {
             return this.typeTextInInput(this.displayNameInput, data.displayName)
@@ -29,11 +34,6 @@ var userStoreWizard = Object.create(wizard, {
     getDescription: {
         value: function () {
             return this.getTextFromInput(this.descriptionInput);
-        }
-    },
-    waitForNewButtonEnabled: {
-        value: function () {
-            return this.waitForEnabled(this.newButton, 1000);
         }
     },
 });

@@ -1,25 +1,18 @@
 import DockedPanel = api.ui.panel.DockedPanel;
 import ModalDialog = api.ui.dialog.ModalDialog;
+import LoadMask = api.ui.mask.LoadMask;
+import User = api.security.User;
+import Action = api.ui.Action;
+import i18n = api.util.i18n;
 import {IssuesPanel} from './IssuesPanel';
-import {ShowIssuesDialogEvent} from '../../browse/ShowIssuesDialogEvent';
-import {IssueDetailsDialog} from './IssueDetailsDialog';
-import {UpdateIssueDialog} from './UpdateIssueDialog';
 import {Issue} from '../Issue';
-import {CreateIssueDialog} from './CreateIssueDialog';
 import {IssueServerEventsHandler} from '../event/IssueServerEventsHandler';
 import {IssueStatus} from '../IssueStatus';
 import {GetIssueStatsRequest} from '../resource/GetIssueStatsRequest';
 import {IssueStatsJson} from '../json/IssueStatsJson';
-import TabBarItem = api.ui.tab.TabBarItem;
-import SpanEl = api.dom.SpanEl;
-import Element = api.dom.Element;
-import LoadMask = api.ui.mask.LoadMask;
-import User = api.security.User;
-import Action = api.ui.Action;
-import Checkbox = api.ui.Checkbox;
-import i18n = api.util.i18n;
 
-export class IssueListDialog extends ModalDialog {
+export class IssueListDialog
+    extends ModalDialog {
 
     private static INSTANCE: IssueListDialog = new IssueListDialog();
 
@@ -35,18 +28,19 @@ export class IssueListDialog extends ModalDialog {
 
     private currentUser: User;
 
+    private createAction: api.ui.Action;
+
+    private issueSelectedListeners: { (issue: Issue): void }[] = [];
+
     private constructor() {
         super(<api.ui.dialog.ModalDialogConfig>{title: i18n('text.publishingissues')});
         this.addClass('issue-list-dialog');
 
+        this.createAction = new Action(i18n('action.newIssueMore'));
+
         this.initDeboundcedReloadFunc();
-        this.handleCreateIssueDialogEvents();
         this.handleIssueGlobalEvents();
         this.initElements();
-
-        ShowIssuesDialogEvent.on((event) => {
-            this.open();
-        });
 
         this.loadCurrentUser();
     }
@@ -70,10 +64,8 @@ export class IssueListDialog extends ModalDialog {
 
     doRender(): Q.Promise<boolean> {
         return super.doRender().then((rendered: boolean) => {
-            this.createNewIssueButton();
+            this.getButtonRow().addAction(this.createAction);
             this.appendChildToContentPanel(this.dockedPanel);
-            this.addClickIgnoredElement(IssueDetailsDialog.get());
-            this.addClickIgnoredElement(UpdateIssueDialog.get());
             return rendered;
         });
     }
@@ -108,15 +100,6 @@ export class IssueListDialog extends ModalDialog {
         this.openIssuesPanel.resetFilters();
         this.closedIssuesPanel.resetFilters();
         this.remove();
-    }
-
-    private handleCreateIssueDialogEvents() {
-        this.addClickIgnoredElement(CreateIssueDialog.get());
-
-        CreateIssueDialog.get().onClosed(() => {
-            this.removeClass('masked');
-            this.getEl().focus();
-        });
     }
 
     private initDeboundcedReloadFunc() {
@@ -248,22 +231,27 @@ export class IssueListDialog extends ModalDialog {
         return this.openIssuesPanel;
     }
 
-    private createNewIssueButton(): Element {
-        let createIssueAction = new Action(i18n('action.newIssueMore'));
-
-        createIssueAction.onExecuted(() => {
-            this.addClass('masked');
-            let createIssueDialog = CreateIssueDialog.get();
-
-            createIssueDialog.reset();
-            createIssueDialog.unlockPublishItems();
-            createIssueDialog.open(this);
-        });
-
-        return this.getButtonRow().addAction(createIssueAction);
+    onCreateButtonClicked(listener: (action) => void) {
+        return this.createAction.onExecuted(listener);
     }
 
     private createIssuePanel(issueStatus: IssueStatus): IssuesPanel {
-        return new IssuesPanel(issueStatus);
+        const issuePanel = new IssuesPanel(issueStatus);
+
+        issuePanel.onIssueSelected(issue => this.notifyIssueSelected(issue.getIssue()));
+
+        return issuePanel;
+    }
+
+    private notifyIssueSelected(issue: Issue) {
+        this.issueSelectedListeners.forEach(listener => listener(issue));
+    }
+
+    public onIssueSelected(listener: (issue: Issue) => void) {
+        this.issueSelectedListeners.push(listener);
+    }
+
+    public unIssueSelected(listener: (issue: Issue) => void) {
+        this.issueSelectedListeners = this.issueSelectedListeners.filter(curr => curr !== listener);
     }
 }
