@@ -244,8 +244,7 @@ export class UserItemsTreeGrid
             if (this.isFiltered()) {
                 new ListUserItemsRequest().setTypes(this.searchTypes).setQuery(this.searchString).sendAndParse()
                     .then((result) => {
-                        const gridItems = result.userItems.map(item => new UserTreeGridItemBuilder().setAny(item).build());
-                        deferred.resolve(gridItems);
+                        deferred.resolve(result.userItems.map(item => new UserTreeGridItemBuilder().setAny(item).build()));
                     })
                     .catch(api.DefaultErrorHandler.handle)
                     .done();

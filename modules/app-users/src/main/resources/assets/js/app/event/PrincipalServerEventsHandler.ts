@@ -138,7 +138,7 @@ export class PrincipalServerEventsHandler {
     private extractPrincipalIds(changes: PrincipalServerChange[]): string[] {
         return changes.reduce<string[]>((prev, curr) => {
             return prev.concat(curr.getChangeItems().map((changeItem: PrincipalServerChangeItem) => {
-                return this.getId(changeItem)
+                return this.getId(changeItem);
             }));
         }, []);
     }
@@ -152,10 +152,10 @@ export class PrincipalServerEventsHandler {
         const path = Path.fromString(changeItem.getPath());
         const name = path.getElement(path.getElements().length - 1);
         if (path.hasParent()) {
-            return path.getParentPath().toString() == '/roles' ? "role:" + name : changeItem.getId();
-        } else {
-            return name;
+            return path.getParentPath().toString() == '/roles' ? 'role:' + name : changeItem.getId();
         }
+
+        return name;
     }
 
     onUserItemCreated(listener: (principal: Principal, userStore: UserStore, sameTypeParent?: boolean) => void) {
@@ -209,4 +209,3 @@ export class PrincipalServerEventsHandler {
         });
     }
 }
-

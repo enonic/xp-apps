@@ -93,8 +93,8 @@ export class MembershipsWizardStepForm extends api.app.wizard.WizardStepForm {
     }
 
     private selectMembership(): void {
-        const isGroupsReady = this.type !== MembershipsType.ROLES //&& this.groupsLoaded;
-        const isRolesReady = this.type !== MembershipsType.GROUPS //&& this.rolesLoaded;
+        const isGroupsReady = this.type !== MembershipsType.ROLES; //&& this.groupsLoaded;
+        const isRolesReady = this.type !== MembershipsType.GROUPS; //&& this.rolesLoaded;
 
         if (this.principal && isGroupsReady) {
 
