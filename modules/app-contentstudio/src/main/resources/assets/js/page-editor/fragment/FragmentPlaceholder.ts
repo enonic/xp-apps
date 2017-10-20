@@ -17,7 +17,7 @@ export class FragmentPlaceholder
 
     private fragmentComponentView: FragmentComponentView;
 
-    private comboBox: api.content.ContentComboBox;
+    private comboBox: api.content.ContentComboBox<ContentTreeSelectorItem>;
 
     private comboboxWrapper: api.dom.DivEl;
 

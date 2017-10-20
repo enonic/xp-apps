@@ -11,12 +11,13 @@ import ContentSummaryOptionDataLoader = api.content.ContentSummaryOptionDataLoad
 import ContentAndStatusTreeSelectorItem = api.content.resource.ContentAndStatusTreeSelectorItem;
 import ContentTreeSelectorItem = api.content.resource.ContentTreeSelectorItem;
 
-export class ContentMoveComboBox extends ContentComboBox {
+export class ContentMoveComboBox
+    extends ContentComboBox<ContentTreeSelectorItem> {
 
     private readonlyChecker: MoveReadOnlyChecker;
 
     constructor() {
-        const contentComboBoxBuilder: ContentComboBoxBuilder = new ContentComboBoxBuilder();
+        const contentComboBoxBuilder: ContentComboBoxBuilder<ContentTreeSelectorItem> = new ContentComboBoxBuilder<ContentTreeSelectorItem>();
 
         contentComboBoxBuilder
             .setMaximumOccurrences(1)
