@@ -1,4 +1,5 @@
 var common = require('./common');
+var authLib = require('/lib/xp/auth');
 
 var Permission = {
     READ: 'READ',
@@ -74,25 +75,22 @@ module.exports = {
         return result;
     },
     create: function(params) {
-        var createdStore = common.create({
-            _parentPath: '/identity',
-            _name: common.prettifyName(params.key),
-            _permissions: calculateUserStorePermissions(params.permissions),
+        var createdStore = authLib.createUserStore({
+            name: common.prettifyName(params.key),
             displayName: params.displayName,
             description: params.description,
-            idProvider: calculateIdProvider(params.authConfig)
+            idProvider: calculateIdProvider(params.authConfig),
+            permissions: calculateUserStorePermissions(params.permissions)
         });
 
-        var createdUsers;
-        var createdGroups;
         if (createdStore) {
-            createdUsers = common.create({
+            var createdUsers = common.create({
                 _parentPath: '/identity/' + createdStore._name,
                 _name: 'users',
                 _permissions: calculateUsersPermissions(params.permissions)
             });
 
-            createdGroups = common.create({
+            var createdGroups = common.create({
                 _parentPath: '/identity/' + createdStore._name,
                 _name: 'groups',
                 _permissions: calculateGroupsPermissions(params.permissions)
@@ -156,7 +154,7 @@ module.exports = {
     },
     delete: function(keys) {
         var deletedIds = common.delete(common.keysToPaths(keys));
-        
+
         // TODO: find which keys could not be deleted with reasons instead of returning all
         return keys.map(function(key) {
             return {
@@ -222,7 +220,7 @@ function calculateGroupsPermissions(access) {
             default: // none
         }
     });
-    
+
     return permissions;
 }
 
