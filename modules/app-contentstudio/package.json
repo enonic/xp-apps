@@ -7,30 +7,29 @@
     "lint": "run-p -c --aggregate-output lint:*",
     "fix": "run-p -c --aggregate-output fix:*",
     "lint:ts": "tslint -c ../../tslint.json -e **/*.d.ts src/**/*.ts",
-    "lint:js": "eslint ../../.eslintrc.js .",
+    "lint:js": "eslint ../../.eslintrc.js --ignore-path ../../.eslintignore .",
     "fix:ts": "tslint -c ../../tslint.json -e **/*.d.ts src/**/*.ts --fix",
-    "fix:js": "eslint ../../.eslintrc.js . --fix"
+    "fix:js": "eslint ../../.eslintrc.js --ignore-path ../../.eslintignore . --fix"
   },
   "devDependencies": {
-    "error-logger-webpack-plugin": "0.0.1",
     "circular-dependency-plugin": "^4.2.1",
     "css-loader": "^0.28.7",
+    "error-logger-webpack-plugin": "0.0.1",
     "eslint": "^3.19.0",
     "eslint-config-airbnb-base": "^11.2.0",
     "eslint-config-prettier": "^2.3.0",
     "eslint-plugin-import": "^2.2.0",
     "eslint-plugin-prettier": "^2.1.2",
-    "npm-run-all": "^4.1.1",
-    "prettier": "^1.5.3",
-    "ts-loader": "2.0.1",
-    "tslint": "^4.2.0",
-    "typescript": "2.0.10",
-    "webpack": "^2.2.1",
     "extract-text-webpack-plugin": "^2.1.2",
     "file-loader": "^0.11.2",
     "less": "^2.7.2",
     "less-loader": "^4.0.5",
+    "npm-run-all": "^4.1.1",
     "prettier": "^1.5.3",
-    "style-loader": "^0.18.2"
+    "style-loader": "^0.18.2",
+    "ts-loader": "2.0.1",
+    "tslint": "^4.2.0",
+    "typescript": "2.0.10",
+    "webpack": "^2.2.1"
   }
 }

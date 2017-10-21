@@ -1,0 +1,4 @@
+**/*.js
+!.eslintrc.js
+!modules/app-{applications,contentstudio,users}/src/main/resources/**/*.js
+modules/app-{applications,contentstudio,users}/src/main/resources/assets/page-editor/**/*.js

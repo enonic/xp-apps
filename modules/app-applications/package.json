@@ -7,9 +7,9 @@
     "lint": "run-p -c --aggregate-output lint:*",
     "fix": "run-p -c --aggregate-output fix:*",
     "lint:ts": "tslint -c ../../tslint.json -e **/*.d.ts src/**/*.ts",
-    "lint:js": "eslint ../../.eslintrc.js .",
+    "lint:js": "eslint ../../.eslintrc.js --ignore-path ../../.eslintignore .",
     "fix:ts": "tslint -c ../../tslint.json -e **/*.d.ts src/**/*.ts --fix",
-    "fix:js": "eslint ../../.eslintrc.js . --fix"
+    "fix:js": "eslint ../../.eslintrc.js --ignore-path ../../.eslintignore . --fix"
   },
   "devDependencies": {
     "error-logger-webpack-plugin": "0.0.1",
