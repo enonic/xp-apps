@@ -19,18 +19,18 @@ module.exports = {
                     fallback: 'style-loader',
                     use: [
                         { loader: 'css-loader', options: { sourceMap: true, importLoaders: 1 } },
-                        {loader: 'postcss-loader', options: {sourceMap: true, config: {path: '../../postcss.config.js'}}},
+                        { loader: 'postcss-loader', options: { sourceMap: true, config: { path: '../../postcss.config.js' } } },
                         { loader: 'less-loader', options: { sourceMap: true } }
                     ]
                 })
             },
             {
                 test: /\.(woff|woff2|eot|ttf|svg)$/,
-                loader: 'file-loader?name=./icons/fonts/[name].[ext]',
+                loader: 'file-loader?name=./icons/fonts/[name].[ext]'
             },
             {
                 test: /\.(png|jpg|gif)$/,
-                loader: 'file-loader?name=./icons/favicons/[name].[ext]',
+                loader: 'file-loader?name=./icons/favicons/[name].[ext]'
             }
         ]
     },

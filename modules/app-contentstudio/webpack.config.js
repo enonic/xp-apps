@@ -2,12 +2,6 @@ const ErrorLoggerPlugin = require('error-logger-webpack-plugin');
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 
-const extractText = new ExtractTextPlugin({
-    filename: './page-editor/styles/_all.css',
-    allChunks: true,
-    disable: false  //process.env.NODE_ENV === "development"
-});
-
 const detectCirculars = new CircularDependencyPlugin({
     // exclude detection of files based on a RegExp
     exclude: /a\.js|node_modules/,
@@ -38,10 +32,14 @@ module.exports = {
             },
             {
                 test: /\.less$/,
-                use: extractText.extract({
+                use: ExtractTextPlugin.extract({
                     fallback: 'style-loader',
                     publicPath: '../../',
-                    use: 'css-loader?importLoaders=1!less-loader'
+                    use: [
+                        { loader: 'css-loader', options: { sourceMap: true, importLoaders: 1 } },
+                        { loader: 'postcss-loader', options: { sourceMap: true, config: { path: '../../postcss.config.js' } } },
+                        { loader: 'less-loader', options: { sourceMap: true } }
+                    ]
                 })
             },
             {
@@ -51,12 +49,16 @@ module.exports = {
             {
                 test: /\.(svg|png|jpg|gif)$/,
                 use: 'file-loader?name=img/[name].[ext]'
-            },
+            }
         ]
     },
     plugins: [
         new ErrorLoggerPlugin(),
-        extractText,
+        new ExtractTextPlugin({
+            filename: './page-editor/styles/_all.css',
+            allChunks: true,
+            disable: false
+        }),
         detectCirculars
     ],
     devtool: 'source-map'
