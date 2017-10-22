@@ -51,6 +51,7 @@ function startApplication() {
 
     api.util.AppHelper.preventDragRedirect();
 
+    // tslint:disable-next-line:no-unused-new
     new ChangeUserPasswordDialog();
     application.setLoaded(true);
 
