@@ -1,5 +1,4 @@
 import '../../api.ts';
-
 import ContentSummary = api.content.ContentSummary;
 import ContentSelectedOptionsView = api.content.ContentSelectedOptionsView;
 import ContentPath = api.content.ContentPath;
@@ -17,7 +16,8 @@ export class ContentMoveComboBox
     private readonlyChecker: MoveReadOnlyChecker;
 
     constructor() {
-        const contentComboBoxBuilder: ContentComboBoxBuilder<ContentTreeSelectorItem> = new ContentComboBoxBuilder<ContentTreeSelectorItem>();
+        const contentComboBoxBuilder: ContentComboBoxBuilder<ContentTreeSelectorItem> =
+            new ContentComboBoxBuilder<ContentTreeSelectorItem>();
 
         contentComboBoxBuilder
             .setMaximumOccurrences(1)

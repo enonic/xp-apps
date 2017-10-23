@@ -6,14 +6,14 @@
     "build": "run-p -c --aggregate-output build:app-*",
     "lint": "run-p -c --aggregate-output lint:*",
     "fix": "run-p -c --aggregate-output fix:*",
+    "quick-lint": "runwith scripts/lint.js --prop=diff",
     "build:app-applications": "npm run --prefix modules/app-applications/ build",
     "build:app-contentstudio": "npm run --prefix modules/app-contentstudio/ build",
     "build:app-main": "npm run --prefix modules/app-main/ build",
     "build:app-users": "npm run --prefix modules/app-users/ build",
-    "lint:quick": "runwith scripts/lint.js --prop=diff",
-    "lint:ts": "tslint modules/**/**/src/main/resources/**/*.ts --exclude **/*.d.ts",
+    "lint:ts": "tslint modules/**/**/src/main/resources/**/*.ts --exclude **/*.d.ts --noUnusedLocals",
     "lint:js": "eslint modules/app-{applications,contentstudio,users}/src/main/**/*.js",
-    "fix:ts": "tslint modules/**/src/main/resources/**/*.ts --fix --exclude **/*.d.ts",
+    "fix:ts": "tslint modules/**/src/main/resources/**/*.ts --fix --exclude **/*.d.ts --noUnusedLocals",
     "fix:js": "eslint modules/app-{applications,contentstudio,users}/src/main/**/*.js --fix"
   },
   "devDependencies": {
