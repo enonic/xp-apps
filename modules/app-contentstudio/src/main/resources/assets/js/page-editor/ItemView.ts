@@ -988,7 +988,7 @@ export class ItemView
     }
 
     protected createInsertAction(): api.ui.Action {
-        return new api.ui.Action(i18n('action.insert')).setChildActions(this.getInsertActions(this.liveEditModel));
+        return new api.ui.Action(i18n('action.insert')).setChildActions(this.getInsertActions(this.liveEditModel)).setVisible(false);
     }
 
     protected createSelectParentAction(): api.ui.Action {
@@ -1013,7 +1013,7 @@ export class ItemView
             this.addComponentView(componentView, this.getNewItemIndex(), true);
         });
 
-        action.setIconClass(api.StyleHelper.getCommonIconCls(label));
+        action.setVisible(false).setIconClass(api.StyleHelper.getCommonIconCls(label));
 
         return action;
     }
