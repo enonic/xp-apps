@@ -9,6 +9,7 @@ module.exports = {
         'vars-on-top': 'off',
         'global-require': 'off',
         'no-use-before-define': ['error', { functions: false }],
+        'linebreak-style': ['off'],
         'prettier/prettier': [
             'error',
             {
