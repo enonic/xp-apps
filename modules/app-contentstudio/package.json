@@ -7,9 +7,9 @@
     "lint": "run-p -c --aggregate-output lint:*",
     "fix": "run-p -c --aggregate-output fix:*",
     "lint:ts": "tslint -c ../../tslint.json -e **/*.d.ts src/**/*.ts --noUnusedLocals",
-    "lint:js": "eslint ../../.eslintrc.js --ignore-path ../../.eslintignore .",
+    "lint:js": "eslint -c ../../.eslintrc.js --ignore-path ../../.eslintignore .",
     "fix:ts": "tslint -c ../../tslint.json -e **/*.d.ts src/**/*.ts --fix --noUnusedLocals",
-    "fix:js": "eslint ../../.eslintrc.js --ignore-path ../../.eslintignore . --fix"
+    "fix:js": "eslint -c ../../.eslintrc.js --ignore-path ../../.eslintignore . --fix"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.6",
