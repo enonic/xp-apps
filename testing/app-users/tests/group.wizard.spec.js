@@ -18,19 +18,15 @@ describe('Group Wizard page spec ', function () {
     it('WHEN `Group` wizard is opened  THEN red circle should be present, because required inputs are empty',
         () => {
             return testUtils.clickOnSystemAndOpenGroupWizard().then(()=> {
-                return groupWizard.waitForOpened();
-            }).then(()=> {
                 return groupWizard.waitUntilInvalidIconAppears('<Unnamed Group>');
             }).then((isRedIconPresent)=> {
-                assert.isTrue(isRedIconPresent, 'red circle should not  present on the tab, because required inputs are empty');
+                assert.isTrue(isRedIconPresent, 'red circle should be present on the tab, because required inputs are empty');
             })
         });
 
     it('WHEN `Group` wizard is opened THEN all required inputs should be present on the page',
         () => {
             return testUtils.clickOnSystemAndOpenGroupWizard().then(()=> {
-                return groupWizard.waitForOpened();
-            }).then(()=> {
                 return expect(groupWizard.isRoleOptionFilterInputDisplayed()).to.eventually.be.true;
             }).then(()=> {
                 return expect(groupWizard.isMemberOptionFilterInputDisplayed()).to.eventually.be.true;
@@ -44,8 +40,8 @@ describe('Group Wizard page spec ', function () {
             testGroup =
                 userItemsBuilder.buildGroup(userItemsBuilder.generateRandomName('group'), 'test group', null, null);
             return testUtils.clickOnSystemAndOpenGroupWizard().then(()=> {
-                return groupWizard.waitForOpened();
-            }).then(()=> groupWizard.typeData(testGroup)).then(()=> {
+                return groupWizard.typeData(testGroup);
+            }).then(()=> {
                 return groupWizard.waitUntilInvalidIconDisappears(testGroup.displayName);
             }).then((isRedIconNotPresent)=> {
                 assert.isTrue(isRedIconNotPresent, 'red circle should not be present on the tab, because all required inputs are filled');
@@ -59,8 +55,8 @@ describe('Group Wizard page spec ', function () {
             testGroup =
                 userItemsBuilder.buildGroup(userItemsBuilder.generateRandomName('group'), 'test group', null, null);
             return testUtils.clickOnSystemAndOpenGroupWizard().then(()=> {
-                return groupWizard.waitForOpened();
-            }).then(()=> groupWizard.typeData(testGroup)).then(()=> {
+                return groupWizard.typeData(testGroup);
+            }).then(()=> {
                 return groupWizard.clearDisplayNameInput();
             }).then(()=> {
                 return groupWizard.waitUntilInvalidIconAppears('<Unnamed Group>');

@@ -18,7 +18,7 @@ var newPrincipalDialog = Object.create(page, {
     },
     cancelButton: {
         get: function () {
-            return `${dialog.container}${elements.CANCEL_BUTTON}`;
+            return `${dialog.container}${elements.CANCEL_BUTTON_TOP}`;
         }
     },
     clickOnCancelButtonTop: {

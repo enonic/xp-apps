@@ -64,15 +64,14 @@ Page.prototype.typeTextInInput = function (selector, text) {
         throw new Error('text was not set in the input ' + err);
     })
 };
-Page.prototype.clearElement = function (selector) {
-    return this.getBrowser().clearElement(selector).catch((err)=> {
-        throw new Error('input was not cleared ' + err);
-    })
-},
 
-    Page.prototype.getText = function (selector) {
-        return this.getBrowser().getText(selector);
-    };
+Page.prototype.clearElement = function (selector) {
+    return this.getBrowser().clearElement(selector);
+};
+
+Page.prototype.getText = function (selector) {
+    return this.getBrowser().getText(selector);
+};
 Page.prototype.waitForExist = function (selector, ms) {
     return this.getBrowser().waitForExist(selector, ms);
 };
