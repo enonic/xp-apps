@@ -988,7 +988,11 @@ export class ItemView
     }
 
     protected createInsertAction(): api.ui.Action {
-        return new api.ui.Action(i18n('action.insert')).setChildActions(this.getInsertActions(this.liveEditModel)).setVisible(false);
+        const action = new api.ui.Action(i18n('action.insert'));
+        action.setChildActions(this.getInsertActions(this.liveEditModel));
+        action.setVisible(false);
+
+        return action;
     }
 
     protected createSelectParentAction(): api.ui.Action {
@@ -1008,12 +1012,13 @@ export class ItemView
     }
 
     private createInsertSubAction(label: string, componentItemType: ItemType): api.ui.Action {
-        let action = new api.ui.Action(i18n('live.view.insert.' + label)).onExecuted(() => {
+        const action = new api.ui.Action(i18n('live.view.insert.' + label)).onExecuted(() => {
             let componentView = this.createView(componentItemType);
             this.addComponentView(componentView, this.getNewItemIndex(), true);
         });
 
-        action.setVisible(false).setIconClass(api.StyleHelper.getCommonIconCls(label));
+        action.setVisible(false);
+        action.setIconClass(api.StyleHelper.getCommonIconCls(label));
 
         return action;
     }
