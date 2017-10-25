@@ -1,6 +1,6 @@
 import '../../../api.ts';
 import {DeletePrincipalRequest} from '../../../api/graphql/principal/DeletePrincipalRequest';
-import {DeleteUserStoreRequest} from '../../../api/graphql/userStore/DeleteUserStoreRequest';
+import DeleteUserStoreRequest = api.security.DeleteUserStoreRequest;
 
 import UserStore = api.security.UserStore;
 import Principal = api.security.Principal;

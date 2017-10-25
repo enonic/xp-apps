@@ -3,7 +3,7 @@ import {UserTreeGridItem, UserTreeGridItemBuilder, UserTreeGridItemType} from '.
 import {UserTreeGridActions} from './UserTreeGridActions';
 import {EditPrincipalEvent} from './EditPrincipalEvent';
 import {UserItemsRowFormatter} from './UserItemsRowFormatter';
-import {ListUserStoresRequest} from '../../api/graphql/userStore/ListUserStoresRequest';
+import ListUserStoresRequest = api.security.ListUserStoresRequest;
 import {ListPrincipalsRequest} from '../../api/graphql/principal/ListPrincipalsRequest';
 import {PrincipalBrowseSearchData} from './filter/PrincipalBrowseSearchData';
 import {UserItemType} from './UserItemType';

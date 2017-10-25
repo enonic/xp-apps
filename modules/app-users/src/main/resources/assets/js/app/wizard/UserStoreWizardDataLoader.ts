@@ -1,6 +1,6 @@
 import '../../api.ts';
 import {UserStoreWizardPanelParams} from './UserStoreWizardPanelParams';
-import {GetUserStoreByKeyRequest} from '../../api/graphql/userStore/GetUserStoreByKeyRequest';
+import GetUserStoreByKeyRequest = api.security.GetUserStoreByKeyRequest;
 
 import UserStore = api.security.UserStore;
 
