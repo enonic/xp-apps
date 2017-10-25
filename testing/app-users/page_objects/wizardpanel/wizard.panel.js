@@ -41,7 +41,7 @@ var wizardPanel = Object.create(page, {
         }
     },
     clearDisplayNameInput: {
-        value: function (displayName) {
+        value: function () {
             return this.clearElement(this.displayNameInput);
         }
     },
@@ -95,7 +95,7 @@ var wizardPanel = Object.create(page, {
             }, 2000).then(()=> {
                 return true;
             }).catch((err)=> {
-                throw new Error(err);
+                throw new Error('group-wizard:invalid-icon was not found' + err);
             });
         }
     },

@@ -7,16 +7,20 @@ const loaderComboBox = require('../inputs/loaderComboBox');
 
 var panel = {
     container: `//div[contains(@id,'UserWizardPanel')]`,
+    emailInput: `//input[@type = 'email']`,
     groupOptionsFilterInput: "//div[contains(@id,'FormItem') and child::label[text()='Groups']]" + `${loaderComboBox.optionFilterInput}`,
     roleOptionsFilterInput: "//div[contains(@id,'FormItem') and child::label[text()='Roles']]" + `${loaderComboBox.optionFilterInput}`,
     rolesGroupLink: `//li[child::a[text()='Roles & Groups']]`,
+    showPasswordLink: `//a[text()='Show']`,
+    generatePasswordLink: `//a[text()='Generate']`,
+    changePasswordButton: `//button[contains(@class,'change-password-button')]`,
 };
 
 var userWizard = Object.create(wizard, {
 
     emailInput: {
         get: function () {
-            return `${panel.container}//input[@type = 'email']`;
+            return `${panel.container}` + `${panel.emailInput}`;
         }
     },
     passwordInput: {
@@ -24,9 +28,77 @@ var userWizard = Object.create(wizard, {
             return `${panel.container}//input[@type = 'password']`;
         }
     },
+    groupOptionsFilterInput: {
+        get: function () {
+            return `${panel.container}` + `${panel.groupOptionsFilterInput}`;
+        }
+    },
+    roleOptionsFilterInput: {
+        get: function () {
+            return `${panel.container}` + `${panel.roleOptionsFilterInput}`;
+        }
+    },
     rolesGroupsLink: {
         get: function () {
             return `${panel.container}` + `${panel.rolesGroupLink}`;
+        }
+    },
+    showPasswordLink: {
+        get: function () {
+            return `${panel.container}` + `${panel.showPasswordLink}`;
+        }
+    },
+    generateLink: {
+        get: function () {
+            return `${panel.container}` + `${panel.generatePasswordLink}`;
+        }
+    },
+    changePasswordButton: {
+        get: function () {
+            return `${panel.container}` + `${panel.changePasswordButton}`;
+        }
+    },
+    clickOnChangePasswordButton: {
+        value: function () {
+            return this.doClick(this.changePasswordButton);
+        }
+    },
+    isShowLinkDisplayed: {
+        value: function () {
+            return this.isVisible(this.showPasswordLink);
+        }
+    },
+    isChangePasswordButtonDisplayed: {
+        value: function () {
+            return this.isVisible(this.changePasswordButton);
+        }
+    },
+    isGenerateDisplayed: {
+        value: function () {
+            return this.isVisible(this.generateLink);
+        }
+    },
+    isEmailInputDisplayed: {
+        value: function () {
+            return this.isVisible(this.emailInput);
+        }
+    },
+    isPasswordInputDisplayed: {
+        value: function () {
+            return this.isVisible(this.passwordInput);
+        }
+    },
+    isGroupOptionsFilterInputDisplayed: {
+        value: function () {
+            return this.isVisible(this.groupOptionsFilterInput);
+        }
+    },
+
+    isRoleOptionsFilterInputDisplayed: {
+        value: function () {
+            return this.clickOnRolesAndGroupsLink().pause(300).then(()=> {
+                return this.isVisible(this.roleOptionsFilterInput);
+            })
         }
     },
     clickOnRolesAndGroupsLink: {
@@ -107,11 +179,6 @@ var userWizard = Object.create(wizard, {
     typePassword: {
         value: function (password) {
             return this.typeTextInInput(this.passwordInput, password);
-        }
-    },
-    getDescription: {
-        value: function () {
-            return this.getTextFromInput(this.descriptionInput);
         }
     },
 });

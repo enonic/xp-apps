@@ -21,7 +21,7 @@ module.exports = Object.freeze({
     tabItemByDisplayName: function (displayName) {
         return `//li[contains(@id,'AppBarTabMenuItem') and descendant::a[contains(.,'${displayName}')]]`
     },
-    CANCEL_BUTTON: `//div[@class='cancel-button-top']`,
+    CANCEL_BUTTON_TOP: `//div[@class='cancel-button-top']`,
     
     COMBO_BOX_OPTION_FILTER_INPUT: "//input[contains(@id,'ComboBoxOptionFilterInput')]",
 
