@@ -13,9 +13,10 @@ const testUtils = require('../libs/test.utils');
 const roleWizard = require('../page_objects/wizardpanel/role.wizard');
 const newPrincipalDialog = require('../page_objects/browsepanel/new.principal.dialog');
 
-describe('New Principal dialog Spec', function () {
+describe('New Principal dialog specification', function () {
     this.timeout(70000);
     webDriverHelper.setupBrowser();
+    let ITEMS_NUMBER = 4;
 
     it('GIVEN `NewPrincipal` dialog is opened WHEN `Cancel` button(top) has been pressed  THEN the dialog should be closed',
         () => {
@@ -41,7 +42,7 @@ describe('New Principal dialog Spec', function () {
             }).then(()=> {
                 return newPrincipalDialog.getNumberOfItems()
                 then(result=> {
-                    assert.equal(result, 4, '`User` item should be present on the dialog');
+                    assert.equal(result, ITEMS_NUMBER, '`User` item should be present on the dialog');
                 })
             }).then(()=> {
                 return newPrincipalDialog.getItemNames()

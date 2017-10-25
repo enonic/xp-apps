@@ -14,7 +14,7 @@ const userItemsBuilder = require('../libs/userItems.builder.js');
 const appConst = require('../libs/app_const');
 const roleStatisticsPanel = require('../page_objects/browsepanel/role.statistics.panel');
 
-describe('Role Wizard page and info on the UserItemStatisticsPanel spec ', function () {
+describe('Role Wizard and Statistics Panel spec', function () {
     this.timeout(70000);
     webDriverHelper.setupBrowser();
     let testRole

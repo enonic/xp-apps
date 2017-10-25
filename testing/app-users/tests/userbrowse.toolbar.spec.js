@@ -8,7 +8,7 @@ var webDriverHelper = require('../libs/WebDriverHelper');
 const userBrowsePanel = require('../page_objects/browsepanel/userbrowse.panel');
 const testUtils = require('../libs/test.utils');
 
-describe('UserBrowse-panel, toolbar spec', function () {
+describe('User Browse panel, toolbar spec', function () {
     this.timeout(70000);
     webDriverHelper.setupBrowser();
 

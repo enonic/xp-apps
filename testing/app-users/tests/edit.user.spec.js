@@ -13,7 +13,7 @@ const userItemsBuilder = require('../libs/userItems.builder.js');
 const appConst = require('../libs/app_const');
 const userStatisticsPanel = require('../page_objects/browsepanel/user.statistics.panel.js');
 
-describe('Edit user spec', function () {
+describe('Edit an user - change name and roles', function () {
     this.timeout(70000);
     webDriverHelper.setupBrowser();
     let testUser;
@@ -70,7 +70,6 @@ describe('Edit user spec', function () {
                 assert.equal(roles[0], appConst.roles.CM_ADMIN, '`Content Manager Administrator` role should be present on the panel');
             })
         });
-
 
     beforeEach(() => testUtils.navigateToUsersApp(webDriverHelper.browser));
     afterEach(() => testUtils.doCloseUsersApp(webDriverHelper.browser));
