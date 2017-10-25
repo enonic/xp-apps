@@ -12,7 +12,7 @@ const testUtils = require('../libs/test.utils');
 const userItemsBuilder = require('../libs/userItems.builder.js');
 const appConst = require('../libs/app_const');
 
-describe('Save User spec ', function () {
+describe('Save User spec - save an user', function () {
     this.timeout(70000);
     webDriverHelper.setupBrowser();
     let testUser;

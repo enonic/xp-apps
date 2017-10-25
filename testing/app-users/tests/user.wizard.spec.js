@@ -83,7 +83,7 @@ describe('User Wizard page spec', function () {
                 return assert.eventually.isTrue(userWizard.waitForSaveButtonDisabled(), 'Save button should be disabled now');
             });
         });
-    it('GIVEN  existing user is opened WHEN name input has been cleared THEN red circle should appears on the tab',
+    it('GIVEN existing user is opened WHEN name input has been cleared THEN red circle should appears on the tab',
         () => {
             return testUtils.selectUserAndOpenWizard(testUser.displayName).then(()=> {
                 return userWizard.clickOnChangePasswordButton();

@@ -74,12 +74,18 @@ tasks.withType( Test ) {
     }
 }
 //run the tusk in the gulpfile.js. Name of the task is 'test'
-task gulpTest( type: GulpTask, dependsOn: [npmInstall, startServer,] ) {
+task downloadAndUsersTest( type: GulpTask, dependsOn: [npmInstall, startServer,] ) {
+    inputs.files fileTree( dir: '.' )
+    outputs.files fileTree( dir: '/test-results' )
+    args = ['test']
+    startServer.mustRunAfter npmInstall
+}
+task localUsersTest( type: GulpTask, dependsOn: [npmInstall] ) {
     inputs.files fileTree( dir: '.' )
     outputs.files fileTree( dir: '/test-results' )
     args = ['test']
     startServer.mustRunAfter npmInstall
 }
 //tasks.withType(Test)*.finalizedBy allureReport
-gulpTest.finalizedBy = ['stopServer']
+downloadAndUsersTest.finalizedBy = ['stopServer']
 

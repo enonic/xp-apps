@@ -6,7 +6,7 @@ chai.Should();
 var loginPage = require('../page_objects/login.page');
 require("mocha-allure-reporter");
 
-describe('login page spec', function () {
+describe('Login Page specification', function () {
 
     this.timeout(17000);
     var client = webDriverHelper.setupBrowser();

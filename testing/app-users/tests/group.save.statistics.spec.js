@@ -13,7 +13,7 @@ const userItemsBuilder = require('../libs/userItems.builder.js');
 const appConst = require('../libs/app_const');
 const groupStatisticsPanel = require('../page_objects/browsepanel/group.statistics.panel');
 
-describe('Save a Group and check info on the UserItemStatisticsPanel spec', function () {
+describe('Save a Group and check info on the Statistics Panel', function () {
     this.timeout(70000);
     webDriverHelper.setupBrowser();
     let groupWithRoleAndMember;

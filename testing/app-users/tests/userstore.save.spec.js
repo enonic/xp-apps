@@ -13,7 +13,7 @@ const userStoreWizard = require('../page_objects/wizardpanel/userstore.wizard');
 const testUtils = require('../libs/test.utils');
 const userWizard = require('../page_objects/wizardpanel/user.wizard');
 
-describe('User Store saving and deleting spec', function () {
+describe('User Store spec - save and edit', function () {
     this.timeout(70000);
     webDriverHelper.setupBrowser();
     let userStore;

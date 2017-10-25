@@ -16,55 +16,7 @@ const appConst = require('../libs/app_const');
 describe('User Wizard negative spec ', function () {
     this.timeout(70000);
     webDriverHelper.setupBrowser();
-    let testUser
-    it('GIVEN `User` wizard is opened WHEN name and e-mail has been typed AND `Save` button pressed THEN correct error-notification message should appear',
-        () => {
-            let userName = userItemsBuilder.generateRandomName('user');
-            testUser = userItemsBuilder.buildUser(userName, '1q2w3e', userItemsBuilder.generateEmail(userName), null);
-            return testUtils.clickOnSystemOpenUserWizard().then(()=> {
-                return userWizard.typeEmail(testUser.email);
-            }).then(()=> {
-                return userWizard.typeDisplayName(testUser.displayName);
-            }).then(()=> {
-                return userWizard.waitAndClickOnSave();
-            }).then(()=> {
-                return userWizard.waitForErrorNotificationMessage();
-            }).then(message=> {
-                expect(message).to.equal(appConst.USER_WIZARD_PASS_MESSAGE);
-            })
-        });
-
-    it('GIVEN `User` wizard is opened WHEN name and e-mail has been typed  THEN red circle should be displayed on the wizard page ',
-        () => {
-            let userName = userItemsBuilder.generateRandomName('user');
-            testUser = userItemsBuilder.buildUser(userName, '1q2w3e', userItemsBuilder.generateEmail(userName), null);
-            return testUtils.clickOnSystemOpenUserWizard().then(()=> {
-                return userWizard.typeEmail(testUser.email);
-            }).then(()=> {
-                return userWizard.typeDisplayName(testUser.displayName);
-            }).then(()=> {
-                return userWizard.isItemInvalid(testUser.displayName);
-            }).then((result)=> {
-                assert.isTrue(result, 'red circle should be present on the tab, because `password` input is empty');
-            })
-        });
-
-    it('GIVEN `User` wizard is opened WHEN name and password has been typed AND `Save` button pressed THEN correct error-notification message should appear',
-        () => {
-            let userName = userItemsBuilder.generateRandomName('user');
-            testUser = userItemsBuilder.buildUser(userName, '1q2w3e', userItemsBuilder.generateEmail(userName), null);
-            return testUtils.clickOnSystemOpenUserWizard().then(()=> {
-                return userWizard.typePassword(testUser.password);
-            }).then(()=> {
-                return userWizard.typeDisplayName(testUser.displayName);
-            }).then(()=> {
-                return userWizard.waitAndClickOnSave();
-            }).then(()=> {
-                return userWizard.waitForErrorNotificationMessage();
-            }).then(message=> {
-                expect(message).to.equal(appConst.USER_WIZARD_EMAIL_MESSAGE);
-            })
-        });
+    let testUser;
 
     it('GIVEN `User` wizard is opened WHEN name and e-mail has been typed  THEN red circle should be displayed on the wizard page',
         () => {
@@ -131,16 +83,10 @@ describe('User Wizard negative spec ', function () {
             return testUtils.clickOnSystemOpenUserWizard().then(()=> {
                 return userWizard.typeData(testUser);
             }).then(()=> {
-                return userWizard.waitAndClickOnSave();
-            }).then(()=> {
-                return userWizard.isItemInvalid(testUser.displayName);
+                return userWizard.waitUntilInvalidIconAppears(testUser.displayName);
             }).then((result)=> {
                 assert.isTrue(result, 'red circle should be present on the tab, because `e-mail` is invalid');
-            }).then(()=> {
-                return userWizard.waitForErrorNotificationMessage();
-            }).then(message=> {
-                expect(message).to.equal(appConst.USER_WIZARD_EMAIL_IS_INVALID);
-            })
+            });
         });
 
     beforeEach(() => testUtils.navigateToUsersApp(webDriverHelper.browser));

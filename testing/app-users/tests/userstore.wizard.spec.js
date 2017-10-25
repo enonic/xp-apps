@@ -8,7 +8,7 @@ var webDriverHelper = require('../libs/WebDriverHelper');
 var userStoreWizard = require('../page_objects/wizardpanel/userstore.wizard');
 const testUtils = require('../libs/test.utils');
 
-describe('User store wizard spec ', function () {
+describe('User Store wizard - validation and inputs', function () {
     this.timeout(70000);
     webDriverHelper.setupBrowser();
 
