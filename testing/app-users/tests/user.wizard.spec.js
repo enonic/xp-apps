@@ -12,7 +12,7 @@ const changePasswordDialog = require('../page_objects/wizardpanel/change.passwor
 const testUtils = require('../libs/test.utils');
 const userItemsBuilder = require('../libs/userItems.builder.js');
 
-describe('User Wizard page spec', function () {
+describe('User Wizard and Change Password dialog spec', function () {
     this.timeout(70000);
     webDriverHelper.setupBrowser();
     let testUser;
@@ -83,18 +83,86 @@ describe('User Wizard page spec', function () {
                 return assert.eventually.isTrue(userWizard.waitForSaveButtonDisabled(), 'Save button should be disabled now');
             });
         });
-    it('GIVEN existing user is opened WHEN name input has been cleared THEN red circle should appears on the tab',
+
+    it('GIVEN existing user is opened WHEN `Change Password` button has been pressed THEN modal dialog should appear',
         () => {
             return testUtils.selectUserAndOpenWizard(testUser.displayName).then(()=> {
                 return userWizard.clickOnChangePasswordButton();
             }).then(()=> {
                 return changePasswordDialog.waitForDialogVisible();
             }).then(()=> {
-                //return assert.eventually.isTrue(changePasswordDialog.getUserPath()[0].includes(), 'Display name of the user should be present in the path');
                 return changePasswordDialog.getUserPath();
             }).then(result=> {
                 assert.isTrue(result[0].includes(testUser.displayName), 'Display name of the user should be present in the path');
             });
+        });
+
+    it('WHEN `Change Password Dialog` is opened THEN required elements should be present',
+        () => {
+            return testUtils.selectUserAndOpenWizard(testUser.displayName).then(()=> {
+                return userWizard.clickOnChangePasswordButton();
+            }).then(()=> {
+                return changePasswordDialog.waitForDialogVisible();
+            }).then(result=> {
+                return assert.eventually.isTrue(changePasswordDialog.isPasswordInputDisplayed(), 'Password Input should be displayed');
+            }).then(()=> {
+                return assert.eventually.isTrue(changePasswordDialog.isGenerateLinkDisplayed(), 'Generate Link should be displayed');
+            }).then(()=> {
+                return assert.eventually.isTrue(changePasswordDialog.isShowLinkDisplayed(), 'Show Password Link should be displayed');
+            })
+        });
+
+    it('WHEN `Change Password Dialog` is opened THEN `Show password` link has been clicked THEN `Hide` link should appear',
+        () => {
+            return testUtils.selectUserAndOpenWizard(testUser.displayName).then(()=> {
+                return userWizard.clickOnChangePasswordButton();
+            }).then(()=> {
+                return changePasswordDialog.waitForDialogVisible();
+            }).then(result=> {
+                return changePasswordDialog.clickOnShowPasswordLink();
+            }).then(()=> {
+                return assert.eventually.isTrue(changePasswordDialog.isHideLinkDisplayed(), '`Hide` text in the link should appear');
+            })
+        });
+
+    it('WHEN `Change Password Dialog` is opened THEN `Generate password`  link has been clicked THEN `password` string should appear',
+        () => {
+            return testUtils.selectUserAndOpenWizard(testUser.displayName).then(()=> {
+                return userWizard.clickOnChangePasswordButton();
+            }).then(()=> {
+                return changePasswordDialog.waitForDialogVisible();
+            }).then(result=> {
+                return changePasswordDialog.clickOnGeneratePasswordLink();
+            }).then(()=> {
+                return changePasswordDialog.getPasswordString();
+            }).then((password)=> {
+                assert.isTrue(password.length > 0, 'password string should be present ');
+            })
+        });
+    it('GIVEN `Change Password Dialog` is opened WHEN `Cancel` button has been clicked THEN the dialog should be closed',
+        () => {
+            return testUtils.selectUserAndOpenWizard(testUser.displayName).then(()=> {
+                return userWizard.clickOnChangePasswordButton();
+            }).then(()=> {
+                return changePasswordDialog.waitForDialogVisible();
+            }).then(result=> {
+                return changePasswordDialog.clickOnCancelButton();
+            }).then(()=> {
+                return expect(changePasswordDialog.waitForClosed()).to.eventually.be.true;
+            })
+        });
+
+    it('GIVEN `Change Password Dialog` is opened WHEN `Cancel-top` button has been clicked THEN the dialog should be closed',
+        () => {
+            return testUtils.selectUserAndOpenWizard(testUser.displayName).then(()=> {
+                return userWizard.clickOnChangePasswordButton();
+            }).then(()=> {
+                return changePasswordDialog.waitForDialogVisible();
+            }).then(result=> {
+                return changePasswordDialog.clickOnCancelButtonTop();
+            }).then(()=> {
+                return expect(changePasswordDialog.waitForClosed()).to.eventually.be.true;
+            })
         });
 
     beforeEach(() => testUtils.navigateToUsersApp(webDriverHelper.browser));

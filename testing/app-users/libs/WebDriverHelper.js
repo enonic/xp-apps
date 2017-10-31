@@ -22,7 +22,8 @@ WebDriverHelper.prototype.setupBrowser = function setupBrowser() {
         var PropertiesReader = require('properties-reader');
         var path = require( 'path' )
         var webdriverio = require('webdriverio');
-        var file = path.join( __dirname, '/../browser.properties' );
+        console.log('dir name ' + __dirname)
+        var file = path.join(__dirname, '../browser.properties');
         var properties = PropertiesReader(file);
         var browser_name = properties.get('browser.name');
         var platform_name = properties.get('platform');
@@ -31,6 +32,10 @@ WebDriverHelper.prototype.setupBrowser = function setupBrowser() {
             desiredCapabilities: {
                 browserName: browser_name,
                 platform: platform_name,
+                loggingPrefs: {
+                    'driver': 'INFO',
+                    'browser': 'INFO'
+                },
                 chromeOptions: {
                     "args": [
                         "--lang=en"

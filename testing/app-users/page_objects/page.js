@@ -100,6 +100,7 @@ Page.prototype.isAttributePresent = function (selector, atrName) {
         }
     })
 };
+
 Page.prototype.getDisplayedElements = function (selector) {
     let displayedElements = [];
     return this.getBrowser().elements(selector).then(results=> {
@@ -131,6 +132,11 @@ Page.prototype.getTextFromElements = function (selector) {
 Page.prototype.getTextFromInput = function (selector) {
     return this.getBrowser().getAttribute(selector, 'value');
 };
+
+Page.prototype.getAttribute = function (selector, attributeName) {
+    return this.getBrowser().getAttribute(selector, attributeName);
+};
+
 Page.prototype.waitForNotificationMessage = function () {
     return this.getBrowser().waitForVisible(`//div[@class='notification-content']/span`, 3000).then(()=> {
         return this.getBrowser().getText(`//div[@class='notification-content']/span`);
