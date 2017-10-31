@@ -20,9 +20,14 @@ var changeUserPasswordDialog = Object.create(page, {
             return `${dialog.container}` + `${dialog.passwordInput}`;
         }
     },
-    passwordInput: {
+    generatePasswordLink: {
         get: function () {
-            return `${dialog.container}` + `${dialog.passwordInput}`;
+            return `${dialog.container}` + `${dialog.generatePasswordLink}`;
+        }
+    },
+    showPasswordLink: {
+        get: function () {
+            return `${dialog.container}` + `${dialog.showPasswordLink}`;
         }
     },
 
@@ -43,11 +48,44 @@ var changeUserPasswordDialog = Object.create(page, {
         }
     },
 
+    isPasswordInputDisplayed: {
+        value: function () {
+            return this.isVisible(this.passwordInput);
+        }
+    },
+    isShowLinkDisplayed: {
+        value: function () {
+            return this.isVisible(this.showPasswordLink);
+        }
+    },
+    isHideLinkDisplayed: {
+        value: function () {
+            return this.getAttribute(this.showPasswordLink, 'data-i18n').then(result=> {
+                return result.includes('Hide')
+            });
+        }
+    },
+    isGenerateLinkDisplayed: {
+        value: function () {
+            return this.isVisible(this.generatePasswordLink);
+        }
+    },
+
     clickOnChangePasswordButton: {
         value: function () {
             return this.doClick(this.changePasswordButton).then(()=> {
                 return this.waitForNotVisible(`${dialog.container}`, 2000);
             });
+        }
+    },
+    clickOnShowPasswordLink: {
+        value: function () {
+            return this.doClick(this.showPasswordLink).pause(300);
+        }
+    },
+    clickOnGeneratePasswordLink: {
+        value: function () {
+            return this.doClick(this.generatePasswordLink).pause(300);
         }
     },
     getUserPath: {
@@ -76,6 +114,23 @@ var changeUserPasswordDialog = Object.create(page, {
     clickOnCancelButton: {
         value: function () {
             return this.doClick(this.cancelButton);
+        }
+    },
+    clickOnCancelButtonTop: {
+        value: function () {
+            return this.doClick(this.cancelButtonTop);
+        }
+    },
+    getPasswordString: {
+        value: function () {
+            return this.getTextFromInput(this.passwordInput)
+        }
+    },
+    waitForClosed: {
+        value: function () {
+            return this.waitForNotVisible(`${dialog.container}`, 3000).catch(error=> {
+                throw new Error('Change Pasword Dialog was not closed');
+            });
         }
     },
 });

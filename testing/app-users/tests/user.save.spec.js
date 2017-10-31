@@ -53,7 +53,7 @@ describe('Save User spec - save an user', function () {
             }).pause(500).then(()=> {
                 return userBrowsePanel.clickOnExpanderIcon("users");
             }).then(()=> {
-                return expect(userBrowsePanel.isExist(userName)).to.eventually.be.true;
+                return expect(userBrowsePanel.isItemDisplayed(userName)).to.eventually.be.true;
             })
         });
 

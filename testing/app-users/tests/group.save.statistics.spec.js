@@ -1,5 +1,5 @@
 /**
- * Created by Lenovo on 09.10.2017.
+ * Created by on 09.10.2017.
  */
 const chai = require('chai');
 chai.use(require('chai-as-promised'));
