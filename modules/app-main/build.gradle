@@ -19,6 +19,8 @@ dependencies {
     include "${group}:lib-mustache:${version}"
     include "${group}:lib-portal:${version}"
     include "${group}:lib-auth:${version}"
+    include "${group}:lib-content:${version}"
+    include "${group}:lib-node:${version}"
     include "com.enonic.lib:lib-admin-ui:${libAdminUiVersion}"
 }
 

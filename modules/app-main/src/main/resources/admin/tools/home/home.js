@@ -2,6 +2,10 @@ var i18n = require('/lib/xp/i18n');
 var admin = require('/lib/xp/admin');
 var portal = require('/lib/xp/portal');
 var mustache = require('/lib/xp/mustache');
+var contentLib = require('/lib/xp/content');
+
+var nodeLib = require('/lib/xp/node');
+var repoId = 'favourites';
 
 exports.get = function () {
 
@@ -78,7 +82,8 @@ exports.get = function () {
         docLinkPrefix: docLinkPrefix,
         tourEnabled: tourEnabled,
         messages: admin.getPhrases(),
-        dashboardIcons: dashboardIcons
+        dashboardIcons: dashboardIcons,
+        favIcons: getFavs()
     };
 
     return {
@@ -88,3 +93,41 @@ exports.get = function () {
 
 };
 
+// Find all entry keys.
+var getFavs = function () {
+    var repo = nodeLib.connect({
+        repoId: repoId,
+        branch: 'master',
+        principals: ['role:system.admin'],
+        user: {
+            login: 'su'
+        }
+    });
+
+    var result = repo.findChildren({
+        parentKey: '/',
+        start: 0,
+        count: 10000,
+        recursive: false
+    });
+    
+    var entries = [];
+    for (var i = 0; i < result.hits.length; i++) {
+        var node = repo.get(result.hits[i].id);
+        var content = contentLib.get({
+            key: node._name,
+            branch: 'draft'
+        });
+        
+        if (node) {
+            entries.push({
+                id: node._name,
+                link: 'tool/com.enonic.xp.app.contentstudio/main#/edit/' + node._name,
+                src: 'rest/schema/content/icon/' + content.type,
+                caption: content.displayName
+            });
+        }
+    }
+
+    return entries;
+};
