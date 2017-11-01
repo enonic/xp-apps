@@ -3,7 +3,6 @@ import {SortContentEvent} from './SortContentEvent';
 import {ContentTreeGridActions} from './action/ContentTreeGridActions';
 import {TreeNodesOfContentPath} from './TreeNodesOfContentPath';
 import {TreeNodeParentOfContent} from './TreeNodeParentOfContent';
-
 import ElementHelper = api.dom.ElementHelper;
 
 import TreeGrid = api.ui.treegrid.TreeGrid;
@@ -82,7 +81,7 @@ export class ContentTreeGrid
 
         const updateColumns = () => {
             const width = this.getEl().getWidth();
-            const checkSelIsMoved = ResponsiveRanges._360_540.isFitOrSmaller(api.dom.Body.get().getEl().getWidth());
+            const checkSelIsMoved = ResponsiveRanges._540_720.isFitOrSmaller(api.dom.Body.get().getEl().getWidth());
 
             const curClass = nameColumn.getCssClass();
 
@@ -94,16 +93,13 @@ export class ContentTreeGrid
 
             if (ResponsiveRanges._240_360.isFitOrSmaller(width)) {
                 this.setColumns([nameColumn, orderColumn], checkSelIsMoved);
-            } else if (ResponsiveRanges._360_540.isFitOrSmaller(width)) {
+            } else if (ResponsiveRanges._540_720.isFitOrSmaller(width)) {
+                modifiedTimeColumn.setMaxWidth(90);
+                modifiedTimeColumn.setFormatter(DateTimeFormatter.formatNoTimestamp);
                 this.setColumns([nameColumn, orderColumn, compareStatusColumn], checkSelIsMoved);
             } else {
-                if (ResponsiveRanges._540_720.isFitOrSmaller(width)) {
-                    modifiedTimeColumn.setMaxWidth(90);
-                    modifiedTimeColumn.setFormatter(DateTimeFormatter.formatNoTimestamp);
-                } else {
-                    modifiedTimeColumn.setMaxWidth(135);
-                    modifiedTimeColumn.setFormatter(DateTimeFormatter.format);
-                }
+                modifiedTimeColumn.setMaxWidth(135);
+                modifiedTimeColumn.setFormatter(DateTimeFormatter.format);
                 this.setColumns([nameColumn, orderColumn, compareStatusColumn, modifiedTimeColumn]);
             }
         };
