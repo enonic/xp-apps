@@ -56,6 +56,23 @@ describe('User Store spec - save and edit', function () {
                     assert.isTrue(result, 'new user store should be present in the grid');
                 })
         });
+    //TODO remove the skip when the xp-apps#205 will be fixed
+    it.skip(
+        `GIVEN User Store wizard is opened WHEN data and permissions have been typed and 'Save' button pressed AND the wizard has been closed THEN 'Save Before' dialog should not be displayed`,
+        () => {
+            let permissions = ['Everyone'];
+            userStore =
+                userItemsBuilder.buildUserStore(userItemsBuilder.generateRandomName('store'), 'test user store', 'Standard ID Provider',
+                    permissions);
+            return testUtils.openWizardAndSaveUserStore(userStore).then(()=> {
+                return userStoreWizard.filterOptionsAndSelectPermission('Everyone');
+            }).then(()=> {
+                return userBrowsePanel.doClickOnCloseTabButton(userStore.displayName);
+            }).pause(1000)
+                .then(()=>userBrowsePanel.isItemDisplayed(userStore.displayName)).then(result=> {
+                    assert.isTrue(result, 'new user store should be present in the grid');
+                })
+        });
 
     it(`GIVEN existing 'User Store' WHEN it has been selected and opened THEN correct description should be present`, () => {
         return userBrowsePanel.clickOnRowByName(userStore.displayName).pause(300).then(()=> {
@@ -107,5 +124,4 @@ describe('User Store spec - save and edit', function () {
 
     beforeEach(() => testUtils.navigateToUsersApp(webDriverHelper.browser));
     afterEach(() => testUtils.doCloseUsersApp(webDriverHelper.browser));
-})
-;
+});

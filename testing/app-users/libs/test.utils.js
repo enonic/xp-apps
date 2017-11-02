@@ -11,7 +11,7 @@ const groupWizard = require('../page_objects/wizardpanel/group.wizard');
 const roleWizard = require('../page_objects/wizardpanel/role.wizard');
 const wizard = require('../page_objects/wizardpanel/wizard.panel');
 const newPrincipalDialog = require('../page_objects/browsepanel/new.principal.dialog');
-const filterPanel = require("../page_objects/browsepanel/principal.filter.panel");
+const filterPanel = require("../page_objects/browsepanel/principal.filter.panel");  
 const confirmationDialog = require("../page_objects/confirmation.dialog");
 
 module.exports = {
@@ -19,7 +19,7 @@ module.exports = {
     findAndSelectItem: function (name) {
         return this.typeNameInFilterPanel(name).then(()=> {
             return browsePanel.waitForRowByNameVisible(name);
-        }).then(()=> {
+        }).pause(400).then(()=> {
             return browsePanel.clickOnRowByName(name);
         });
     },
