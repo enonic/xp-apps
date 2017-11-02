@@ -127,7 +127,7 @@ export class ContentPublishDialog
         const publishAction = new ContentPublishDialogAction(this.doPublish.bind(this, false));
         this.createIssueAction = new CreateIssueDialogAction(this.createIssue.bind(this));
 
-        const actionMenu: MenuButton = this.getButtonRow().makeActionMenu(publishAction, [this.createIssueAction, this.showScheduleAction]);
+        const actionMenu: MenuButton = this.getButtonRow().makeActionMenu(publishAction, [this.showScheduleAction, this.createIssueAction]);
 
         this.actionButton = actionMenu.getActionButton();
         this.publishButton = actionMenu.getActionButton();

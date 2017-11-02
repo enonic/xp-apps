@@ -34,7 +34,7 @@ export class ContentWizardToolbarPublishControls
         this.unpublishAction = actions.getUnpublishAction();
         this.publishMobileAction = actions.getPublishMobileAction();
 
-        this.publishButton = new MenuButton(this.publishAction, [this.publishTreeAction, this.createIssueAction, this.unpublishAction]);
+        this.publishButton = new MenuButton(this.publishAction, [this.publishTreeAction, this.unpublishAction, this.createIssueAction]);
         this.publishButton.addClass('content-wizard-toolbar-publish-button');
 
         this.contentStateSpan = new SpanEl('content-status');
