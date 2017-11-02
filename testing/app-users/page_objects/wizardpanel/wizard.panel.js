@@ -1,5 +1,5 @@
 /**
- * Created by on 5/30/2017.
+ * Created on 5/30/2017.
  */
 var page = require('../page');
 var elements = require('../../libs/elements');
@@ -48,11 +48,6 @@ var wizardPanel = Object.create(page, {
     isDisplayNameInputVisible: {
         value: function () {
             return this.isVisible(this.displayNameInput);
-        }
-    },
-    isDescriptionInputDisplayed: {
-        value: function () {
-            return this.isVisible(this.descriptionInput);
         }
     },
     waitAndClickOnSave: {

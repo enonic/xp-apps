@@ -1,9 +1,6 @@
-
-
 /**
- * Created by on 10.09.2017.
- */
-/**
+ *  Created by on 10.09.2017.
+ *  
  * Helper class that encapsulates webdriverio
  * and sets up mocha hooks for easier test writing.
  */
@@ -17,10 +14,10 @@ function WebDriverHelper() {
  */
 WebDriverHelper.prototype.setupBrowser = function setupBrowser() {
     var _this = this;
-    before(function() {
+    before(function () {
         //screenshotPath: `${__dirname}/../../screenshots/`,
         var PropertiesReader = require('properties-reader');
-        var path = require( 'path' )
+        var path = require('path')
         var webdriverio = require('webdriverio');
         console.log('dir name ' + __dirname)
         var file = path.join(__dirname, '../browser.properties');
@@ -43,14 +40,13 @@ WebDriverHelper.prototype.setupBrowser = function setupBrowser() {
                 }
             }
         };
-
         _this.browser = webdriverio
             .remote(options)
             .init().url(baseUrl);
-        _this.browser.windowHandleSize({width:properties.get('browser.width') , height: properties.get('browser.height')});
+        _this.browser.windowHandleSize({width: properties.get('browser.width'), height: properties.get('browser.height')});
         return _this.browser;
     });
-    after(function() {
+    after(function () {
         return _this.browser.end();
     });
 };

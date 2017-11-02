@@ -15,7 +15,8 @@ module.exports = Object.freeze({
     USER_WIZARD_EMAIL_IS_INVALID: 'Email is invalid.',
     USER_WAS_CREATED_MESSAGE: 'User was created',
     GROUP_WAS_CREATED: 'Group was created',
-    
+    STANDARD_ID_PROVIDER: 'Standard ID Provider',
+
     roles: {
         CM_ADMIN: 'Content Manager Administrator',
         ADMIN_CONSOLE: 'Administration Console Login',
@@ -24,6 +25,7 @@ module.exports = Object.freeze({
         USERS_APP: 'Users App',
         AUTHENTICATED: 'Authenticated',
         USERS_ADMINISTRATOR: 'Users Administrator',
+        EVERYONE: 'Everyone'
     },
     principalExistsMessage: function (displayName) {
         return `Principal [${displayName}] could not be created. A principal with that name already exists`
