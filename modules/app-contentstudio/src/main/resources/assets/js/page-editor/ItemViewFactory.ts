@@ -8,7 +8,6 @@ import {PartComponentView, PartComponentViewBuilder} from './part/PartComponentV
 import {TextComponentView, TextComponentViewBuilder} from './text/TextComponentView';
 import {ContentView, ContentViewBuilder} from './ContentView';
 import {ItemType} from './ItemType';
-import {ComponentFragmentCreatedEvent} from './ComponentFragmentCreatedEvent';
 import ImageComponent = api.content.page.region.ImageComponent;
 import LayoutComponent = api.content.page.region.LayoutComponent;
 import PartComponent = api.content.page.region.PartComponent;
@@ -54,8 +53,6 @@ export class DefaultItemViewFactory
             .setElement(config.element)
             .setComponent(config.data)
             .setPositionIndex(config.positionIndex));
-
-        new ComponentFragmentCreatedEvent(view, config.sourceComponentType, config.fragmentContent).fire();
 
         return view;
     }
