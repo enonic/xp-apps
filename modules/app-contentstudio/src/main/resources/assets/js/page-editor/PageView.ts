@@ -33,6 +33,7 @@ import {PageModel} from './PageModel';
 import {DragAndDrop} from './DragAndDrop';
 import {ItemViewFactory} from './ItemViewFactory';
 import {PageViewController} from './PageViewController';
+import {LiveEditPageViewReadyEvent} from './LiveEditPageViewReadyEvent';
 import PageMode = api.content.page.PageMode;
 import PageModeChangedEvent = api.content.page.PageModeChangedEvent;
 import Component = api.content.page.region.Component;
@@ -293,6 +294,12 @@ export class PageView
         api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.responsive.ResponsiveItem) => {
             if (this.isTextEditMode()) {
                 this.updateVerticalSpaceForEditorToolbar();
+            }
+        });
+
+        LiveEditPageViewReadyEvent.on(event => {
+            if (this == event.getPageView()) {
+                this.appendContainerForTextToolbar();
             }
         });
     }
