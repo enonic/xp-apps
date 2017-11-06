@@ -143,10 +143,17 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends UserItem>
     }
 
     saveChanges(): wemQ.Promise<USER_ITEM_TYPE> {
-        if (this.isRendered() && !this.getWizardHeader().getName()) {
-            return wemQ.fcall(() => {
-                throw i18n('notify.empty.name');
-            });
+        if (this.isRendered()) {
+            if (!this.getWizardHeader().getName()) {
+                return wemQ.fcall(() => {
+                    throw i18n('notify.empty.name');
+                });
+            }
+            if (!this.getWizardHeader().getDisplayName()) {
+                return wemQ.fcall(() => {
+                    throw i18n('notify.empty.displayName');
+                });
+            }
         }
         return super.saveChanges();
     }
