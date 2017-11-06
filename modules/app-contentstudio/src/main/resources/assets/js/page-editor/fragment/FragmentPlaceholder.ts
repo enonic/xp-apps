@@ -36,6 +36,7 @@ export class FragmentPlaceholder
             .setLoader(loader)
             .setMinWidth(270)
             .setTreegridDropdownEnabled(false)
+            .setTreeModeTogglerAllowed(false)
             .build();
 
         this.comboboxWrapper.appendChildren(this.comboBox);

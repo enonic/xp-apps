@@ -17,6 +17,8 @@ import {ItemViewFactory} from './ItemViewFactory';
 import {PageItemType} from './PageItemType';
 import {RegionView} from './RegionView';
 import {PageView} from './PageView';
+import {ComponentFragmentCreatedEvent} from './ComponentFragmentCreatedEvent';
+import {FragmentComponentView} from './fragment/FragmentComponentView';
 import Component = api.content.page.region.Component;
 import ComponentPath = api.content.page.region.ComponentPath;
 import ComponentPropertyChangedEvent = api.content.page.region.ComponentPropertyChangedEvent;
@@ -253,6 +255,9 @@ export class ComponentView<COMPONENT extends Component>
                             .setData(newComponent));
 
                     this.addComponentView(<ComponentView<COMPONENT>>fragmentCmpView, this.getNewItemIndex());
+                    new ComponentFragmentCreatedEvent(<FragmentComponentView>fragmentCmpView, this.getComponent().getType(),
+                        content).fire();
+
                     this.remove();
                 });
             }));
