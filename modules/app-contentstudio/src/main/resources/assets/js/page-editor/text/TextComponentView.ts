@@ -7,7 +7,8 @@ import {LiveEditPageDialogCreatedEvent} from '../LiveEditPageDialogCreatedEvent'
 import {Highlighter} from '../Highlighter';
 import {ItemView} from '../ItemView';
 import {PageViewController} from '../PageViewController';
-import {LiveEditPageViewReadyEvent} from '../LiveEditPageViewReadyEvent';
+import {DragAndDrop} from '../DragAndDrop';
+import {PageView} from '../PageView';
 
 declare var CONFIG;
 
@@ -17,8 +18,6 @@ import HTMLAreaHelper = api.util.htmlarea.editor.HTMLAreaHelper;
 import ModalDialog = api.util.htmlarea.dialog.ModalDialog;
 import Promise = Q.Promise;
 import i18n = api.util.i18n;
-import {DragAndDrop} from '../DragAndDrop';
-import {PageView} from '../PageView';
 
 export class TextComponentViewBuilder
     extends ComponentViewBuilder<TextComponent> {
@@ -99,10 +98,6 @@ export class TextComponentView
             if (this.getEl().hasClass(TextComponentView.EDITOR_FOCUSED_CLASS)) {
                 this.processEditorValue();
             }
-        });
-
-        LiveEditPageViewReadyEvent.on(event => {
-            event.getPageView().appendContainerForTextToolbar();
         });
 
         LiveEditPageDialogCreatedEvent.on(handleDialogCreated.bind(this));
