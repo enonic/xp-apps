@@ -14,7 +14,8 @@ import ContentSummaryAndCompareStatusViewer = api.content.ContentSummaryAndCompa
 import ModalDialogButtonRow = api.ui.dialog.ButtonRow;
 import DivEl = api.dom.DivEl;
 
-export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
+export class DependantItemsDialog
+    extends api.ui.dialog.ModalDialog {
 
     protected actionButton: DialogButton;
 
@@ -152,6 +153,10 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
 
     setListItems(items: ContentSummaryAndCompareStatus[], silent?: boolean) {
         this.itemList.setItems(items, silent);
+    }
+
+    addListItems(items: ContentSummaryAndCompareStatus[], silent?: boolean) {
+        this.itemList.addItems(items, silent);
     }
 
     private extendsWindowHeightSize(): boolean {
@@ -293,7 +298,8 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
 
 }
 
-export class DialogItemList extends ListBox<ContentSummaryAndCompareStatus> {
+export class DialogItemList
+    extends ListBox<ContentSummaryAndCompareStatus> {
 
     createItemView(item: ContentSummaryAndCompareStatus, readOnly: boolean): StatusSelectionItem {
         let itemViewer = new ContentSummaryAndCompareStatusViewer();
@@ -332,7 +338,8 @@ export class DialogItemList extends ListBox<ContentSummaryAndCompareStatus> {
     }
 }
 
-export class DialogDependantList extends ListBox<ContentSummaryAndCompareStatus> {
+export class DialogDependantList
+    extends ListBox<ContentSummaryAndCompareStatus> {
 
     constructor(className?: string) {
         super(className);

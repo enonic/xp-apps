@@ -12,7 +12,8 @@ import ModalDialog = api.ui.dialog.ModalDialog;
 import ArrayHelper = api.util.ArrayHelper;
 import ContentTreeSelectorItem = api.content.resource.ContentTreeSelectorItem;
 
-export abstract class IssueDialog extends DependantItemsDialog {
+export abstract class IssueDialog
+    extends DependantItemsDialog {
 
     protected form: IssueDialogForm;
 
@@ -49,7 +50,7 @@ export abstract class IssueDialog extends DependantItemsDialog {
 
         this.getItemList().setCanBeEmpty(true);
 
-        this.publishProcessor.onLoadingStarted(()=> {
+        this.publishProcessor.onLoadingStarted(() => {
             this.loadMask.show();
         });
 
@@ -75,7 +76,7 @@ export abstract class IssueDialog extends DependantItemsDialog {
             ContentSummaryAndCompareStatusFetcher.fetchByIds(
                 this.newItems.map(summary => summary.getContentId())).then((result) => {
 
-                this.setListItems(this.getItemList().getItems().concat(result));
+                this.addListItems(result);
 
                 this.publishProcessor.reloadPublishDependencies(true);
 

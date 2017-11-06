@@ -1,5 +1,5 @@
 import {PublishDialogItemList} from './PublishDialogItemList';
-import {PublishDialogDependantList, isContentSummaryValid} from './PublishDialogDependantList';
+import {isContentSummaryValid, PublishDialogDependantList} from './PublishDialogDependantList';
 import ResolvePublishDependenciesResult = api.content.resource.result.ResolvePublishDependenciesResult;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import CompareStatus = api.content.CompareStatus;
@@ -20,9 +20,9 @@ export class PublishProcessor {
 
     private ignoreItemsChanged: boolean;
 
-    private loadingStartedListeners: {(): void}[] = [];
+    private loadingStartedListeners: { (): void }[] = [];
 
-    private loadingFinishedListeners: {(): void}[] = [];
+    private loadingFinishedListeners: { (): void }[] = [];
 
     constructor(itemList: PublishDialogItemList, dependantList: PublishDialogDependantList) {
         this.itemList = itemList;
@@ -36,6 +36,11 @@ export class PublishProcessor {
             if (!this.ignoreItemsChanged) {
                 this.reloadPublishDependencies();
             }
+        });
+
+        this.itemList.onItemsAdded((items) => {
+            const newIds: string[] = items.map(item => item.getId());
+            this.excludedIds = this.excludedIds.filter(id => newIds.indexOf(id.toString()) < 0);
         });
 
         this.itemList.onExcludeChildrenListChanged(() => {
