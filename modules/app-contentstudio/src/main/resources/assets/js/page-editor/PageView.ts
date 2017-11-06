@@ -33,7 +33,7 @@ import {PageModel} from './PageModel';
 import {DragAndDrop} from './DragAndDrop';
 import {ItemViewFactory} from './ItemViewFactory';
 import {PageViewController} from './PageViewController';
-import {LiveEditPageViewReadyEvent} from "./LiveEditPageViewReadyEvent";
+import {LiveEditPageViewReadyEvent} from './LiveEditPageViewReadyEvent';
 import PageMode = api.content.page.PageMode;
 import PageModeChangedEvent = api.content.page.PageModeChangedEvent;
 import Component = api.content.page.region.Component;
