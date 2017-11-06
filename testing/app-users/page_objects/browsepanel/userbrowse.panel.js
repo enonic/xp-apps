@@ -2,6 +2,7 @@
  * Created on 5/31/2017.
  */
 const page = require('../page');
+const saveBeforeCloseDialog = require('../save.before.close.dialog');
 const elements = require('../../libs/elements');
 
 var panel = {
@@ -182,7 +183,7 @@ var userBrowsePanel = Object.create(page, {
             var nameXpath = panel.rowByName(name);
             return this.waitForVisible(nameXpath, 3000).then(()=> {
                 return this.doClick(nameXpath);
-            }).catch(()=> {
+            }).pause(400).catch(()=> {
                 throw Error('Row with the name ' + name + ' was not found')
             })
         }
@@ -210,6 +211,19 @@ var userBrowsePanel = Object.create(page, {
         value: function (displayName) {
             return this.doClick(`${panel.closeItemTabButton(displayName)}`).catch((err)=> {
                 throw new Error('itemTabButton was not found!' + displayName);
+            })
+        }
+    },
+    doClickOnCloseTabAndWaitGrid: {
+        value: function (displayName) {
+            return this.doClick(`${panel.closeItemTabButton(displayName)}`).catch((err)=> {
+                throw new Error('itemTabButton was not found!' + displayName);
+            }).pause(300).then(()=> {
+                return saveBeforeCloseDialog.isDialogPresent(100);
+            }).then((result)=> {
+                if (result) {
+                    throw new Error('`Save Before Close` dialog should not appear when try to close the ! ' + displayName);
+                }
             }).then(()=> {
                 return this.waitForSpinnerNotVisible(1000);
             }).then(()=> {

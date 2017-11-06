@@ -63,7 +63,6 @@ module.exports = {
             return this.doLoginAndSwitchToUsers(browser);
         })
     },
-
     doSwitchToUsersApp: function (browser) {
         console.log('testUtils:switching to users app...');
         return browser.getTabIds().then(tabs => {
@@ -73,7 +72,6 @@ module.exports = {
             return browsePanel.waitForUsersGridLoaded(5000);
         });
     },
-
     doLoginAndSwitchToUsers: function (browser) {
         return loginPage.doLogin().then(()=> {
             return homePage.waitForXpTourVisible(5000);
@@ -93,7 +91,6 @@ module.exports = {
             return browser.switchTab(this.xpTabs[0]);
         })
     },
-
     selectUserAndOpenWizard: function (displayName) {
         return this.findAndSelectItem(displayName).then(()=> {
             return browsePanel.waitForEditButtonEnabled();
@@ -118,9 +115,9 @@ module.exports = {
             return roleWizard.waitForOpened();
         })
     },
-    saveAndClose: function (displayName) {
-        return wizard.waitAndClickOnSave().then(()=> {
-            return browsePanel.doClickOnCloseTabButton(displayName);
+    saveAndCloseWizard: function (displayName) {
+        return wizard.waitAndClickOnSave().pause(300).then(()=> {
+            return browsePanel.doClickOnCloseTabAndWaitGrid(displayName);
         })
     },
     openWizardAndSaveUserStore: function (userStoreData) {
@@ -130,7 +127,6 @@ module.exports = {
             return userStoreWizard.waitAndClickOnSave()
         }).pause(500);
     },
-
     clickOnNewOpenUserStoreWizard: function () {
         return browsePanel.clickOnNewButton().then(()=> {
             return newPrincipalDialog.waitForOpened();
@@ -148,6 +144,13 @@ module.exports = {
         }).then(()=> {
             return userWizard.waitForOpened();
         });
+    },
+    addSystemUser: function (userData) {
+        return this.clickOnSystemOpenUserWizard().then(()=> {
+            return userWizard.typeData(userData).then(()=> {
+                return this.saveAndCloseWizard(userData.displayName);
+            })
+        })
     },
     clickOnSystemAndOpenGroupWizard: function () {
         return browsePanel.clickOnRowByName('system').then(()=> {
@@ -169,7 +172,7 @@ module.exports = {
             return newPrincipalDialog.clickOnItem('User');
         }).then(()=> {
             return userWizard.waitForOpened();
-        });
+        }).pause(300);
     },
     getDisplayedElements: function (browser, selector) {
         var elems = browser.elements(selector).filter;

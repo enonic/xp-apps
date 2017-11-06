@@ -11,10 +11,16 @@ var panel = {
     itemName: `//h1[@class='title']`,
     itemPath: `//h4[@class='path']`,
     rolesAndGroupDataGroup: `//div[contains(@id,'ItemDataGroup') and child::h2[text()='Roles & Groups']]`,
-    roleList: `//ul[@class='data-list' and child::li[text()='Roles']]`
+    roleList: `//ul[@class='data-list' and child::li[text()='Roles']]`,
+    email: `//ul[@class='data-list' and child::li[text()='Email']]//span`,
 }
 var userStatisticsPanel = Object.create(itemStatistic, {
-    
+
+    email: {
+        get: function () {
+            return `${panel.div}` + `${panel.email}`;
+        }
+    },
     getDisplayNameOfRoles: {
         value: function () {
             let items = `${panel.div}` + `${panel.roleList}` + `${elements.H6_DISPLAY_NAME}`;
@@ -27,6 +33,11 @@ var userStatisticsPanel = Object.create(itemStatistic, {
             })
         }
     },
+    getEmail: {
+        value: function () {
+            return this.getTextFromElements(this.email);
+        }
+    }
 });
 module.exports = userStatisticsPanel;
 

@@ -1,33 +1,30 @@
 /**
- * Created  on 6/29/2017.
+ * Created on 03.11.2017.
  */
-const page = require('./page')
+const page = require('./page');
 const dialog = {
-    container: `//div[contains(@id,'ConfirmationDialog')]`,
+    container: `//div[contains(@id,'SaveBeforeCloseDialog')]`,
     yesButton: `//button[contains(@id,'DialogButton') and child::span[text()='Yes']]`,
-    noButton: `//div[@class='dialog-buttons']//button/span[text()='No']`
+    noButton: `//div[@class='dialog-buttons']//button/span[text()='No']`,
 };
-var confirmationDialog = Object.create(page, {
+var saveBeforeCloseDialog = Object.create(page, {
 
     warningMessage: {
         get: function () {
-            return `${dialog.container}//h6[text()='Are you sure you want to delete this item?']`;
+            return `${dialog.container}//h6[text()='There are unsaved changes, do you want to save them before closing?']`;
         }
     },
-
     yesButton: {
         get: function () {
-            return `${dialog.container}` + `${dialog.yesButton}`;
+            return `${dialog.container}//button[contains(@id,'DialogButton') and child::span[text()='Yes']]`
 
         }
     },
-
     noButton: {
         get: function () {
-            return `${dialog.container}` + `${dialog.yesButton}`;
+            return `${dialog.container}//div[@class='dialog-buttons']//button/span[text()='No']`
         }
     },
-
     clickOnYesButton: {
         value: function () {
             return this.doClick(this.yesButton).then(()=> {
@@ -35,7 +32,6 @@ var confirmationDialog = Object.create(page, {
             });
         }
     },
-
     waitForDialogVisible: {
         value: function (ms) {
             return this.waitForVisible(`${dialog.container}`, ms);
@@ -51,14 +47,18 @@ var confirmationDialog = Object.create(page, {
             return this.isVisible(this.warningMessage, ms);
         }
     },
-
+    isDialogPresent: {
+        value: function (ms) {
+            return this.isVisible(`${dialog.container}`, ms);
+        }
+    },
     clickOnNoButton: {
         value: function () {
             return this.doClick(this.noButton);
         }
     },
 });
-module.exports = confirmationDialog;
+module.exports = saveBeforeCloseDialog;
 
 
 

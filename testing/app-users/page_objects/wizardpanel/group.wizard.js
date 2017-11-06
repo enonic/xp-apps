@@ -88,6 +88,11 @@ var groupWizard = Object.create(wizard, {
             return this.isVisible(this.roleOptionsFilterInput);
         }
     },
+    isDescriptionInputDisplayed: {
+        value: function () {
+            return this.isVisible(this.descriptionInput);
+        }
+    },
     addRoles: {
         value: function (roleDisplayNames) {
             let result = Promise.resolve();
@@ -169,9 +174,9 @@ var groupWizard = Object.create(wizard, {
     },
     removeRole: {
         value: function (displayName) {
-            let selector = `${panel.container}` + `${panel.rolesStepForm}` + `${elements.selectedPrincipalByDisplayName(displayName)}` +
-                           `${elements.REMOVE_ICON}`;
-            return this.clickOnMembersLink().pause(400).then(()=>this.doClick(selector)).pause(300);
+            let removeIcon = `${panel.container}` + `${panel.rolesStepForm}` + `${elements.selectedPrincipalByDisplayName(displayName)}` +
+                             `${elements.REMOVE_ICON}`;
+            return this.clickOnMembersLink().pause(500).then(()=>this.doClick(removeIcon)).pause(1000);
         }
     },
 

@@ -36,7 +36,7 @@ describe('User Store spec - save and edit', function () {
     it(`GIVEN 'user store' wizard is opened WHEN the name that already in use has been typed THEN correct notification message should be present`,
         ()=> {
             return testUtils.clickOnNewOpenUserStoreWizard().then(()=>userStoreWizard.waitForOpened())
-                .then(()=>userStoreWizard.typeDisplayName(userStore.displayName)).then(()=> {
+                .then(()=>userStoreWizard.typeDisplayName(userStore.displayName)).pause(400).then(()=> {
                     return userStoreWizard.waitAndClickOnSave();
                 }).then(()=> {
                     return userStoreWizard.waitForErrorNotificationMessage();
@@ -50,32 +50,30 @@ describe('User Store spec - save and edit', function () {
         () => {
             userStore = userItemsBuilder.buildUserStore(userItemsBuilder.generateRandomName('store'), 'test user store');
             return testUtils.openWizardAndSaveUserStore(userStore).then(()=> {
-                return userBrowsePanel.doClickOnCloseTabButton(userStore.displayName);
+                return userBrowsePanel.doClickOnCloseTabAndWaitGrid(userStore.displayName);
             }).pause(1000)
                 .then(()=>userBrowsePanel.isItemDisplayed(userStore.displayName)).then(result=> {
                     assert.isTrue(result, 'new user store should be present in the grid');
                 })
         });
-    //TODO remove the skip when the xp-apps#205 will be fixed
-    it.skip(
-        `GIVEN User Store wizard is opened WHEN data and permissions have been typed and 'Save' button pressed AND the wizard has been closed THEN 'Save Before' dialog should not be displayed`,
+    //verifies the xp-apps#205 (Save Before Close issue)
+    it(`GIVEN User Store wizard is opened WHEN data and permissions have been typed and 'Save' button pressed AND the wizard has been closed THEN 'Save Before' dialog should not be displayed`,
         () => {
-            let permissions = ['Everyone'];
-            userStore =
-                userItemsBuilder.buildUserStore(userItemsBuilder.generateRandomName('store'), 'test user store', 'Standard ID Provider',
-                    permissions);
-            return testUtils.openWizardAndSaveUserStore(userStore).then(()=> {
-                return userStoreWizard.filterOptionsAndSelectPermission('Everyone');
+            let permissions = ['Everyone', 'Users App'];
+            let testStore =
+                userItemsBuilder.buildUserStore(userItemsBuilder.generateRandomName('store'), 'test user store', null, permissions);
+            return testUtils.clickOnNewOpenUserStoreWizard(testStore).then(()=> {
+                return userStoreWizard.typeData(testStore);
             }).then(()=> {
-                return userBrowsePanel.doClickOnCloseTabButton(userStore.displayName);
+                return userBrowsePanel.doClickOnCloseTabAndWaitGrid(testStore.displayName);
             }).pause(1000)
-                .then(()=>userBrowsePanel.isItemDisplayed(userStore.displayName)).then(result=> {
+                .then(()=>userBrowsePanel.isItemDisplayed(testStore.displayName)).then(result=> {
                     assert.isTrue(result, 'new user store should be present in the grid');
                 })
         });
 
     it(`GIVEN existing 'User Store' WHEN it has been selected and opened THEN correct description should be present`, () => {
-        return userBrowsePanel.clickOnRowByName(userStore.displayName).pause(300).then(()=> {
+        return userBrowsePanel.clickOnRowByName(userStore.displayName).then(()=> {
             return userBrowsePanel.clickOnEditButton();
         }).then(()=> {
             return userStoreWizard.waitForOpened();
@@ -84,10 +82,10 @@ describe('User Store spec - save and edit', function () {
         })
     });
 
-    it(`GIVEN existing 'User Store'(no any users) WHEN it has been selected THEN Delete button should be enabled`, () => {
-        return userBrowsePanel.clickOnRowByName(userStore.displayName).pause(700).then(()=> {
+    it(`GIVEN existing 'User Store'(no any users) WHEN it has been selected THEN 'Delete' button should be enabled`, () => {
+        return userBrowsePanel.clickOnRowByName(userStore.displayName).then(()=> {
             return assert.eventually.equal(userBrowsePanel.isDeleteButtonEnabled(), true,
-                "'Delete' button should be enabled, because of no users are present in the store");
+                "'Delete' button should be enabled, because of no any users were added in the store");
         }).then(()=> {
             return assert.eventually.equal(userBrowsePanel.isNewButtonEnabled(), true, "'New' button should be enabled");
         }).then(()=> {
@@ -97,11 +95,11 @@ describe('User Store spec - save and edit', function () {
 
     it(`GIVEN existing 'User Store' has an user WHEN store has been selected THEN 'Delete' button should be disabled`, () => {
         let userName = userItemsBuilder.generateRandomName('user');
-        testUser = userItemsBuilder.buildUser(userName, '1q2w3e', userItemsBuilder.generateEmail(userName), null);
-        return testUtils.clickOnUserStoreAndOpenUserWizard(userStore.displayName).pause(400).then(()=> {
+        testUser = userItemsBuilder.buildUser(userName, '1q2w3e', userItemsBuilder.generateEmail(userName));
+        return testUtils.clickOnUserStoreAndOpenUserWizard(userStore.displayName).then(()=> {
             return userWizard.typeData(testUser);
         }).then(()=> {
-            return testUtils.saveAndClose(testUser.displayName);
+            return testUtils.saveAndCloseWizard(testUser.displayName);
         }).then(()=> {
             //Delete should be disabled, because of the store has an user
             return expect(userBrowsePanel.isDeleteButtonEnabled()).to.eventually.be.false;
