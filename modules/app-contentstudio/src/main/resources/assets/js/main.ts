@@ -244,7 +244,9 @@ function startApplication() {
 }
 
 function startContentWizard(wizardParams: ContentWizardPanelParams, connectionDetector: LostConnectionDetector) {
-    let wizard = new ContentWizardPanel(wizardParams);
+    const wizard = new ContentWizardPanel(wizardParams);
+    const discardMessage = i18n('notify.content.discard');
+    const firefox = navigator.userAgent.indexOf('Firefox') != -1;
 
     wizard.onDataLoaded(content => {
         let contentType = (<ContentWizardPanel>wizard).getContentType();
@@ -266,19 +268,42 @@ function startContentWizard(wizardParams: ContentWizardPanelParams, connectionDe
                 updateTabTitle(name);
             }
         });
+        if (!firefox) {
+            api.notify.showWarning(discardMessage, true);
+        }
     });
+
+    let discardNotificationId;
 
     api.dom.WindowDOM.get().onBeforeUnload(event => {
         if (wizard.isContentDeleted() || !connectionDetector.isConnected() || !connectionDetector.isAuthenticated()) {
             return;
         }
-        if (wizard.hasUnsavedChanges()) {
-            let message = i18n('dialog.wizard.unsavedChanges');
-            // Hack for IE. returnValue is boolean
+        if (wizard.isNew()) {
+            api.notify.hideNotification(discardNotificationId);
+            discardNotificationId = api.notify.showWarning(discardMessage, true, true);
+            const e: any = event || window.event || {returnValue: ''};
+            e['returnValue'] = discardMessage;
+            return discardMessage;
+        } else if (wizard.hasUnsavedChanges()) {
+            const message = i18n('dialog.wizard.unsavedChanges');
             const e: any = event || window.event || {returnValue: ''};
             e['returnValue'] = message;
             return message;
         }
+    });
+
+    api.dom.WindowDOM.get().onUnload(event => {
+        if (wizard.isNew()) {
+            const request = new api.content.resource.DeleteContentRequest().addContentPath(wizard.getPersistedItem().getPath());
+            if (firefox) {
+                request.setAsync(false);
+            }
+            request.sendAndParse();
+        }
+        const e: any = event || window.event || {returnValue: ''};
+        e['returnValue'] = true;
+        return true;
     });
 
     wizard.onClosed(event => window.close());
