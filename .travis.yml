@@ -6,7 +6,7 @@ jdk:
 
 install: true
 script:
-  - ./gradlew build --stacktrace --no-daemon
+  - ./gradlew build -Pci --stacktrace --no-daemon
 
 cache:
   directories:
