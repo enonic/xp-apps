@@ -8,6 +8,9 @@ var panel = {
     permissionsFilterInput: `//div[contains(@id,'UserStoreAccessControlComboBox')]` + `${loaderComboBox.optionFilterInput}`,
     permissionsLink: `//li[child::a[text()='Permissions']]`,
     aclList: `//ul[contains(@class,'access-control-list')]`,
+    providerComboBox: `//div[contains(@id,'AuthApplicationComboBox')]`,
+    selectedProviderView: "//div[contains(@id,'AuthApplicationSelectedOptionView')]",
+    removeProviderIcon: `//a[contains(@class,'remove')]`,
 
 };
 var userStoreWizard = Object.create(wizard, {
@@ -27,9 +30,24 @@ var userStoreWizard = Object.create(wizard, {
             return `${panel.container}` + `${panel.permissionsFilterInput}`;
         }
     },
+    permissionsDropDownHandle: {
+        get: function () {
+            return `${panel.container}` + `//div[contains(@id,'UserStoreAccessControlComboBox')]` + `${elements.DROP_DOWN_HANDLE}`;
+        }
+    },
+    providerDropDownHandle: {
+        get: function () {
+            return `${panel.container}` + `${panel.providerComboBox}` + `${elements.DROP_DOWN_HANDLE}`;
+        }
+    },
     permissionsLink: {
         get: function () {
             return `${panel.container}` + `${panel.permissionsLink}`;
+        }
+    },
+    removeProviderIcon: {
+        get: function () {
+            return `${panel.container}` + `${panel.selectedProviderView}` + `${panel.removeProviderIcon}`;
         }
     },
 
@@ -74,6 +92,12 @@ var userStoreWizard = Object.create(wizard, {
             return this.waitForVisible(this.displayNameInput, 3000);
         }
     },
+    removeProvider: {
+        value: function () {
+            return this.doClick(this.removeProviderIcon).pause(300);
+        }
+
+    },
     filterOptionsAndSelectIdProvider: {
         value: function (providerName) {
             return this.typeTextInInput(`${panel.providerFilterInput}`, providerName).pause(400).then(()=> {
@@ -96,7 +120,31 @@ var userStoreWizard = Object.create(wizard, {
             })
         }
     },
-
+    clearPrincipalOptionsFilterInput: {
+        value: function () {
+            return this.clearElement(this.permissionsOptionsFilterInput).pause(200);
+        }
+    },
+    clickOnPrincipalComboBoxDropDownHandle: {
+        value: function () {
+            return this.doClick(this.permissionsDropDownHandle).pause(1000);
+        }
+    },
+    clickOnProviderComboBoxDropDownHandle: {
+        value: function () {
+            return this.doClick(this.providerDropDownHandle).pause(1000);
+        }
+    },
+    getPrincipalOptionDisplayNames: {
+        value: function () {
+            return loaderComboBox.getOptionDisplayNames(`${panel.container}`);
+        }
+    },
+    getProviderOptionDisplayNames: {
+        value: function () {
+            return loaderComboBox.getOptionDisplayNames(`${panel.container}` + `${panel.providerComboBox}`);
+        }
+    },
     typeDescription: {
         value: function (description) {
             this.typeTextInInput(this.descriptionInput, description);

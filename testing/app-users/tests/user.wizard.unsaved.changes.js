@@ -14,7 +14,7 @@ const testUtils = require('../libs/test.utils');
 const userItemsBuilder = require('../libs/userItems.builder.js');
 const appConst = require('../libs/app_const');
 
-describe('Edit an user - change name and roles', function () {
+describe('User Wizard and `Save Before Close dialog`', function () {
     this.timeout(70000);
     webDriverHelper.setupBrowser();
     let testUser;

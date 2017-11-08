@@ -1,5 +1,7 @@
 /**
  * Created on 5/30/2017.
+ * verifies the xp-apps#201 (options not filtered, when the name of ID provider has been typed)
+ * https://github.com/enonic/xp-apps/issues/201
  */
 const chai = require('chai');
 chai.use(require('chai-as-promised'));
@@ -38,19 +40,30 @@ describe('User Store wizard - validation and inputs', function () {
                     "`Permissions Options Filter` input should be present");
             })
         });
-    //TODO remove the skip, when the xp-apps#201
-    it.skip(
-        'GIVEN `User Store Wizard` is opened WHEN `Standard ID Provider` has been selected THEN `Provider Options Filter` input should not be displayed',
+    //verifies the xp-apps#201
+    it('GIVEN `User Store` wizard is opened WHEN `Standard ID Provider` has been selected THEN `Provider Options Filter` input should not be displayed',
         () => {
             return testUtils.clickOnNewOpenUserStoreWizard().then(()=> {
-                return userStoreWizard.filterOptionsAndSelectIdProvider('Standard ID Provider');
+                return userStoreWizard.filterOptionsAndSelectIdProvider(appConst.STANDARD_ID_PROVIDER);
             }).then(()=> {
                 return assert.eventually.isFalse(userStoreWizard.isProviderOptionsFilterInputDisplayed(),
                     "`Provider Options Filter` input should not be displayed");
             });
         });
-    it(
-        'GIVEN `User Store Wizard` is opened WHEN `Everyone` role has been selected THEN `Permissions Options Filter` input should be displayed',
+
+    it('GIVEN wizard is opened and `Standard ID Provider` is selected WHEN the provider has been removed THEN `Provider Options Filter` input should be displayed',
+        () => {
+            return testUtils.clickOnNewOpenUserStoreWizard().then(()=> {
+                return userStoreWizard.filterOptionsAndSelectIdProvider(appConst.STANDARD_ID_PROVIDER);
+            }).then(()=> {
+                return userStoreWizard.removeProvider();
+            }).then(()=> {
+                return assert.eventually.isTrue(userStoreWizard.isProviderOptionsFilterInputDisplayed(),
+                    "`Provider Options Filter` input should be displayed");
+            });
+        });
+
+    it('GIVEN `User Store Wizard` is opened WHEN `Everyone` role has been selected THEN `Permissions Options Filter` input should be displayed',
         () => {
             return testUtils.clickOnNewOpenUserStoreWizard().then(()=> {
                 return userStoreWizard.filterOptionsAndSelectPermission('Everyone');
@@ -67,7 +80,7 @@ describe('User Store wizard - validation and inputs', function () {
         });
 
 
-    it(' GIVEN `User Store Wizard` is opened WHEN name has been typed THEN red icon should not be present on the page',
+    it('GIVEN `User Store Wizard` is opened WHEN name has been typed THEN red icon should not be present on the page',
         () => {
             return testUtils.clickOnNewOpenUserStoreWizard().then(()=> {
                 return userStoreWizard.typeDisplayName('test');
