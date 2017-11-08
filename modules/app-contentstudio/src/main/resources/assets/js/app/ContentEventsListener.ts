@@ -2,7 +2,7 @@ import '../api.ts';
 import {NewContentEvent} from './create/NewContentEvent';
 import {ViewContentEvent} from './browse/ViewContentEvent';
 import {SortContentEvent} from './browse/SortContentEvent';
-import {MoveContentEvent} from './browse/MoveContentEvent';
+import {MoveContentEvent} from './move/MoveContentEvent';
 import {ContentEventsProcessor} from './ContentEventsProcessor';
 import EditContentEvent = api.content.event.EditContentEvent;
 import ContentUpdatedEvent = api.content.event.ContentUpdatedEvent;

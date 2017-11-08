@@ -25,7 +25,7 @@ import {ContentUnpublishDialog} from './app/publish/ContentUnpublishDialog';
 import {NewContentDialog} from './app/create/NewContentDialog';
 import {ShowNewContentDialogEvent} from './app/browse/ShowNewContentDialogEvent';
 import {SortContentDialog} from './app/browse/SortContentDialog';
-import {MoveContentDialog} from './app/browse/MoveContentDialog';
+import {MoveContentDialog} from './app/move/MoveContentDialog';
 import {EditPermissionsDialog} from './app/wizard/EditPermissionsDialog';
 import {ContentWizardPanelParams} from './app/wizard/ContentWizardPanelParams';
 import {ContentWizardPanel} from './app/wizard/ContentWizardPanel';
