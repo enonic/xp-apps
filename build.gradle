@@ -6,3 +6,7 @@ allprojects {
     apply plugin: 'com.moowork.node'
     group = 'com.enonic.xp'
 }
+
+task build {
+    dependsOn gradle.includedBuild('lib-admin-ui').task(':buildNoLint')
+}
