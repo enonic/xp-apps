@@ -1,11 +1,12 @@
-var wizard = require('./wizard.panel');
-var elements = require('../../libs/elements');
+const wizard = require('./wizard.panel');
+const elements = require('../../libs/elements');
 const loaderComboBox = require('../inputs/loaderComboBox');
 var panel = {
     container: `//div[contains(@id,'UserStoreWizardPanel')]`,
     providerFilterInput: "//div[contains(@id,'InputView') and descendant::div[text()='ID Provider']]" +
                          `${loaderComboBox.optionFilterInput}`,
     permissionsFilterInput: `//div[contains(@id,'UserStoreAccessControlComboBox')]` + `${loaderComboBox.optionFilterInput}`,
+    permissionsLink: `//li[child::a[text()='Permissions']]`,
     aclList: `//ul[contains(@class,'access-control-list')]`,
 
 };
@@ -26,16 +27,46 @@ var userStoreWizard = Object.create(wizard, {
             return `${panel.container}` + `${panel.permissionsFilterInput}`;
         }
     },
+    permissionsLink: {
+        get: function () {
+            return `${panel.container}` + `${panel.permissionsLink}`;
+        }
+    },
 
     typeDescription: {
         value: function (description) {
             return this.typeTextInInput(this.descriptionInput, description);
         }
     },
+    addPrincipals: {
+        value: function (principalDisplayNames) {
+            let result = Promise.resolve();
+            principalDisplayNames.forEach((displayName)=> {
+                result = result.then(() => this.filterOptionsAndSelectPermission(displayName));
+            });
+            return result;
+        }
+    },
+    clickOnPermissionsTabItem: {
+        value: function () {
+            return this.doClick(this.permissionsLink).pause(300);
+        }
+    },
     typeData: {
-        value: function (data) {
-            return this.typeDisplayName(data.displayName)
-                .then(() => this.typeDescription(data.description));
+        value: function (userstore) {
+            return this.typeDisplayName(userstore.displayName)
+                .then(() => this.typeDescription(userstore.description)).then(()=> {
+
+                    if (userstore.permissions != null) {
+                        return this.clickOnPermissionsTabItem().then(()=> {
+                            return this.addPrincipals(userstore.permissions);
+                        })
+                    }
+                }).then(()=> {
+                    if (userstore.providerName != null) {
+                        return this.filterOptionsAndSelectIdProvider(userstore.providerName);
+                    }
+                }).pause(400);
         }
     },
     waitForOpened: {

@@ -56,7 +56,7 @@ describe('Save a Group and check info on the Statistics Panel', function () {
             }).then(()=> {
                 return groupWizard.waitAndClickOnSave();
             }).then(()=> {
-                return userBrowsePanel.doClickOnCloseTabButton(testGroup.displayName);
+                return userBrowsePanel.doClickOnCloseTabAndWaitGrid(testGroup.displayName);
             }).then(result=> {
                 return testUtils.typeNameInFilterPanel(testGroup.displayName);
             }).then(()=> {

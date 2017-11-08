@@ -1,4 +1,4 @@
-var webDriverHelper = require('./../libs/WebDriverHelper');
+const webDriverHelper = require('./../libs/WebDriverHelper');
 
 function Page() {
 }
@@ -52,7 +52,7 @@ Page.prototype.isSpinnerVisible = function () {
 };
 
 Page.prototype.doClick = function (selector) {
-    return this.getBrowser().elements(selector).then((result)=> {
+    return this.getBrowser().element(selector).then((result)=> {
         return this.getBrowser().click(selector);
     }).catch(function (err) {
         throw Error(err.message + ` ` + selector);

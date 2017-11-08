@@ -75,7 +75,7 @@ describe('Role Wizard and Statistics Panel spec', function () {
                 return roleWizard.removeMember(appConst.SUPER_USER)
             }).then(()=>{
                 // role has been saved and the wizard closed
-                return testUtils.saveAndClose(testRole.displayName);
+                return testUtils.saveAndCloseWizard(testRole.displayName);
             }).then(()=> {
                 return roleStatisticsPanel.getDisplayNameOfMembers();
             }).then((members)=>{

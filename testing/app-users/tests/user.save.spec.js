@@ -47,7 +47,7 @@ describe('Save User spec - save an user', function () {
             }).then(()=> {
                 return userWizard.waitAndClickOnSave();
             }).then(()=> {
-                return userBrowsePanel.doClickOnCloseTabButton(userName);
+                return userBrowsePanel.doClickOnCloseTabAndWaitGrid(userName);
             }).then(()=> {
                 return userBrowsePanel.clickOnExpanderIcon("system");
             }).pause(500).then(()=> {

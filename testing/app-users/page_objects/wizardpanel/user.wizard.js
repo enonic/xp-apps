@@ -1,8 +1,8 @@
 /**
  * Created on 5/30/2017.
  */
-var wizard = require('./wizard.panel');
-var elements = require('../../libs/elements');
+const wizard = require('./wizard.panel');
+const elements = require('../../libs/elements');
 const loaderComboBox = require('../inputs/loaderComboBox');
 
 var panel = {
@@ -169,6 +169,11 @@ var userWizard = Object.create(wizard, {
             }).catch((err)=> {
                 throw new Error('Error when selecting the role-option: ' + roleDisplayName + ' ' + err);
             })
+        }
+    },
+    clearEmailInput: {
+        value: function () {
+            return this.clearElement(this.emailInput);
         }
     },
     typeEmail: {

@@ -8,11 +8,12 @@ module.exports = {
     generateEmail: function (userName) {
         return userName + '@gmail.com'
     },
-    buildUserStore: function (displayName, description, providerName) {
+    buildUserStore: function (displayName, description, providerName, permissions) {
         return {
             displayName: displayName,
             description: description,
             providerName: providerName,
+            permissions: permissions,
         };
     },
     buildUser: function (displayName, password, email, roles) {
