@@ -62,10 +62,8 @@ describe('Role Wizard and Statistics Panel spec', function () {
                 return roleStatisticsPanel.waitForPanelVisible();
             }).then(()=> {
                 return expect(roleStatisticsPanel.getItemName()).to.eventually.be.equal(testRole.displayName);
-                //TODO uncomment  it , when the bug will be fixed
-                // }).then(()=>{
-                //    return expect(userItemStatisticsPanel.getItemPath()).to.eventually.be.equal('/roles/'+testRole.name);
-                // })
+            }).then(()=> {
+                return expect(roleStatisticsPanel.getItemPath()).to.eventually.be.equal('/roles/' + testRole.displayName);
             })
         });
 

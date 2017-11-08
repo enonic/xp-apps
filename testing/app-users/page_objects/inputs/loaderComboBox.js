@@ -6,9 +6,7 @@ var elements = require('../../libs/elements');
 var comboBox = {
     div: `//div[contains(@id,'LoaderComboBox')]`,
     optionFilterInput: `${elements.COMBO_BOX_OPTION_FILTER_INPUT}`,
-    optionByDisplayName: function (displayName) {
-        return `//div[@class='slick-viewport']//div[contains(@id,'ComboBoxDisplayValueViewer') and text()='${displayName}']`
-    },
+    optionDisplayName: "//div[@class='slick-viewport']" + `${elements.H6_DISPLAY_NAME}`,
 };
 var loaderComboBox = Object.create(wizard, {
 
@@ -24,14 +22,27 @@ var loaderComboBox = Object.create(wizard, {
     },
     clickOnOption: {
         value: function (panelDiv, displayName) {
-            return this.doClick(panelDiv + `${elements.slickRowByDisplayName(displayName)}`)
+            return this.doClick(panelDiv + `${elements.slickRowByDisplayName(displayName)}`).pause(500);
         }
     },
     waitForOptionVisible: {
         value: function (panelDiv, displayName) {
-            return this.waitForVisible(panelDiv + `${elements.slickRowByDisplayName(displayName)}`,2000)
+            return this.waitForVisible(panelDiv + `${elements.slickRowByDisplayName(displayName)}`, 2000)
         }
     },
+
+    waitForListExpanded: {
+        value: function (panelDiv) {
+            return this.waitForVisible(panelDiv + `${elements.SLICK_ROW}`, 1000)
+        }
+    },
+    getOptionDisplayNames: {
+        value: function (panelDiv) {
+            return this.waitForListExpanded(panelDiv).then(()=> {
+                return this.getTextFromElements(panelDiv + `${comboBox.optionDisplayName}`)
+            });
+        }
+    }
 
 });
 module.exports = loaderComboBox;
