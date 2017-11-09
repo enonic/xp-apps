@@ -305,7 +305,7 @@ export class PageView
     }
 
     private createCloseTextEditModeEl(): api.dom.Element {
-        let closeButton = new api.dom.AEl('close-edit-mode-button icon-close2');
+        let closeButton = new api.dom.AEl('close-edit-mode-button icon-close');
         closeButton.onClicked((event: MouseEvent) => {
             this.setTextEditMode(false);
             event.stopPropagation();

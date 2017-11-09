@@ -96,7 +96,6 @@ export class WidgetSelectorDropdown extends Dropdown<WidgetViewOption> {
         if (object && object instanceof HTMLElement) {
             const elem = <HTMLElement> object;
             return elem.parentElement.className.indexOf('option-value') > -1
-                   && elem.id.indexOf('InfoWidgetToggleButton') === -1
                    && elem.id.indexOf('DropdownHandle') === -1;
         }
         return false;

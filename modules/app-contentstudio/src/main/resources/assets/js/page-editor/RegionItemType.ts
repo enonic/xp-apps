@@ -24,7 +24,7 @@ export class RegionItemType
             cssSelector: '[data-portal-region]',
             draggable: false,
             cursor: 'pointer',
-            iconCls: api.StyleHelper.COMMON_PREFIX + 'icon-region',
+            iconCls: 'icon-region',
             highlighterStyle: {
                 stroke: 'rgba(20, 20, 20, 1)', // not used
                 strokeDasharray: '4 4',

@@ -68,7 +68,7 @@ export class UserAccessWidgetItemView
 
             this.headerEl = new api.dom.DivEl('user-access-widget-header');
 
-            this.headerEl.appendChild(new api.dom.DivEl('icon-menu4'));
+            this.headerEl.appendChild(new api.dom.DivEl('icon-lock'));
             this.headerEl.appendChild(headerStrEl);
             this.prependChild(this.headerEl);
         }

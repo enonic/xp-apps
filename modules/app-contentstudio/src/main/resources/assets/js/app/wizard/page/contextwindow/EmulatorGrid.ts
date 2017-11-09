@@ -22,7 +22,7 @@ export class EmulatorGrid extends api.ui.grid.Grid<any> {
         rowEl.getEl().setData('height', data.getHeight().toString());
         rowEl.getEl().setData('units', data.getUnits());
 
-        let icon = new api.ui.FontIcon('icon-' + data.getDeviceType());
+        let icon = new api.dom.DivEl('font-icon icon-' + data.getDeviceType());
 
         let title = new api.dom.H5El();
         title.getEl().setInnerHtml(data.getName());

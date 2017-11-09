@@ -89,11 +89,7 @@
 }
 
 .@{_CLS_PREFIX}text-placeholder {
-
-  &:before {
-    content: "\e449";
-  }
-
+  .icon-font-size;
 }
 
 .mce-toolbar-container {
@@ -156,7 +152,7 @@
   margin: 0;
 }
 
-.close-edit-mode-button.icon-close2 {
+.close-edit-mode-button.icon-close {
   position: fixed;
   top: 12px;
   right: 10px;
@@ -164,7 +160,6 @@
   z-index: @z-index-mce-toolbar-close;
   pointer-events: auto;
   color: @admin-dark-gray;
-  font-size: 26px;
   display: none;
   text-decoration: none;
 
