@@ -14,5 +14,7 @@ subprojects {
 }
 
 task buildAll {
-    dependsOn gradle.includedBuild( 'lib-admin-ui' ).task( ':buildNoLint' )
+    if (gradle.libAdminUi) {
+        dependsOn gradle.includedBuild( 'lib-admin-ui' ).task( ':buildNoLint' )
+    }
 }

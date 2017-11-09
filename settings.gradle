@@ -5,7 +5,7 @@ include ':app-contentstudio'
 include ':app-users'
 
 addBuild('../xp')
-addBuild('../lib-admin-ui')
+gradle.ext.libAdminUi = addBuild('../lib-admin-ui')
 
 rootProject.name = 'xp-apps'
 
@@ -31,4 +31,6 @@ def addBuild( name )
     if (dir.directory) {
         includeBuild name
     }
+
+    return dir.exists()
 }
