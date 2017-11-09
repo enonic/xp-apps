@@ -1,6 +1,6 @@
 /**
  *  Created by on 10.09.2017.
- *  
+ *
  * Helper class that encapsulates webdriverio
  * and sets up mocha hooks for easier test writing.
  */
@@ -19,20 +19,25 @@ WebDriverHelper.prototype.setupBrowser = function setupBrowser() {
         var PropertiesReader = require('properties-reader');
         var path = require('path')
         var webdriverio = require('webdriverio');
-        console.log('dir name ' + __dirname)
-        var file = path.join(__dirname, '../browser.properties');
-        var properties = PropertiesReader(file);
+        console.log('dir name: ' + __dirname)
+        var file = path.join(__dirname, '/../browser.properties');
+        var properties = null;
+        try {
+            properties = PropertiesReader(file);
+        } catch (err) {
+            console.log(err);
+        }
+
         var browser_name = properties.get('browser.name');
+        console.log('browser name ##################### ' + browser_name)
+        console.log('browser.height ##################### ' + properties.get('browser.height'))
+        console.log('browser.width ##################### ' + properties.get('browser.width'))
         var platform_name = properties.get('platform');
         var baseUrl = properties.get('base.url');
         var options = {
             desiredCapabilities: {
                 browserName: browser_name,
                 platform: platform_name,
-                loggingPrefs: {
-                    'driver': 'INFO',
-                    'browser': 'INFO'
-                },
                 chromeOptions: {
                     "args": [
                         "--lang=en"
