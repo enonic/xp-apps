@@ -1,7 +1,6 @@
 import '../../api.ts';
 import {OpenMoveDialogEvent} from './OpenMoveDialogEvent';
 import {ContentMoveComboBox} from './ContentMoveComboBox';
-
 import ContentPath = api.content.ContentPath;
 import ContentType = api.schema.content.ContentType;
 import GetContentTypeByNameRequest = api.schema.content.GetContentTypeByNameRequest;
