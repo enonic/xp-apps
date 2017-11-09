@@ -57,6 +57,8 @@ export class TextComponentView
     private authRequest: Promise<void>;
     private editableSourceCode: boolean;
 
+    private debounceEditorValueProcess: Function;
+
     constructor(builder: TextComponentViewBuilder) {
         super(builder.setPlaceholder(new TextPlaceholder()).setViewer(new TextComponentViewer()).setComponent(builder.component));
 
@@ -94,11 +96,9 @@ export class TextComponentView
             }
         };
 
-        this.onMouseLeave(() => {
-            if (this.getEl().hasClass(TextComponentView.EDITOR_FOCUSED_CLASS)) {
-                this.processEditorValue();
-            }
-        });
+        this.debounceEditorValueProcess = api.util.AppHelper.debounce(() => {
+            this.processEditorValue();
+        }, 500, false);
 
         LiveEditPageDialogCreatedEvent.on(handleDialogCreated.bind(this));
     }
@@ -324,6 +324,10 @@ export class TextComponentView
         }, 50);
     }
 
+    private onKeyPressedHandler(e: KeyboardEvent) {
+        this.debounceEditorValueProcess();
+    }
+
     private onKeydownHandler(e: KeyboardEvent) {
         let saveShortcut = (e.keyCode === 83 && (e.ctrlKey || e.metaKey));
 
@@ -371,10 +375,17 @@ export class TextComponentView
 
         new HTMLAreaBuilder().setSelector('div.' + id + ' .tiny-mce-here').setAssetsUri(assetsUri).setInline(true).onCreateDialog(event => {
             this.currentDialogConfig = event.getConfig();
-        }).setFocusHandler(this.onFocusHandler.bind(this)).setBlurHandler(this.onBlurHandler.bind(this)).setKeydownHandler(
-            this.onKeydownHandler.bind(this)).setFixedToolbarContainer('.mce-toolbar-container').setContent(
-            this.getContent()).setEditableSourceCode(this.editableSourceCode).setContentPath(this.getContentPath()).setApplicationKeys(
-            this.getApplicationKeys()).createEditor().then(this.handleEditorCreated.bind(this));
+        }).setFocusHandler(this.onFocusHandler.bind(this))
+            .setBlurHandler(this.onBlurHandler.bind(this))
+            .setKeydownHandler(this.onKeydownHandler.bind(this))
+            .setKeyPressedHandler(this.onKeyPressedHandler.bind(this))
+            .setFixedToolbarContainer('.mce-toolbar-container')
+            .setContent(this.getContent())
+            .setEditableSourceCode(this.editableSourceCode)
+            .setContentPath(this.getContentPath())
+            .setApplicationKeys(this.getApplicationKeys())
+            .createEditor()
+            .then(this.handleEditorCreated.bind(this));
     }
 
     private handleEditorCreated(editor: HtmlAreaEditor) {
