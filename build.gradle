@@ -7,9 +7,12 @@ allprojects {
     group = 'com.enonic.xp'
 }
 
-// If not CI (don't have `ci` property), disable linting in `lib-admin-ui` dependent build
-if (!project.hasProperty('ci')) {
-    task build {
+subprojects {
+    apply plugin: 'java'
+}
+
+task build {
+    if (project.hasProperty('all')) {
         dependsOn gradle.includedBuild( 'lib-admin-ui' ).task( ':buildNoLint' )
     }
 }
