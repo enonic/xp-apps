@@ -4,8 +4,11 @@ include ':app-applications'
 include ':app-contentstudio'
 include ':app-users'
 
-addBuild('../xp')
-addBuild('../lib-admin-ui')
+
+if (startParameter.getProjectProperties().containsKey('all')) {
+    addBuild('../xp')
+    addBuild('../lib-admin-ui')
+}
 
 rootProject.name = 'xp-apps'
 
