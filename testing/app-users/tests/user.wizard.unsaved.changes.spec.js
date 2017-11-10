@@ -18,10 +18,12 @@ describe('User Wizard and `Save Before Close dialog`', function () {
     this.timeout(70000);
     webDriverHelper.setupBrowser();
     let testUser;
+    let browser = webDriverHelper.browser;
 
     it('GIVEN user-wizard is opened AND display name has been typed WHEN close button pressed THEN Save Before Close dialog should appear',
         () => {
             return testUtils.clickOnSystemOpenUserWizard().then(()=> {
+                webDriverHelper.browser.saveScreenshot('./scr/aa.png');
                 return userWizard.typeDisplayName('test-user');
             }).then(()=> {
                 return userBrowsePanel.doClickOnCloseTabButton('test-user');
@@ -54,18 +56,7 @@ describe('User Wizard and `Save Before Close dialog`', function () {
             });
         });
 
-    it('GIVEN existing user is opened WHEN display name has been changed AND `Close` button pressed THEN Save Before Close dialog should appear',
-        () => {
-            return testUtils.selectUserAndOpenWizard(testUser.displayName).then(()=> {
-                return userWizard.typeEmail('new@gmail.com');
-            }).pause(500).then(()=> {
-                return userBrowsePanel.doClickOnCloseTabButton(testUser.displayName);
-            }).then(()=> {
-                return saveBeforeClose.waitForDialogVisible();
-            });
-        });
-
-    it('GIVEN existing user is opened WHEN display name has been changed AND `Close` button pressed THEN Save Before Close dialog should appear',
+    it('GIVEN existing user is opened WHEN e-mail name has been changed AND `Close` button pressed THEN Save Before Close dialog should appear',
         () => {
             return testUtils.selectUserAndOpenWizard(testUser.displayName).then(()=> {
                 return userWizard.typeEmail('new@gmail.com');

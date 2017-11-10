@@ -103,6 +103,13 @@ module.exports = {
             return userWizard.waitForOpened();
         })
     },
+    clickOnRolesFolderAndOpenWizard: function () {
+        return browsePanel.clickOnRowByName('roles').then(()=> {
+            return browsePanel.clickOnNewButton();
+        }).then(()=> {
+            return roleWizard.waitForOpened();
+        });
+    },
     selectRoleAndOpenWizard: function (displayName) {
         return this.findAndSelectItem(displayName).then(()=> {
             return browsePanel.waitForEditButtonEnabled();
@@ -115,6 +122,18 @@ module.exports = {
             return roleWizard.waitForOpened();
         })
     },
+    selectGroupAndOpenWizard: function (displayName) {
+        return this.findAndSelectItem(displayName).then(()=> {
+            return browsePanel.waitForEditButtonEnabled();
+        }).then((result)=> {
+            if (!result) {
+                throw new Error('`Edit` button is disabled!');
+            }
+            return browsePanel.clickOnEditButton();
+        }).then(()=> {
+            return groupWizard.waitForOpened();
+        })
+    },
     saveAndCloseWizard: function (displayName) {
         return wizard.waitAndClickOnSave().pause(300).then(()=> {
             return browsePanel.doClickOnCloseTabAndWaitGrid(displayName);
@@ -125,6 +144,20 @@ module.exports = {
             return userStoreWizard.typeData(userStoreData)
         }).then(()=> {
             return userStoreWizard.waitAndClickOnSave()
+        }).pause(500);
+    },
+    openWizardAndSaveRole: function (role) {
+        return this.clickOnRolesFolderAndOpenWizard().then(()=> {
+            return roleWizard.typeData(role)
+        }).then(()=> {
+            return this.saveAndCloseWizard(role.displayName)
+        }).pause(500);
+    },
+    openWizardAndSaveGroup: function (group) {
+        return this.clickOnSystemAndOpenGroupWizard().then(()=> {
+            return groupWizard.typeData(group)
+        }).then(()=> {
+            return this.saveAndCloseWizard(group.displayName)
         }).pause(500);
     },
     clickOnNewOpenUserStoreWizard: function () {
@@ -182,5 +215,8 @@ module.exports = {
         //if(!elem.isVisible()){
         //    //do something
         //}
+    },
+    saveScreenshot: function (browser, name) {
+        return browser.saveScreenshot('./screenshots/' + name);
     }
 };
