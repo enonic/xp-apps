@@ -9,12 +9,10 @@ allprojects {
 
 subprojects {
     apply plugin: 'java'
-    task buildAll
-    tasks.buildAll.dependsOn(build)
 }
 
-task buildAll {
-    if (gradle.libAdminUi) {
+task build {
+    if (project.hasProperty('all')) {
         dependsOn gradle.includedBuild( 'lib-admin-ui' ).task( ':buildNoLint' )
     }
 }
