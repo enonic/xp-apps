@@ -33,7 +33,7 @@ var userItemStatisticsPanel = Object.create(page, {
             return this.waitForVisible(`${panel.div}`, ms).then(()=> {
                 return this.waitForSpinnerNotVisible(3000);
             }).then(()=> {
-                return console.log('statistics panel is loaded and spinner is not visible')
+                return console.log('user statistics panel is loaded')
             });
         }
     },

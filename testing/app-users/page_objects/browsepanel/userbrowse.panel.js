@@ -95,9 +95,9 @@ var userBrowsePanel = Object.create(page, {
             return this.waitForVisible(`${panel.grid}`, ms).then(()=> {
                 return this.waitForSpinnerNotVisible(3000);
             }).then(()=> {
-                return console.log('spinner is not visible')
+                return console.log('user browse panel is loaded')
             }).catch(err=> {
-                throw new Error('browse panel, grid was not loaded in ' + ms);
+                throw new Error('users browse panel was not loaded in ' + ms);
             });
         }
     },

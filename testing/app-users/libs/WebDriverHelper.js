@@ -23,32 +23,22 @@ WebDriverHelper.prototype.setupBrowser = function setupBrowser() {
         var browser_name = properties.get('browser.name');
         var platform_name = properties.get('platform');
         var baseUrl = properties.get('base.url');
-        console.log('browser name ##################### ' + browser_name)
-        console.log('browser.height ##################### ' + properties.get('browser.height'))
-        console.log('browser.width ##################### ' + properties.get('browser.width'))
-        console.log('browser.height ##################### ' + properties.get('browser.height'))
-        
+        console.log('browser name ##################### ' + browser_name);
         var options = {
             desiredCapabilities: {
                 browserName: browser_name,
                 platform: platform_name,
                 chromeOptions: {
                     "args": [
-                        "--lang=en"
+                        "--lang=en",
+                        "--start-maximized"
                     ],
                 }
             }
         };
         _this.browser = webdriverio
             .remote(options)
-            .init().url(baseUrl)
-            .setViewportSize({
-                width: properties.get('browser.width'),
-                height: properties.get('browser.height')
-            }).windowHandleSize(function (err, res) {
-                console.log(res.value);
-            });
-        //_this.browser.windowHandleSize({width: properties.get('browser.width'), height: properties.get('browser.height')});
+            .init().url(baseUrl);
         return _this.browser;
     });
     after(function () {
