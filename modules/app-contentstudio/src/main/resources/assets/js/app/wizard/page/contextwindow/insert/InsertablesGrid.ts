@@ -48,7 +48,7 @@ export class InsertablesGrid extends api.ui.grid.Grid<Insertable> {
             rowEl.addClass(this.componentGridOptions.rowClass);
         }
 
-        let icon = new api.dom.DivEl('font-icon ' + insertable.getIconCls());
+        let icon = new api.ui.FontIcon(insertable.getIconCls());
 
         let title = new api.dom.H5El();
         title.getEl().setInnerHtml(insertable.getDisplayName());
