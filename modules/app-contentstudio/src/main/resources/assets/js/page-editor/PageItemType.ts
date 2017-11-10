@@ -20,7 +20,7 @@ export class PageItemType
             cssSelector: '[data-portal-component-type=page]',
             draggable: false,
             cursor: 'pointer',
-            iconCls: api.StyleHelper.COMMON_PREFIX + 'icon-page',
+            iconCls: 'icon-page',
             highlighterStyle: {
                 stroke: 'rgba(20, 20, 20, 1)', // not used
                 strokeDasharray: '7 7',
