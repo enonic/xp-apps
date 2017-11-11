@@ -31,7 +31,8 @@ WebDriverHelper.prototype.setupBrowser = function setupBrowser() {
                 chromeOptions: {
                     "args": [
                         "--lang=en",
-                        "--start-maximized"
+                        "--start-maximized",
+                        "--start-fullscreen"
                     ],
                 }
             }
