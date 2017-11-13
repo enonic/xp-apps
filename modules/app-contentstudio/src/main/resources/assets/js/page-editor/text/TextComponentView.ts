@@ -57,8 +57,6 @@ export class TextComponentView
     private authRequest: Promise<void>;
     private editableSourceCode: boolean;
 
-    private debounceEditorValueProcess: Function;
-
     constructor(builder: TextComponentViewBuilder) {
         super(builder.setPlaceholder(new TextPlaceholder()).setViewer(new TextComponentViewer()).setComponent(builder.component));
 
@@ -95,10 +93,6 @@ export class TextComponentView
                 this.modalDialog = event.getModalDialog();
             }
         };
-
-        this.debounceEditorValueProcess = api.util.AppHelper.debounce(() => {
-            this.processEditorValue();
-        }, 500, false);
 
         LiveEditPageDialogCreatedEvent.on(handleDialogCreated.bind(this));
     }
@@ -324,10 +318,6 @@ export class TextComponentView
         }, 50);
     }
 
-    private onKeyPressedHandler(e: KeyboardEvent) {
-        this.debounceEditorValueProcess();
-    }
-
     private onKeydownHandler(e: KeyboardEvent) {
         let saveShortcut = (e.keyCode === 83 && (e.ctrlKey || e.metaKey));
 
@@ -378,7 +368,7 @@ export class TextComponentView
         }).setFocusHandler(this.onFocusHandler.bind(this))
             .setBlurHandler(this.onBlurHandler.bind(this))
             .setKeydownHandler(this.onKeydownHandler.bind(this))
-            .setKeyPressedHandler(this.onKeyPressedHandler.bind(this))
+            .setNodeChangeHandler(this.processEditorValue.bind(this))
             .setFixedToolbarContainer('.mce-toolbar-container')
             .setContent(this.getContent())
             .setEditableSourceCode(this.editableSourceCode)
