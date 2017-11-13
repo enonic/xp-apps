@@ -1,7 +1,6 @@
 import {IssueDialogForm} from './IssueDialogForm';
 import {SchedulableDialog} from '../../dialog/SchedulableDialog';
 import {Issue} from '../Issue';
-import {ProgressBarConfig} from '../../dialog/ProgressBarDialog';
 import {ContentPublishPromptEvent} from '../../browse/ContentPublishPromptEvent';
 import {Router} from '../../Router';
 import {PublicStatusSelectionItem, PublishDialogItemList} from '../../publish/PublishDialogItemList';
@@ -15,6 +14,7 @@ import {PublishRequest} from '../PublishRequest';
 import {PublishRequestItem} from '../PublishRequestItem';
 import {IssueStatusInfoGenerator} from './IssueStatusInfoGenerator';
 import {IssueDetailsDialogButtonRow} from './IssueDetailsDialogDropdownButtonRow';
+import {DependantItemsWithProgressDialogConfig} from '../../dialog/DependantItemsWithProgressDialog';
 import AEl = api.dom.AEl;
 import DialogButton = api.ui.dialog.DialogButton;
 import ContentSummaryAndCompareStatusFetcher = api.content.resource.ContentSummaryAndCompareStatusFetcher;
@@ -53,11 +53,11 @@ export class IssueDetailsDialog
     private static INSTANCE: IssueDetailsDialog = new IssueDetailsDialog();
 
     private constructor() {
-        super(<ProgressBarConfig> {
+        super(<DependantItemsWithProgressDialogConfig> {
                 dialogName: i18n('dialog.issue'),
                 dialogSubName: i18n('dialog.issue.resolving'),
                 dependantsName: '',
-                isProcessingClass: 'is-publishing',
+            processingClass: 'is-publishing',
                 processingLabel: `${i18n('field.progress.publishing')}...`,
                 buttonRow: new IssueDetailsDialogButtonRow(),
                 processHandler: () => {

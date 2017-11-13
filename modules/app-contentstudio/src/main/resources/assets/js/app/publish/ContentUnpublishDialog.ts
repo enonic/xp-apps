@@ -1,7 +1,6 @@
 import '../../api.ts';
-import {ProgressBarDialog, ProgressBarConfig} from '../dialog/ProgressBarDialog';
 import {ContentUnpublishPromptEvent} from '../browse/ContentUnpublishPromptEvent';
-
+import {DependantItemsWithProgressDialog, DependantItemsWithProgressDialogConfig} from '../dialog/DependantItemsWithProgressDialog';
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import UnpublishContentRequest = api.content.resource.UnpublishContentRequest;
 import CompareStatus = api.content.CompareStatus;
@@ -9,19 +8,19 @@ import ContentId = api.content.ContentId;
 import i18n = api.util.i18n;
 
 export class ContentUnpublishDialog
-    extends ProgressBarDialog {
+    extends DependantItemsWithProgressDialog {
 
     constructor() {
 
-        super(<ProgressBarConfig> {
+        super(<DependantItemsWithProgressDialogConfig> {
                 dialogName: i18n('dialog.unpublish'),
                 dialogSubName: i18n('dialog.unpublish.subname'),
                 dependantsName: i18n('dialog.unpublish.dependants'),
-                isProcessingClass: 'is-unpublishing',
+                processingClass: 'is-unpublishing',
                 processingLabel: `${i18n('field.progress.unpublishing')}...`,
                 processHandler: () => {
                     new ContentUnpublishPromptEvent([]).fire();
-                }
+                },
             }
         );
 
