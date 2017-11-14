@@ -6,7 +6,6 @@ import TaskState = api.task.TaskState;
 
 export interface DependantItemsWithProgressDialogConfig
     extends DependantItemsDialogConfig {
-    processingClass: string;
     processingLabel: string;
     processHandler: () => void;
 }
@@ -19,7 +18,6 @@ export class DependantItemsWithProgressDialog
     constructor(config: DependantItemsWithProgressDialogConfig) {
         super(config);
         this.progressManager = new ProgressBarManager({
-            processingClass: config.processingClass,
             processingLabel: config.processingLabel,
             processHandler: config.processHandler,
             unlockControlsHandler: () => {
@@ -30,7 +28,7 @@ export class DependantItemsWithProgressDialog
     }
 
     protected isProgressBarEnabled(): boolean {
-        return this.hasClass(this.progressManager.getProcessingClass());
+        return this.progressManager.isEnabled();
     }
 
     protected pollTask(taskId: TaskId, elapsed: number = 0) {

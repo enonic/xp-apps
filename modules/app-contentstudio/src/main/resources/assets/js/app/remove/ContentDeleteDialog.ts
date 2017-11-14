@@ -25,7 +25,6 @@ export class ContentDeleteDialog
                 dialogName: i18n('dialog.delete'),
                 dialogSubName: i18n('dialog.delete.subname'),
                 dependantsName: i18n('dialog.delete.dependants'),
-            processingClass: 'is-deleting',
                 processingLabel:  `${i18n('field.progress.deleting')}...`,
                 processHandler: () => {
                     new ContentDeletePromptEvent([]).fire();

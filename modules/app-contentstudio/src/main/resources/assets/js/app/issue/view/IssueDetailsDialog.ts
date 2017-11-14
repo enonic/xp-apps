@@ -57,7 +57,6 @@ export class IssueDetailsDialog
                 dialogName: i18n('dialog.issue'),
                 dialogSubName: i18n('dialog.issue.resolving'),
                 dependantsName: '',
-            processingClass: 'is-publishing',
                 processingLabel: `${i18n('field.progress.publishing')}...`,
                 buttonRow: new IssueDetailsDialogButtonRow(),
                 processHandler: () => {

@@ -223,7 +223,7 @@ function startApplication() {
             .open();
     });
 
-    let contentUnpublishDialog = new ContentUnpublishDialog();
+    const contentUnpublishDialog = new ContentUnpublishDialog();
     ContentUnpublishPromptEvent.on((event) => {
         contentUnpublishDialog
             .setContentToUnpublish(event.getModels())

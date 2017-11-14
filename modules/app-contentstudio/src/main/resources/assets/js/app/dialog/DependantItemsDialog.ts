@@ -13,6 +13,7 @@ import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
 import ContentSummaryAndCompareStatusViewer = api.content.ContentSummaryAndCompareStatusViewer;
 import DivEl = api.dom.DivEl;
 import ModalDialogConfig = api.ui.dialog.ModalDialogConfig;
+import WindowDOM = api.dom.WindowDOM;
 
 export interface DependantItemsDialogConfig
     extends ModalDialogConfig {
@@ -172,7 +173,7 @@ export class DependantItemsDialog
                                          el.getHeightWithBorder() +
                                          el.getMarginBottom();
 
-            if (window.innerHeight < bottomPosition) {
+            if (WindowDOM.get().asWindow().innerHeight < bottomPosition) {
                 return true;
             }
         }
