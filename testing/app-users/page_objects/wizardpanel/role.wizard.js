@@ -67,9 +67,10 @@ var roleWizard = Object.create(wizard, {
     removeMember: {
         value: function (displayName) {
             let selector = `${panel.container}` + `${elements.selectedPrincipalByDisplayName(displayName)}` + `${elements.REMOVE_ICON}`;
-            return this.doClick(selector).catch(()=> {
+            return this.doClick(selector).catch((err)=> {
+                this.saveScreenshot('err_remove_member');
                 throw new Error('Remove-icon for the role ' + displayName + ' ' + 'was not found on the  wizard page');
-            }).pause(300);
+            }).pause(500);
         }
     }
 });

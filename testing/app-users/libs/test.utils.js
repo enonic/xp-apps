@@ -11,7 +11,7 @@ const groupWizard = require('../page_objects/wizardpanel/group.wizard');
 const roleWizard = require('../page_objects/wizardpanel/role.wizard');
 const wizard = require('../page_objects/wizardpanel/wizard.panel');
 const newPrincipalDialog = require('../page_objects/browsepanel/new.principal.dialog');
-const filterPanel = require("../page_objects/browsepanel/principal.filter.panel");  
+const filterPanel = require("../page_objects/browsepanel/principal.filter.panel");
 const confirmationDialog = require("../page_objects/confirmation.dialog");
 
 module.exports = {
@@ -61,9 +61,13 @@ module.exports = {
             return this.doSwitchToUsersApp(browser);
         }).catch(()=> {
             return this.doLoginAndSwitchToUsers(browser);
-        })
+        }).catch((err)=> {
+            this.saveScreenshot(browser, "err_login_page");
+            throw  new Error("Login for was not loaded");
+        });
+
     },
-    doSwitchToUsersApp: function (browser) {
+    doSwitchToUsersApp_old: function (browser) {
         console.log('testUtils:switching to users app...');
         return browser.getTabIds().then(tabs => {
             this.xpTabs = tabs;
@@ -72,6 +76,32 @@ module.exports = {
             return browsePanel.waitForUsersGridLoaded(5000);
         });
     },
+    doSwitchToUsersApp: function (browser) {
+        console.log('testUtils:switching to users app...');
+        return browser.getTabIds().then(tabs => {
+            let prevPromise = Promise.resolve(false);
+            tabs.some((tabId)=> {
+                prevPromise = prevPromise.then((isUsers) => {
+                    if (!isUsers) {
+                        return this.switchAndCheckTitle(browser, tabId)
+                    }
+                    return false;
+                });
+            });
+            return prevPromise;
+        }).then(()=> {
+            return browsePanel.waitForUsersGridLoaded(5000);
+        });
+    },
+    switchAndCheckTitle: function (browser, tabId) {
+        return browser.switchTab(tabId).then(()=> {
+            return browser.getTitle().then(title=> {
+                return title == "Users - Enonic XP Admin";
+
+            })
+        });
+    },
+
     doLoginAndSwitchToUsers: function (browser) {
         return loginPage.doLogin().then(()=> {
             return homePage.waitForXpTourVisible(5000);
@@ -217,6 +247,8 @@ module.exports = {
         //}
     },
     saveScreenshot: function (browser, name) {
-        return browser.saveScreenshot('./screenshots/' + name);
+        return browser.saveScreenshot('./build/screenshots/' + name + '.png').then(()=> {
+            return console.log('screenshot saved ' + name);
+        })
     }
 };

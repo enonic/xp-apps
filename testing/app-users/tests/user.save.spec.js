@@ -59,7 +59,7 @@ describe('Save User spec - save an user', function () {
 
     it('WHEN try to save user with name that already in use THEN correct notification message should appear',
         () => {
-            testUser.email = "aa@gmail.com";
+            testUser.email = userItemsBuilder.generateEmail('test');
             return testUtils.clickOnSystemOpenUserWizard().then(()=> {
                 return userWizard.typeData(testUser);
             }).then(()=> {
@@ -67,6 +67,7 @@ describe('Save User spec - save an user', function () {
             }).then(()=> {
                 return userWizard.waitForErrorNotificationMessage();
             }).then(actualMessage=> {
+                testUtils.saveScreenshot(webDriverHelper.browser, 'user-already-exists-message');
                 let expectedMessage = appConst.principalExistsMessage(testUser.displayName);
                 expect(actualMessage).to.be.equal(expectedMessage);
             })
