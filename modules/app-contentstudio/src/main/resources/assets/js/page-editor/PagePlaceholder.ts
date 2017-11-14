@@ -11,60 +11,76 @@ import ContentType = api.schema.content.ContentType;
 export class PagePlaceholder
     extends ItemViewPlaceholder {
 
+    private pageDescriptorPlaceholder: api.dom.DivEl;
+
+    private infoBlock: PagePlaceholderInfoBlock;
+
+    private controllerDropdown: PageDescriptorDropdown;
+
+    private pageView: PageView;
+
     constructor(pageView: PageView) {
         super();
         this.addClassEx('page-placeholder');
 
-        let pageDescriptorPlaceholder = new api.dom.DivEl('page-descriptor-placeholder', api.StyleHelper.getCurrentPrefix());
+        this.pageView = pageView;
 
-        let infoBlock = new PagePlaceholderInfoBlock();
-        let controllerDropdown = this.createControllerDropdown(pageView, infoBlock);
+        this.infoBlock = new PagePlaceholderInfoBlock();
+        this.createControllerDropdown();
 
-        pageDescriptorPlaceholder.appendChild(infoBlock);
-        pageDescriptorPlaceholder.appendChild(controllerDropdown);
+        this.pageDescriptorPlaceholder = new api.dom.DivEl('page-descriptor-placeholder', api.StyleHelper.getCurrentPrefix());
+        this.pageDescriptorPlaceholder.appendChild(this.infoBlock);
+        this.pageDescriptorPlaceholder.appendChild(this.controllerDropdown);
 
-        this.appendChild(pageDescriptorPlaceholder);
+        this.appendChild(this.pageDescriptorPlaceholder);
     }
 
-    private createControllerDropdown(pageView: PageView, infoBlock: PagePlaceholderInfoBlock): PageDescriptorDropdown {
-        let controllerDropdown = new PageDescriptorDropdown(pageView.getLiveEditModel());
-        controllerDropdown.addClassEx('page-descriptor-dropdown');
-        controllerDropdown.hide();
-        controllerDropdown.load();
+    private createControllerDropdown(): PageDescriptorDropdown {
+        this.controllerDropdown = new PageDescriptorDropdown(this.pageView.getLiveEditModel());
+        this.controllerDropdown.addClassEx('page-descriptor-dropdown');
+        this.controllerDropdown.hide();
+        this.controllerDropdown.load();
 
-        this.addControllerDropdownEvents(controllerDropdown, pageView, infoBlock);
+        this.addControllerDropdownEvents();
 
-        return controllerDropdown;
+        return this.controllerDropdown;
     }
 
-    private addControllerDropdownEvents(controllerDropdown: PageDescriptorDropdown,
-                                        pageView: PageView,
-                                        infoBlock: PagePlaceholderInfoBlock) {
-        controllerDropdown.onLoadedData((event: LoadedDataEvent<PageDescriptor>) => {
-            if (event.getData().length > 0) {
-                controllerDropdown.show();
-                let content = pageView.getLiveEditModel().getContent();
-                if (!content.isPageTemplate()) {
-                    new GetContentTypeByNameRequest(content.getType()).sendAndParse().then((contentType: ContentType) => {
-                        infoBlock.setTextForContent(contentType.getDisplayName());
-                    }).catch((reason) => {
-                        infoBlock.setTextForContent(content.getType().toString());
-                        api.DefaultErrorHandler.handle(reason);
-                    }).done();
-                } else {
-                    infoBlock.setBaseHeader();
-                }
-                infoBlock.removeClass('empty');
+    private handler(event: LoadedDataEvent<PageDescriptor>) {
+
+        if (event.getData().length > 0) {
+            this.controllerDropdown.show();
+            let content = this.pageView.getLiveEditModel().getContent();
+            if (!content.isPageTemplate()) {
+                new GetContentTypeByNameRequest(content.getType()).sendAndParse().then((contentType: ContentType) => {
+                    this.infoBlock.setTextForContent(contentType.getDisplayName());
+                }).catch((reason) => {
+                    this.infoBlock.setTextForContent(content.getType().toString());
+                    api.DefaultErrorHandler.handle(reason);
+                }).done();
             } else {
-                controllerDropdown.hide();
-                infoBlock.setNoControllersAvailableText();
-                infoBlock.addClass('empty');
+                this.infoBlock.toggleHeader(true);
             }
-        });
+            this.infoBlock.removeClass('empty');
+        } else {
+            this.controllerDropdown.hide();
+            this.infoBlock.setEmptyText();
+            this.infoBlock.addClass('empty');
+        }
+    }
 
-        controllerDropdown.onClicked((event: MouseEvent) => {
-            controllerDropdown.giveFocus();
+    private addControllerDropdownEvents() {
+        this.controllerDropdown.onLoadedData(this.handler.bind(this));
+
+        this.controllerDropdown.onClicked((event: MouseEvent) => {
+            this.controllerDropdown.giveFocus();
             event.stopPropagation();
         });
+    }
+
+    remove() {
+        this.controllerDropdown.unLoadedData(this.handler.bind(this));
+        return super.remove();
+
     }
 }
