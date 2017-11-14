@@ -232,10 +232,10 @@ export class NonMobileDetailsPanelsManager {
     private requiresFloatingPanelDueToShortWidth(): boolean {
         let splitPanelWidth = this.splitPanelWithGridAndDetails.getEl().getWidthWithBorder();
         if (this.floatingPanelIsShown()) {
-            return ( splitPanelWidth - this.floatingDetailsPanel.getActualWidth() ) < 320;
+            return ( splitPanelWidth - this.floatingDetailsPanel.getActualWidth() ) < 720;
         } else {
             let defaultDetailsPanelWidth = this.splitPanelWithGridAndDetails.getActiveWidthPxOfSecondPanel();
-            return ( splitPanelWidth - defaultDetailsPanelWidth ) < 320;
+            return ( splitPanelWidth - defaultDetailsPanelWidth ) < 720;
         }
     }
 
