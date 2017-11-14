@@ -24,7 +24,8 @@ var newPrincipalDialog = Object.create(page, {
     clickOnCancelButtonTop: {
         value: function () {
             return this.doClick(this.cancelButton).catch((err)=> {
-                throw new Error('Error when cancel button has been pressed ' + err);
+                this.saveScreenshot('err_principal_dialog');
+                throw new Error('Error when try click on cancel button ' + err);
             })
         }
     },
@@ -39,6 +40,7 @@ var newPrincipalDialog = Object.create(page, {
     waitForOpened: {
         value: function () {
             return this.waitForVisible(`${dialog.container}`, 3000).catch(err=> {
+                this.saveScreenshot('err_principal_dialog_load');
                 throw new Error('NewPrincipal dialog was not loaded! ' + err);
             });
         }
@@ -46,6 +48,7 @@ var newPrincipalDialog = Object.create(page, {
     waitForClosed: {
         value: function () {
             return this.waitForNotVisible(`${dialog.container}`, 3000).catch(error=> {
+                this.saveScreenshot('err_principal_dialog_close');
                 throw new Error('New Principal Dialog was not closed');
             });
         }

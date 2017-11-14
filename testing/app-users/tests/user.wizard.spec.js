@@ -32,6 +32,7 @@ describe('User Wizard and Change Password dialog spec', function () {
             }).then(()=> {
                 return assert.eventually.isTrue(userWizard.isEmailInputDisplayed(), "E-mail name input should be displayed");
             }).then(()=> {
+                testUtils.saveScreenshot(webDriverHelper.browser, 'change_pass_button_should_not_be_displayed');
                 return assert.eventually.isTrue(userWizard.isPasswordInputDisplayed(), "`Password` name input should be displayed");
             }).then(()=> {
                 return assert.eventually.isTrue(userWizard.isGroupOptionsFilterInputDisplayed(),

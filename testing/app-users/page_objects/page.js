@@ -133,6 +133,14 @@ Page.prototype.getTextFromInput = function (selector) {
     return this.getBrowser().getAttribute(selector, 'value');
 };
 
+Page.prototype.saveScreenshot = function (name) {
+    return this.getBrowser().saveScreenshot('./build/screenshots/' + name + '.png').then(()=> {
+        console.log('screenshot is saved ' + name);
+    }).catch(err=> {
+        console.log('screenshot was not saved ' + name);
+    })
+};
+
 Page.prototype.getAttribute = function (selector, attributeName) {
     return this.getBrowser().getAttribute(selector, attributeName);
 };

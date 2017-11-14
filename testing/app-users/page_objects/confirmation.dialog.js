@@ -32,7 +32,10 @@ var confirmationDialog = Object.create(page, {
         value: function () {
             return this.doClick(this.yesButton).then(()=> {
                 return this.waitForNotVisible(`${dialog.container}`, 2000);
-            });
+            }).catch((err)=> {
+                this.saveScreenshot('err_close_confirmation');
+                throw new Error('Confirmation dialog must be closed!')
+            })
         }
     },
 

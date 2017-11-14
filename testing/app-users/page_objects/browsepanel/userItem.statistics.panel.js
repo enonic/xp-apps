@@ -17,14 +17,20 @@ var userItemStatisticsPanel = Object.create(page, {
         value: function () {
             return this.waitForVisible(`${panel.div}` + `${panel.header}`, 1000).then(()=> {
                 return this.getText(`${panel.div}` + `${panel.header}` + `${panel.itemName}`);
-            });
+            }).catch((err)=> {
+                this.saveScreenshot('err_statistic_item_name');
+                throw new Error('Item name string was not found');
+            })
         }
     },
     getItemPath: {
         value: function () {
             return this.waitForVisible(`${panel.div}` + `${panel.header}`, 1000).then(()=> {
                 return this.getText(`${panel.div}` + `${panel.header}` + `${panel.itemPath}`);
-            });
+            }).catch((err)=> {
+                this.saveScreenshot('err_statistic_item_path');
+                throw new Error('Item path string was not found');
+            })
 
         }
     },

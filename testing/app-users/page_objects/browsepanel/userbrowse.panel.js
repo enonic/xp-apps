@@ -70,7 +70,8 @@ var userBrowsePanel = Object.create(page, {
         value: function (itemName) {
             return this.waitForVisible(`${panel.rowByName(itemName)}`, 1000).catch((err)=> {
                 console.log("item is not displayed:" + itemName);
-                return false;
+                this.saveScreenshot('err_find_' + itemName)
+                throw new Error('Item was not found! ' + itemName);
             });
         }
     },
@@ -127,6 +128,7 @@ var userBrowsePanel = Object.create(page, {
             return this.waitForEnabled(this.editButton, 1000).then(()=> {
                 return this.doClick(this.editButton);
             }).catch((err)=> {
+                this.saveScreenshot('err_browsepanel_edit');
                 throw new Error('Edit button is not enabled! ' + err);
             })
         }
@@ -136,6 +138,7 @@ var userBrowsePanel = Object.create(page, {
             return this.waitForEnabled(this.deleteButton, 2000).then(()=> {
                 return this.doClick(this.deleteButton);
             }).catch((err)=> {
+                this.saveScreenshot('err_browsepanel_delete');
                 throw new Error('Delete button is not enabled! ' + err);
             })
         }
@@ -162,6 +165,11 @@ var userBrowsePanel = Object.create(page, {
             return this.waitForEnabled(this.deleteButton, 3000);
         }
     },
+    waitForDeleteButtonDisabled: {
+        value: function () {
+            return this.waitForDisabled(this.deleteButton, 3000);
+        }
+    },
 
     isDeleteButtonEnabled: {
         value: function () {
@@ -183,7 +191,8 @@ var userBrowsePanel = Object.create(page, {
             var nameXpath = panel.rowByName(name);
             return this.waitForVisible(nameXpath, 3000).then(()=> {
                 return this.doClick(nameXpath);
-            }).pause(400).catch(()=> {
+            }).pause(400).catch((err)=> {
+                this.saveScreenshot('err_find_' + name);
                 throw Error('Row with the name ' + name + ' was not found')
             })
         }
@@ -193,7 +202,8 @@ var userBrowsePanel = Object.create(page, {
             var nameXpath = panel.rowByName(name);
             return this.waitForVisible(nameXpath, 3000)
                 .catch((err)=> {
-                    throw Error('Row with the name ' + name + ' is not visible after ' + '3000ms')
+                    this.saveScreenshot('err_find_' + name);
+                    throw Error('Row with the name ' + name + ' is not visible after ' + 3000 + 'ms')
                 })
         }
     },
@@ -202,7 +212,8 @@ var userBrowsePanel = Object.create(page, {
             var displayNameXpath = panel.rowByName(displayName);
             return this.waitForVisible(displayNameXpath, 2000).then(()=> {
                 return this.doClick(displayNameXpath);
-            }).catch(()=> {
+            }).catch((err)=> {
+                this.saveScreenshot('err_find_item');
                 throw Error('Row with the displayName ' + displayName + ' was not found')
             })
         }
@@ -210,6 +221,7 @@ var userBrowsePanel = Object.create(page, {
     doClickOnCloseTabButton: {
         value: function (displayName) {
             return this.doClick(`${panel.closeItemTabButton(displayName)}`).catch((err)=> {
+                this.saveScreenshot('err_item_tab');
                 throw new Error('itemTabButton was not found!' + displayName);
             })
         }
@@ -222,7 +234,11 @@ var userBrowsePanel = Object.create(page, {
                 return saveBeforeCloseDialog.isDialogPresent(100);
             }).then((result)=> {
                 if (result) {
-                    throw new Error('`Save Before Close` dialog should not appear when try to close the ! ' + displayName);
+                    this.saveScreenshot('err_save_close_item').then(()=> {
+                        console.log('save before close dialog must not be present');
+                        throw new Error('`Save Before Close` dialog should not appear when try to close the ' + displayName);
+                    });
+
                 }
             }).then(()=> {
                 return this.waitForSpinnerNotVisible(1000);
