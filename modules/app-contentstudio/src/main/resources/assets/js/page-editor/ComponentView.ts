@@ -255,10 +255,10 @@ export class ComponentView<COMPONENT extends Component>
                             .setData(newComponent));
 
                     this.addComponentView(<ComponentView<COMPONENT>>fragmentCmpView, this.getNewItemIndex());
+                    this.remove();
+
                     new ComponentFragmentCreatedEvent(<FragmentComponentView>fragmentCmpView, this.getComponent().getType(),
                         content).fire();
-
-                    this.remove();
                 });
             }));
         }
