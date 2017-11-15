@@ -73,8 +73,8 @@ export class IssueListDialog
     private createDockedPanel(): DockedPanel {
         const dockedPanel = new DockedPanel();
 
-        dockedPanel.addItem(i18n('field.issue.status.open'), true, this.openIssuesPanel);
-        dockedPanel.addItem(i18n('field.issue.status.closed'), true, this.closedIssuesPanel);
+        dockedPanel.addItem(i18n('field.issue.openIssues'), true, this.openIssuesPanel);
+        dockedPanel.addItem(i18n('field.issue.closedIssues'), true, this.closedIssuesPanel);
 
         return dockedPanel;
     }
@@ -206,8 +206,8 @@ export class IssueListDialog
 
     private updateTabAndFiltersLabels() {
         new GetIssueStatsRequest().sendAndParse().then((stats: IssueStatsJson) => {
-            this.updateTabLabel(0, i18n('field.issue.status.open'), stats.open);
-            this.updateTabLabel(1, i18n('field.issue.status.closed'), stats.closed);
+            this.updateTabLabel(0, i18n('field.issue.openIssues'), stats.open);
+            this.updateTabLabel(1, i18n('field.issue.closedIssues'), stats.closed);
             this.openIssuesPanel.updateMyIssuesCheckbox(stats.openCreatedByMe);
             this.openIssuesPanel.updateAssignedToMeCheckbox(stats.openAssignedToMe);
             this.closedIssuesPanel.updateMyIssuesCheckbox(stats.closedCreatedByMe);
