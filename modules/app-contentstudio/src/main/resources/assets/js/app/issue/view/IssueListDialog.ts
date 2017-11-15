@@ -34,7 +34,7 @@ export class IssueListDialog
 
     private constructor() {
         super(<api.ui.dialog.ModalDialogConfig>{title: i18n('text.publishingissues')});
-        this.addClass('issue-list-dialog');
+        this.addClass('issue-list-dialog grey-header');
 
         this.createAction = new Action(i18n('action.newIssueMore'));
 

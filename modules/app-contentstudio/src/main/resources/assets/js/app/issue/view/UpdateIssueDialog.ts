@@ -15,7 +15,7 @@ export class UpdateIssueDialog extends IssueDialog {
     protected constructor() {
         super(i18n('action.editIssue'));
 
-        this.getEl().addClass('update-issue-dialog');
+        this.getEl().addClass('update-issue-dialog grey-header');
 
         this.addCancelButtonToBottom(i18n('action.cancel'));
     }

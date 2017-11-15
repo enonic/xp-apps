@@ -1,7 +1,6 @@
 import '../../api.ts';
 import {OpenMoveDialogEvent} from './OpenMoveDialogEvent';
 import {ContentMoveComboBox} from './ContentMoveComboBox';
-
 import ContentPath = api.content.ContentPath;
 import ContentType = api.schema.content.ContentType;
 import GetContentTypeByNameRequest = api.schema.content.GetContentTypeByNameRequest;
@@ -42,7 +41,7 @@ export class MoveContentDialog
 
         this.listenOpenMoveDialogEvent();
 
-        this.appendChildToContentPanel(this.contentPathSubHeader);
+        this.appendChildToHeader(this.contentPathSubHeader);
         this.appendChildToContentPanel(this.descriptionHeader);
         this.appendChildToContentPanel(this.destinationSearchInput);
         this.addCancelButtonToBottom();

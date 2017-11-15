@@ -65,7 +65,7 @@ export class IssueDetailsDialog
                 },
             }
         );
-        this.addClass('issue-details-dialog');
+        this.addClass('issue-details-dialog grey-header');
 
         this.editAction = new Action(i18n('action.editIssue'));
 

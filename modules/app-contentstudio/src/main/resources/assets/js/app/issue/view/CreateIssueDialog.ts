@@ -25,7 +25,7 @@ export class CreateIssueDialog
     protected constructor() {
         super(i18n('dialog.newIssue'));
 
-        this.getEl().addClass('create-issue-dialog');
+        this.getEl().addClass('create-issue-dialog grey-header');
 
         this.initElements();
         this.initElementsListeners();
