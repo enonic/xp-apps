@@ -18,16 +18,17 @@ export class PagePlaceholderInfoBlock
     }
 
     setTextForContent(contentTypeDisplayName: string) {
-        this.setBaseHeader();
+        this.toggleHeader(true);
         this.line2.setHtml(i18n('live.view.page.notemplates', contentTypeDisplayName));
     }
 
-    setBaseHeader(value?: string) {
-        this.line1.setHtml(api.util.StringHelper.isEmpty(value) ? i18n('live.view.page.selectcontroller') : value);
+    toggleHeader(hasControllers: boolean) {
+        this.line1.setHtml(hasControllers ? i18n('live.view.page.selectcontroller')
+            : i18n('live.view.page.nocontrollers'));
     }
 
-    setNoControllersAvailableText() {
-        this.line1.setHtml(i18n('live.view.page.nocontrollers'));
+    setEmptyText() {
+        this.toggleHeader(false);
         this.line2.setHtml(i18n('live.view.page.addapplications'));
     }
 

@@ -147,6 +147,14 @@ export class LiveEditPageProxy {
 
         placeholderIFrame.onLoaded(() => this.handlePlaceholderIFrameLoadedEvent(placeholderIFrame));
 
+        placeholderIFrame.onAdded(() => {
+            if (this.liveEditModel && this.liveEditModel.getSiteModel()) {
+                this.liveEditModel.getSiteModel().onApplicationAdded(() => {
+                    this.hidePlaceholderAndShowEditor();
+                });
+            }
+        });
+
         return placeholderIFrame;
     }
 
@@ -236,11 +244,6 @@ export class LiveEditPageProxy {
 
             this.hideEditorAndShowPlaceholder();
 
-            this.placeholderIFrame.onAdded(() => {
-                this.liveEditModel.getSiteModel().onApplicationAdded(() => {
-                    this.hidePlaceholderAndShowEditor();
-                });
-            });
         }
     }
 

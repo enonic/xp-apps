@@ -13,10 +13,13 @@ buildscript {
         classpath "com.moowork.gradle:gradle-node-plugin:0.13"
     }
 }
-apply plugin: 'com.moowork.node'
-apply plugin: 'com.moowork.gulp'
-apply plugin: 'java'
 
+plugins {
+    id 'java'
+    id 'maven'
+    id 'com.moowork.node' version '0.13'
+    id 'com.moowork.gulp' version '0.13'
+}
 
 configurations {
     distro
@@ -84,6 +87,7 @@ task localUsersTest( type: GulpTask, dependsOn: [npmInstall] ) {
     inputs.files fileTree( dir: '.' )
     outputs.files fileTree( dir: '/test-results' )
     args = ['test']
+    //systemProperty 'allure.results.directory', 'build/allure-results'
     startServer.mustRunAfter npmInstall
 }
 //tasks.withType(Test)*.finalizedBy allureReport

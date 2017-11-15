@@ -18,29 +18,41 @@ export class DescriptorBasedComponentInspectionPanel<COMPONENT extends Descripto
 
     protected selector: DescriptorBasedDropdown<DESCRIPTOR>;
 
+    private applicationUnavailableListener: (applicationEvent: api.application.ApplicationEvent) => void;
+
+    private applicationAddedListener: (event: api.content.site.ApplicationAddedEvent) => void;
+
+    private applicationRemovedListener: (event: api.content.site.ApplicationRemovedEvent) => void;
+
     constructor(config: DescriptorBasedComponentInspectionPanelConfig) {
         super(config);
 
         this.formView = null;
+
+        this.applicationUnavailableListener = this.applicationUnavailableHandler.bind(this);
+
+        this.applicationAddedListener = this.reloadDescriptorsOnApplicationChange.bind(this);
+
+        this.applicationRemovedListener = this.reloadDescriptorsOnApplicationChange.bind(this);
     }
 
     setModel(liveEditModel: LiveEditModel) {
 
         if (this.liveEditModel !== liveEditModel) {
             if (this.liveEditModel != null && this.liveEditModel.getSiteModel() != null) {
-                let siteModel = this.liveEditModel.getSiteModel();
+                const siteModel = this.liveEditModel.getSiteModel();
 
-                siteModel.unApplicationUnavailable(this.applicationUnavailableHandler.bind(this));
-                siteModel.unApplicationAdded(this.reloadDescriptorsOnApplicationChange.bind(this));
-                siteModel.unApplicationRemoved(this.reloadDescriptorsOnApplicationChange.bind(this));
+                siteModel.unApplicationUnavailable(this.applicationUnavailableListener);
+                siteModel.unApplicationAdded(this.applicationAddedListener);
+                siteModel.unApplicationRemoved(this.applicationRemovedListener);
             }
 
             super.setModel(liveEditModel);
             this.layout();
 
-            liveEditModel.getSiteModel().onApplicationUnavailable(this.applicationUnavailableHandler.bind(this));
-            liveEditModel.getSiteModel().onApplicationAdded(this.reloadDescriptorsOnApplicationChange.bind(this));
-            liveEditModel.getSiteModel().onApplicationRemoved(this.reloadDescriptorsOnApplicationChange.bind(this));
+            liveEditModel.getSiteModel().onApplicationUnavailable(this.applicationUnavailableListener);
+            liveEditModel.getSiteModel().onApplicationAdded(this.applicationAddedListener);
+            liveEditModel.getSiteModel().onApplicationRemoved(this.applicationRemovedListener);
         }
     }
 

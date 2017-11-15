@@ -37,12 +37,12 @@ gulp.task('mocha', function () {
                 //reportOpts: { dir: './build/testoutput/'}
                 reporterOptions: {
                     allure: {
-                        outputDir: '/build/testoutput/'
+                        outputDir: '/build/testoutput/',
+                        targetDir: '/build/allure-results'
                     }
                 },
             }
-        ));
-        //.pipe(gulp.dest('./testoutput'));
+        )).pipe(gulp.dest('./build/screenshots'));
 });
 
 gulp.task('test', function (done) {
