@@ -43,7 +43,7 @@ export class PrincipalBrowseFilterPanel
         return this.searchFacets(true);
     }
 
-    doSearch(elementChanged?: api.dom.Element): wemQ.Promise<void> {
+    protected doSearch(): wemQ.Promise<void> {
         return this.searchFacets();
     }
 
