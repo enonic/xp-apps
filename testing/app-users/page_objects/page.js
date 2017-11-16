@@ -1,4 +1,5 @@
 const webDriverHelper = require('./../libs/WebDriverHelper');
+const path = require('path');
 
 function Page() {
 }
@@ -134,10 +135,11 @@ Page.prototype.getTextFromInput = function (selector) {
 };
 
 Page.prototype.saveScreenshot = function (name) {
-    return this.getBrowser().saveScreenshot('./build/screenshots/' + name + '.png').then(()=> {
+    var screenshotsDir = path.join(__dirname, '/../build/screenshots/');
+    return this.getBrowser().saveScreenshot(screenshotsDir + name + '.png').then(()=> {
         console.log('screenshot is saved ' + name);
     }).catch(err=> {
-        console.log('screenshot was not saved ' + name);
+        console.log('screenshot was not saved ' + screenshotsDir + ' ' + err);
     })
 };
 

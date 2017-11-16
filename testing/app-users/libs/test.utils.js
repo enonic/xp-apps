@@ -247,8 +247,12 @@ module.exports = {
         //}
     },
     saveScreenshot: function (browser, name) {
-        return browser.saveScreenshot('./build/screenshots/' + name + '.png').then(()=> {
+        var path = require('path')
+        var screenshotsDir = path.join(__dirname, '/../build/screenshots/');
+        return browser.saveScreenshot(screenshotsDir + name + '.png').then(()=> {
             return console.log('screenshot saved ' + name);
+        }).catch(err=> {
+            return console.log('screenshot was not saved ' + screenshotsDir + 'utils  ' + err);
         })
     }
 };
