@@ -2,7 +2,6 @@ import '../../../../../api.ts';
 import {WidgetItemView} from '../../WidgetItemView';
 import {DependencyGroup, DependencyType} from './DependencyGroup';
 import {ToggleSearchPanelWithDependenciesEvent} from '../../../../browse/ToggleSearchPanelWithDependenciesEvent';
-
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import ContentDependencyJson = api.content.json.ContentDependencyJson;
 import ActionButton = api.ui.button.ActionButton;
@@ -11,7 +10,8 @@ import NamesAndIconViewSize = api.app.NamesAndIconViewSize;
 import NamesAndIconViewBuilder = api.app.NamesAndIconViewBuilder;
 import i18n = api.util.i18n;
 
-export class DependenciesWidgetItemView extends WidgetItemView {
+export class DependenciesWidgetItemView
+    extends WidgetItemView {
 
     private mainContainer: api.dom.DivEl;
     private nameAndIcon: api.app.NamesAndIconView;
@@ -101,7 +101,7 @@ export class DependenciesWidgetItemView extends WidgetItemView {
         let typeAsString = DependencyType[type].toLowerCase();
         let div = new api.dom.DivEl('dependencies-container ' + typeAsString);
         if (dependencies.length === 0) {
-            this.addClass('no-'  + typeAsString);
+            this.addClass('no-' + typeAsString);
             div.addClass('no-dependencies');
             div.setHtml(i18n('field.widget.noDependencies.' + typeAsString));
         } else {
@@ -152,11 +152,14 @@ export class DependenciesWidgetItemView extends WidgetItemView {
      */
     private resolveDependencies(item: ContentSummaryAndCompareStatus): wemQ.Promise<any> {
 
-        let resolveDependenciesRequest = new api.content.resource.ResolveDependenciesRequest(item.getContentId());
+        let resolveDependenciesRequest = new api.content.resource.ResolveDependenciesRequest([item.getContentId()]);
 
-        return resolveDependenciesRequest.send().then((jsonResponse: api.rest.JsonResponse<ContentDependencyJson>) => {
-            this.initResolvedDependenciesItems(jsonResponse.getResult());
-            this.renderContent(item);
+        return resolveDependenciesRequest.sendAndParse().then((result: api.content.resource.ResolveDependenciesResult) => {
+            const dependencyEntry: api.content.resource.ResolveDependencyResult = result.getDependencies()[0];
+            if (dependencyEntry) {
+                this.initResolvedDependenciesItems(dependencyEntry.getDependency());
+                this.renderContent(item);
+            }
         });
     }
 
