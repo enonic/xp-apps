@@ -32,7 +32,7 @@ export abstract class IssueDialog
 
         this.publishProcessor = new PublishProcessor(this.getItemList(), this.getDependantList());
 
-        this.getEl().addClass('issue-dialog');
+        this.getEl().addClass('issue-dialog grey-header');
 
         this.initForm();
 
