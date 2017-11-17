@@ -13,7 +13,7 @@ WebDriverHelper.prototype.getBrowser = function () {
 
 const makeChromeOptions = headless => ({
     "args": [
-        ...(headless ? ["headless", "disable-gpu"] : []),
+        ...(headless ? ["--headless", "--disable-gpu", "--no-sandbox"] : []),
         "--lang=en",
         "--start-maximized",
         '--disable-extensions',
