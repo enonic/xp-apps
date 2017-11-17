@@ -41,7 +41,7 @@ export class ContentPublishDialog
 
     constructor() {
         super(<DependantItemsWithProgressDialogConfig> {
-                dialogName: i18n('dialog.publish'),
+            title: i18n('dialog.publish'),
                 dialogSubName: i18n('dialog.publish.resolving'),
                 dependantsName: i18n('dialog.publish.dependants'),
                 processingLabel: `${i18n('field.progress.publishing')}...`,

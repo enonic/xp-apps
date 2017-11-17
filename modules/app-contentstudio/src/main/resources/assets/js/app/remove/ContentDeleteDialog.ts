@@ -22,7 +22,7 @@ export class ContentDeleteDialog
 
     constructor() {
         super(<DependantItemsWithProgressDialogConfig> {
-                dialogName: i18n('dialog.delete'),
+            title: i18n('dialog.delete'),
                 dialogSubName: i18n('dialog.delete.subname'),
                 dependantsName: i18n('dialog.delete.dependants'),
                 processingLabel:  `${i18n('field.progress.deleting')}...`,

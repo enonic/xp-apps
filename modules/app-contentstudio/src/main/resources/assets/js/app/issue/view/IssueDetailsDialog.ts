@@ -54,7 +54,7 @@ export class IssueDetailsDialog
 
     private constructor() {
         super(<DependantItemsWithProgressDialogConfig> {
-                dialogName: i18n('dialog.issue'),
+            title: i18n('dialog.issue'),
                 dialogSubName: i18n('dialog.issue.resolving'),
                 dependantsName: '',
                 processingLabel: `${i18n('field.progress.publishing')}...`,

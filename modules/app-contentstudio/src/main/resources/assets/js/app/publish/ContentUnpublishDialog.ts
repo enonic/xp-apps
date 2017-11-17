@@ -13,7 +13,7 @@ export class ContentUnpublishDialog
     constructor() {
 
         super(<DependantItemsWithProgressDialogConfig> {
-                dialogName: i18n('dialog.unpublish'),
+            title: i18n('dialog.unpublish'),
                 dialogSubName: i18n('dialog.unpublish.subname'),
                 dependantsName: i18n('dialog.unpublish.dependants'),
                 processingLabel: `${i18n('field.progress.unpublishing')}...`,
