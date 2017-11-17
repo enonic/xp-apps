@@ -53,8 +53,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         this.EDIT_CONTENT = new EditContentAction(grid);
         this.DELETE_CONTENT = new DeleteContentAction(grid);
         this.DUPLICATE_CONTENT = new DuplicateContentAction(grid);
-        this.MOVE_CONTENT = new MoveContentAction(grid)
-            .setIconClass('move-action');
+        this.MOVE_CONTENT = new MoveContentAction(grid);
         this.SORT_CONTENT = new SortContentAction(grid);
         this.PUBLISH_CONTENT = new PublishContentAction(grid);
         this.PUBLISH_TREE_CONTENT = new PublishTreeContentAction(grid);

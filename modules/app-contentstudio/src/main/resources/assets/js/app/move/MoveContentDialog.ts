@@ -1,7 +1,6 @@
 import '../../api.ts';
 import {OpenMoveDialogEvent} from './OpenMoveDialogEvent';
 import {ContentMoveComboBox} from './ContentMoveComboBox';
-import {ContentMovePromptEvent} from '../browse/ContentMovePromptEvent';
 import ContentPath = api.content.ContentPath;
 import ContentType = api.schema.content.ContentType;
 import GetContentTypeByNameRequest = api.schema.content.GetContentTypeByNameRequest;
@@ -105,7 +104,6 @@ export class MoveContentDialog
     private initMoveAction() {
         this.addClickIgnoredElement(this.moveConfirmationDialog);
         this.moveAction = new Action(i18n('action.move'), '')
-            .setIconClass('move-action')
             .onExecuted(() => {
                 if (this.checkContentWillMoveOutOfSite()) {
                     this.showConfirmationDialog();
@@ -120,7 +118,7 @@ export class MoveContentDialog
         this.progressManager = new ProgressBarManager({
             processingLabel: `${i18n('field.progress.moving')}...`,
             processHandler: () => {
-                new ContentMovePromptEvent([]).fire();
+                new OpenMoveDialogEvent([]).fire();
             },
             managingElement: this
         });
