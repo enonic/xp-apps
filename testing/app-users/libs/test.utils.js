@@ -83,7 +83,7 @@ module.exports = {
             tabs.some((tabId)=> {
                 prevPromise = prevPromise.then((isUsers) => {
                     if (!isUsers) {
-                        return this.switchAndCheckTitle(browser, tabId)
+                        return this.switchAndCheckTitle(browser, tabId, "Users - Enonic XP Admin");
                     }
                     return false;
                 });
@@ -93,10 +93,27 @@ module.exports = {
             return browsePanel.waitForUsersGridLoaded(5000);
         });
     },
-    switchAndCheckTitle: function (browser, tabId) {
+    doSwitchToHome: function (browser) {
+        console.log('testUtils:switching to Home page...');
+        return browser.getTabIds().then(tabs => {
+            let prevPromise = Promise.resolve(false);
+            tabs.some((tabId)=> {
+                prevPromise = prevPromise.then((isUsers) => {
+                    if (!isUsers) {
+                        return this.switchAndCheckTitle(browser, tabId, "Enonic XP Home");
+                    }
+                    return false;
+                });
+            });
+            return prevPromise;
+        }).then(()=> {
+            return homePage.waitForLoaded(2000);
+        });
+    },
+    switchAndCheckTitle: function (browser, tabId, reqTitle) {
         return browser.switchTab(tabId).then(()=> {
             return browser.getTitle().then(title=> {
-                return title == "Users - Enonic XP Admin";
+                return title == reqTitle;
 
             })
         });
@@ -118,7 +135,7 @@ module.exports = {
 
     doCloseUsersApp: function (browser) {
         return browser.close().pause(300).then(()=> {
-            return browser.switchTab(this.xpTabs[0]);
+            return this.doSwitchToHome(browser);
         })
     },
     selectUserAndOpenWizard: function (displayName) {
