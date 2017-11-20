@@ -38,6 +38,7 @@ WebDriverHelper.prototype.setupBrowser = function setupBrowser() {
         var baseUrl = properties.get('base.url');
         var chromeBinPath = properties.get('chrome.bin.path');
         var isHeadless = properties.get('is.headless');
+        console.log('is Headless ##################### ' + isHeadless);
         console.log('browser name ##################### ' + browser_name);
         var options = {
             desiredCapabilities: {
@@ -50,6 +51,7 @@ WebDriverHelper.prototype.setupBrowser = function setupBrowser() {
         _this.browser = webdriverio
             .remote(options)
             .init().url(baseUrl);
+        console.log('webdriverio #####################  ' + 'is  initialized!');
         return _this.browser;
     });
     after(function () {
