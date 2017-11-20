@@ -15,9 +15,8 @@ const makeChromeOptions = headless => ({
     "args": [
         ...(headless ? ["--headless", "--disable-gpu", "--no-sandbox"] : []),
         "--lang=en",
-        "--start-maximized",
         '--disable-extensions',
-        "--start-fullscreen"
+        'window-size=1920,1100'
     ]
 });
 
