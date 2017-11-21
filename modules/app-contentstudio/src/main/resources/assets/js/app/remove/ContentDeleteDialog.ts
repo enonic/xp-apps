@@ -6,6 +6,10 @@ import {ContentDeletePromptEvent} from '../browse/ContentDeletePromptEvent';
 import CompareStatus = api.content.CompareStatus;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import i18n = api.util.i18n;
+import {DeleteDialogItemList} from './DeleteDialogItemList';
+import ArrayHelper = api.util.ArrayHelper;
+import {DeleteItemViewer} from './DeleteItemViewer';
+import ContentDependencyGroupJson = api.content.json.ContentDependencyGroupJson;
 
 export class ContentDeleteDialog
     extends ProgressBarDialog {
@@ -20,13 +24,15 @@ export class ContentDeleteDialog
 
     protected autoUpdateTitle: boolean = true;
 
+    private messageId: string;
+
     constructor() {
         super(<ProgressBarConfig> {
                 dialogName: i18n('dialog.delete'),
                 dialogSubName: i18n('dialog.delete.subname'),
                 dependantsName: i18n('dialog.delete.dependants'),
                 isProcessingClass: 'is-deleting',
-                processingLabel:  `${i18n('field.progress.deleting')}...`,
+                processingLabel: `${i18n('field.progress.deleting')}...`,
                 processHandler: () => {
                     new ContentDeletePromptEvent([]).fire();
                 }
@@ -57,6 +63,50 @@ export class ContentDeleteDialog
         this.updateSubTitle();
 
         this.manageDescendants();
+    }
+
+    protected createItemList(): DeleteDialogItemList {
+        return new DeleteDialogItemList();
+    }
+
+    protected getItemList(): DeleteDialogItemList {
+        return <DeleteDialogItemList>super.getItemList();
+    }
+
+    protected manageInboundDependencies(contents: ContentSummaryAndCompareStatus[]) {
+        new api.content.resource.ResolveDependenciesRequest(contents.map(content => content.getContentId())).sendAndParse().then(
+            (result: api.content.resource.ResolveDependenciesResult) => {
+
+                const lockedItems: ContentId[] = result.getDependencies()
+                     .filter((dependencyResult) => {
+                         const inbounds: ContentDependencyGroupJson[] = dependencyResult.getDependency().inbound;
+                         return inbounds && inbounds.length > 0;
+                     })
+                     .map(dependencyResult => dependencyResult.getContentId()) || [];
+
+                const block: boolean = lockedItems.length > 0;
+
+                if (block) {
+                    this.messageId = api.notify.showWarning(
+                        i18n('dialog.delete.dependency.warning'), false);
+                }
+
+                this.getItemList().getItemViews().forEach((itemView) => {
+                    if (ArrayHelper.contains(lockedItems, itemView.getBrowseItem().getModel().getContentId())) {
+                        const dependency = result.getById(itemView.getBrowseItem().getModel().getContentId());
+                        if (dependency.getDependency().inbound[0]) {
+                            let value = 0;
+
+                            dependency.getDependency().inbound.forEach((inbound) => {
+                                value += inbound.count;
+                            });
+
+                            (<DeleteItemViewer>itemView.getViewer()).setInboundDependencyCount(value);
+                        }
+                    }
+
+                });
+            });
     }
 
     protected manageDescendants() {
@@ -101,11 +151,16 @@ export class ContentDeleteDialog
     close() {
         super.close();
         this.instantDeleteCheckbox.setChecked(false);
+        if (this.messageId) {
+            api.notify.NotifyManager.get().hide(this.messageId);
+            this.messageId = '';
+        }
     }
 
     setContentToDelete(contents: ContentSummaryAndCompareStatus[]): ContentDeleteDialog {
         this.manageContentToDelete(contents);
         this.manageInstantDeleteStatus(contents);
+        this.manageInboundDependencies(contents);
         this.manageDescendants();
 
         return this;
