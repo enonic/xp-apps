@@ -6,7 +6,7 @@ var elements = require('../../libs/elements');
 var wizard = {
     displayNameInput: `//input[contains(@name,'displayName')]`,
     saveButton: `//button[contains(@id,'ActionButton') and child::span[text()='Save']]`,
-    deleteButton: `//button[contains(@id,'ActionButton')) and child::span[text()='Delete']`,
+    deleteButton: `//button[contains(@id,'ActionButton') and child::span[text()='Delete']]`,
 }
 var wizardPanel = Object.create(page, {
 
@@ -64,10 +64,14 @@ var wizardPanel = Object.create(page, {
             })
         }
     },
-   
-    doClickOnDelete: {
+
+    clickOnDelete: {
         value: function () {
-            return this.doClick(this.deleteButton);
+            return this.doClick(this.deleteButton).catch(err=> {
+                console.log(err);
+                this.saveScreenshot('err_delete_wizard');
+                throw new Error('Error when Delete button has been clicked ' + err);
+            });
         }
     },
     isItemInvalid: {
@@ -106,6 +110,12 @@ var wizardPanel = Object.create(page, {
             }).catch((err)=> {
                 throw new Error(err);
             });
+        }
+    },
+    doCatch: {
+        value: function (screenshotName, errString) {
+            this.saveScreenshot(screenshotName);
+            throw new Error(errString);
         }
     }
 

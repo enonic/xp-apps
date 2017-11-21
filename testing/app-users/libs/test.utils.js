@@ -53,13 +53,20 @@ module.exports = {
             return browsePanel.waitForSpinnerNotVisible();
         })
     },
+    confirmDelete: ()=> {
+        return confirmationDialog.waitForDialogVisible().then(()=> {
+            return confirmationDialog.clickOnYesButton();
+        }).then(()=> {
+            return browsePanel.waitForSpinnerNotVisible();
+        });
+    },
     navigateToUsersApp: function (browser) {
         return launcherPanel.waitForPanelVisible(1000).then(()=> {
             console.log("'user browse panel' should be loaded");
             return launcherPanel.clickOnUsersLink();
         }).then(()=> {
             return this.doSwitchToUsersApp(browser);
-        }).catch(()=> {
+        }).catch((err)=> {
             return this.doLoginAndSwitchToUsers(browser);
         }).catch((err)=> {
             this.saveScreenshot(browser, "err_login_page");
