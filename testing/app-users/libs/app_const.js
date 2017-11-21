@@ -31,4 +31,8 @@ module.exports = Object.freeze({
         return `Principal [${displayName}] could not be created. A principal with that name already exists`
     },
 
+    principalDeletedMessage: function (displayName) {
+        return `Principal "group:system:${displayName}" is deleted`
+    },
+
 });
