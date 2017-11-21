@@ -37,7 +37,6 @@ module.exports = {
             description: description,
             members: members,
             roles: roles,
-        }
-            ;
+        };
     },
 };

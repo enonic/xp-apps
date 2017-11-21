@@ -1,4 +1,5 @@
 const webDriverHelper = require('./../libs/WebDriverHelper');
+const path = require('path');
 
 function Page() {
 }
@@ -134,10 +135,11 @@ Page.prototype.getTextFromInput = function (selector) {
 };
 
 Page.prototype.saveScreenshot = function (name) {
-    return this.getBrowser().saveScreenshot('./build/screenshots/' + name + '.png').then(()=> {
+    var screenshotsDir = path.join(__dirname, '/../build/screenshots/');
+    return this.getBrowser().saveScreenshot(screenshotsDir + name + '.png').then(()=> {
         console.log('screenshot is saved ' + name);
     }).catch(err=> {
-        console.log('screenshot was not saved ' + name);
+        console.log('screenshot was not saved ' + screenshotsDir + ' ' + err);
     })
 };
 
@@ -151,8 +153,16 @@ Page.prototype.waitForNotificationMessage = function () {
     })
 };
 
+Page.prototype.waitForExpectedNotificationMessage = function (expectedMessage) {
+    let selector = `//div[contains(@id,'NotificationMessage')]//div[contains(@class,'notification-content')]//span[contains(.,'${expectedMessage}')]`
+    return this.getBrowser().waitForVisible(selector, 3000).catch((err)=> {
+        this.saveScreenshot('err_notification_mess');
+        throw new Error('expected notification message was not shown! ' + err);
+    })
+};
+
 Page.prototype.waitForErrorNotificationMessage = function () {
-    var selector = "//div[contains(@id,'NotificationMessage') and @class='notification error']//div[contains(@class,'notification-content')]/span";
+    var selector = `//div[contains(@id,'NotificationMessage') and @class='notification error']//div[contains(@class,'notification-content')]/span`;
     return this.getBrowser().waitForVisible(selector, 3000).then(()=> {
         return this.getBrowser().getText(selector);
     })

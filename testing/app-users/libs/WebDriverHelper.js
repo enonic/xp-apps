@@ -7,6 +7,19 @@ function WebDriverHelper() {
     this.browser = null;
 }
 
+WebDriverHelper.prototype.getBrowser = function () {
+    return this.browser;
+}
+
+const makeChromeOptions = headless => ({
+    "args": [
+        ...(headless ? ["--headless", "--disable-gpu", "--no-sandbox"] : []),
+        "--lang=en",
+        '--disable-extensions',
+        'window-size=1920,1100'
+    ]
+});
+
 /**
  * Sets up a before and after mocha hook
  * that initialize and terminate the webdriverio session.
@@ -14,7 +27,6 @@ function WebDriverHelper() {
 WebDriverHelper.prototype.setupBrowser = function setupBrowser() {
     var _this = this;
     before(function () {
-        //screenshotPath: `${__dirname}/../../screenshots/`,
         var PropertiesReader = require('properties-reader');
         var path = require('path')
         var webdriverio = require('webdriverio');
@@ -23,22 +35,22 @@ WebDriverHelper.prototype.setupBrowser = function setupBrowser() {
         var browser_name = properties.get('browser.name');
         var platform_name = properties.get('platform');
         var baseUrl = properties.get('base.url');
+        var chromeBinPath = properties.get('chrome.bin.path');
+        var isHeadless = properties.get('is.headless');
+        console.log('is Headless ##################### ' + isHeadless);
         console.log('browser name ##################### ' + browser_name);
         var options = {
             desiredCapabilities: {
                 browserName: browser_name,
                 platform: platform_name,
-                chromeOptions: {
-                    "args": [
-                        "--lang=en",
-                        "--start-maximized"
-                    ],
-                }
+                binary: chromeBinPath,
+                chromeOptions: makeChromeOptions(isHeadless)
             }
         };
         _this.browser = webdriverio
             .remote(options)
             .init().url(baseUrl);
+        console.log('webdriverio #####################  ' + 'is  initialized!');
         return _this.browser;
     });
     after(function () {

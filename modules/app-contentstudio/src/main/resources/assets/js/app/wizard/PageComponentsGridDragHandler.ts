@@ -19,7 +19,7 @@ import Element = api.dom.Element;
 export class PageComponentsGridDragHandler
     extends GridDragHandler<ItemView> {
 
-    protected handleDragInit(e: DragEvent, dd: DragEventData) {
+    protected handleDragInit(e: DragEvent) {
         let row = this.getRowByTarget(new ElementHelper(<HTMLElement>e.target));
         let nodes = this.contentGrid.getRoot().getCurrentRoot().treeToList();
         let draggedNode = nodes[row.getSiblingIndex()];
@@ -100,10 +100,6 @@ export class PageComponentsGridDragHandler
 
     protected getModelId(model: ItemView) {
         return model ? model.getItemId() : null;
-    }
-
-    protected handleMovements(rowDataId: any, moveBeforeRowDataId: any) {
-        return;
     }
 
     protected moveIntoNewParent(item: TreeNode<ItemView>, insertBefore: number, data: TreeNode<ItemView>[]) {

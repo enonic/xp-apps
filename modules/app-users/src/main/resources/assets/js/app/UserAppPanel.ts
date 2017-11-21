@@ -132,8 +132,9 @@ export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
         });
     }
 
-    protected handleBrowse(event: ShowBrowsePanelEvent) {
-        super.handleBrowse(event);
+    protected handleBrowse() {
+        super.handleBrowse();
+
         this.getAppBarTabMenu().deselectNavigationItem();
     }
 

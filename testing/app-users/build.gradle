@@ -87,8 +87,6 @@ task localUsersTest( type: GulpTask, dependsOn: [npmInstall] ) {
     inputs.files fileTree( dir: '.' )
     outputs.files fileTree( dir: '/test-results' )
     args = ['test']
-    //systemProperty 'allure.results.directory', 'build/allure-results'
-    startServer.mustRunAfter npmInstall
 }
 //tasks.withType(Test)*.finalizedBy allureReport
 downloadAndUsersTest.finalizedBy = ['stopServer']

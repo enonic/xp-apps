@@ -34,7 +34,6 @@ gulp.task('mocha', function () {
             {
                 reporter: 'mocha-allure-reporter',
                 outputDir: '/build/testoutput/',
-                //reportOpts: { dir: './build/testoutput/'}
                 reporterOptions: {
                     allure: {
                         outputDir: '/build/testoutput/',
@@ -45,9 +44,9 @@ gulp.task('mocha', function () {
         )).pipe(gulp.dest('./build/screenshots'));
 });
 
-gulp.task('test', function (done) {
+gulp.task('test', function (callback) {
     return runSequence([ 'selenium'], 'mocha', function () {
         selenium.child.kill();
-        done();
+        callback();
     });
 });

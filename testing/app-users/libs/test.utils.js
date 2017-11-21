@@ -53,13 +53,20 @@ module.exports = {
             return browsePanel.waitForSpinnerNotVisible();
         })
     },
+    confirmDelete: ()=> {
+        return confirmationDialog.waitForDialogVisible().then(()=> {
+            return confirmationDialog.clickOnYesButton();
+        }).then(()=> {
+            return browsePanel.waitForSpinnerNotVisible();
+        });
+    },
     navigateToUsersApp: function (browser) {
         return launcherPanel.waitForPanelVisible(1000).then(()=> {
             console.log("'user browse panel' should be loaded");
             return launcherPanel.clickOnUsersLink();
         }).then(()=> {
             return this.doSwitchToUsersApp(browser);
-        }).catch(()=> {
+        }).catch((err)=> {
             return this.doLoginAndSwitchToUsers(browser);
         }).catch((err)=> {
             this.saveScreenshot(browser, "err_login_page");
@@ -83,7 +90,7 @@ module.exports = {
             tabs.some((tabId)=> {
                 prevPromise = prevPromise.then((isUsers) => {
                     if (!isUsers) {
-                        return this.switchAndCheckTitle(browser, tabId)
+                        return this.switchAndCheckTitle(browser, tabId, "Users - Enonic XP Admin");
                     }
                     return false;
                 });
@@ -93,10 +100,27 @@ module.exports = {
             return browsePanel.waitForUsersGridLoaded(5000);
         });
     },
-    switchAndCheckTitle: function (browser, tabId) {
+    doSwitchToHome: function (browser) {
+        console.log('testUtils:switching to Home page...');
+        return browser.getTabIds().then(tabs => {
+            let prevPromise = Promise.resolve(false);
+            tabs.some((tabId)=> {
+                prevPromise = prevPromise.then((isUsers) => {
+                    if (!isUsers) {
+                        return this.switchAndCheckTitle(browser, tabId, "Enonic XP Home");
+                    }
+                    return false;
+                });
+            });
+            return prevPromise;
+        }).then(()=> {
+            return homePage.waitForLoaded(2000);
+        });
+    },
+    switchAndCheckTitle: function (browser, tabId, reqTitle) {
         return browser.switchTab(tabId).then(()=> {
             return browser.getTitle().then(title=> {
-                return title == "Users - Enonic XP Admin";
+                return title == reqTitle;
 
             })
         });
@@ -118,7 +142,7 @@ module.exports = {
 
     doCloseUsersApp: function (browser) {
         return browser.close().pause(300).then(()=> {
-            return browser.switchTab(this.xpTabs[0]);
+            return this.doSwitchToHome(browser);
         })
     },
     selectUserAndOpenWizard: function (displayName) {
@@ -247,8 +271,12 @@ module.exports = {
         //}
     },
     saveScreenshot: function (browser, name) {
-        return browser.saveScreenshot('./build/screenshots/' + name + '.png').then(()=> {
+        var path = require('path')
+        var screenshotsDir = path.join(__dirname, '/../build/screenshots/');
+        return browser.saveScreenshot(screenshotsDir + name + '.png').then(()=> {
             return console.log('screenshot saved ' + name);
+        }).catch(err=> {
+            return console.log('screenshot was not saved ' + screenshotsDir + 'utils  ' + err);
         })
     }
 };
