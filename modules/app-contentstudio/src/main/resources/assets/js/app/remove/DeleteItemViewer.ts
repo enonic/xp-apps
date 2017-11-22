@@ -11,28 +11,21 @@ import {ToggleSearchPanelWithDependenciesGlobalEvent} from '../browse/ToggleSear
 export class DeleteItemViewer
     extends ContentSummaryAndCompareStatusViewer {
 
-    private inboundDependencyEl: AEl;
-
     constructor() {
         super();
         this.addClass('delete-item-viewer');
     }
 
-    doLayout(object: ContentSummaryAndCompareStatus) {
-        super.doLayout(object);
-
-        this.inboundDependencyEl = new AEl('inbound-dependency');
-        this.appendChild(this.inboundDependencyEl);
-
-    }
-
     setInboundDependencyCount(value: number) {
-        this.inboundDependencyEl.setHtml(value > 0
-            ? value == 1
-                                             ? i18n('dialog.delete.dependency') + ': ' + value
-                                             : i18n('dialog.delete.dependencies') + ': ' + value
-            : '');
-        this.inboundDependencyEl.onClicked(() => {
+        if (value == 0) {
+            return;
+        }
+
+        const inboundDependencyEl = new AEl('inbound-dependency');
+
+        inboundDependencyEl.setHtml((value == 1 ? i18n('dialog.delete.dependency') : i18n('dialog.delete.dependencies')) + ': ' + value);
+
+        inboundDependencyEl.onClicked(() => {
 
             const contentSummary = this.getObject().getContentSummary();
 
@@ -49,5 +42,7 @@ export class DeleteItemViewer
                 new ToggleSearchPanelWithDependenciesGlobalEvent(this.getObject().getContentSummary(), true).fire(win);
             }, 1000);
         });
+
+        this.appendChild(inboundDependencyEl);
     }
 }
