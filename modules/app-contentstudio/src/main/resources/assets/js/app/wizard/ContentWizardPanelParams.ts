@@ -49,10 +49,13 @@ export class ContentWizardPanelParams {
     }
 
     toString(): string {
-        return this.contentId ?
-               'edit/' + this.contentId.toString() :
-               'new/' + this.contentTypeName.toString() +
-               (this.parentContentId ? '/' + this.parentContentId.toString() : '');
+
+        return this.tabId && this.tabId.getMode() == 'browse'
+            ? this.tabId.getMode() + '/' + this.tabId.getId()
+            : this.contentId
+                   ? 'edit/' + this.contentId.toString()
+                   : 'new/' + this.contentTypeName.toString() +
+                     (this.parentContentId ? '/' + this.parentContentId.toString() : '');
     }
 
     static fromApp(app: Application): ContentWizardPanelParams {
