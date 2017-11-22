@@ -31,6 +31,7 @@ import i18n = api.util.i18n;
 import ComponentType = api.content.page.region.ComponentType;
 import DescriptorBasedComponentBuilder = api.content.page.region.DescriptorBasedComponentBuilder;
 import DescriptorBasedComponent = api.content.page.region.DescriptorBasedComponent;
+import StyleHelper = api.StyleHelper;
 
 export interface ElementDimensions {
     top: number;
@@ -595,6 +596,10 @@ export class ItemView
                 SelectedHighlighter.get().getSelectedView().showContextMenu(clickPosition);
             }
         } else {
+            if (elem.hasAnyParentClass('dropdown-tree-grid') &&
+                elem.hasAnyParentClass(StyleHelper.PAGE_EDITOR_PREFIX + 'item-placeholder')) {
+                return;
+            }
             this.deselect();
         }
     }
