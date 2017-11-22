@@ -77,32 +77,20 @@ export class ContentDeleteDialog
         new api.content.resource.ResolveDependenciesRequest(contents.map(content => content.getContentId())).sendAndParse().then(
             (result: api.content.resource.ResolveDependenciesResult) => {
 
-                const lockedItems: ContentId[] = result.getDependencies()
-                     .filter((dependencyResult) => {
-                         const inbounds: ContentDependencyGroupJson[] = dependencyResult.getDependency().inbound;
-                         return inbounds && inbounds.length > 0;
-                     })
-                     .map(dependencyResult => dependencyResult.getContentId()) || [];
+                const dependencyCount = result.getIncomingDependenciesCount();
 
-                const block: boolean = lockedItems.length > 0;
-
-                if (block) {
-                    this.messageId = api.notify.showWarning(
-                        i18n('dialog.delete.dependency.warning'), false);
+                if (!Object.keys(dependencyCount).length) {
+                    return;
                 }
 
+                this.messageId = api.notify.showWarning(
+                    i18n('dialog.delete.dependency.warning'), false);
+
                 this.getItemList().getItemViews().forEach((itemView) => {
-                    if (ArrayHelper.contains(lockedItems, itemView.getBrowseItem().getModel().getContentId())) {
-                        const dependency = result.getById(itemView.getBrowseItem().getModel().getContentId());
-                        if (dependency.getDependency().inbound[0]) {
-                            let value = 0;
+                    const contentId = itemView.getBrowseItem().getModel().getContentId().toString();
 
-                            dependency.getDependency().inbound.forEach((inbound) => {
-                                value += inbound.count;
-                            });
-
-                            (<DeleteItemViewer>itemView.getViewer()).setInboundDependencyCount(value);
-                        }
+                    if (dependencyCount.hasOwnProperty(contentId)) {
+                        (<DeleteItemViewer>itemView.getViewer()).setInboundDependencyCount(dependencyCount[contentId]);
                     }
 
                 });
