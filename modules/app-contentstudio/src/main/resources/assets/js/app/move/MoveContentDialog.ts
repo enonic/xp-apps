@@ -14,6 +14,7 @@ import MoveContentRequest = api.content.resource.MoveContentRequest;
 import TaskId = api.task.TaskId;
 import Action = api.ui.Action;
 import i18n = api.util.i18n;
+import SpanEl = api.dom.SpanEl;
 
 export class MoveContentDialog
     extends api.ui.dialog.ModalDialog {
@@ -120,6 +121,9 @@ export class MoveContentDialog
             processHandler: () => {
                 new OpenMoveDialogEvent([]).fire();
             },
+            createProcessingMessage: () => new SpanEl()
+                .setHtml(`${i18n('dialog.move.progressMessage')} `)
+                .appendChild(new SpanEl('content-path').setHtml(this.getParentPath().toString())),
             managingElement: this
         });
     }
@@ -187,6 +191,11 @@ export class MoveContentDialog
 
     private getParentContentItem(): ContentTreeSelectorItem {
         return this.destinationSearchInput.getSelectedDisplayValues()[0];
+    }
+
+    private getParentPath(): api.content.ContentPath {
+        const parentContent: ContentTreeSelectorItem = this.getParentContentItem();
+        return parentContent ? parentContent.getPath() : ContentPath.ROOT;
     }
 
     private isProgressBarEnabled(): boolean {
