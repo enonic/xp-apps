@@ -11,8 +11,15 @@ import LoadMask = api.ui.mask.LoadMask;
 import DialogButton = api.ui.dialog.DialogButton;
 import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
 import ContentSummaryAndCompareStatusViewer = api.content.ContentSummaryAndCompareStatusViewer;
-import ModalDialogButtonRow = api.ui.dialog.ButtonRow;
 import DivEl = api.dom.DivEl;
+import ModalDialogConfig = api.ui.dialog.ModalDialogConfig;
+import WindowDOM = api.dom.WindowDOM;
+
+export interface DependantItemsDialogConfig
+    extends ModalDialogConfig {
+    dialogSubName?: string;
+    dependantsName?: string;
+}
 
 export class DependantItemsDialog
     extends api.ui.dialog.ModalDialog {
@@ -45,30 +52,29 @@ export class DependantItemsDialog
 
     protected dependantIds: ContentId[] = [];
 
-    constructor(title: string = '', dialogSubName: string = '', dependantsName: string = '', buttonRow?: ModalDialogButtonRow) {
-        super(<api.ui.dialog.ModalDialogConfig>{title, buttonRow});
+    constructor(config: DependantItemsDialogConfig) {
+        super(config);
 
         this.addClass('dependant-dialog');
 
-        this.subTitle = new api.dom.H6El('sub-title')
-            .setHtml(dialogSubName, false);
+        this.subTitle = new api.dom.H6El('sub-title').setHtml(config.dialogSubName, false);
         this.appendChildToHeader(this.subTitle);
 
         this.itemList = this.createItemList();
         this.itemList.addClass('item-list');
         this.appendChildToContentPanel(this.itemList);
 
-        let itemsChangedListener = (items) => {
+        let itemsChangedListener = () => {
             let count = this.itemList.getItemCount();
             if (this.autoUpdateTitle) {
-                this.setTitle(title + (count > 1 ? 's' : ''));
+                this.setTitle(config.title + (count > 1 ? 's' : ''));
             }
         };
         this.itemList.onItemsRemoved(itemsChangedListener);
         this.itemList.onItemsAdded(itemsChangedListener);
 
-        this.dependantsHeaderText = dependantsName;
-        this.dependantsHeader = new api.dom.H6El('dependants-header').setHtml(dependantsName, false);
+        this.dependantsHeaderText = config.dependantsName;
+        this.dependantsHeader = new api.dom.H6El('dependants-header').setHtml(this.dependantsHeaderText, false);
 
         this.dependantList = this.createDependantList();
         this.dependantList.addClass('dependant-list');
@@ -76,7 +82,7 @@ export class DependantItemsDialog
         this.dependantsContainer = new api.dom.DivEl('dependants');
         this.dependantsContainer.appendChildren(this.dependantsHeader, this.dependantList);
 
-        let dependantsChangedListener = (items) => {
+        let dependantsChangedListener = () => {
             let count = this.dependantList.getItemCount();
             this.dependantsContainer.setVisible(count > 0);
         };
@@ -167,7 +173,7 @@ export class DependantItemsDialog
                                          el.getHeightWithBorder() +
                                          el.getMarginBottom();
 
-            if (window.innerHeight < bottomPosition) {
+            if (WindowDOM.get().asWindow().innerHeight < bottomPosition) {
                 return true;
             }
         }

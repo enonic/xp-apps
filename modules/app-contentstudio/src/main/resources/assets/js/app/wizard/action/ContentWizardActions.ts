@@ -62,7 +62,8 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
             new PublishAction(wizardPanel),
             new PublishTreeAction(wizardPanel),
             new CreateIssueAction(wizardPanel),
-            new UnpublishAction(wizardPanel),
+            new UnpublishAction(wizardPanel)
+                .setIconClass('unpublish-action'),
             new CloseAction(wizardPanel),
             new ShowLiveEditAction(wizardPanel),
             new ShowFormAction(wizardPanel),

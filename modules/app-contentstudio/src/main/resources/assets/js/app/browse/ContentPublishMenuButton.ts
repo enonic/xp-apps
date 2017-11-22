@@ -1,8 +1,7 @@
 import '../../api.ts';
 import {ContentTreeGridActions} from './action/ContentTreeGridActions';
-import {MenuButtonProgressBarManager} from './MenuButtonProgressBarManager';
-
 import MenuButton = api.ui.button.MenuButton;
+import MenuButtonProgressBarManager = api.ui.button.MenuButtonProgressBarManager;
 
 export class ContentPublishMenuButton extends MenuButton {
 

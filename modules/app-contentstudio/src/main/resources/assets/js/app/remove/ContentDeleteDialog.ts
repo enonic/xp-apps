@@ -1,14 +1,14 @@
 import '../../api.ts';
 import {ContentDeleteDialogAction} from './ContentDeleteDialogAction';
 import {ConfirmContentDeleteDialog} from './ConfirmContentDeleteDialog';
-import {ProgressBarDialog, ProgressBarConfig} from '../dialog/ProgressBarDialog';
 import {ContentDeletePromptEvent} from '../browse/ContentDeletePromptEvent';
+import {DependantItemsWithProgressDialog, DependantItemsWithProgressDialogConfig} from '../dialog/DependantItemsWithProgressDialog';
 import CompareStatus = api.content.CompareStatus;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import i18n = api.util.i18n;
 
 export class ContentDeleteDialog
-    extends ProgressBarDialog {
+    extends DependantItemsWithProgressDialog {
 
     private instantDeleteCheckbox: api.ui.Checkbox;
 
@@ -21,15 +21,14 @@ export class ContentDeleteDialog
     protected autoUpdateTitle: boolean = true;
 
     constructor() {
-        super(<ProgressBarConfig> {
-                dialogName: i18n('dialog.delete'),
+        super(<DependantItemsWithProgressDialogConfig> {
+            title: i18n('dialog.delete'),
                 dialogSubName: i18n('dialog.delete.subname'),
                 dependantsName: i18n('dialog.delete.dependants'),
-                isProcessingClass: 'is-deleting',
                 processingLabel:  `${i18n('field.progress.deleting')}...`,
                 processHandler: () => {
                     new ContentDeletePromptEvent([]).fire();
-                }
+                },
             }
         );
 
