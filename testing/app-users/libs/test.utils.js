@@ -54,14 +54,14 @@ module.exports = {
         })
     },
     confirmDelete: ()=> {
-        return confirmationDialog.waitForDialogVisible().then(()=> {
+        return confirmationDialog.waitForDialogVisible(2000).then(()=> {
             return confirmationDialog.clickOnYesButton();
         }).then(()=> {
             return browsePanel.waitForSpinnerNotVisible();
         });
     },
     navigateToUsersApp: function (browser) {
-        return launcherPanel.waitForPanelVisible(1000).then(()=> {
+        return launcherPanel.waitForPanelVisible(2000).then(()=> {
             console.log("'user browse panel' should be loaded");
             return launcherPanel.clickOnUsersLink();
         }).then(()=> {

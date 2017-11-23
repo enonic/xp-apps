@@ -38,7 +38,7 @@ describe('Edit an user - change name and roles', function () {
             }).then((roles)=> {
                 assert.equal(roles[0], appConst.roles.CM_ADMIN, '`Content Manager Administrator` role should be present on the panel');
                 assert.equal(roles[1], appConst.roles.USERS_ADMINISTRATOR,
-                    '`Content Manager Administrator` role should be present on the panel')
+                    '`Content Manager Administrator` role should be present on the panel');
             }).then(()=> {
                 return expect(userStatisticsPanel.getItemName()).to.eventually.be.equal(userName);
             })

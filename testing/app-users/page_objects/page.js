@@ -108,8 +108,6 @@ Page.prototype.getDisplayedElements = function (selector) {
         results.value.filter
     })
     return this.getBrowser().elementIdDisplayed(el.ELEMENT);
-    //https://github.com/webdriverio/webdriverio/issues/1701
-    //});
 };
 
 Page.prototype.getTextFromElements = function (selector) {
