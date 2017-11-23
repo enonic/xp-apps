@@ -595,11 +595,8 @@ export class ItemView
             } else if (isViewInsideSelectedContainer && rightClicked) {
                 SelectedHighlighter.get().getSelectedView().showContextMenu(clickPosition);
             }
-        } else {
-            if (elem.hasAnyParentClass('dropdown-tree-grid') &&
-                elem.hasAnyParentClass(StyleHelper.PAGE_EDITOR_PREFIX + 'item-placeholder')) {
-                return;
-            }
+        } else if (!this.isEmpty() || event.target === this.placeholder.getHTMLElement()) {
+            // Deselect component on left-click only if it's not empty or the placeholder was clicked
             this.deselect();
         }
     }

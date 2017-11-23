@@ -277,7 +277,9 @@ export class PageView
                 if (this.isTextEditMode()) {
                     this.setTextEditMode(false);
                 }
-                itemView.select(null, ItemViewContextMenuPosition.NONE, event.isNew());
+                if (event.isNew()) {
+                    itemView.select(null, ItemViewContextMenuPosition.NONE, event.isNew());
+                }
             }
         };
         this.itemViewRemovedListener = (event: ItemViewRemovedEvent) => {
