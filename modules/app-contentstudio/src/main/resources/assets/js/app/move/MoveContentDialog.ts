@@ -14,6 +14,7 @@ import MoveContentRequest = api.content.resource.MoveContentRequest;
 import TaskId = api.task.TaskId;
 import Action = api.ui.Action;
 import i18n = api.util.i18n;
+import SpanEl = api.dom.SpanEl;
 
 export class MoveContentDialog
     extends api.ui.dialog.ModalDialog {
@@ -87,7 +88,10 @@ export class MoveContentDialog
     private initMoveConfirmationDialog() {
         this.moveConfirmationDialog = new ConfirmationDialog()
             .setQuestion(i18n('dialog.confirm.move'))
-            .setYesCallback(() => this.doMove())
+            .setYesCallback(() => {
+                this.open();
+                this.doMove();
+            })
             .setNoCallback(() => {
                 this.open();
             });
@@ -120,6 +124,9 @@ export class MoveContentDialog
             processHandler: () => {
                 new OpenMoveDialogEvent([]).fire();
             },
+            createProcessingMessage: () => new SpanEl()
+                .setHtml(`${i18n('dialog.move.progressMessage')} `)
+                .appendChild(new SpanEl('content-path').setHtml(this.getParentPath().toString())),
             managingElement: this
         });
     }
@@ -169,6 +176,8 @@ export class MoveContentDialog
         let parentRoot = parentContent ? parentContent.getPath() : ContentPath.ROOT;
         let contentIds = ContentIds.create().fromContentIds(this.movedContentSummaries.map(summary => summary.getContentId())).build();
 
+        this.lockControls();
+
         new MoveContentRequest(contentIds, parentRoot)
             .sendAndParse()
             .then((taskId: api.task.TaskId) => {
@@ -189,6 +198,11 @@ export class MoveContentDialog
         return this.destinationSearchInput.getSelectedDisplayValues()[0];
     }
 
+    private getParentPath(): api.content.ContentPath {
+        const parentContent: ContentTreeSelectorItem = this.getParentContentItem();
+        return parentContent ? parentContent.getPath() : ContentPath.ROOT;
+    }
+
     private isProgressBarEnabled(): boolean {
         return this.progressManager.isEnabled();
     }
@@ -203,5 +217,22 @@ export class MoveContentDialog
         if (this.isProgressBarEnabled()) {
             this.destinationSearchInput.giveFocus();
         }
+    }
+
+    close() {
+        this.unlockControls();
+        super.close();
+    }
+
+    protected lockControls() {
+        this.addClass('locked');
+        this.moveAction.setEnabled(false);
+        this.destinationSearchInput.getComboBox().setEnabled(false);
+    }
+
+    protected unlockControls() {
+        this.removeClass('locked');
+        this.moveAction.setEnabled(true);
+        this.destinationSearchInput.getComboBox().setEnabled(true);
     }
 }
