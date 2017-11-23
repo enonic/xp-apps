@@ -88,7 +88,10 @@ export class MoveContentDialog
     private initMoveConfirmationDialog() {
         this.moveConfirmationDialog = new ConfirmationDialog()
             .setQuestion(i18n('dialog.confirm.move'))
-            .setYesCallback(() => this.doMove())
+            .setYesCallback(() => {
+                this.open();
+                this.doMove();
+            })
             .setNoCallback(() => {
                 this.open();
             });
@@ -173,6 +176,8 @@ export class MoveContentDialog
         let parentRoot = parentContent ? parentContent.getPath() : ContentPath.ROOT;
         let contentIds = ContentIds.create().fromContentIds(this.movedContentSummaries.map(summary => summary.getContentId())).build();
 
+        this.lockControls();
+
         new MoveContentRequest(contentIds, parentRoot)
             .sendAndParse()
             .then((taskId: api.task.TaskId) => {
@@ -212,5 +217,22 @@ export class MoveContentDialog
         if (this.isProgressBarEnabled()) {
             this.destinationSearchInput.giveFocus();
         }
+    }
+
+    close() {
+        this.unlockControls();
+        super.close();
+    }
+
+    protected lockControls() {
+        this.addClass('locked');
+        this.moveAction.setEnabled(false);
+        this.destinationSearchInput.getComboBox().setEnabled(false);
+    }
+
+    protected unlockControls() {
+        this.removeClass('locked');
+        this.moveAction.setEnabled(true);
+        this.destinationSearchInput.getComboBox().setEnabled(true);
     }
 }
