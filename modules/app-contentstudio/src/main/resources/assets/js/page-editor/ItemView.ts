@@ -31,6 +31,7 @@ import i18n = api.util.i18n;
 import ComponentType = api.content.page.region.ComponentType;
 import DescriptorBasedComponentBuilder = api.content.page.region.DescriptorBasedComponentBuilder;
 import DescriptorBasedComponent = api.content.page.region.DescriptorBasedComponent;
+import StyleHelper = api.StyleHelper;
 
 export interface ElementDimensions {
     top: number;
@@ -559,10 +560,6 @@ export class ItemView
 
         const elem = new api.dom.ElementHelper(<HTMLElement>event.target);
 
-        if (elem.hasClass('toggle') && (elem.hasClass('expand') || elem.hasClass('collapse'))) {
-            return;
-        }
-
         let rightClicked = event.which === 3 || event.ctrlKey;
 
         if (rightClicked) { // right click
@@ -594,7 +591,8 @@ export class ItemView
             } else if (isViewInsideSelectedContainer && rightClicked) {
                 SelectedHighlighter.get().getSelectedView().showContextMenu(clickPosition);
             }
-        } else {
+        } else if (!this.isEmpty() || event.target === this.placeholder.getHTMLElement()) {
+            // Deselect component on left-click only if it's not empty or the placeholder was clicked
             this.deselect();
         }
     }

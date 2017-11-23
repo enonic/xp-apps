@@ -471,7 +471,7 @@ export class TextComponentView
         }
 
         if (!pageView.isTextEditMode()) {
-            pageView.setTextEditMode(true);
+            PageViewController.get().setTextEditMode(true);
         }
 
         this.giveFocus();

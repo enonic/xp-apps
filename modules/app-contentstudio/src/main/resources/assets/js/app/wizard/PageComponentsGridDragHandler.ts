@@ -116,7 +116,7 @@ export class PageComponentsGridDragHandler
         this.contentGrid.deselectAll();
         item.getData().deselect();
 
-        (<ComponentView<Component>>item.getData()).moveToRegion(<RegionView>newParent.getData(), insertIndex, true);
+        (<ComponentView<Component>>item.getData()).moveToRegion(<RegionView>newParent.getData(), insertIndex);
 
         item.getData().select(null, ItemViewContextMenuPosition.NONE);
         this.contentGrid.refresh();
