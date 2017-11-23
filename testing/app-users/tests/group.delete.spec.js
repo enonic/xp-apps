@@ -49,7 +49,7 @@ describe('Group wizard - confirm and delete in wizard', function () {
                 return testUtils.confirmDelete();
             }).then(result=> {
                 testUtils.saveScreenshot(webDriverHelper.browser, "group_deleted_confirmation_mess1");
-                var expectedMessage = appConst.principalDeletedMessage(testGroup.displayName);
+                var expectedMessage = appConst.groupDeletedMessage(testGroup.displayName);
                 return assert.eventually.isTrue(userBrowsePanel.waitForExpectedNotificationMessage(expectedMessage),
                     "Correct notification message should appear");
             });
@@ -77,7 +77,7 @@ describe('Group wizard - confirm and delete in wizard', function () {
                 return userBrowsePanel.waitForNotificationMessage();
             }).then(result=> {
                 testUtils.saveScreenshot(webDriverHelper.browser, "group_deleted_notification_mes2");
-                var msg = appConst.principalDeletedMessage(testGroup.displayName);
+                var msg = appConst.groupDeletedMessage(testGroup.displayName);
                 assert.strictEqual(result, msg, 'expected notification message should be displayed');
             });
         });
