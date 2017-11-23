@@ -560,10 +560,6 @@ export class ItemView
 
         const elem = new api.dom.ElementHelper(<HTMLElement>event.target);
 
-        if (elem.hasClass('toggle') && (elem.hasClass('expand') || elem.hasClass('collapse'))) {
-            return;
-        }
-
         let rightClicked = event.which === 3 || event.ctrlKey;
 
         if (rightClicked) { // right click

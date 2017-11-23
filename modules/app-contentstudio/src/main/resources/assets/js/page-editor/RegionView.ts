@@ -89,6 +89,8 @@ export class RegionView
 
     private mouseOverListener: (e: MouseEvent) => void;
 
+    private textMode: boolean = false;
+
     public static debug: boolean = false;
 
     constructor(builder: RegionViewBuilder) {
@@ -161,6 +163,14 @@ export class RegionView
         };
 
         this.onMouseOver(this.mouseOverListener);
+
+        const textEditModeListener = (value: boolean) => this.textMode = value;
+
+        PageViewController.get().onTextEditModeChanged(textEditModeListener);
+
+        this.onRemoved(event => {
+            PageViewController.get().unTextEditModeChanged(textEditModeListener);
+        });
     }
 
     /*
@@ -238,13 +248,13 @@ export class RegionView
             }
     */
     highlightSelected() {
-        if (!PageViewController.get().isTextEditMode() && !this.isDragging()) {
+        if (!this.textMode && !this.isDragging()) {
             super.highlightSelected();
         }
     }
 
     showCursor() {
-        if (!PageViewController.get().isTextEditMode()) {
+        if (!this.textMode) {
             super.showCursor();
         }
     }
@@ -337,7 +347,7 @@ export class RegionView
         }
 
         this.insertChild(componentView, index);
-        this.registerComponentView(componentView, index, isNew);
+        this.registerComponentView(componentView, index, isNew || dragged);
 
         new ComponentAddedEvent(componentView, this, dragged).fire();
     }
