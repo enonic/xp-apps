@@ -26,7 +26,7 @@ describe('User Wizard and `Save Before Close dialog`', function () {
             }).then(()=> {
                 return userBrowsePanel.doClickOnCloseTabButton('test-user');
             }).then(()=> {
-                return saveBeforeClose.waitForDialogVisible();
+                return saveBeforeClose.waitForDialogVisible(2000);
             });
         });
 
@@ -50,29 +50,18 @@ describe('User Wizard and `Save Before Close dialog`', function () {
             }).pause(500).then(()=> {
                 return userBrowsePanel.doClickOnCloseTabButton('new-name');
             }).then(()=> {
-                return saveBeforeClose.waitForDialogVisible();
+                return saveBeforeClose.waitForDialogVisible(2000);
             });
         });
 
-    it('GIVEN existing user is opened WHEN display name has been changed AND `Close` button pressed THEN Save Before Close dialog should appear',
+    it('GIVEN existing user is opened WHEN e-mail name has been changed AND `Close` button pressed THEN Save Before Close dialog should appear',
         () => {
             return testUtils.selectUserAndOpenWizard(testUser.displayName).then(()=> {
                 return userWizard.typeEmail('new@gmail.com');
             }).pause(500).then(()=> {
                 return userBrowsePanel.doClickOnCloseTabButton(testUser.displayName);
             }).then(()=> {
-                return saveBeforeClose.waitForDialogVisible();
-            });
-        });
-
-    it('GIVEN existing user is opened WHEN display name has been changed AND `Close` button pressed THEN Save Before Close dialog should appear',
-        () => {
-            return testUtils.selectUserAndOpenWizard(testUser.displayName).then(()=> {
-                return userWizard.typeEmail('new@gmail.com');
-            }).pause(500).then(()=> {
-                return userBrowsePanel.doClickOnCloseTabButton(testUser.displayName);
-            }).then(()=> {
-                return saveBeforeClose.waitForDialogVisible();
+                return saveBeforeClose.waitForDialogVisible(2000);
             });
         });
 
@@ -83,7 +72,7 @@ describe('User Wizard and `Save Before Close dialog`', function () {
             }).pause(500).then(()=> {
                 return userBrowsePanel.doClickOnCloseTabButton(testUser.displayName);
             }).then(()=> {
-                return saveBeforeClose.waitForDialogVisible();
+                return saveBeforeClose.waitForDialogVisible(2000);
             });
         });
     beforeEach(() => testUtils.navigateToUsersApp(webDriverHelper.browser));

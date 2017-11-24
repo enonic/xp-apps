@@ -174,11 +174,24 @@ var groupWizard = Object.create(wizard, {
     },
     removeRole: {
         value: function (displayName) {
-            let removeIcon = `${panel.container}` + `${panel.rolesStepForm}` + `${elements.selectedPrincipalByDisplayName(displayName)}` +
-                             `${elements.REMOVE_ICON}`;
-            return this.clickOnMembersLink().pause(500).then(()=>this.doClick(removeIcon)).pause(1000);
+            let removeRoleIcon = `${panel.container}` + `${panel.rolesStepForm}` +
+                                 `${elements.selectedPrincipalByDisplayName(displayName)}` +
+                                 `${elements.REMOVE_ICON}`;
+            return this.clickOnMembersLink().pause(500).then(()=>this.doClick(removeRoleIcon)).pause(1000).catch(err=> {
+                console.log(err);
+                this.doCatch('err_group_wizard_remove_role_icon', 'Group wizard: error, when click on the `remove role` button');
+            })
         }
     },
+    clickOnDelete: {
+        value: function () {
+            let deleteSelector = `${panel.container}` + `${wizard.deleteButton}`
+            return this.doClick(deleteSelector).catch(err=> {
+                console.log(err);
+                this.doCatch('err_group_wizard_delete_button', 'Group wizard: error, when click on the `delete` button');
+            })
+        }
+    }
 
 });
 module.exports = groupWizard;

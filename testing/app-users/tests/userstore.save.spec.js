@@ -86,7 +86,7 @@ describe('User Store spec - save and edit', function () {
 
     it(`GIVEN existing 'User Store'(no any users) WHEN it has been selected THEN 'Delete' button should be enabled`, () => {
         return userBrowsePanel.clickOnRowByName(userStore.displayName).then(()=> {
-            return assert.eventually.equal(userBrowsePanel.isDeleteButtonEnabled(), true,
+            return assert.eventually.equal(userBrowsePanel.waitForDeleteButtonEnabled(), true,
                 "'Delete' button should be enabled, because of no any users were added in the store");
         }).then(()=> {
             return assert.eventually.equal(userBrowsePanel.isNewButtonEnabled(), true, "'New' button should be enabled");
@@ -104,9 +104,9 @@ describe('User Store spec - save and edit', function () {
             return testUtils.saveAndCloseWizard(testUser.displayName);
         }).then(()=> {
             //Delete should be disabled, because of the store has an user
-            return expect(userBrowsePanel.isDeleteButtonEnabled()).to.eventually.be.false;
+            return expect(userBrowsePanel.waitForDeleteButtonDisabled()).to.eventually.be.true;
         }).then(()=> {
-            return expect(userBrowsePanel.isEditButtonEnabled()).to.eventually.be.true;
+            return expect(userBrowsePanel.waitForEditButtonEnabled()).to.eventually.be.true;
         });
     });
 

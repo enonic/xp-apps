@@ -19,10 +19,9 @@ var roleStatisticsPanel = Object.create(itemStatistic, {
     getDisplayNameOfMembers: {
         value: function () {
             let items = `${panel.div}` + `${panel.memberList}` + `${elements.H6_DISPLAY_NAME}`;
-            return this.waitForVisible(`${panel.membersDataGroup}`, 1000).then((result)=> {
-                if (!result) {
-                    throw new Error('Members data-group is not present on the page!');
-                }
+            return this.waitForVisible(`${panel.membersDataGroup}`, 1000).catch((err)=> {
+                this.saveScreenshot('err_statistic_role');
+                throw new Error('Members data-group is not present on the page!');
             }).then(()=> {
                 return this.isVisible(items);
             }).then((result)=> {
@@ -30,7 +29,7 @@ var roleStatisticsPanel = Object.create(itemStatistic, {
                     return [];
                 }
                 return this.getTextFromElements(items)
-            }).catch((err)=>{
+            }).catch((err)=> {
                 return [];
             })
         }

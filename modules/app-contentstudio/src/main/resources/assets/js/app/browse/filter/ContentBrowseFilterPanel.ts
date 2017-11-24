@@ -82,7 +82,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
         return this.refreshDataAndHandleResponse(this.createContentQuery());
     }
 
-    doSearch(elementChanged?: api.dom.Element): wemQ.Promise<void>  {
+    protected doSearch(): wemQ.Promise<void>  {
         if (!this.isFilteredOrConstrained()) {
             return this.handleEmptyFilterInput();
         }

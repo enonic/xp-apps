@@ -307,8 +307,12 @@ export class DependantItemsDialog
 export class DialogItemList
     extends ListBox<ContentSummaryAndCompareStatus> {
 
+    protected createItemViewer(): ContentSummaryAndCompareStatusViewer {
+        return new ContentSummaryAndCompareStatusViewer();
+    }
+
     createItemView(item: ContentSummaryAndCompareStatus, readOnly: boolean): StatusSelectionItem {
-        let itemViewer = new ContentSummaryAndCompareStatusViewer();
+        const itemViewer = this.createItemViewer();
 
         itemViewer.setObject(item);
 

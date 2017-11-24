@@ -656,7 +656,9 @@ export class ContentWizardPanel
             if (liveFormPanel) {
                 this.liveEditModel.setContent(content);
                 if (this.reloadPageEditorOnSave) {
-                    this.updateLiveForm();
+                    this.updateLiveForm().then(() => {
+                        this.contentWizardStepForm.update(content.getContentData(), false);
+                    });
                 }
             }
 
@@ -832,7 +834,8 @@ export class ContentWizardPanel
             }
 
             // checks if parent site has been modified
-            if (this.site != null && this.siteModel !== null && this.site.getContentId().equals(contentId)) {
+            if (this.site != null && this.siteModel !== null && this.site.getContentId().equals(contentId)
+                && !this.persistedContent.getContentId().equals(contentId)) {
                 new ContentWizardDataLoader().loadSite(contentId).then(site => {
                     this.siteModel.update(site);
                 }).catch(api.DefaultErrorHandler.handle).done();
@@ -891,7 +894,7 @@ export class ContentWizardPanel
         return new GetContentByIdRequest(this.getPersistedItem().getContentId()).sendAndParse();
     }
 
-    private updateLiveForm() {
+    private updateLiveForm(): wemQ.Promise<any> {
         let content = this.getPersistedItem();
         let formContext = this.getFormContext(content);
 
@@ -903,7 +906,10 @@ export class ContentWizardPanel
         if (liveFormPanel) {
 
             let site = content.isSite() ? <Site>content : this.site;
-            this.siteModel = new SiteModel(site);
+
+            this.siteModel = this.siteModel ? this.siteModel.update(site) : new SiteModel(site);
+            this.initSiteModelListeners();
+
             return this.initLiveEditModel(content, this.siteModel, formContext).then(() => {
                 liveFormPanel.setModel(this.liveEditModel);
                 liveFormPanel.skipNextReloadConfirmation(true);
@@ -919,9 +925,6 @@ export class ContentWizardPanel
         }
         if (!this.siteModel && content.isSite()) {
             this.siteModel = new SiteModel(<Site>content);
-        }
-        if (this.siteModel) {
-            this.unbindSiteModelListeners();
             this.initSiteModelListeners();
         }
     }
@@ -1107,7 +1110,11 @@ export class ContentWizardPanel
 
             if (!this.liveEditModel) {
                 let site = content.isSite() ? <Site>content : this.site;
-                this.siteModel = new SiteModel(site);
+
+                this.unbindSiteModelListeners();
+                this.siteModel = this.siteModel ? this.siteModel.update(site) : new SiteModel(site);
+                this.initSiteModelListeners();
+
                 this.initLiveEditModel(content, this.siteModel, formContext).then(() => {
                     liveFormPanel.setModel(this.liveEditModel);
                     liveFormPanel.loadPage();
@@ -1187,9 +1194,6 @@ export class ContentWizardPanel
 
                     if (!this.siteModel && content.isSite()) {
                         this.siteModel = new SiteModel(<Site>content);
-                    }
-                    if (this.siteModel) {
-                        this.unbindSiteModelListeners();
                         this.initSiteModelListeners();
                     }
                     return wemQ(null);
@@ -1248,17 +1252,21 @@ export class ContentWizardPanel
     }
 
     private initSiteModelListeners() {
-        this.siteModel.onApplicationAdded(this.applicationAddedListener);
-        this.siteModel.onApplicationRemoved(this.applicationRemovedListener);
-        this.siteModel.onApplicationUnavailable(this.applicationUnavailableListener);
-        this.siteModel.onApplicationStarted(this.applicationStartedListener);
+        if (this.siteModel) {
+            this.siteModel.onApplicationAdded(this.applicationAddedListener);
+            this.siteModel.onApplicationRemoved(this.applicationRemovedListener);
+            this.siteModel.onApplicationUnavailable(this.applicationUnavailableListener);
+            this.siteModel.onApplicationStarted(this.applicationStartedListener);
+        }
     }
 
     private unbindSiteModelListeners() {
-        this.siteModel.unApplicationAdded(this.applicationAddedListener);
-        this.siteModel.unApplicationRemoved(this.applicationRemovedListener);
-        this.siteModel.unApplicationUnavailable(this.applicationUnavailableListener);
-        this.siteModel.unApplicationStarted(this.applicationStartedListener);
+        if (this.siteModel) {
+            this.siteModel.unApplicationAdded(this.applicationAddedListener);
+            this.siteModel.unApplicationRemoved(this.applicationRemovedListener);
+            this.siteModel.unApplicationUnavailable(this.applicationUnavailableListener);
+            this.siteModel.unApplicationStarted(this.applicationStartedListener);
+        }
     }
 
     private removeMetadataStepForms() {
@@ -1348,8 +1356,6 @@ export class ContentWizardPanel
     }
 
     private initLiveEditModel(content: Content, siteModel: SiteModel, formContext: ContentFormContext): wemQ.Promise<void> {
-        this.unbindSiteModelListeners();
-        this.initSiteModelListeners();
         this.liveEditModel = LiveEditModel.create()
             .setParentContent(this.parentContent)
             .setContent(content)

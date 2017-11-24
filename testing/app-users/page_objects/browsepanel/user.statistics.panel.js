@@ -24,10 +24,9 @@ var userStatisticsPanel = Object.create(itemStatistic, {
     getDisplayNameOfRoles: {
         value: function () {
             let items = `${panel.div}` + `${panel.roleList}` + `${elements.H6_DISPLAY_NAME}`;
-            return this.waitForVisible(`${panel.rolesAndGroupDataGroup}`, 1000).then((result)=> {
-                if (!result) {
-                    throw new Error('Roles & Groups was not loaded!');
-                }
+            return this.waitForVisible(`${panel.rolesAndGroupDataGroup}`, 1000).catch((err)=> {
+                this.saveScreenshot('err_user_statistic');
+                throw new Error('Roles & Groups was not loaded!');
             }).then(()=> {
                 return this.getTextFromElements(items)
             })

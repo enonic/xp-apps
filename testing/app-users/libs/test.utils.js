@@ -11,7 +11,7 @@ const groupWizard = require('../page_objects/wizardpanel/group.wizard');
 const roleWizard = require('../page_objects/wizardpanel/role.wizard');
 const wizard = require('../page_objects/wizardpanel/wizard.panel');
 const newPrincipalDialog = require('../page_objects/browsepanel/new.principal.dialog');
-const filterPanel = require("../page_objects/browsepanel/principal.filter.panel");  
+const filterPanel = require("../page_objects/browsepanel/principal.filter.panel");
 const confirmationDialog = require("../page_objects/confirmation.dialog");
 
 module.exports = {
@@ -43,7 +43,7 @@ module.exports = {
         }).then((result)=> {
             return browsePanel.clickOnDeleteButton();
         }).then(()=> {
-            return confirmationDialog.waitForDialogVisible();
+            return confirmationDialog.waitForDialogVisible(2000);
         }).then(result=> {
             if (!result) {
                 throw new Error('Confirmation dialog was not loaded!')
@@ -53,17 +53,28 @@ module.exports = {
             return browsePanel.waitForSpinnerNotVisible();
         })
     },
+    confirmDelete: ()=> {
+        return confirmationDialog.waitForDialogVisible(2000).then(()=> {
+            return confirmationDialog.clickOnYesButton();
+        }).then(()=> {
+            return browsePanel.waitForSpinnerNotVisible();
+        });
+    },
     navigateToUsersApp: function (browser) {
-        return launcherPanel.waitForPanelVisible(1000).then(()=> {
+        return launcherPanel.waitForPanelVisible(2000).then(()=> {
             console.log("'user browse panel' should be loaded");
             return launcherPanel.clickOnUsersLink();
         }).then(()=> {
             return this.doSwitchToUsersApp(browser);
-        }).catch(()=> {
+        }).catch((err)=> {
             return this.doLoginAndSwitchToUsers(browser);
-        })
+        }).catch((err)=> {
+            this.saveScreenshot(browser, "err_login_page");
+            throw  new Error("Login for was not loaded");
+        });
+
     },
-    doSwitchToUsersApp: function (browser) {
+    doSwitchToUsersApp_old: function (browser) {
         console.log('testUtils:switching to users app...');
         return browser.getTabIds().then(tabs => {
             this.xpTabs = tabs;
@@ -72,6 +83,49 @@ module.exports = {
             return browsePanel.waitForUsersGridLoaded(5000);
         });
     },
+    doSwitchToUsersApp: function (browser) {
+        console.log('testUtils:switching to users app...');
+        return browser.getTabIds().then(tabs => {
+            let prevPromise = Promise.resolve(false);
+            tabs.some((tabId)=> {
+                prevPromise = prevPromise.then((isUsers) => {
+                    if (!isUsers) {
+                        return this.switchAndCheckTitle(browser, tabId, "Users - Enonic XP Admin");
+                    }
+                    return false;
+                });
+            });
+            return prevPromise;
+        }).then(()=> {
+            return browsePanel.waitForUsersGridLoaded(5000);
+        });
+    },
+    doSwitchToHome: function (browser) {
+        console.log('testUtils:switching to Home page...');
+        return browser.getTabIds().then(tabs => {
+            let prevPromise = Promise.resolve(false);
+            tabs.some((tabId)=> {
+                prevPromise = prevPromise.then((isUsers) => {
+                    if (!isUsers) {
+                        return this.switchAndCheckTitle(browser, tabId, "Enonic XP Home");
+                    }
+                    return false;
+                });
+            });
+            return prevPromise;
+        }).then(()=> {
+            return homePage.waitForLoaded(2000);
+        });
+    },
+    switchAndCheckTitle: function (browser, tabId, reqTitle) {
+        return browser.switchTab(tabId).then(()=> {
+            return browser.getTitle().then(title=> {
+                return title == reqTitle;
+
+            })
+        });
+    },
+
     doLoginAndSwitchToUsers: function (browser) {
         return loginPage.doLogin().then(()=> {
             return homePage.waitForXpTourVisible(5000);
@@ -88,7 +142,7 @@ module.exports = {
 
     doCloseUsersApp: function (browser) {
         return browser.close().pause(300).then(()=> {
-            return browser.switchTab(this.xpTabs[0]);
+            return this.doSwitchToHome(browser);
         })
     },
     selectUserAndOpenWizard: function (displayName) {
@@ -103,6 +157,13 @@ module.exports = {
             return userWizard.waitForOpened();
         })
     },
+    clickOnRolesFolderAndOpenWizard: function () {
+        return browsePanel.clickOnRowByName('roles').then(()=> {
+            return browsePanel.clickOnNewButton();
+        }).then(()=> {
+            return roleWizard.waitForOpened();
+        });
+    },
     selectRoleAndOpenWizard: function (displayName) {
         return this.findAndSelectItem(displayName).then(()=> {
             return browsePanel.waitForEditButtonEnabled();
@@ -115,6 +176,18 @@ module.exports = {
             return roleWizard.waitForOpened();
         })
     },
+    selectGroupAndOpenWizard: function (displayName) {
+        return this.findAndSelectItem(displayName).then(()=> {
+            return browsePanel.waitForEditButtonEnabled();
+        }).then((result)=> {
+            if (!result) {
+                throw new Error('`Edit` button is disabled!');
+            }
+            return browsePanel.clickOnEditButton();
+        }).then(()=> {
+            return groupWizard.waitForOpened();
+        })
+    },
     saveAndCloseWizard: function (displayName) {
         return wizard.waitAndClickOnSave().pause(300).then(()=> {
             return browsePanel.doClickOnCloseTabAndWaitGrid(displayName);
@@ -125,6 +198,20 @@ module.exports = {
             return userStoreWizard.typeData(userStoreData)
         }).then(()=> {
             return userStoreWizard.waitAndClickOnSave()
+        }).pause(500);
+    },
+    openWizardAndSaveRole: function (role) {
+        return this.clickOnRolesFolderAndOpenWizard().then(()=> {
+            return roleWizard.typeData(role)
+        }).then(()=> {
+            return this.saveAndCloseWizard(role.displayName)
+        }).pause(500);
+    },
+    openWizardAndSaveGroup: function (group) {
+        return this.clickOnSystemAndOpenGroupWizard().then(()=> {
+            return groupWizard.typeData(group)
+        }).then(()=> {
+            return this.saveAndCloseWizard(group.displayName)
         }).pause(500);
     },
     clickOnNewOpenUserStoreWizard: function () {
@@ -182,5 +269,14 @@ module.exports = {
         //if(!elem.isVisible()){
         //    //do something
         //}
+    },
+    saveScreenshot: function (browser, name) {
+        var path = require('path')
+        var screenshotsDir = path.join(__dirname, '/../build/screenshots/');
+        return browser.saveScreenshot(screenshotsDir + name + '.png').then(()=> {
+            return console.log('screenshot saved ' + name);
+        }).catch(err=> {
+            return console.log('screenshot was not saved ' + screenshotsDir + 'utils  ' + err);
+        })
     }
 };

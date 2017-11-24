@@ -94,12 +94,6 @@ export class TextComponentView
             }
         };
 
-        this.onMouseLeave(() => {
-            if (this.getEl().hasClass(TextComponentView.EDITOR_FOCUSED_CLASS)) {
-                this.processEditorValue();
-            }
-        });
-
         LiveEditPageDialogCreatedEvent.on(handleDialogCreated.bind(this));
     }
 
@@ -371,10 +365,17 @@ export class TextComponentView
 
         new HTMLAreaBuilder().setSelector('div.' + id + ' .tiny-mce-here').setAssetsUri(assetsUri).setInline(true).onCreateDialog(event => {
             this.currentDialogConfig = event.getConfig();
-        }).setFocusHandler(this.onFocusHandler.bind(this)).setBlurHandler(this.onBlurHandler.bind(this)).setKeydownHandler(
-            this.onKeydownHandler.bind(this)).setFixedToolbarContainer('.mce-toolbar-container').setContent(
-            this.getContent()).setEditableSourceCode(this.editableSourceCode).setContentPath(this.getContentPath()).setApplicationKeys(
-            this.getApplicationKeys()).createEditor().then(this.handleEditorCreated.bind(this));
+        }).setFocusHandler(this.onFocusHandler.bind(this))
+            .setBlurHandler(this.onBlurHandler.bind(this))
+            .setKeydownHandler(this.onKeydownHandler.bind(this))
+            .setNodeChangeHandler(this.processEditorValue.bind(this))
+            .setFixedToolbarContainer('.mce-toolbar-container')
+            .setContent(this.getContent())
+            .setEditableSourceCode(this.editableSourceCode)
+            .setContentPath(this.getContentPath())
+            .setApplicationKeys(this.getApplicationKeys())
+            .createEditor()
+            .then(this.handleEditorCreated.bind(this));
     }
 
     private handleEditorCreated(editor: HtmlAreaEditor) {
@@ -470,7 +471,7 @@ export class TextComponentView
         }
 
         if (!pageView.isTextEditMode()) {
-            pageView.setTextEditMode(true);
+            PageViewController.get().setTextEditMode(true);
         }
 
         this.giveFocus();

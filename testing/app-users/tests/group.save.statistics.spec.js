@@ -29,6 +29,7 @@ describe('Save a Group and check info on the Statistics Panel', function () {
             }).then(()=> {
                 return groupWizard.waitForNotificationMessage();
             }).then(result=> {
+                testUtils.saveScreenshot(webDriverHelper.browser, "group_is_saved");
                 expect(result).to.equal(appConst.GROUP_WAS_CREATED);
             })
         });

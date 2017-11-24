@@ -1,12 +1,24 @@
 /**
- *  Created by on 10.09.2017.
- *
+ * Created by on 10.09.2017.
  * Helper class that encapsulates webdriverio
  * and sets up mocha hooks for easier test writing.
  */
 function WebDriverHelper() {
     this.browser = null;
 }
+
+WebDriverHelper.prototype.getBrowser = function () {
+    return this.browser;
+}
+
+const makeChromeOptions = headless => ({
+    "args": [
+        ...(headless ? ["--headless", "--disable-gpu", "--no-sandbox"] : []),
+        "--lang=en",
+        '--disable-extensions',
+        'window-size=1920,1100'
+    ]
+});
 
 /**
  * Sets up a before and after mocha hook
@@ -15,44 +27,35 @@ function WebDriverHelper() {
 WebDriverHelper.prototype.setupBrowser = function setupBrowser() {
     var _this = this;
     before(function () {
-        //screenshotPath: `${__dirname}/../../screenshots/`,
         var PropertiesReader = require('properties-reader');
         var path = require('path')
         var webdriverio = require('webdriverio');
-        console.log('dir name: ' + __dirname)
         var file = path.join(__dirname, '/../browser.properties');
-        var properties = null;
-        try {
-            properties = PropertiesReader(file);
-        } catch (err) {
-            console.log(err);
-        }
-
+        var properties = PropertiesReader(file);
         var browser_name = properties.get('browser.name');
-        console.log('browser name ##################### ' + browser_name)
-        console.log('browser.height ##################### ' + properties.get('browser.height'))
-        console.log('browser.width ##################### ' + properties.get('browser.width'))
         var platform_name = properties.get('platform');
         var baseUrl = properties.get('base.url');
+        var chromeBinPath = properties.get('chrome.bin.path');
+        var isHeadless = properties.get('is.headless');
+        console.log('is Headless ##################### ' + isHeadless);
+        console.log('browser name ##################### ' + browser_name);
         var options = {
             desiredCapabilities: {
                 browserName: browser_name,
                 platform: platform_name,
-                chromeOptions: {
-                    "args": [
-                        "--lang=en"
-                    ],
-                }
+                binary: chromeBinPath,
+                chromeOptions: makeChromeOptions(isHeadless)
             }
         };
         _this.browser = webdriverio
             .remote(options)
             .init().url(baseUrl);
-        _this.browser.windowHandleSize({width: properties.get('browser.width'), height: properties.get('browser.height')});
+        console.log('webdriverio #####################  ' + 'is  initialized!');
         return _this.browser;
     });
     after(function () {
         return _this.browser.end();
     });
 };
+
 module.exports = new WebDriverHelper();

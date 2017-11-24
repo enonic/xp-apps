@@ -255,10 +255,10 @@ export class ComponentView<COMPONENT extends Component>
                             .setData(newComponent));
 
                     this.addComponentView(<ComponentView<COMPONENT>>fragmentCmpView, this.getNewItemIndex());
+                    this.remove();
+
                     new ComponentFragmentCreatedEvent(<FragmentComponentView>fragmentCmpView, this.getComponent().getType(),
                         content).fire();
-
-                    this.remove();
                 });
             }));
         }
@@ -426,7 +426,7 @@ export class ComponentView<COMPONENT extends Component>
         }
     }
 
-    moveToRegion(toRegionView: RegionView, toIndex: number, dragged?: boolean) {
+    moveToRegion(toRegionView: RegionView, toIndex: number) {
         const parentRegionView = this.getParentItemView();
         if (ComponentView.debug) {
             console.log('ComponentView[' + this.toString() + '].moveToRegion', this, parentRegionView, toRegionView);
@@ -450,7 +450,7 @@ export class ComponentView<COMPONENT extends Component>
         }
 
         // Register with new region...
-        toRegionView.addComponentView(this, toIndex, false, dragged);
+        toRegionView.addComponentView(this, toIndex, false, true);
         if (parentView && this.component) {
             this.registerComponentListeners(this.component);
         }

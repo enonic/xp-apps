@@ -39,7 +39,7 @@ export class ImagePlaceholder
             .setMaximumOccurrences(1)
             .setLoader(loader)
             .setContent(imageView.getLiveEditModel().getContent())
-            .setTreegridDropdownEnabled(true)
+            .setTreegridDropdownEnabled(false)
             .setMinWidth(270)
             .build();
 

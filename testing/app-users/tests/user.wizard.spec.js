@@ -32,6 +32,7 @@ describe('User Wizard and Change Password dialog spec', function () {
             }).then(()=> {
                 return assert.eventually.isTrue(userWizard.isEmailInputDisplayed(), "E-mail name input should be displayed");
             }).then(()=> {
+                testUtils.saveScreenshot(webDriverHelper.browser, 'change_pass_button_should_not_be_displayed');
                 return assert.eventually.isTrue(userWizard.isPasswordInputDisplayed(), "`Password` name input should be displayed");
             }).then(()=> {
                 return assert.eventually.isTrue(userWizard.isGroupOptionsFilterInputDisplayed(),
@@ -89,7 +90,7 @@ describe('User Wizard and Change Password dialog spec', function () {
             return testUtils.selectUserAndOpenWizard(testUser.displayName).then(()=> {
                 return userWizard.clickOnChangePasswordButton();
             }).then(()=> {
-                return changePasswordDialog.waitForDialogVisible();
+                return changePasswordDialog.waitForDialogVisible(2000);
             }).then(()=> {
                 return changePasswordDialog.getUserPath();
             }).then(result=> {
@@ -102,7 +103,7 @@ describe('User Wizard and Change Password dialog spec', function () {
             return testUtils.selectUserAndOpenWizard(testUser.displayName).then(()=> {
                 return userWizard.clickOnChangePasswordButton();
             }).then(()=> {
-                return changePasswordDialog.waitForDialogVisible();
+                return changePasswordDialog.waitForDialogVisible(1000);
             }).then(result=> {
                 return assert.eventually.isTrue(changePasswordDialog.isPasswordInputDisplayed(), 'Password Input should be displayed');
             }).then(()=> {
@@ -117,7 +118,7 @@ describe('User Wizard and Change Password dialog spec', function () {
             return testUtils.selectUserAndOpenWizard(testUser.displayName).then(()=> {
                 return userWizard.clickOnChangePasswordButton();
             }).then(()=> {
-                return changePasswordDialog.waitForDialogVisible();
+                return changePasswordDialog.waitForDialogVisible(1000);
             }).then(result=> {
                 return changePasswordDialog.clickOnShowPasswordLink();
             }).then(()=> {
@@ -130,7 +131,7 @@ describe('User Wizard and Change Password dialog spec', function () {
             return testUtils.selectUserAndOpenWizard(testUser.displayName).then(()=> {
                 return userWizard.clickOnChangePasswordButton();
             }).then(()=> {
-                return changePasswordDialog.waitForDialogVisible();
+                return changePasswordDialog.waitForDialogVisible(1000);
             }).then(result=> {
                 return changePasswordDialog.clickOnGeneratePasswordLink();
             }).then(()=> {
@@ -144,7 +145,7 @@ describe('User Wizard and Change Password dialog spec', function () {
             return testUtils.selectUserAndOpenWizard(testUser.displayName).then(()=> {
                 return userWizard.clickOnChangePasswordButton();
             }).then(()=> {
-                return changePasswordDialog.waitForDialogVisible();
+                return changePasswordDialog.waitForDialogVisible(1000);
             }).then(result=> {
                 return changePasswordDialog.clickOnCancelButton();
             }).then(()=> {
@@ -157,7 +158,7 @@ describe('User Wizard and Change Password dialog spec', function () {
             return testUtils.selectUserAndOpenWizard(testUser.displayName).then(()=> {
                 return userWizard.clickOnChangePasswordButton();
             }).then(()=> {
-                return changePasswordDialog.waitForDialogVisible();
+                return changePasswordDialog.waitForDialogVisible(1000);
             }).then(result=> {
                 return changePasswordDialog.clickOnCancelButtonTop();
             }).then(()=> {

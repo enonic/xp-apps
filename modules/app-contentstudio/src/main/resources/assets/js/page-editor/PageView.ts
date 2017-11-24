@@ -266,7 +266,7 @@ export class PageView
             // adding anything except text should exit the text edit mode
             if (itemView.getType().equals(TextItemType.get())) {
                 if (!this.isTextEditMode()) {
-                    this.setTextEditMode(true);
+                    PageViewController.get().setTextEditMode(true);
                 } else {
                     (<TextComponentView>itemView).setEditMode(true);
                     this.closeTextEditModeButton.toggleClass('active', true);
@@ -275,9 +275,11 @@ export class PageView
                 itemView.giveFocus();
             } else {
                 if (this.isTextEditMode()) {
-                    this.setTextEditMode(false);
+                    PageViewController.get().setTextEditMode(false);
                 }
-                itemView.select(null, ItemViewContextMenuPosition.NONE, event.isNew());
+                if (event.isNew()) {
+                    itemView.select(null, ItemViewContextMenuPosition.NONE, true);
+                }
             }
         };
         this.itemViewRemovedListener = (event: ItemViewRemovedEvent) => {
@@ -305,9 +307,9 @@ export class PageView
     }
 
     private createCloseTextEditModeEl(): api.dom.Element {
-        let closeButton = new api.dom.AEl('close-edit-mode-button icon-close2');
+        let closeButton = new api.dom.AEl('close-edit-mode-button icon-close');
         closeButton.onClicked((event: MouseEvent) => {
-            this.setTextEditMode(false);
+            PageViewController.get().setTextEditMode(false);
             event.stopPropagation();
             return false;
         });
@@ -462,7 +464,7 @@ export class PageView
 
         if (this.isTextEditMode()) {
             if (!this.isTextEditorToolbarClicked(event) && !this.isTextEditorDialogClicked(event)) {
-                this.setTextEditMode(false);
+                PageViewController.get().setTextEditMode(false);
             }
         } else {
             super.handleClick(event);

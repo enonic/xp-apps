@@ -56,7 +56,7 @@ export class ContentBrowsePanel
         });
 
         ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
-            this.getBrowseActions().TOGGLE_SEARCH_PANEL.setVisible(item.isInRangeOrSmaller(ResponsiveRanges._360_540));
+            this.getBrowseActions().TOGGLE_SEARCH_PANEL.setVisible(item.isInRangeOrSmaller(ResponsiveRanges._540_720));
         });
 
         this.getBrowseActions().updateActionsEnabledState([]); // to enable/disable actions correctly
@@ -186,9 +186,9 @@ export class ContentBrowsePanel
         });
 
         ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
-            if (ResponsiveRanges._540_720.isFitOrBigger(item.getOldRangeValue())) {
+            if (ResponsiveRanges._720_960.isFitOrBigger(item.getOldRangeValue())) {
                 contentPublishMenuButton.maximize();
-                if (item.isInRangeOrSmaller(ResponsiveRanges._360_540)) {
+                if (item.isInRangeOrSmaller(ResponsiveRanges._540_720)) {
                     ActiveDetailsPanelManager.setActiveDetailsPanel(this.mobileContentItemStatisticsPanel.getDetailsPanel());
                     nonMobileDetailsPanelsManager.hideActivePanel(true);
                 } else {
@@ -207,10 +207,13 @@ export class ContentBrowsePanel
 
         let dockedDetailsPanel = new DockedDetailsPanel(detailsPanelView);
 
-        let contentPanelsAndDetailPanel: api.ui.panel.SplitPanel = new api.ui.panel.SplitPanelBuilder(this.getFilterAndGridSplitPanel(),
-            dockedDetailsPanel).setAlignment(api.ui.panel.SplitPanelAlignment.VERTICAL).setSecondPanelSize(280,
-            api.ui.panel.SplitPanelUnit.PIXEL).setSecondPanelMinSize(280, api.ui.panel.SplitPanelUnit.PIXEL).setAnimationDelay(
-            600).setSecondPanelShouldSlideRight(true).build();
+        let contentPanelsAndDetailPanel: api.ui.panel.SplitPanel =
+            new api.ui.panel.SplitPanelBuilder(this.getFilterAndGridSplitPanel(), dockedDetailsPanel)
+                .setAlignment(api.ui.panel.SplitPanelAlignment.VERTICAL)
+                .setSecondPanelSize(280, api.ui.panel.SplitPanelUnit.PIXEL)
+                .setSecondPanelMinSize(280, api.ui.panel.SplitPanelUnit.PIXEL)
+                .setAnimationDelay(600)
+                .setSecondPanelShouldSlideRight(true).build();
 
         contentPanelsAndDetailPanel.addClass('split-panel-with-details');
         contentPanelsAndDetailPanel.setSecondPanelSize(280, api.ui.panel.SplitPanelUnit.PIXEL);
@@ -304,7 +307,7 @@ export class ContentBrowsePanel
         }
     }
 
-    treeNodeToBrowseItem(node: TreeNode<ContentSummaryAndCompareStatus>): ContentBrowseItem|null {
+    treeNodeToBrowseItem(node: TreeNode<ContentSummaryAndCompareStatus>): ContentBrowseItem | null {
         const data = node ? node.getData() : null;
         return (!data || !data.getContentSummary()) ? null : <ContentBrowseItem>new ContentBrowseItem(data)
             .setId(data.getId())

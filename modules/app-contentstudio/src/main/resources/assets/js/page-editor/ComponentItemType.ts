@@ -10,7 +10,7 @@ export class ComponentItemType
             cssSelector: '[data-portal-component-type=' + itemType + ']',
             draggable: true,
             cursor: 'move',
-            iconCls: api.StyleHelper.COMMON_PREFIX + 'icon-' + itemType,
+            iconCls: 'icon-' + itemType,
             highlighterStyle: {
                 stroke: 'rgba(68, 68, 68, 1)', // not used
                 strokeDasharray: '',

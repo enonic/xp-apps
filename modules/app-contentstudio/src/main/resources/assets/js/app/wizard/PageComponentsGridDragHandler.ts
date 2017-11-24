@@ -9,7 +9,6 @@ import {FragmentComponentView} from '../../page-editor/fragment/FragmentComponen
 import {PageView} from '../../page-editor/PageView';
 import GridDragHandler = api.ui.grid.GridDragHandler;
 import TreeNode = api.ui.treegrid.TreeNode;
-import DragEventData = api.ui.grid.DragEventData;
 import Component = api.content.page.region.Component;
 
 import DragHelper = api.ui.DragHelper;
@@ -19,7 +18,7 @@ import Element = api.dom.Element;
 export class PageComponentsGridDragHandler
     extends GridDragHandler<ItemView> {
 
-    protected handleDragInit(e: DragEvent, dd: DragEventData) {
+    protected handleDragInit(e: DragEvent) {
         let row = this.getRowByTarget(new ElementHelper(<HTMLElement>e.target));
         let nodes = this.contentGrid.getRoot().getCurrentRoot().treeToList();
         let draggedNode = nodes[row.getSiblingIndex()];
@@ -102,10 +101,6 @@ export class PageComponentsGridDragHandler
         return model ? model.getItemId() : null;
     }
 
-    protected handleMovements(rowDataId: any, moveBeforeRowDataId: any) {
-        return;
-    }
-
     protected moveIntoNewParent(item: TreeNode<ItemView>, insertBefore: number, data: TreeNode<ItemView>[]) {
         let insertData = this.getParentPosition(insertBefore, data);
         let regionPosition = insertData.parentPosition;
@@ -120,7 +115,7 @@ export class PageComponentsGridDragHandler
         this.contentGrid.deselectAll();
         item.getData().deselect();
 
-        (<ComponentView<Component>>item.getData()).moveToRegion(<RegionView>newParent.getData(), insertIndex, true);
+        (<ComponentView<Component>>item.getData()).moveToRegion(<RegionView>newParent.getData(), insertIndex);
 
         item.getData().select(null, ItemViewContextMenuPosition.NONE);
         this.contentGrid.refresh();

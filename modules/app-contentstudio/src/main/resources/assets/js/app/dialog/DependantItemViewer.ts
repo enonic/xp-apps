@@ -1,5 +1,4 @@
 import '../../api.ts';
-
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 
 export class DependantItemViewer extends api.ui.NamesAndIconViewer<ContentSummaryAndCompareStatus> {
@@ -15,8 +14,8 @@ export class DependantItemViewer extends api.ui.NamesAndIconViewer<ContentSummar
         return object.getPath().toString();
     }
 
-    resolveSubName(object: ContentSummaryAndCompareStatus, relativePath: boolean = false): string {
-        return super.resolveSubName(object, relativePath);
+    resolveSubName(object: ContentSummaryAndCompareStatus): string {
+        return super.resolveSubName(object);
     }
 
     resolveIconUrl(object: ContentSummaryAndCompareStatus): string {

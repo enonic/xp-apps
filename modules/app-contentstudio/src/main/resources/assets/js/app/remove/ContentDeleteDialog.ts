@@ -3,6 +3,8 @@ import {ContentDeleteDialogAction} from './ContentDeleteDialogAction';
 import {ConfirmContentDeleteDialog} from './ConfirmContentDeleteDialog';
 import {ContentDeletePromptEvent} from '../browse/ContentDeletePromptEvent';
 import {DependantItemsWithProgressDialog, DependantItemsWithProgressDialogConfig} from '../dialog/DependantItemsWithProgressDialog';
+import {DeleteDialogItemList} from './DeleteDialogItemList';
+import {DeleteItemViewer} from './DeleteItemViewer';
 import CompareStatus = api.content.CompareStatus;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import i18n = api.util.i18n;
@@ -20,12 +22,14 @@ export class ContentDeleteDialog
 
     protected autoUpdateTitle: boolean = true;
 
+    private messageId: string;
+
     constructor() {
         super(<DependantItemsWithProgressDialogConfig> {
             title: i18n('dialog.delete'),
                 dialogSubName: i18n('dialog.delete.subname'),
                 dependantsName: i18n('dialog.delete.dependants'),
-                processingLabel:  `${i18n('field.progress.deleting')}...`,
+                processingLabel: `${i18n('field.progress.deleting')}...`,
                 processHandler: () => {
                     new ContentDeletePromptEvent([]).fire();
                 },
@@ -56,6 +60,38 @@ export class ContentDeleteDialog
         this.updateSubTitle();
 
         this.manageDescendants();
+    }
+
+    protected createItemList(): DeleteDialogItemList {
+        return new DeleteDialogItemList();
+    }
+
+    protected getItemList(): DeleteDialogItemList {
+        return <DeleteDialogItemList>super.getItemList();
+    }
+
+    protected manageInboundDependencies(contents: ContentSummaryAndCompareStatus[]) {
+        new api.content.resource.ResolveDependenciesRequest(contents.map(content => content.getContentId())).sendAndParse().then(
+            (result: api.content.resource.ResolveDependenciesResult) => {
+
+                const dependencyCount = result.getIncomingDependenciesCount();
+
+                if (!Object.keys(dependencyCount).length) {
+                    return;
+                }
+
+                this.messageId = api.notify.showWarning(
+                    i18n('dialog.delete.dependency.warning'), false);
+
+                this.getItemList().getItemViews().forEach((itemView) => {
+                    const contentId = itemView.getBrowseItem().getModel().getContentId().toString();
+
+                    if (dependencyCount.hasOwnProperty(contentId)) {
+                        (<DeleteItemViewer>itemView.getViewer()).setInboundDependencyCount(dependencyCount[contentId]);
+                    }
+
+                });
+            });
     }
 
     protected manageDescendants() {
@@ -100,11 +136,16 @@ export class ContentDeleteDialog
     close() {
         super.close();
         this.instantDeleteCheckbox.setChecked(false);
+        if (this.messageId) {
+            api.notify.NotifyManager.get().hide(this.messageId);
+            this.messageId = '';
+        }
     }
 
     setContentToDelete(contents: ContentSummaryAndCompareStatus[]): ContentDeleteDialog {
         this.manageContentToDelete(contents);
         this.manageInstantDeleteStatus(contents);
+        this.manageInboundDependencies(contents);
         this.manageDescendants();
 
         return this;

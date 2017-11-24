@@ -14,6 +14,7 @@ export class ContentEventsProcessor {
 
     static openWizardTab(params: ContentWizardPanelParams, tabId: AppBarTabId): Window {
         let wizardUrl = 'main#/' + params.toString();
+        // let wizardUrl = 'main#/' +(tabId.getMode() == 'browse' ? 'browse/'+tabId.getId() : params.toString());
         let isNew = !params.contentId;
         let wizardId;
         if (!isNew && navigator.userAgent.search('Chrome') > -1) {

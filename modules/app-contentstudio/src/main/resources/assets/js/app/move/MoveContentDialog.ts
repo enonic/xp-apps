@@ -2,8 +2,6 @@ import '../../api.ts';
 import {OpenMoveDialogEvent} from './OpenMoveDialogEvent';
 import {ContentMoveComboBox} from './ContentMoveComboBox';
 import ContentPath = api.content.ContentPath;
-import ContentType = api.schema.content.ContentType;
-import GetContentTypeByNameRequest = api.schema.content.GetContentTypeByNameRequest;
 import ContentSummary = api.content.ContentSummary;
 import ContentIds = api.content.ContentIds;
 import ConfirmationDialog = api.ui.dialog.ConfirmationDialog;
@@ -71,17 +69,10 @@ export class MoveContentDialog
 
             const contents = event.getContentSummaries();
 
-            const allContentTypes = contents.map((content) => content.getType());
-            const contentTypes = api.util.ArrayHelper.removeDuplicates(allContentTypes, (ct) => ct.toString());
-            const contentTypeRequests = contentTypes.map((contentType) => new GetContentTypeByNameRequest(contentType).sendAndParse());
+            this.destinationSearchInput.setFilterContents(contents);
+            this.contentPathSubHeader.setHtml(contents.length === 1 ? contents[0].getPath().toString() : '');
 
-            const deferred = wemQ.defer<ContentType[]>();
-            wemQ.all(contentTypeRequests).spread((...filterContentTypes: ContentType[]) => {
-                this.destinationSearchInput.setFilterContents(contents);
-                this.contentPathSubHeader.setHtml(contents.length === 1 ? contents[0].getPath().toString() : '');
-                this.open();
-                deferred.resolve(filterContentTypes);
-            }).catch((reason: any) => deferred.reject(reason)).done();
+            this.open();
         });
     }
 
