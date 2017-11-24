@@ -92,14 +92,14 @@ function initToolTip() {
         if (left + tooltipWidth >= windowWidth) {
             left = windowWidth - tooltipWidth;
         }
-        wemjq('#' + ID).html(tooltipText).css({
+        wemjq(`#${ID}`).remove();
+        wemjq(`<div id='${ID}' />`).html(tooltipText).css({
             position: 'absolute', top, left
-        }).show();
+        }).appendTo('body').show();
     };
     wemjq(document).on('mouseenter', '*[title]:not([title=""]):not([disabled]):visible', function (e: any) {
         wemjq(e.target).data(DATA, wemjq(e.target).attr('title'));
         wemjq(e.target).removeAttr('title').addClass(CLS_ON);
-        wemjq(`<div id='${ID}' />`).appendTo('body');
         if (e.pageX) {
             pageX = e.pageX;
         }
