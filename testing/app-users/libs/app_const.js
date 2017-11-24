@@ -37,5 +37,8 @@ module.exports = Object.freeze({
     roleDeletedMessage: function (displayName) {
         return `Principal "role:${displayName}" is deleted`
     },
+    userDeletedMessage: function (displayName) {
+        return `Principal "user:system:${displayName}" is deleted`
+    },
 
 });

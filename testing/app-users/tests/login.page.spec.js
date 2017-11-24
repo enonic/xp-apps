@@ -4,7 +4,6 @@ const assert = chai.assert;
 var webDriverHelper = require('../libs/WebDriverHelper');
 chai.Should();
 var loginPage = require('../page_objects/login.page');
-require("mocha-allure-reporter");
 
 describe('Login Page specification', function () {
 

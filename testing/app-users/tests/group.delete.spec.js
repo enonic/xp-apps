@@ -31,7 +31,7 @@ describe('Group wizard - confirm and delete in wizard', function () {
                 return groupWizard.clickOnDelete();
             }).then(result=> {
                 testUtils.saveScreenshot(webDriverHelper.browser, "group_wizard_confirm_delete1");
-                return assert.eventually.isTrue(confirmationDialog.waitForDialogVisible(), "`Confirmation Dialog` should be displayed");
+                return assert.eventually.isTrue(confirmationDialog.waitForDialogVisible(2000), "`Confirmation Dialog` should be displayed");
             });
         });
 
@@ -67,7 +67,7 @@ describe('Group wizard - confirm and delete in wizard', function () {
                 return userBrowsePanel.clickOnDeleteButton();
             }).then(()=> {
                 testUtils.saveScreenshot(webDriverHelper.browser, "group_confirm_delete2");
-                return assert.eventually.isTrue(confirmationDialog.waitForDialogVisible(), "`Confirmation Dialog` should be displayed");
+                return assert.eventually.isTrue(confirmationDialog.waitForDialogVisible(2000), "`Confirmation Dialog` should be displayed");
             });
         });
 
