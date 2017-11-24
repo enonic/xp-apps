@@ -89,11 +89,11 @@ export class MoveContentDialog
         this.moveConfirmationDialog = new ConfirmationDialog()
             .setQuestion(i18n('dialog.confirm.move'))
             .setYesCallback(() => {
-                this.open();
+                this.open(false);
                 this.doMove();
             })
             .setNoCallback(() => {
-                this.open();
+                this.open(false);
             });
     }
 
@@ -187,10 +187,6 @@ export class MoveContentDialog
             if (reason && reason.message) {
                 api.notify.showError(reason.message);
             }
-        }).finally(() => {
-            if (parentContent) {
-                this.destinationSearchInput.deselect(parentContent);
-            }
         });
     }
 
@@ -209,6 +205,13 @@ export class MoveContentDialog
 
     private pollTask(taskId: TaskId, elapsed: number = 0) {
         this.progressManager.pollTask(taskId, elapsed);
+    }
+
+    open(reset: boolean = true) {
+        if (reset && !this.progressManager.isEnabled()) {
+            this.destinationSearchInput.clearCombobox();
+        }
+        super.open();
     }
 
     show() {
