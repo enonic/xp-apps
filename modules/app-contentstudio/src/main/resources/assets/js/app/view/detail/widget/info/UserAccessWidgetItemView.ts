@@ -1,6 +1,5 @@
 import '../../../../../api.ts';
 import {WidgetItemView} from '../../WidgetItemView';
-
 import Content = api.content.Content;
 import ContentId = api.content.ContentId;
 import Access = api.ui.security.acl.Access;

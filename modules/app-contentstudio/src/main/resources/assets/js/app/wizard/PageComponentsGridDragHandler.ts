@@ -9,7 +9,6 @@ import {FragmentComponentView} from '../../page-editor/fragment/FragmentComponen
 import {PageView} from '../../page-editor/PageView';
 import GridDragHandler = api.ui.grid.GridDragHandler;
 import TreeNode = api.ui.treegrid.TreeNode;
-import DragEventData = api.ui.grid.DragEventData;
 import Component = api.content.page.region.Component;
 
 import DragHelper = api.ui.DragHelper;

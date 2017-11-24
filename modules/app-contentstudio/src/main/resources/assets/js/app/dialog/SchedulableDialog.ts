@@ -1,17 +1,18 @@
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import CompareStatus = api.content.CompareStatus;
-import {ProgressBarConfig, ProgressBarDialog} from './ProgressBarDialog';
-import {SchedulePublishDialog} from '../publish/SchedulePublishDialog';
 import DropdownButtonRow = api.ui.dialog.DropdownButtonRow;
 import i18n = api.util.i18n;
+import {SchedulePublishDialog} from '../publish/SchedulePublishDialog';
+import {DependantItemsWithProgressDialog, DependantItemsWithProgressDialogConfig} from './DependantItemsWithProgressDialog';
 
-export abstract class SchedulableDialog extends ProgressBarDialog {
+export abstract class SchedulableDialog
+    extends DependantItemsWithProgressDialog {
 
     private scheduleDialog: SchedulePublishDialog;
 
     protected showScheduleAction: ShowSchedulePublishDialogAction;
 
-    constructor(config: ProgressBarConfig) {
+    constructor(config: DependantItemsWithProgressDialogConfig) {
         super(config);
         this.addClass('schedulable-dialog');
     }

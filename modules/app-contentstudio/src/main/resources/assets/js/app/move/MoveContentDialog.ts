@@ -1,16 +1,18 @@
 import '../../api.ts';
 import {OpenMoveDialogEvent} from './OpenMoveDialogEvent';
 import {ContentMoveComboBox} from './ContentMoveComboBox';
-
 import ContentPath = api.content.ContentPath;
 import ContentSummary = api.content.ContentSummary;
 import ContentIds = api.content.ContentIds;
-import MoveContentResult = api.content.resource.result.MoveContentResult;
-import MoveContentResultFailure = api.content.resource.result.MoveContentResultFailure;
 import ConfirmationDialog = api.ui.dialog.ConfirmationDialog;
 import TreeNode = api.ui.treegrid.TreeNode;
-import i18n = api.util.i18n;
 import ContentTreeSelectorItem = api.content.resource.ContentTreeSelectorItem;
+import ProgressBarManager = api.ui.dialog.ProgressBarManager;
+import MoveContentRequest = api.content.resource.MoveContentRequest;
+import TaskId = api.task.TaskId;
+import Action = api.ui.Action;
+import i18n = api.util.i18n;
+import SpanEl = api.dom.SpanEl;
 
 export class MoveContentDialog
     extends api.ui.dialog.ModalDialog {
@@ -27,6 +29,10 @@ export class MoveContentDialog
 
     private moveConfirmationDialog: ConfirmationDialog;
 
+    private progressManager: ProgressBarManager;
+
+    private moveAction: Action;
+
     constructor() {
         super();
 
@@ -35,6 +41,7 @@ export class MoveContentDialog
         this.contentPathSubHeader = new api.dom.H6El().addClass('content-path');
         this.descriptionHeader = new api.dom.H6El().addClass('desc-message');
         this.initMoveConfirmationDialog();
+        this.initProgressManager();
         this.initSearchInput();
         this.initMoveAction();
 
@@ -72,9 +79,12 @@ export class MoveContentDialog
     private initMoveConfirmationDialog() {
         this.moveConfirmationDialog = new ConfirmationDialog()
             .setQuestion(i18n('dialog.confirm.move'))
-            .setYesCallback(() => this.moveContent())
+            .setYesCallback(() => {
+                this.open(false);
+                this.doMove();
+            })
             .setNoCallback(() => {
-                this.open();
+                this.open(false);
             });
     }
 
@@ -88,13 +98,28 @@ export class MoveContentDialog
 
     private initMoveAction() {
         this.addClickIgnoredElement(this.moveConfirmationDialog);
-        this.addAction(new api.ui.Action(i18n('action.move'), '').onExecuted(() => {
-            if (this.checkContentWillMoveOutOfSite()) {
-                this.showConfirmationDialog();
-            } else {
-                this.moveContent();
-            }
-        }), true);
+        this.moveAction = new Action(i18n('action.move'), '')
+            .onExecuted(() => {
+                if (this.checkContentWillMoveOutOfSite()) {
+                    this.showConfirmationDialog();
+                } else {
+                    this.doMove();
+                }
+            });
+        this.addAction(this.moveAction, true);
+    }
+
+    private initProgressManager() {
+        this.progressManager = new ProgressBarManager({
+            processingLabel: `${i18n('field.progress.moving')}...`,
+            processHandler: () => {
+                new OpenMoveDialogEvent([]).fire();
+            },
+            createProcessingMessage: () => new SpanEl()
+                .setHtml(`${i18n('dialog.move.progressMessage')} `)
+                .appendChild(new SpanEl('content-path').setHtml(this.getParentPath().toString())),
+            managingElement: this
+        });
     }
 
     private showConfirmationDialog() {
@@ -137,47 +162,71 @@ export class MoveContentDialog
         return null;
     }
 
-    private moveContent() {
+    private doMove() {
         const parentContent: ContentTreeSelectorItem = this.getParentContentItem();
-        let parentRoot = (!!parentContent) ? parentContent.getPath() : ContentPath.ROOT;
+        let parentRoot = parentContent ? parentContent.getPath() : ContentPath.ROOT;
         let contentIds = ContentIds.create().fromContentIds(this.movedContentSummaries.map(summary => summary.getContentId())).build();
 
-        new api.content.resource.MoveContentRequest(contentIds, parentRoot).sendAndParse().then((response: MoveContentResult) => {
-            if (parentContent) {
-                this.destinationSearchInput.deselect(parentContent);
-            }
+        this.lockControls();
 
-            if (response.getMoved().length > 0) {
-                if (response.getMoved().length > 1) {
-                    api.notify.showFeedback(i18n('notify.item.movedMultiple', response.getMoved().length));
-                } else {
-                    api.notify.showFeedback(i18n('notify.item.moved', response.getMoved()[0]));
-                }
-            } else if (response.getMoveFailures().length == 0) {
-                api.notify.showWarning(i18n('notify.item.nothingToMove'));
-            }
-
-            response.getMoveFailures().forEach((failure: MoveContentResultFailure) => {
-                api.notify.showWarning(failure.getReason());
-            });
-            if (this.isVisible()) {
-                this.close();
-            }
-        }).catch((reason) => {
-            api.notify.showWarning(reason.getMessage());
+        new MoveContentRequest(contentIds, parentRoot)
+            .sendAndParse()
+            .then((taskId: api.task.TaskId) => {
+                this.pollTask(taskId);
+            }).catch((reason) => {
             this.close();
-            this.destinationSearchInput.deselect(this.getParentContentItem());
-        }).done();
+            if (reason && reason.message) {
+                api.notify.showError(reason.message);
+            }
+        });
     }
 
     private getParentContentItem(): ContentTreeSelectorItem {
         return this.destinationSearchInput.getSelectedDisplayValues()[0];
     }
 
+    private getParentPath(): api.content.ContentPath {
+        const parentContent: ContentTreeSelectorItem = this.getParentContentItem();
+        return parentContent ? parentContent.getPath() : ContentPath.ROOT;
+    }
+
+    private isProgressBarEnabled(): boolean {
+        return this.progressManager.isEnabled();
+    }
+
+    private pollTask(taskId: TaskId, elapsed: number = 0) {
+        this.progressManager.pollTask(taskId, elapsed);
+    }
+
+    open(reset: boolean = true) {
+        if (reset && !this.progressManager.isEnabled()) {
+            this.destinationSearchInput.clearCombobox();
+        }
+        super.open();
+    }
+
     show() {
         api.dom.Body.get().appendChild(this);
         super.show();
-        this.destinationSearchInput.giveFocus();
+        if (this.isProgressBarEnabled()) {
+            this.destinationSearchInput.giveFocus();
+        }
     }
 
+    close() {
+        this.unlockControls();
+        super.close();
+    }
+
+    protected lockControls() {
+        this.addClass('locked');
+        this.moveAction.setEnabled(false);
+        this.destinationSearchInput.getComboBox().setEnabled(false);
+    }
+
+    protected unlockControls() {
+        this.removeClass('locked');
+        this.moveAction.setEnabled(true);
+        this.destinationSearchInput.getComboBox().setEnabled(true);
+    }
 }

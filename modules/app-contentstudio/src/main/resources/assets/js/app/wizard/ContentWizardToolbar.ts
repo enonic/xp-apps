@@ -1,7 +1,6 @@
 import '../../api.ts';
 import {ContentWizardActions} from './action/ContentWizardActions';
 import {ContentWizardToolbarPublishControls} from './ContentWizardToolbarPublishControls';
-
 import CycleButton = api.ui.button.CycleButton;
 import TogglerButton = api.ui.button.TogglerButton;
 import AppIcon = api.app.bar.AppIcon;
@@ -41,18 +40,14 @@ export class ContentWizardToolbar extends api.ui.toolbar.Toolbar {
     }
 
     private addActionButtons(actions: ContentWizardActions) {
-
         super.addActions([
             actions.getSaveAction(),
             actions.getDeleteAction(),
             actions.getDuplicateAction(),
             actions.getPreviewAction(),
-            actions.getUndoPendingDeleteAction()
+            actions.getUndoPendingDeleteAction(),
+            actions.getUnpublishAction()
         ]);
-
-        // Unpublish button will be visible only on mobile resolution
-        super.addAction(actions.getUnpublishAction()).addClass('unpublish-button');
-
         super.addGreedySpacer();
     }
 

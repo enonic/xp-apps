@@ -1,5 +1,5 @@
 import '../../api.ts';
-import {BaseContentModelEvent} from './BaseContentModelEvent';
+import {BaseContentModelEvent} from '../browse/BaseContentModelEvent';
 import TreeNode = api.ui.treegrid.TreeNode;
 
 export class MoveContentEvent extends BaseContentModelEvent {
