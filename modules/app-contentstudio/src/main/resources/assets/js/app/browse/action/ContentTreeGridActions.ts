@@ -23,6 +23,7 @@ import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStat
 import Content = api.content.Content;
 import Permission = api.security.acl.Permission;
 import GetContentByPathRequest = api.content.resource.GetContentByPathRequest;
+import i18n = api.util.i18n;
 
 export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAndCompareStatus> {
 
@@ -244,6 +245,37 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         });
     }
 
+    private handleDeletedContentType(contentSummary: ContentSummary): wemQ.Promise<any> {
+        api.notify.NotifyManager.get().showWarning(i18n('notify.contentType.notFound', contentSummary.getType().getLocalName()));
+
+        return new api.content.resource.GetPermittedActionsRequest().
+            addContentIds(contentSummary.getContentId()).
+            addPermissionsToBeChecked(Permission.CREATE, Permission.DELETE, Permission.PUBLISH).
+            sendAndParse().
+            then((allowedPermissions: Permission[]) => {
+                this.resetDefaultActionsNoItemsSelected();
+                this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(false);
+
+                let canCreate = allowedPermissions.indexOf(Permission.CREATE) > -1;
+
+                let canDelete = allowedPermissions.indexOf(Permission.DELETE) > -1;
+
+                let canPublish = allowedPermissions.indexOf(Permission.PUBLISH) > -1;
+
+                if (canDelete) {
+                    this.DELETE_CONTENT.setEnabled(true);
+                }
+
+                if (canCreate && canDelete) {
+                    this.MOVE_CONTENT.setEnabled(true);
+                }
+
+                if (canPublish) {
+                    this.UNPUBLISH_CONTENT.setEnabled(true);
+                }
+            });
+    }
+
     private updateActionsByPermissionsMultipleItemsSelected(contentBrowseItems: ContentBrowseItem[],
                                                             contentTypesAllowChildren: boolean = true): wemQ.Promise<any> {
         return new api.content.resource.GetPermittedActionsRequest().
@@ -280,10 +312,9 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
     private checkIsChildrenAllowedByContentType(contentSummary: ContentSummary): wemQ.Promise<Boolean> {
         let deferred = wemQ.defer<boolean>();
 
-        new api.schema.content.GetContentTypeByNameRequest(contentSummary.getType()).sendAndParse().then(
-            (contentType: api.schema.content.ContentType) => {
-                return deferred.resolve(contentType && contentType.isAllowChildContent());
-            });
+        new api.schema.content.GetContentTypeByNameRequest(contentSummary.getType()).sendAndParse()
+            .then((contentType: api.schema.content.ContentType) => deferred.resolve(contentType && contentType.isAllowChildContent()))
+            .fail(() => this.handleDeletedContentType(contentSummary));
 
         return deferred.promise;
     }
