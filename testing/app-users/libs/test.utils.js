@@ -43,7 +43,7 @@ module.exports = {
         }).then((result)=> {
             return browsePanel.clickOnDeleteButton();
         }).then(()=> {
-            return confirmationDialog.waitForDialogVisible();
+            return confirmationDialog.waitForDialogVisible(2000);
         }).then(result=> {
             if (!result) {
                 throw new Error('Confirmation dialog was not loaded!')

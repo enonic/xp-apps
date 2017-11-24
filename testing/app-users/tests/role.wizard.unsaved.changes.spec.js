@@ -25,7 +25,7 @@ describe('Role Wizard and `Save Before Close dialog`', function () {
             }).then(()=> {
                 return userBrowsePanel.doClickOnCloseTabButton('test-role');
             }).then(()=> {
-                return saveBeforeClose.waitForDialogVisible();
+                return saveBeforeClose.waitForDialogVisible(2000);
             });
         });
 
@@ -48,7 +48,7 @@ describe('Role Wizard and `Save Before Close dialog`', function () {
             }).pause(500).then(()=> {
                 return userBrowsePanel.doClickOnCloseTabButton('new-name');
             }).then(()=> {
-                return saveBeforeClose.waitForDialogVisible();
+                return saveBeforeClose.waitForDialogVisible(2000);
             });
         });
 
@@ -59,7 +59,7 @@ describe('Role Wizard and `Save Before Close dialog`', function () {
             }).pause(500).then(()=> {
                 return userBrowsePanel.doClickOnCloseTabButton(testrole.displayName);
             }).then(()=> {
-                return saveBeforeClose.waitForDialogVisible();
+                return saveBeforeClose.waitForDialogVisible(2000);
             });
         });
 
@@ -70,7 +70,7 @@ describe('Role Wizard and `Save Before Close dialog`', function () {
             }).pause(500).then(()=> {
                 return userBrowsePanel.doClickOnCloseTabButton(testrole.displayName);
             }).then(()=> {
-                return saveBeforeClose.waitForDialogVisible();
+                return saveBeforeClose.waitForDialogVisible(2000);
             });
         });
 
