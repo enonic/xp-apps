@@ -36,6 +36,8 @@ import {IssueServerEventsHandler} from './app/issue/event/IssueServerEventsHandl
 import {CreateIssuePromptEvent} from './app/browse/CreateIssuePromptEvent';
 import {IssueDialogsManager} from './app/issue/IssueDialogsManager';
 import {ShowIssuesDialogEvent} from './app/browse/ShowIssuesDialogEvent';
+import {ToggleSearchPanelWithDependenciesGlobalEvent} from './app/browse/ToggleSearchPanelWithDependenciesGlobalEvent';
+import {ToggleSearchPanelWithDependenciesEvent} from './app/browse/ToggleSearchPanelWithDependenciesEvent';
 
 function getApplication(): api.app.Application {
     let application = new api.app.Application('content-studio', i18n('app.name'), i18n('app.abbr'), CONFIG.appIconUrl);
@@ -246,6 +248,8 @@ function startApplication() {
 function startContentWizard(wizardParams: ContentWizardPanelParams, connectionDetector: LostConnectionDetector) {
     let wizard = new ContentWizardPanel(wizardParams);
 
+    // initSearchPanelListener(wizard);
+
     wizard.onDataLoaded(content => {
         let contentType = (<ContentWizardPanel>wizard).getContentType();
         if (!wizardParams.contentId || !dataPreloaded) {
@@ -292,6 +296,8 @@ function startContentApplication(application: api.app.Application) {
     let appBar = new api.app.bar.AppBar(application);
     let appPanel = new ContentAppPanel(application.getPath());
 
+    initSearchPanelListener(appPanel);
+
     let clientEventsListener = new ContentEventsListener();
     clientEventsListener.start();
 
@@ -336,6 +342,22 @@ function startContentApplication(application: api.app.Application) {
     new SortContentDialog();
     // tslint:disable-next-line:no-unused-new
     new MoveContentDialog();
+}
+
+function initSearchPanelListener(panel: ContentAppPanel) {
+    ToggleSearchPanelWithDependenciesGlobalEvent.on((event) => {
+        if (!panel.getBrowsePanel().getTreeGrid().isEmpty()) {
+            new ToggleSearchPanelWithDependenciesEvent(event.getContent(), event.isInbound()).fire();
+        } else {
+
+            const handler = () => {
+                new ToggleSearchPanelWithDependenciesEvent(event.getContent(), event.isInbound()).fire();
+                panel.getBrowsePanel().getTreeGrid().unLoaded(handler);
+            };
+
+            panel.getBrowsePanel().getTreeGrid().onLoaded(handler);
+        }
+    });
 }
 
 preLoadApplication();

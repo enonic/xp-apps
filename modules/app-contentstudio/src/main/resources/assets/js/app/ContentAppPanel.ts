@@ -12,7 +12,8 @@ import ContentId = api.content.ContentId;
 import ShowBrowsePanelEvent = api.app.ShowBrowsePanelEvent;
 import AppPanel = api.app.AppPanel;
 
-export class ContentAppPanel extends AppPanel<ContentSummaryAndCompareStatus> {
+export class ContentAppPanel
+    extends AppPanel<ContentSummaryAndCompareStatus> {
 
     private path: api.rest.Path;
 
@@ -74,6 +75,10 @@ export class ContentAppPanel extends AppPanel<ContentSummaryAndCompareStatus> {
 
     protected createBrowsePanel() {
         return new ContentBrowsePanel();
+    }
+
+    getBrowsePanel(): ContentBrowsePanel {
+        return <ContentBrowsePanel>this.browsePanel;
     }
 
     private handleNew(newContentEvent: NewContentEvent) {

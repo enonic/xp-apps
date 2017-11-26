@@ -72,7 +72,16 @@ var roleWizard = Object.create(wizard, {
                 throw new Error('Remove-icon for the role ' + displayName + ' ' + 'was not found on the  wizard page');
             }).pause(500);
         }
-    }
+    },
+    clickOnDelete: {
+        value: function () {
+            let deleteSelector = `${panel.container}` + `${wizard.deleteButton}`;
+            return this.doClick(deleteSelector).catch(err=> {
+                console.log(err);
+                this.doCatch('err_delete_in_role_wizard', 'Error when Delete button has been clicked ');
+            });
+        }
+    },
 });
 module.exports = roleWizard;
 
