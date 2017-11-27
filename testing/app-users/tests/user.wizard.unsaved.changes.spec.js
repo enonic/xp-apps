@@ -26,7 +26,7 @@ describe('User Wizard and `Save Before Close dialog`', function () {
             }).then(()=> {
                 return userBrowsePanel.doClickOnCloseTabButton('test-user');
             }).then(()=> {
-                return saveBeforeClose.waitForDialogVisible(2000);
+                return saveBeforeClose.waitForDialogVisible(appConst.TIMEOUT_3);
             });
         });
 
@@ -50,7 +50,7 @@ describe('User Wizard and `Save Before Close dialog`', function () {
             }).pause(500).then(()=> {
                 return userBrowsePanel.doClickOnCloseTabButton('new-name');
             }).then(()=> {
-                return saveBeforeClose.waitForDialogVisible(2000);
+                return saveBeforeClose.waitForDialogVisible(appConst.TIMEOUT_3);
             });
         });
 
@@ -72,7 +72,7 @@ describe('User Wizard and `Save Before Close dialog`', function () {
             }).pause(500).then(()=> {
                 return userBrowsePanel.doClickOnCloseTabButton(testUser.displayName);
             }).then(()=> {
-                return saveBeforeClose.waitForDialogVisible(2000);
+                return saveBeforeClose.waitForDialogVisible(appConst.TIMEOUT_3);
             });
         });
     beforeEach(() => testUtils.navigateToUsersApp(webDriverHelper.browser));

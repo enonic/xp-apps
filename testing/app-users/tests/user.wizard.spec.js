@@ -11,6 +11,7 @@ const userWizard = require('../page_objects/wizardpanel/user.wizard');
 const changePasswordDialog = require('../page_objects/wizardpanel/change.password.dialog');
 const testUtils = require('../libs/test.utils');
 const userItemsBuilder = require('../libs/userItems.builder.js');
+const appConst = require('../libs/app_const');
 
 describe('User Wizard and Change Password dialog spec', function () {
     this.timeout(70000);
@@ -90,7 +91,7 @@ describe('User Wizard and Change Password dialog spec', function () {
             return testUtils.selectUserAndOpenWizard(testUser.displayName).then(()=> {
                 return userWizard.clickOnChangePasswordButton();
             }).then(()=> {
-                return changePasswordDialog.waitForDialogVisible(2000);
+                return changePasswordDialog.waitForDialogVisible(appConst.TIMEOUT_3);
             }).then(()=> {
                 return changePasswordDialog.getUserPath();
             }).then(result=> {
@@ -103,7 +104,7 @@ describe('User Wizard and Change Password dialog spec', function () {
             return testUtils.selectUserAndOpenWizard(testUser.displayName).then(()=> {
                 return userWizard.clickOnChangePasswordButton();
             }).then(()=> {
-                return changePasswordDialog.waitForDialogVisible(1000);
+                return changePasswordDialog.waitForDialogVisible(appConst.TIMEOUT_3);
             }).then(result=> {
                 return assert.eventually.isTrue(changePasswordDialog.isPasswordInputDisplayed(), 'Password Input should be displayed');
             }).then(()=> {
@@ -118,7 +119,7 @@ describe('User Wizard and Change Password dialog spec', function () {
             return testUtils.selectUserAndOpenWizard(testUser.displayName).then(()=> {
                 return userWizard.clickOnChangePasswordButton();
             }).then(()=> {
-                return changePasswordDialog.waitForDialogVisible(1000);
+                return changePasswordDialog.waitForDialogVisible(appConst.TIMEOUT_3);
             }).then(result=> {
                 return changePasswordDialog.clickOnShowPasswordLink();
             }).then(()=> {
@@ -131,7 +132,7 @@ describe('User Wizard and Change Password dialog spec', function () {
             return testUtils.selectUserAndOpenWizard(testUser.displayName).then(()=> {
                 return userWizard.clickOnChangePasswordButton();
             }).then(()=> {
-                return changePasswordDialog.waitForDialogVisible(1000);
+                return changePasswordDialog.waitForDialogVisible(appConst.TIMEOUT_3);
             }).then(result=> {
                 return changePasswordDialog.clickOnGeneratePasswordLink();
             }).then(()=> {
@@ -158,7 +159,7 @@ describe('User Wizard and Change Password dialog spec', function () {
             return testUtils.selectUserAndOpenWizard(testUser.displayName).then(()=> {
                 return userWizard.clickOnChangePasswordButton();
             }).then(()=> {
-                return changePasswordDialog.waitForDialogVisible(1000);
+                return changePasswordDialog.waitForDialogVisible(appConst.TIMEOUT_3);
             }).then(result=> {
                 return changePasswordDialog.clickOnCancelButtonTop();
             }).then(()=> {

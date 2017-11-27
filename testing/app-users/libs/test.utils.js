@@ -13,6 +13,8 @@ const wizard = require('../page_objects/wizardpanel/wizard.panel');
 const newPrincipalDialog = require('../page_objects/browsepanel/new.principal.dialog');
 const filterPanel = require("../page_objects/browsepanel/principal.filter.panel");
 const confirmationDialog = require("../page_objects/confirmation.dialog");
+const appConst = require("./app_const");
+
 
 module.exports = {
     xpTabs: {},
@@ -34,7 +36,7 @@ module.exports = {
         }).then(()=> {
             return filterPanel.typeSearchText(name);
         }).then(()=> {
-            return browsePanel.waitForSpinnerNotVisible(3000);
+            return browsePanel.waitForSpinnerNotVisible(appConst.TIMEOUT_3);
         });
     },
     selectAndDeleteItem: function (name) {
@@ -43,7 +45,7 @@ module.exports = {
         }).then((result)=> {
             return browsePanel.clickOnDeleteButton();
         }).then(()=> {
-            return confirmationDialog.waitForDialogVisible(2000);
+            return confirmationDialog.waitForDialogVisible(appConst.TIMEOUT_3);
         }).then(result=> {
             if (!result) {
                 throw new Error('Confirmation dialog was not loaded!')
@@ -54,14 +56,14 @@ module.exports = {
         })
     },
     confirmDelete: ()=> {
-        return confirmationDialog.waitForDialogVisible(2000).then(()=> {
+        return confirmationDialog.waitForDialogVisible(appConst.TIMEOUT_3).then(()=> {
             return confirmationDialog.clickOnYesButton();
         }).then(()=> {
             return browsePanel.waitForSpinnerNotVisible();
         });
     },
     navigateToUsersApp: function (browser) {
-        return launcherPanel.waitForPanelVisible(2000).then(()=> {
+        return launcherPanel.waitForPanelVisible(appConst.TIMEOUT_3).then(()=> {
             console.log("'user browse panel' should be loaded");
             return launcherPanel.clickOnUsersLink();
         }).then(()=> {
@@ -80,7 +82,7 @@ module.exports = {
             this.xpTabs = tabs;
             return browser.switchTab(this.xpTabs[1]);
         }).then(()=> {
-            return browsePanel.waitForUsersGridLoaded(5000);
+            return browsePanel.waitForUsersGridLoaded(appConst.TIMEOUT_3);
         });
     },
     doSwitchToUsersApp: function (browser) {
@@ -97,7 +99,7 @@ module.exports = {
             });
             return prevPromise;
         }).then(()=> {
-            return browsePanel.waitForUsersGridLoaded(5000);
+            return browsePanel.waitForUsersGridLoaded(appConst.TIMEOUT_3);
         });
     },
     doSwitchToHome: function (browser) {
@@ -114,7 +116,7 @@ module.exports = {
             });
             return prevPromise;
         }).then(()=> {
-            return homePage.waitForLoaded(2000);
+            return homePage.waitForLoaded(appConst.TIMEOUT_3);
         });
     },
     switchAndCheckTitle: function (browser, tabId, reqTitle) {
@@ -128,7 +130,7 @@ module.exports = {
 
     doLoginAndSwitchToUsers: function (browser) {
         return loginPage.doLogin().then(()=> {
-            return homePage.waitForXpTourVisible(5000);
+            return homePage.waitForXpTourVisible(appConst.TIMEOUT_3);
         }).then(()=> {
             return homePage.doCloseXpTourDialog();
         }).then(()=> {

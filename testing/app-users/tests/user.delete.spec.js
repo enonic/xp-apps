@@ -29,9 +29,10 @@ describe('User - confirm and delete in wizard and in browse panel', function () 
                 return userWizard.waitAndClickOnSave();
             }).then(()=> {
                 return userWizard.clickOnDelete();
-            }).then(result=> {
+            }).then(()=> {
                 testUtils.saveScreenshot(webDriverHelper.browser, "user_wizard_confirm_delete1");
-                return assert.eventually.isTrue(confirmationDialog.waitForDialogVisible(2000), "`Confirmation Dialog` should be displayed");
+                return assert.eventually.isTrue(confirmationDialog.waitForDialogVisible(appConst.TIMEOUT_3),
+                    "`Confirmation Dialog` should be displayed");
             });
         });
 
@@ -55,7 +56,7 @@ describe('User - confirm and delete in wizard and in browse panel', function () 
             });
         });
 
-    it('GIVEN `User` is saved WHEN Delete button on toolbar has been pressed THEN Confirmation dialog should appear',
+    it('GIVEN `User` is selected WHEN Delete button on toolbar has been pressed THEN Confirmation dialog should appear',
         () => {
             let userName = userItemsBuilder.generateRandomName('user');
             testUser = userItemsBuilder.buildUser(userName, '1q2w3e', userItemsBuilder.generateEmail(userName), null);
@@ -67,7 +68,8 @@ describe('User - confirm and delete in wizard and in browse panel', function () 
                 return userBrowsePanel.clickOnDeleteButton();
             }).then(()=> {
                 testUtils.saveScreenshot(webDriverHelper.browser, "user_confirm_delete2");
-                return assert.eventually.isTrue(confirmationDialog.waitForDialogVisible(), "`Confirmation Dialog` should be displayed");
+                return assert.eventually.isTrue(confirmationDialog.waitForDialogVisible(appConst.TIMEOUT_3),
+                    "`Confirmation Dialog` should be displayed");
             });
         });
 

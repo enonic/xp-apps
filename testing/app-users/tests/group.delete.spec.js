@@ -31,7 +31,8 @@ describe('Group wizard - confirm and delete in wizard', function () {
                 return groupWizard.clickOnDelete();
             }).then(result=> {
                 testUtils.saveScreenshot(webDriverHelper.browser, "group_wizard_confirm_delete1");
-                return assert.eventually.isTrue(confirmationDialog.waitForDialogVisible(2000), "`Confirmation Dialog` should be displayed");
+                return assert.eventually.isTrue(confirmationDialog.waitForDialogVisible(appConst.TIMEOUT_3),
+                    "`Confirmation Dialog` should be displayed");
             });
         });
 
@@ -55,7 +56,7 @@ describe('Group wizard - confirm and delete in wizard', function () {
             });
         });
 
-    it('GIVEN `Group` is saved WHEN Delete button on toolbar has been pressed THEN Confirmation dialog should appear',
+    it('GIVEN `Group` is selected WHEN Delete button on toolbar has been pressed THEN Confirmation dialog should appear',
         () => {
             testGroup =
                 userItemsBuilder.buildGroup(userItemsBuilder.generateRandomName('group'), 'test group 2');
@@ -67,7 +68,8 @@ describe('Group wizard - confirm and delete in wizard', function () {
                 return userBrowsePanel.clickOnDeleteButton();
             }).then(()=> {
                 testUtils.saveScreenshot(webDriverHelper.browser, "group_confirm_delete2");
-                return assert.eventually.isTrue(confirmationDialog.waitForDialogVisible(2000), "`Confirmation Dialog` should be displayed");
+                return assert.eventually.isTrue(confirmationDialog.waitForDialogVisible(appConst.TIMEOUT_3),
+                    "`Confirmation Dialog` should be displayed");
             });
         });
 
