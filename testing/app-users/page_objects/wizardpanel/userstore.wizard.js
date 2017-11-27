@@ -187,5 +187,22 @@ var userStoreWizard = Object.create(wizard, {
             return this.isVisible(this.permissionsOptionsFilterInput);
         }
     },
+    waitForDeleteButtonEnabled: {
+        value: function () {
+            let deleteSelector = `${panel.container}` + `${wizard.deleteButton}`;
+            return this.waitForEnabled(deleteSelector, 3000);
+        }
+    },
+    clickOnDelete: {
+        value: function () {
+            let deleteSelector = `${panel.container}` + `${wizard.deleteButton}`;
+            return this.waitForDeleteButtonEnabled().then(result=> {
+                return this.doClick(deleteSelector);
+            }).catch(err=> {
+                console.log(err);
+                this.doCatch('err_delete_in_userstore_wizard', 'Error when Delete button has been clicked ');
+            });
+        }
+    },
 });
 module.exports = userStoreWizard;

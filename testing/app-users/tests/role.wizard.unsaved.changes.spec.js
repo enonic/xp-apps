@@ -59,7 +59,7 @@ describe('Role Wizard and `Save Before Close dialog`', function () {
             }).pause(500).then(()=> {
                 return userBrowsePanel.doClickOnCloseTabButton(testrole.displayName);
             }).then(()=> {
-                return saveBeforeClose.waitForDialogVisible(2000);
+                return saveBeforeClose.waitForDialogVisible(appConst.TIMEOUT_3);
             });
         });
 
@@ -70,7 +70,7 @@ describe('Role Wizard and `Save Before Close dialog`', function () {
             }).pause(500).then(()=> {
                 return userBrowsePanel.doClickOnCloseTabButton(testrole.displayName);
             }).then(()=> {
-                return saveBeforeClose.waitForDialogVisible(2000);
+                return saveBeforeClose.waitForDialogVisible(appConst.TIMEOUT_3);
             });
         });
 

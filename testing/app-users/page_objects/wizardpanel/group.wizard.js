@@ -4,6 +4,7 @@
 
 var wizard = require('./wizard.panel');
 var elements = require('../../libs/elements');
+var appConst = require('../../libs/app_const');
 const loaderComboBox = require('../inputs/loaderComboBox');
 
 var panel = {
@@ -135,7 +136,7 @@ var groupWizard = Object.create(wizard, {
     },
     waitForOpened: {
         value: function () {
-            return this.waitForVisible(this.memberOptionsFilterInput, 3000).catch((e)=> {
+            return this.waitForVisible(this.memberOptionsFilterInput, appConst.TIMEOUT_3).catch((e)=> {
                 throw new Error("Group wizard was not loaded! " + e);
             });
         }

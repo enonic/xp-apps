@@ -14,20 +14,17 @@ var confirmationDialog = Object.create(page, {
             return `${dialog.container}//h6[text()='Are you sure you want to delete this item?']`;
         }
     },
-
     yesButton: {
         get: function () {
             return `${dialog.container}` + `${dialog.yesButton}`;
 
         }
     },
-
     noButton: {
         get: function () {
             return `${dialog.container}` + `${dialog.yesButton}`;
         }
     },
-
     clickOnYesButton: {
         value: function () {
             return this.doClick(this.yesButton).then(()=> {
@@ -38,7 +35,6 @@ var confirmationDialog = Object.create(page, {
             })
         }
     },
-
     waitForDialogVisible: {
         value: function (ms) {
             return this.waitForVisible(`${dialog.container}`, ms);

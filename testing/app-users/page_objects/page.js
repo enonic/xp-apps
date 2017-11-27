@@ -1,4 +1,5 @@
 const webDriverHelper = require('./../libs/WebDriverHelper');
+const appConst = require('./../libs/app_const');
 const path = require('path');
 
 function Page() {
@@ -146,14 +147,14 @@ Page.prototype.getAttribute = function (selector, attributeName) {
 };
 
 Page.prototype.waitForNotificationMessage = function () {
-    return this.getBrowser().waitForVisible(`//div[@class='notification-content']/span`, 3000).then(()=> {
+    return this.getBrowser().waitForVisible(`//div[@class='notification-content']/span`, appConst.TIMEOUT_3).then(()=> {
         return this.getBrowser().getText(`//div[@class='notification-content']/span`);
     })
 };
 
 Page.prototype.waitForExpectedNotificationMessage = function (expectedMessage) {
     let selector = `//div[contains(@id,'NotificationMessage')]//div[contains(@class,'notification-content')]//span[contains(.,'${expectedMessage}')]`
-    return this.getBrowser().waitForVisible(selector, 3000).catch((err)=> {
+    return this.getBrowser().waitForVisible(selector, appConst.TIMEOUT_3).catch((err)=> {
         this.saveScreenshot('err_notification_mess');
         throw new Error('expected notification message was not shown! ' + err);
     })
@@ -161,7 +162,7 @@ Page.prototype.waitForExpectedNotificationMessage = function (expectedMessage) {
 
 Page.prototype.waitForErrorNotificationMessage = function () {
     var selector = `//div[contains(@id,'NotificationMessage') and @class='notification error']//div[contains(@class,'notification-content')]/span`;
-    return this.getBrowser().waitForVisible(selector, 3000).then(()=> {
+    return this.getBrowser().waitForVisible(selector, appConst.TIMEOUT_3).then(()=> {
         return this.getBrowser().getText(selector);
     })
 };

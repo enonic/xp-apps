@@ -4,6 +4,7 @@
 
 var page = require('../page');
 var elements = require('../../libs/elements');
+var appConst = require('../../libs/app_const');
 var dialog = {
     container: `//div[contains(@id,'ChangeUserPasswordDialog')]`,
     passwordInput: "//input[contains(@id,'PasswordInput')]",
@@ -74,7 +75,7 @@ var changeUserPasswordDialog = Object.create(page, {
     clickOnChangePasswordButton: {
         value: function () {
             return this.doClick(this.changePasswordButton).then(()=> {
-                return this.waitForNotVisible(`${dialog.container}`, 2000);
+                return this.waitForNotVisible(`${dialog.container}`, appConst.TIMEOUT_3);
             });
         }
     },
@@ -128,7 +129,7 @@ var changeUserPasswordDialog = Object.create(page, {
     },
     waitForClosed: {
         value: function () {
-            return this.waitForNotVisible(`${dialog.container}`, 3000).catch(error=> {
+            return this.waitForNotVisible(`${dialog.container}`, appConst.TIMEOUT_3).catch(error=> {
                 throw new Error('Change Pasword Dialog was not closed');
             });
         }
