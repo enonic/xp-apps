@@ -1,7 +1,7 @@
 import '../../api.ts';
 
 import ApplicationResourceRequest = api.application.ApplicationResourceRequest;
-import {ApplicationInfoJson} from './ApplicationInfoJson';
+import {ApplicationInfoJson} from './json/ApplicationInfoJson';
 import {ApplicationInfo} from './ApplicationInfo';
 
 export class GetApplicationInfoRequest

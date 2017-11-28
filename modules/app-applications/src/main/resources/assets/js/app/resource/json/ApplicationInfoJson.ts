@@ -1,4 +1,4 @@
-import '../../api.ts';
+import '../../../api.ts';
 
 import ContentTypeSummaryListJson = api.schema.content.ContentTypeSummaryListJson;
 import PageDescriptorsJson = api.content.page.PageDescriptorsJson;
@@ -6,19 +6,22 @@ import PartDescriptorsJson = api.content.page.region.PartDescriptorsJson;
 import LayoutDescriptorsJson = api.content.page.region.LayoutDescriptorsJson;
 import RelationshipTypeListJson = api.schema.relationshiptype.RelationshipTypeListJson;
 import MacrosJson = api.macro.resource.MacrosJson;
+import {ContentReferencesJson} from './ContentReferencesJson';
 
 export interface ApplicationInfoJson {
 
-    contentTypesJson: ContentTypeSummaryListJson;
+    contentTypes: ContentTypeSummaryListJson;
 
-    pagesJson: PageDescriptorsJson;
+    pages: PageDescriptorsJson;
 
-    partsJson: PartDescriptorsJson;
+    parts: PartDescriptorsJson;
 
-    layoutsJson: LayoutDescriptorsJson;
+    layouts: LayoutDescriptorsJson;
 
-    relationsJson: RelationshipTypeListJson;
+    relations: RelationshipTypeListJson;
 
-    macrosJson: MacrosJson;
+    macros: MacrosJson;
+
+    references: ContentReferencesJson;
 
 }
