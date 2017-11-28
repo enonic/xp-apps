@@ -43,7 +43,6 @@ export class SecurityWizardStepForm extends api.app.wizard.WizardStepForm {
         this.inheritance = new DivEl(/*'inheritance'*/);
 
         this.accessListView = new AccessControlListView();
-        this.accessListView.setItemsEditable(false);
 
         this.editLink = new Button(i18n('action.editPermissions'));
         this.editLink.addClass('edit-permissions');
@@ -89,7 +88,7 @@ export class SecurityWizardStepForm extends api.app.wizard.WizardStepForm {
         this.accessListView.clearItems();
 
         this.permissions.getEntries().sort().forEach((entry) => {
-            this.accessListView.addItem(entry);
+            this.accessListView.addItem(entry, true);
 
             let entryView = <AccessControlEntryView> this.accessListView.getItemView(entry);
             let selector = entryView.getPermissionSelector();
