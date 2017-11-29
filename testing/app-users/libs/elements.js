@@ -31,5 +31,5 @@ module.exports = Object.freeze({
     selectedPrincipalByDisplayName: function (displayName) {
         return `//div[contains(@id,'PrincipalSelectedOptionView') and descendant::h6[contains(@class,'main-name') and text()='${displayName}']]`
     },
-    REMOVE_ICON: `//a[@class='icon-close']`,
+    REMOVE_ICON: `//a[@class='remove']`,
 });
