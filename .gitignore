@@ -1,7 +1,6 @@
 .DS_Store
 build/
 temp/
-temp/*.*
 target/
 .gradle/
 node_modules/
@@ -20,5 +19,4 @@ classes/
 out/
 .xp/
 
-
-
+testing/app-users/allure-results/

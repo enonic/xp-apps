@@ -32,7 +32,10 @@ ext {
     reportsDir = "$buildDir${File.separator}reports"
     distroDir = "$unpackDir${File.separator}enonic-xp-$xpVersion"
     deployDir = "$distroDir${File.separator}home${File.separator}deploy"
+//    allureResultsDir = "$buildDir${File.separator}allure-results"
+    allureResultsDir = "allure-results"
     xpHome = "$distroDir${File.separator}home"
+    xpServer = new ServerInstance()
 }
 
 dependencies {
@@ -51,8 +54,23 @@ task unpackDistro( type: Copy ) {
     into file( unpackDir )
 }
 
-ext {
-    xpServer = new ServerInstance()
+task zipScreenshots( type: Zip ) {
+    from screenshotsDir
+    include '*'
+    include '*/*'
+    archiveName 'userAppTestScreenshots.zip'
+}
+
+task zipAllure( type: Zip ) {
+    from allureResultsDir
+    include '*'
+    include '*/*'
+    archiveName 'userAppTestAllureResults.zip'
+}
+
+artifacts {
+    archives zipScreenshots
+    archives zipAllure
 }
 
 task startServer( dependsOn: unpackDistro ) {
@@ -63,8 +81,11 @@ task startServer( dependsOn: unpackDistro ) {
     }
 }
 
-task stopServer << {
-    xpServer.stop()
+task stopServer {
+    doLast {
+        xpServer.stop()
+    }
+    finalizedBy zipScreenshots, zipAllure
 }
 
 tasks.withType( Test ) {
@@ -76,19 +97,16 @@ tasks.withType( Test ) {
     }
 }
 
-//run the tusk in the gulpfile.js. Name of the task is 'test'
-task downloadAndUsersTest( type: GulpTask, dependsOn: [npmInstall, startServer,] ) {
+task testApp( type: GulpTask, dependsOn: [npmInstall, startServer] ) {
     inputs.files fileTree( dir: '.' )
     outputs.files fileTree( dir: '/test-results' )
     args = ['test']
     startServer.mustRunAfter npmInstall
+    finalizedBy stopServer
 }
 
-task localUsersTest( type: GulpTask, dependsOn: [npmInstall] ) {
+task testAppLocally( type: GulpTask, dependsOn: [npmInstall] ) {
     inputs.files fileTree( dir: '.' )
     outputs.files fileTree( dir: '/test-results' )
     args = ['test']
 }
-
-downloadAndUsersTest.finalizedBy = ['stopServer']
-
