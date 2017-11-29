@@ -31,7 +31,7 @@ allprojects {
     uploadArchives {
         repositories {
             mavenDeployer {
-                repository( url: 'http://repo.enonic.com/artifactory/public' )
+                repository( url: 'http://repo.enonic.com/artifactory/inhouse' )
             }
         }
     }
