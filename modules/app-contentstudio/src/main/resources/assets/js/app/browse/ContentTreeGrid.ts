@@ -176,7 +176,14 @@ export class ContentTreeGrid
         ContentVersionSetEvent.on((event: ContentVersionSetEvent) => {
             this.updateContentNode(event.getContentId());
         });
+    }
 
+    protected isClickOutsideGridViewport(clickedEl: HTMLElement) {
+        if (super.isClickOutsideGridViewport(clickedEl)) {
+            return true;
+        }
+        const element = api.dom.Element.fromHtmlElement(clickedEl);
+        return element.hasClass('content-item-preview-panel');
     }
 
     isEmptyNode(node: TreeNode<ContentSummaryAndCompareStatus>): boolean {
