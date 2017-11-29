@@ -85,7 +85,6 @@ task stopServer {
     doLast {
         xpServer.stop()
     }
-    finalizedBy zipScreenshots, zipAllure
 }
 
 tasks.withType( Test ) {
@@ -97,7 +96,7 @@ tasks.withType( Test ) {
     }
 }
 
-task testApp( type: GulpTask, dependsOn: [npmInstall, startServer] ) {
+task testUsersApp( type: GulpTask, dependsOn: [npmInstall, startServer] ) {
     inputs.files fileTree( dir: '.' )
     outputs.files fileTree( dir: '/test-results' )
     args = ['test']
@@ -105,7 +104,7 @@ task testApp( type: GulpTask, dependsOn: [npmInstall, startServer] ) {
     finalizedBy stopServer
 }
 
-task testAppLocally( type: GulpTask, dependsOn: [npmInstall] ) {
+task testUsersAppLocally( type: GulpTask, dependsOn: [npmInstall] ) {
     inputs.files fileTree( dir: '.' )
     outputs.files fileTree( dir: '/test-results' )
     args = ['test']
