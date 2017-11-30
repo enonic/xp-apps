@@ -2,18 +2,19 @@ import {IssueStatus, IssueStatusFormatter} from '../IssueStatus';
 import TabMenuItem = api.ui.tab.TabMenuItem;
 import TabMenu = api.ui.tab.TabMenu;
 
-type IssueOptions = [{value: IssueStatus, name: String}];
+type IssueOptions = [{ value: IssueStatus, name: String }];
 
-export class IssueStatusSelector extends TabMenu {
+export class IssueStatusSelector
+    extends TabMenu {
 
-    private static OPTIONS:IssueOptions = [
+    private static OPTIONS: IssueOptions = [
         {value: IssueStatus.OPEN, name: 'Open'},
         {value: IssueStatus.CLOSED, name: 'Closed'}
     ];
 
     private value: IssueStatus;
 
-    private valueChangedListeners: {(event: api.ValueChangedEvent): void}[] = [];
+    private valueChangedListeners: { (event: api.ValueChangedEvent): void }[] = [];
 
     constructor() {
         super('issue-status-selector');
@@ -25,7 +26,6 @@ export class IssueStatusSelector extends TabMenu {
                 .build();
 
             this.addNavigationItem(menuItem);
-
         });
 
         this.onNavigationItemSelected((event: api.ui.NavigatorEvent) => {
@@ -33,7 +33,7 @@ export class IssueStatusSelector extends TabMenu {
             this.setValue(IssueStatusSelector.OPTIONS[item.getIndex()].value);
         });
 
-       this.handleClickOutside();
+        this.handleClickOutside();
     }
 
     getValue(): IssueStatus {
@@ -43,14 +43,14 @@ export class IssueStatusSelector extends TabMenu {
     setValue(value: IssueStatus, silent?: boolean): IssueStatusSelector {
         let option = this.findOptionByValue(value);
         if (option) {
-            this.selectNavigationItem(IssueStatusSelector.OPTIONS.indexOf(option));
+            this.selectNavigationItem(IssueStatusSelector.OPTIONS.indexOf(option), true);
 
             this.removeClass(IssueStatusSelector.OPTIONS
                 .map(curOption => curOption.name.toLowerCase())
                 .join(' '));
             this.addClass(option.name.toLowerCase());
 
-            if (!silent) {
+            if (!silent && value != this.value) {
                 this.notifyValueChanged(
                     new api.ValueChangedEvent(IssueStatusFormatter.formatStatus(this.value), IssueStatusFormatter.formatStatus(value)));
             }
@@ -104,7 +104,7 @@ export class IssueStatusSelector extends TabMenu {
                         return;
                     }
                 }
-               this.hideMenu();
+                this.hideMenu();
             }
         };
 
@@ -117,11 +117,11 @@ export class IssueStatusSelector extends TabMenu {
         });
     }
 
-    onValueChanged(listener: (event: api.ValueChangedEvent)=>void) {
+    onValueChanged(listener: (event: api.ValueChangedEvent) => void) {
         this.valueChangedListeners.push(listener);
     }
 
-    unValueChanged(listener: (event: api.ValueChangedEvent)=>void) {
+    unValueChanged(listener: (event: api.ValueChangedEvent) => void) {
         this.valueChangedListeners = this.valueChangedListeners.filter((curr) => {
             return curr !== listener;
         });

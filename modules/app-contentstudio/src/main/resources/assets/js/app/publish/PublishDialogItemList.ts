@@ -1,6 +1,5 @@
 import {DialogItemList} from '../dialog/DependantItemsDialog';
 import {StatusSelectionItem} from '../dialog/StatusSelectionItem';
-
 import ContentSummaryAndCompareStatusViewer = api.content.ContentSummaryAndCompareStatusViewer;
 import BrowseItem = api.app.browse.BrowseItem;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
@@ -8,11 +7,12 @@ import Tooltip = api.ui.Tooltip;
 import i18n = api.util.i18n;
 import ArrayHelper = api.util.ArrayHelper;
 
-export class PublishDialogItemList extends DialogItemList {
+export class PublishDialogItemList
+    extends DialogItemList {
 
     private excludeChildrenIds: ContentId[] = [];
 
-    private excludeChildrenListChangedListeners: {(items: ContentId[]): void}[] = [];
+    private excludeChildrenListChangedListeners: { (items: ContentId[]): void }[] = [];
 
     private canBeEmpty: boolean = false;
 
@@ -65,14 +65,10 @@ export class PublishDialogItemList extends DialogItemList {
         item.onItemStateChanged((contentId, enabled) => {
 
             const exist = ArrayHelper.contains(this.excludeChildrenIds, contentId);
-            if (enabled) {
-                if (exist) {
-                    this.excludeChildrenIds = <ContentId[]>ArrayHelper.filter(this.excludeChildrenIds, contentId);
-                }
-            } else {
-                if (!exist) {
-                    this.excludeChildrenIds.push(contentId);
-                }
+            if (enabled && exist) {
+                this.excludeChildrenIds = <ContentId[]>ArrayHelper.filter(this.excludeChildrenIds, contentId);
+            } else if (!enabled && !exist) {
+                this.excludeChildrenIds.push(contentId);
             }
             this.debounceNotifyListChanged();
         });
@@ -150,9 +146,10 @@ export class PublishDialogItemList extends DialogItemList {
     }
 }
 
-export class PublicStatusSelectionItem extends StatusSelectionItem {
+export class PublicStatusSelectionItem
+    extends StatusSelectionItem {
 
-    private itemStateChangedListeners: {(itemId: ContentId, enabled: boolean): void}[] = [];
+    private itemStateChangedListeners: { (itemId: ContentId, enabled: boolean): void }[] = [];
 
     private id: ContentId;
 
@@ -219,9 +216,11 @@ export class PublicStatusSelectionItem extends StatusSelectionItem {
         });
     }
 }
-class IncludeChildrenToggler extends api.dom.DivEl {
 
-    private stateChangedListeners: {(enabled: boolean): void}[] = [];
+class IncludeChildrenToggler
+    extends api.dom.DivEl {
+
+    private stateChangedListeners: { (enabled: boolean): void }[] = [];
 
     private tooltip: Tooltip;
 
@@ -239,7 +238,7 @@ class IncludeChildrenToggler extends api.dom.DivEl {
     }
 
     toggle(condition?: boolean, silent?: boolean) {
-        if (!this.readOnly) {
+        if (!this.readOnly && this.isEnabled() != condition) {
             this.toggleClass('on', condition);
 
             this.tooltip.setText(this.isEnabled() ? i18n('dialog.publish.excludeChildren') : i18n('dialog.publish.includeChildren'));

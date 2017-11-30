@@ -43,7 +43,7 @@ export class PublishProcessor {
             this.excludedIds = this.excludedIds.filter(id => newIds.indexOf(id.toString()) < 0);
         });
 
-        this.itemList.onExcludeChildrenListChanged(() => {
+        this.itemList.onExcludeChildrenListChanged((ids) => {
             this.reloadPublishDependencies(true);
         });
 
@@ -55,7 +55,7 @@ export class PublishProcessor {
 
         this.dependantList.onItemRemoveClicked((item: ContentSummaryAndCompareStatus) => {
             this.excludedIds.push(item.getContentId());
-            this.reloadPublishDependencies(true);
+            this.reloadPublishDependencies();
         });
     }
 
@@ -65,10 +65,27 @@ export class PublishProcessor {
 
         let ids = this.getContentToPublishIds();
 
-        let resolveDependenciesRequest = api.content.resource.ResolvePublishDependenciesRequest.create().setIds(ids).setExcludedIds(
-            this.excludedIds).setExcludeChildrenIds(this.itemList.getExcludeChildrenIds()).build();
+        let resolveDependenciesRequest;
+        if (ids.length == 0) {
+            // spare a request if there're no ids
+            const result = ResolvePublishDependenciesResult.create()
+                .setDependentContents([])
+                .setRequiredContents([])
+                .setRequestedContents([])
+                .setAllPublishable(false)
+                .setContainsInvalid(false)
+                .build();
+            resolveDependenciesRequest = wemQ(result);
+        } else {
+            resolveDependenciesRequest = api.content.resource.ResolvePublishDependenciesRequest.create()
+                .setIds(ids)
+                .setExcludedIds(this.excludedIds)
+                .setExcludeChildrenIds(this.itemList.getExcludeChildrenIds())
+                .build()
+                .sendAndParse();
+        }
 
-        return resolveDependenciesRequest.sendAndParse().then((result: ResolvePublishDependenciesResult) => {
+        return resolveDependenciesRequest.then((result: ResolvePublishDependenciesResult) => {
 
             this.dependantIds = result.getDependants().slice();
 
@@ -77,7 +94,15 @@ export class PublishProcessor {
             this.containsInvalid = result.isContainsInvalid();
             this.allPublishable = result.isAllPublishable();
 
-            return this.loadDescendants(0, 20).then((dependants: ContentSummaryAndCompareStatus[]) => {
+            let resolveDescendantsRequest;
+            if (this.dependantIds.length == 0) {
+                // spare the request if there're no dependants
+                resolveDescendantsRequest = wemQ([]);
+            } else {
+                resolveDescendantsRequest = this.loadDescendants(this.dependantIds, 0, 20);
+            }
+
+            return resolveDescendantsRequest.then((dependants: ContentSummaryAndCompareStatus[]) => {
                 if (resetDependantItems) { // just opened or first time loading children
                     this.dependantList.setItems(dependants);
                 } else {
@@ -104,9 +129,7 @@ export class PublishProcessor {
     }
 
     public getContentToPublishIds(): ContentId[] {
-        return this.itemList.getItems().map(item => {
-            return item.getContentId();
-        });
+        return this.itemList.getItemsIds();
     }
 
     public countTotal(): number {
@@ -137,6 +160,10 @@ export class PublishProcessor {
         this.excludedIds = [];
     }
 
+    public getExcludeChildrenIds(): ContentId[] {
+        return this.itemList.getExcludeChildrenIds();
+    }
+
     public setIgnoreItemsChanged(value: boolean) {
         this.ignoreItemsChanged = value;
     }
@@ -147,11 +174,11 @@ export class PublishProcessor {
         }, 0);
     }
 
-    private loadDescendants(from: number,
+    private loadDescendants(ids: ContentId[], from: number,
                             size: number): wemQ.Promise<ContentSummaryAndCompareStatus[]> {
 
-        let ids = this.dependantIds.slice(from, from + size);
-        return api.content.resource.ContentSummaryAndCompareStatusFetcher.fetchByIds(ids);
+        let slicedIds = ids.slice(from, from + size);
+        return api.content.resource.ContentSummaryAndCompareStatusFetcher.fetchByIds(slicedIds);
     }
 
     private filterDependantItems(dependants: ContentSummaryAndCompareStatus[]) {

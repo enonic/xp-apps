@@ -13,6 +13,7 @@ import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
 import ContentSummaryAndCompareStatusViewer = api.content.ContentSummaryAndCompareStatusViewer;
 import ModalDialogButtonRow = api.ui.dialog.ButtonRow;
 import DivEl = api.dom.DivEl;
+import i18n = api.util.i18n;
 
 export class DependantItemsDialog
     extends api.ui.dialog.ModalDialog {
@@ -69,6 +70,11 @@ export class DependantItemsDialog
 
         this.dependantsHeaderText = dependantsName;
         this.dependantsHeader = new api.dom.H6El('dependants-header').setHtml(dependantsName, false);
+        this.dependantsHeader.onClicked(e => {
+            const isShown = !this.dependantList.isVisible();
+            this.dependantList.setVisible(isShown);
+            this.updateDependantsHeader(i18n(`dialog.issue.${isShown ? 'hide' : 'show' }Dependents`));
+        });
 
         this.dependantList = this.createDependantList();
         this.dependantList.addClass('dependant-list');
@@ -78,7 +84,9 @@ export class DependantItemsDialog
 
         let dependantsChangedListener = (items) => {
             let count = this.dependantList.getItemCount();
-            this.dependantsContainer.setVisible(count > 0);
+            const isShown = count > 0;
+            this.dependantsContainer.setVisible(isShown);
+            this.updateDependantsHeader(i18n(`dialog.issue.${isShown ? 'hide' : 'show'}Dependents`));
         };
         this.dependantList.onItemsRemoved(dependantsChangedListener);
         this.dependantList.onItemsAdded(dependantsChangedListener);
@@ -98,7 +106,8 @@ export class DependantItemsDialog
     }
 
     protected updateDependantsHeader(header?: string) {
-        this.dependantsHeader.setHtml(header || this.dependantsHeaderText, false);
+        const count = this.dependantList.getItemCount();
+        this.dependantsHeader.setHtml((header || this.dependantsHeaderText) + ` (${count})`, false);
     }
 
     private initLoadMask() {
@@ -121,6 +130,10 @@ export class DependantItemsDialog
         return this.dependantList;
     }
 
+    protected getDependantsContainer(): api.dom.DivEl {
+        return this.dependantsContainer;
+    }
+
     protected isIgnoreItemsChanged(): boolean {
         return this.ignoreItemsChanged;
     }
@@ -138,11 +151,13 @@ export class DependantItemsDialog
         }
     }
 
-    close() {
+    close(clearItems: boolean = true) {
         super.close();
         this.remove();
-        this.itemList.clearItems(true);
-        this.dependantList.clearItems(true);
+        if (clearItems) {
+            this.itemList.clearItems(true);
+            this.dependantList.clearItems(true);
+        }
         this.dependantsContainer.setVisible(false);
         this.unlockControls();
     }
