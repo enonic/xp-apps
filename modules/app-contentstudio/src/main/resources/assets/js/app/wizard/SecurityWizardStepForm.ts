@@ -55,7 +55,7 @@ export class SecurityWizardStepForm extends api.app.wizard.WizardStepForm {
         });
 
         let formView = new DivEl('form-view');
-        let inputView = new DivEl('input-view valid');
+        let inputView = new DivEl('input-view valid no-label');
         let inputTypeView = new DivEl('input-type-view');
         let inputOccurrenceView = new DivEl('input-occurrence-view single-occurrence');
         let inputWrapper = new DivEl('input-wrapper');

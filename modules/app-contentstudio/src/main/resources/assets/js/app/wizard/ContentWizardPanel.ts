@@ -588,7 +588,7 @@ export class ContentWizardPanel
             this.scheduleWizardStepIndex = steps.length;
             steps.push(this.scheduleWizardStep);
 
-            steps.push(new WizardStep(i18n('field.security'), this.securityWizardStepForm));
+            steps.push(new WizardStep(i18n('field.access'), this.securityWizardStepForm));
 
             this.setSteps(steps);
 
