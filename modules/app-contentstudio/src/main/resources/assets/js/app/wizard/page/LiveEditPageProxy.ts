@@ -216,8 +216,30 @@ export class LiveEditPageProxy {
         this.dragMask.remove();
     }
 
+    private scrollIFrameToSavedPosition(scrollTop: number, timer?: number) {
+        if (!scrollTop) {
+            return;
+        }
+
+        if (!this.liveEditWindow.document.body) {
+            timer = setTimeout(() => this.scrollIFrameToSavedPosition(scrollTop, timer), 10);
+            return;
+        }
+
+        this.livejq(this.liveEditWindow.document).scrollTop(scrollTop);
+        clearTimeout(timer);
+    }
+
     public load() {
+        let scrollTop;
         if (this.pageView) {
+
+            if (this.livejq && this.liveEditWindow) {
+                // Store vertical scroll position inside the iFrame
+                // to be able to scroll to it after reload
+                scrollTop = this.livejq(this.liveEditWindow).scrollTop();
+            }
+
             // do this to unregister all dependencies of current page view
             this.pageView.remove();
             this.pageView = null;
@@ -229,8 +251,14 @@ export class LiveEditPageProxy {
             this.copyObjectsBeforeFrameReloadForIE();
         }
 
-        this.liveEditIFrame.setSrc(pageUrl);
-
+        if (!this.liveEditWindow) {
+            this.liveEditIFrame.setSrc(pageUrl);
+        } else {
+            this.liveEditWindow.document.location.href = pageUrl; // This is a faster way to reload the iframe
+            if (scrollTop) {
+                this.livejq(this.liveEditWindow.document).ready(() => this.scrollIFrameToSavedPosition(scrollTop));
+            }
+        }
         if (this.liveEditModel.isRenderableContent()) {
             if (LiveEditPageProxy.debug) {
                 console.log(`LiveEditPageProxy.load loading page from '${pageUrl}' at ${new Date().toISOString()}`);
@@ -277,6 +305,11 @@ export class LiveEditPageProxy {
         }
 
         if (liveEditWindow) {
+
+            if (this.liveEditWindow) {
+                this.stopListening(this.liveEditWindow);
+            }
+
             this.liveEditWindow = liveEditWindow;
             if (liveEditWindow.wemjq) {
                 if (LiveEditPageProxy.debug) {
@@ -286,10 +319,6 @@ export class LiveEditPageProxy {
                 liveEditWindow.CONFIG = JSON.parse(JSON.stringify(CONFIG));
 
                 this.livejq = <JQueryStatic>liveEditWindow.wemjq;
-
-                if (this.liveEditWindow) {
-                    this.stopListening(this.liveEditWindow);
-                }
 
                 this.listenToPage(this.liveEditWindow);
 
