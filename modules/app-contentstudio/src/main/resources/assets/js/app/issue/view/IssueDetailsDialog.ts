@@ -31,6 +31,7 @@ import TabBar = api.ui.tab.TabBar;
 import TabBarItemBuilder = api.ui.tab.TabBarItemBuilder;
 import Panel = api.ui.panel.Panel;
 import PEl = api.dom.PEl;
+import AppHelper = api.util.AppHelper;
 
 export class IssueDetailsDialog
     extends SchedulableDialog {
@@ -58,6 +59,7 @@ export class IssueDetailsDialog
     private saveOnLoaded: boolean;
     private skipNextServerUpdatedEvent: boolean;
     private ignoreNextExcludeChildrenEvent: boolean;
+    private debouncedUpdateIssue: Function;
 
     private constructor() {
         super(<ProgressBarConfig> {
@@ -74,6 +76,8 @@ export class IssueDetailsDialog
         );
         this.addClass('issue-dialog issue-details-dialog grey-header');
         this.publishProcessor = new PublishProcessor(this.getItemList(), this.getDependantList());
+
+        this.debouncedUpdateIssue = AppHelper.debounce(this.doUpdateIssue.bind(this), 1000);
 
         this.loadCurrentUser();
         this.initRouting();
@@ -156,17 +160,17 @@ export class IssueDetailsDialog
             .setHideComboBoxWhenMaxReached(false)
             .build();
         this.itemSelector.onOptionSelected(o => {
+            this.saveOnLoaded = true;
             const ids = [o.getSelectedOption().getOption().displayValue.getContentId()];
             ContentSummaryAndCompareStatusFetcher.fetchByIds(ids).then(result => {
                 this.addListItems(result);
-                this.saveOnLoaded = true;
             });
         });
         this.itemSelector.onOptionDeselected(o => {
+            this.saveOnLoaded = true;
             const id = o.getSelectedOption().getOption().displayValue.getContentId();
             const items = this.getItemList().getItems().filter(item => !item.getContentId().equals(id));
             this.setListItems(items, true);
-            this.saveOnLoaded = true;
         });
         itemsPanel.appendChildren<api.dom.DivEl>(this.itemSelector, this.getItemList(), this.getDependantsContainer());
         return itemsPanel;
@@ -176,15 +180,24 @@ export class IssueDetailsDialog
         this.detailsSubTitle = new DetailsDialogSubTitle(this.issue, this.currentUser);
         this.detailsSubTitle.onIssueStatusChanged((event) => {
             const newStatus = IssueStatusFormatter.fromString(event.getNewValue());
-            this.doUpdateIssue(newStatus);
+            this.debouncedUpdateIssue(newStatus);
         });
 
         this.setSubTitleEl(this.detailsSubTitle);
     }
 
     private initElementListeners() {
-        const itemList = this.getItemList();
+        const handleRemoveItemClicked = (item) => {
+            this.saveOnLoaded = true;
 
+            const combo = this.itemSelector.getComboBox();
+            const option = combo.getOptionByValue(item.getContentId().toString());
+            if (option) {
+                // option may not be loaded yet
+                combo.deselectOption(option, true);
+            }
+        };
+        const itemList = this.getItemList();
         itemList.onItemsAdded(items => {
             this.initItemListTogglers(itemList);
             this.updateCountsAndActions();
@@ -194,6 +207,7 @@ export class IssueDetailsDialog
             this.updateCountsAndActions();
             this.updateShowScheduleDialogButton();
         });
+        itemList.onItemRemoveClicked(handleRemoveItemClicked);
         itemList.onExcludeChildrenListChanged(items => {
             if (!this.ignoreNextExcludeChildrenEvent) {
                 // save if toggle was updated manually only
@@ -206,14 +220,14 @@ export class IssueDetailsDialog
         const dependantList = this.getDependantList();
         dependantList.onItemsAdded(handleDependantsChanged);
         dependantList.onItemsRemoved(handleDependantsChanged);
-        dependantList.onItemRemoveClicked(item => this.saveOnLoaded = true);
+        dependantList.onItemRemoveClicked(handleRemoveItemClicked);
         dependantList.onShown(handleDependantsChanged);
         dependantList.onHidden(handleDependantsChanged);
 
         this.publishProcessor.onLoadingFinished(() => {
             this.updateCountsAndActions();
             if (this.saveOnLoaded) {
-                this.doUpdateIssue();
+                this.debouncedUpdateIssue();
                 this.saveOnLoaded = false;
             }
         });
@@ -293,14 +307,14 @@ export class IssueDetailsDialog
         return <IssueDetailsDialogButtonRow>super.getButtonRow();
     }
 
-    private initItemListTogglers(itemList: PublishDialogItemList) {
-        // ignore event as we're just setting loaded values on list
-        this.ignoreNextExcludeChildrenEvent = true;
-        itemList.getItemViews()
-            .forEach(itemView => {
-                const toggler = itemView.getIncludeChildrenToggler();
-                return toggler && toggler.toggle(this.areChildrenIncludedInIssue(itemView.getContentId()));
-            });
+    private initItemListTogglers(itemList: PublishDialogItemList): boolean {
+        // ignore event if there're changes as we're just setting loaded values on list
+        const changesMade = itemList.getItemViews().reduce((alreadyMade, itemView) => {
+            const toggler = itemView.getIncludeChildrenToggler();
+            return alreadyMade || toggler && toggler.toggle(this.areChildrenIncludedInIssue(itemView.getContentId()));
+        }, false);
+        this.ignoreNextExcludeChildrenEvent = changesMade;
+        return changesMade;
     }
 
     protected initActions() {
@@ -402,7 +416,7 @@ export class IssueDetailsDialog
 
     private doPublishAndClose(scheduled: boolean) {
         return this.doPublish(scheduled).then(() => {
-            return this.doUpdateIssue(IssueStatus.CLOSED);
+            return this.debouncedUpdateIssue(IssueStatus.CLOSED);
         });
     }
 

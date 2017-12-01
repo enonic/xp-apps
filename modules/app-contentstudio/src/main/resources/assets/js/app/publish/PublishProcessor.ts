@@ -41,6 +41,9 @@ export class PublishProcessor {
         this.itemList.onItemsAdded((items) => {
             const newIds: string[] = items.map(item => item.getId());
             this.excludedIds = this.excludedIds.filter(id => newIds.indexOf(id.toString()) < 0);
+            if (!this.ignoreItemsChanged) {
+                this.reloadPublishDependencies();
+            }
         });
 
         this.itemList.onExcludeChildrenListChanged((ids) => {

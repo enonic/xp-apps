@@ -14,6 +14,8 @@ export class PublishDialogItemList
 
     private excludeChildrenListChangedListeners: { (items: ContentId[]): void }[] = [];
 
+    private removeClickListeners: { (item: ContentSummaryAndCompareStatus): void }[] = [];
+
     private canBeEmpty: boolean = false;
 
     private debounceNotifyListChanged: Function;
@@ -52,6 +54,11 @@ export class PublishDialogItemList
         if (this.canBeEmpty) {
             itemView.setIsRemovableFn(() => true);
         }
+
+        itemView.setRemoveHandlerFn(() => {
+            this.removeItem(item);
+            this.notifyItemRemoveClicked(item)
+        });
 
         this.updateRemovableState(itemView);
 
@@ -142,6 +149,22 @@ export class PublishDialogItemList
     private notifyExcludeChildrenListChanged(items: ContentId[]) {
         this.excludeChildrenListChangedListeners.forEach((listener) => {
             listener(items);
+        });
+    }
+
+    onItemRemoveClicked(listener: (item: ContentSummaryAndCompareStatus) => void) {
+        this.removeClickListeners.push(listener);
+    }
+
+    unItemRemoveClicked(listener: (item: ContentSummaryAndCompareStatus) => void) {
+        this.removeClickListeners = this.removeClickListeners.filter((curr) => {
+            return curr !== listener;
+        });
+    }
+
+    private notifyItemRemoveClicked(item: ContentSummaryAndCompareStatus) {
+        this.removeClickListeners.forEach(listener => {
+            listener(item);
         });
     }
 }
@@ -237,7 +260,7 @@ class IncludeChildrenToggler
         });
     }
 
-    toggle(condition?: boolean, silent?: boolean) {
+    toggle(condition?: boolean, silent?: boolean): boolean {
         if (!this.readOnly && this.isEnabled() != condition) {
             this.toggleClass('on', condition);
 
@@ -246,7 +269,9 @@ class IncludeChildrenToggler
             if (!silent) {
                 this.notifyStateChanged(this.isEnabled());
             }
+            return true;
         }
+        return false;
     }
 
     setReadOnly(value: boolean) {
