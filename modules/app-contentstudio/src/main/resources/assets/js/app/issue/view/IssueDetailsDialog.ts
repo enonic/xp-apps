@@ -48,6 +48,7 @@ export class IssueDetailsDialog
     private itemsTab: api.ui.tab.TabBarItem;
     private tabPanel: api.ui.panel.NavigatedDeckPanel;
     private closeAction: api.ui.Action;
+    private reopenAction: api.ui.Action;
     private detailsSubTitle: DetailsDialogSubTitle;
     private description: api.dom.PEl;
     private publishAction: ContentPublishDialogAction;
@@ -91,6 +92,7 @@ export class IssueDetailsDialog
             this.createBackButton();
             this.createEditButton();
             this.createCloseButton();
+            this.createReopenButton();
             this.createNoActionMessage();
 
             const issueTab = new TabBarItemBuilder().setLabel(i18n('field.issue')).build();
@@ -303,6 +305,10 @@ export class IssueDetailsDialog
         this.closeAction.onExecuted(action => {
             this.detailsSubTitle.setStatus(IssueStatus.CLOSED);
         });
+        this.reopenAction = new Action(i18n('action.reopenIssue'));
+        this.reopenAction.onExecuted(action => {
+            this.detailsSubTitle.setStatus(IssueStatus.OPEN);
+        });
         this.publishAction = new ContentPublishDialogAction(this.doPublishAndClose.bind(this, false), i18n('action.publishAndCloseIssue'));
 
         this.publishButton = this.createPublishButton();
@@ -323,6 +329,11 @@ export class IssueDetailsDialog
     private createCloseButton() {
         const closeButton: DialogButton = this.getButtonRow().addAction(this.closeAction);
         closeButton.addClass('close-issue force-enabled');
+    }
+
+    private createReopenButton() {
+        const reopenButton: DialogButton = this.getButtonRow().addAction(this.reopenAction);
+        reopenButton.addClass('reopen-issue green force-enabled');
     }
 
     private createPublishButton(): MenuButton {
