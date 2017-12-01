@@ -19,22 +19,14 @@ plugins {
 
 allprojects {
 
-    group = 'com.enonic.xp.users.js_testing'
-    version = '1.0.0-SNAPSHOT'
+    group = 'com.enonic.xp.js_testing'
+    version = '1.0'
 
     repositories {
         mavenLocal()
         mavenCentral()
         maven {
             url 'http://repo.enonic.com/public'
-        }
-    }
-
-    uploadArchives {
-        repositories {
-            mavenDeployer {
-                repository( url: 'http://repo.enonic.com/artifactory/inhouse' )
-            }
         }
     }
 }

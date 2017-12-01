@@ -21,6 +21,12 @@ plugins {
     id 'com.moowork.gulp' version '0.13'
 }
 
+apply plugin: 'com.enonic.defaults'
+
+enonic {
+    publishRepo = 'inhouse'
+}
+
 configurations {
     distro
 }
@@ -32,7 +38,6 @@ ext {
     reportsDir = "$buildDir${File.separator}reports"
     distroDir = "$unpackDir${File.separator}enonic-xp-$xpVersion"
     deployDir = "$distroDir${File.separator}home${File.separator}deploy"
-//    allureResultsDir = "$buildDir${File.separator}allure-results"
     allureResultsDir = "allure-results"
     xpHome = "$distroDir${File.separator}home"
     xpServer = new ServerInstance()
@@ -58,20 +63,22 @@ task zipScreenshots( type: Zip ) {
     from screenshotsDir
     include '*'
     include '*/*'
-    archiveName 'userAppTestScreenshots.zip'
+    classifier 'screenshots'
 }
 
 task zipAllure( type: Zip ) {
     from allureResultsDir
     include '*'
     include '*/*'
-    archiveName 'userAppTestAllureResults.zip'
+    classifier 'allureResults'
 }
 
 artifacts {
     archives zipScreenshots
     archives zipAllure
 }
+
+jar.enabled = true
 
 task startServer( dependsOn: unpackDistro ) {
     doLast {
