@@ -46,7 +46,7 @@ export class CreateIssueDialog
 
     private initElementsListeners() {
         let onItemsChanged = (items) => {
-            (<CreateIssueAction>this.actionButton.getAction()).updateLabel(items.length);
+            (<CreateIssueAction>this.actionButton.getAction()).updateLabel(this.getItemList().getItemCount());
         };
 
         this.getItemList().onItemsAdded(onItemsChanged);

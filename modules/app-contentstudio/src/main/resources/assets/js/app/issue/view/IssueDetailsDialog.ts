@@ -115,9 +115,6 @@ export class IssueDetailsDialog
             this.appendChildToHeader(tabBar);
             this.appendChildToContentPanel(this.tabPanel);
 
-            this.errorTooltip = new Tooltip(this.publishButton, i18n('dialog.publish.invalidError'), 500);
-            this.errorTooltip.setActive(false);
-
             this.initElementListeners();
             this.updateCountsAndActions();
 
@@ -134,6 +131,15 @@ export class IssueDetailsDialog
         this.itemsTab.setLabel(i18n('field.items') + (count > 0 ? ` (${count})` : ''));
         this.updateButtonCount(i18n('action.publishAndCloseIssue'), count);
         this.toggleAction(count > 0);
+    }
+
+    protected toggleAction(enable: boolean) {
+        super.toggleAction(enable);
+        const hasInvalidItems = this.getItemList().getItems().some(item => !item.getContentSummary().isValid());
+        const hasInvalidDependants = this.publishProcessor.isContainsInvalid();
+        const hasInvalids = hasInvalidItems || hasInvalidDependants;
+        this.publishButton.setEnabled(!hasInvalids && this.publishProcessor.isAllPublishable());
+        this.errorTooltip.setActive(hasInvalids);
     }
 
     private createIssuePanel() {
@@ -180,7 +186,7 @@ export class IssueDetailsDialog
         const itemList = this.getItemList();
 
         itemList.onItemsAdded(items => {
-            this.initItemList(itemList);
+            this.initItemListTogglers(itemList);
             this.updateCountsAndActions();
             this.updateShowScheduleDialogButton();
         });
@@ -196,13 +202,13 @@ export class IssueDetailsDialog
             this.ignoreNextExcludeChildrenEvent = false;
         });
 
-        const handleDependantsChanged = (items) => setTimeout(this.centerMyself.bind(this), 100);
+        const handleDependantsChanged = () => setTimeout(this.centerMyself.bind(this), 100);
         const dependantList = this.getDependantList();
         dependantList.onItemsAdded(handleDependantsChanged);
         dependantList.onItemsRemoved(handleDependantsChanged);
-        dependantList.onItemRemoveClicked(item => {
-            this.saveOnLoaded = true;
-        });
+        dependantList.onItemRemoveClicked(item => this.saveOnLoaded = true);
+        dependantList.onShown(handleDependantsChanged);
+        dependantList.onHidden(handleDependantsChanged);
 
         this.publishProcessor.onLoadingFinished(() => {
             this.updateCountsAndActions();
@@ -287,7 +293,7 @@ export class IssueDetailsDialog
         return <IssueDetailsDialogButtonRow>super.getButtonRow();
     }
 
-    private initItemList(itemList: PublishDialogItemList) {
+    private initItemListTogglers(itemList: PublishDialogItemList) {
         // ignore event as we're just setting loaded values on list
         this.ignoreNextExcludeChildrenEvent = true;
         itemList.getItemViews()
@@ -313,6 +319,9 @@ export class IssueDetailsDialog
 
         this.publishButton = this.createPublishButton();
         this.actionButton = this.publishButton.getActionButton();
+
+        this.errorTooltip = new Tooltip(this.publishButton, i18n('dialog.publish.invalidError'), 500);
+        this.errorTooltip.setActive(false);
     }
 
     private createBackButton() {
