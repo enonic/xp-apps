@@ -14,7 +14,7 @@ const userItemsBuilder = require('../libs/userItems.builder.js');
 const appConst = require('../libs/app_const');
 const confirmationDialog = require("../page_objects/confirmation.dialog");
 
-describe('Group wizard - confirm and delete in wizard', function () {
+describe('`group.delete.spec`: confirm and delete it in the wizard and in the browse panel', function () {
     this.timeout(70000);
     webDriverHelper.setupBrowser();
     let testGroup;

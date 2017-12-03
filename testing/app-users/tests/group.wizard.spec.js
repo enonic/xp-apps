@@ -11,7 +11,7 @@ const groupWizard = require('../page_objects/wizardpanel/group.wizard');
 const testUtils = require('../libs/test.utils');
 const userItemsBuilder = require('../libs/userItems.builder.js');
 
-describe('Group Wizard spec - validation and inputs', function () {
+describe('`group.wizard.spec` - validation and check inputs', function () {
     this.timeout(70000);
     webDriverHelper.setupBrowser();
     let testGroup;

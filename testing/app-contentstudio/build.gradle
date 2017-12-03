@@ -1,0 +1,112 @@
+import com.enonic.uitest.server.ServerInstance
+
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+            jcenter()
+        }
+    }
+
+    dependencies {
+        classpath 'com.moowork.gradle:gradle-gulp-plugin:0.13'
+        classpath "com.moowork.gradle:gradle-node-plugin:0.13"
+    }
+}
+
+plugins {
+    id 'java'
+    id 'maven'
+    id 'com.moowork.node' version '0.13'
+    id 'com.moowork.gulp' version '0.13'
+
+}
+
+configurations {
+    distro
+}
+apply plugin: 'com.enonic.defaults'
+
+enonic {
+    publishRepo = 'inhouse'
+}
+task buildApplications( dependsOn: ['test-applications:simple-page:install'] )
+ext {
+    xpVersion = '6.13.0-SNAPSHOT'
+    unpackDir = "$buildDir${File.separator}install"
+    screenshotsDir = "$buildDir${File.separator}screenshots"
+    reportsDir = "$buildDir${File.separator}repots"
+    distroDir = "$unpackDir${File.separator}enonic-xp-$xpVersion"
+    deployDir = "$distroDir${File.separator}home${File.separator}deploy"
+    xpHome = "$distroDir${File.separator}home"
+}
+
+task copyApps( type: Copy ) {
+    from '/test-applications/'
+    from '/test-applications/'
+    from '/test-applications/'
+    from '/test-applications/'
+
+    //from '../test-applications/simple-page/build/libs/'
+    //from '../test-applications/myfirstapp/build/libs/'
+    //from '../test-applications/first-application/build/libs/'
+    include '*.jar'
+    into file( deployDir )
+}
+dependencies {
+    compile "com.enonic.xp:core-api:$xpVersion"
+    distro "com.enonic.xp:distro:$xpVersion@zip"
+}
+
+task deleteFolders( type: Delete ) {
+    delete unpackDir, screenshotsDir, reportsDir
+}
+
+task unpackDistro( type: Copy ) {
+    from {
+        configurations.distro.collect { zipTree( it ) }
+    }
+    into file( unpackDir )
+}
+
+ext {
+    xpServer = new ServerInstance()
+}
+
+task startServer( dependsOn: unpackDistro ) {
+    doLast {
+        xpServer.installDir = file( distroDir )
+        xpServer.startupDelay = 40000
+        xpServer.start()
+    }
+}
+
+task stopServer << {
+    xpServer.stop()
+}
+
+tasks.withType( Test ) {
+    jvmArgs '-Xms128m', '-Xmx1024m'
+    testLogging {
+        exceptionFormat "full"
+        events "started", "passed", "skipped", "failed", "standardOut", "standardError"
+        displayGranularity = 0
+    }
+}
+//run the tusk in the gulpfile.js. Name of the task is 'test'
+task testContentStudioApp( type: GulpTask, dependsOn: [npmInstall, startServer, copyApps,] ) {
+    inputs.files fileTree( dir: '.' )
+    outputs.files fileTree( dir: '/test-results' )
+    args = ['test']
+    //npmInstall.mustRunAfter buildApplications
+    startServer.mustRunAfter npmInstall
+    copyApps.mustRunAfter startServer
+}
+
+task testContentStudioAppLocally( type: GulpTask, dependsOn: [npmInstall] ) {
+    inputs.files fileTree( dir: '.' )
+    outputs.files fileTree( dir: '/test-results' )
+    args = ['test']
+}
+downloadAndStudioTest.finalizedBy = ['stopServer']
+
