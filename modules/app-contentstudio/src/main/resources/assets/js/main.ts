@@ -38,6 +38,7 @@ import {IssueDialogsManager} from './app/issue/IssueDialogsManager';
 import {ShowIssuesDialogEvent} from './app/browse/ShowIssuesDialogEvent';
 import {ToggleSearchPanelWithDependenciesGlobalEvent} from './app/browse/ToggleSearchPanelWithDependenciesGlobalEvent';
 import {ToggleSearchPanelWithDependenciesEvent} from './app/browse/ToggleSearchPanelWithDependenciesEvent';
+import {DuplicateContentDialog} from './app/duplicate/DuplicateContentDialog';
 
 function getApplication(): api.app.Application {
     let application = new api.app.Application('content-studio', i18n('app.name'), i18n('app.abbr'), CONFIG.appIconUrl);
@@ -342,6 +343,8 @@ function startContentApplication(application: api.app.Application) {
     new SortContentDialog();
     // tslint:disable-next-line:no-unused-new
     new MoveContentDialog();
+    // tslint:disable-next-line:no-unused-new
+    new DuplicateContentDialog();
 }
 
 function initSearchPanelListener(panel: ContentAppPanel) {

@@ -13,9 +13,11 @@ import TaskId = api.task.TaskId;
 import Action = api.ui.Action;
 import i18n = api.util.i18n;
 import SpanEl = api.dom.SpanEl;
+import HeavyOperationPerformer = api.heavy.HeavyOperationPerformer;
 
 export class MoveContentDialog
-    extends api.ui.dialog.ModalDialog {
+    extends api.ui.dialog.ModalDialog
+    implements HeavyOperationPerformer {
 
     private destinationSearchInput: ContentMoveComboBox;
 
@@ -228,5 +230,9 @@ export class MoveContentDialog
         this.removeClass('locked');
         this.moveAction.setEnabled(true);
         this.destinationSearchInput.getComboBox().setEnabled(true);
+    }
+
+    isPerforming(): boolean {
+        return this.progressManager.isEnabled();
     }
 }

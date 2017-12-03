@@ -3,6 +3,7 @@ import {DependantItemsDialog, DependantItemsDialogConfig} from '../dialog/Depend
 import ProgressBarManager = api.ui.dialog.ProgressBarManager;
 import TaskId = api.task.TaskId;
 import TaskState = api.task.TaskState;
+import HeavyOperationPerformer = api.heavy.HeavyOperationPerformer;
 
 export interface DependantItemsWithProgressDialogConfig
     extends DependantItemsDialogConfig {
@@ -11,7 +12,8 @@ export interface DependantItemsWithProgressDialogConfig
 }
 
 export class DependantItemsWithProgressDialog
-    extends DependantItemsDialog {
+    extends DependantItemsDialog
+    implements HeavyOperationPerformer {
 
     protected progressManager: ProgressBarManager;
 
@@ -45,5 +47,9 @@ export class DependantItemsWithProgressDialog
 
     show() {
         super.show(this.isProgressBarEnabled());
+    }
+
+    isPerforming(): boolean {
+        return this.progressManager.isEnabled();
     }
 }
