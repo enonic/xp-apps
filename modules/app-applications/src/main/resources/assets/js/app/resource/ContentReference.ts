@@ -1,4 +1,6 @@
 import '../../api.ts';
+import ContentTypeName = api.schema.content.ContentTypeName;
+import ContentPath = api.content.ContentPath;
 import {ContentReferenceJson} from './json/ContentReferencesJson';
 
 export class ContentReference {
@@ -17,12 +19,12 @@ export class ContentReference {
         return this.displayName;
     }
 
-    getType(): ContentPath {
+    getContentPath(): ContentPath {
         return this.path;
     }
 
     public static fromJson(json: ContentReferenceJson) {
-        const result = new ContentReferenceJson();
+        const result = new ContentReference();
 
         result.type = new ContentTypeName(json.type);
         result.displayName = json.displayName;

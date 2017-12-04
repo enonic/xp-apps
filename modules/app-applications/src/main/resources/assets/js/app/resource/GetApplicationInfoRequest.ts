@@ -7,9 +7,18 @@ import {ApplicationInfo} from './ApplicationInfo';
 export class GetApplicationInfoRequest
     extends ApplicationResourceRequest<ApplicationInfoJson, ApplicationInfo> {
 
-    constructor() {
+    private applicationKey: ApplicationKey;
+
+    constructor(applicationKey: ApplicationKey) {
         super();
+        this.applicationKey = applicationKey;
         super.setMethod('GET');
+    }
+
+    getParams(): Object {
+        return {
+            applicationKey: this.applicationKey.toString()
+        };
     }
 
     getRequestPath(): api.rest.Path {

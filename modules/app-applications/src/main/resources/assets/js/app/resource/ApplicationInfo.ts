@@ -7,6 +7,9 @@ import RelationshipType = api.schema.relationshiptype.RelationshipType;
 import MacroDescriptor = api.macro.MacroDescriptor;
 import {ApplicationInfoJson} from './json/ApplicationInfoJson';
 import {ContentReference} from './ContentReference';
+import {ApplicationDeployment} from './json/ApplicationDeployment';
+import {ApplicationTask} from './ApplicationTask';
+import {ApplicationIdProvider} from './ApplicationIdProvider';
 
 export class ApplicationInfo {
 
@@ -20,9 +23,15 @@ export class ApplicationInfo {
 
     relations: RelationshipType[];
 
+    references: ContentReference[];
+
     macros: MacroDescriptor[];
 
-    references: ContentReference[];
+    tasks: ApplicationTask[];
+
+    idProvider: ApplicationIdProvider;
+
+    deployment: ApplicationDeployment;
 
     static fromJson(json: ApplicationInfoJson): ApplicationInfo {
         let result = new ApplicationInfo();
@@ -53,6 +62,14 @@ export class ApplicationInfo {
         result.references = (json.references && json.references.references) ? json.references.references.map((referenceJson) => {
             return ContentReference.fromJson(referenceJson);
         }) : [];
+
+        result.tasks = (json.tasks && json.tasks.tasks) ? json.tasks.tasks.map((taskJson) => {
+            return ApplicationTask.fromJson(taskJson);
+        }) : [];
+
+        result.idProvider = json.idProvider ? ApplicationIdProvider.fromJson(json.idProvider) : null;
+
+        result.deployment = json.deployment;
 
         return result;
     }

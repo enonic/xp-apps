@@ -1,6 +1,6 @@
 import '../../../api.ts';
 
-export interface ContentReferenceJson {
+export class ContentReferenceJson {
 
     type: string;
 
@@ -9,6 +9,6 @@ export interface ContentReferenceJson {
     path: string;
 }
 
-export interface ContentReferencesJson {
+export class ContentReferencesJson {
     references: ContentReferenceJson[];
 }
