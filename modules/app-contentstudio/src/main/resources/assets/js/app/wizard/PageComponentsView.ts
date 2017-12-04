@@ -182,7 +182,7 @@ export class PageComponentsView
         this.liveEditPage.onItemViewSelected((event: ItemViewSelectedEvent) => {
             if (!event.isNew() && !this.pageView.isLocked()) {
                 let selectedItemId = this.tree.getDataId(event.getItemView());
-                this.tree.selectNode(selectedItemId);
+                this.tree.selectNode(selectedItemId, true);
                 this.tree.getGrid().focus();
             }
         });
