@@ -14,7 +14,7 @@ const userItemsBuilder = require('../libs/userItems.builder.js');
 const appConst = require('../libs/app_const');
 const confirmationDialog = require("../page_objects/confirmation.dialog");
 
-describe('User - confirm and delete in wizard and in browse panel', function () {
+describe('`user.delete.spec`:User - confirm and delete it in the wizard and in the browse panel', function () {
     this.timeout(70000);
     webDriverHelper.setupBrowser();
     let testUser;

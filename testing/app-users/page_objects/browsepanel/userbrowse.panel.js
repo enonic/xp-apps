@@ -4,6 +4,7 @@
 const page = require('../page');
 const saveBeforeCloseDialog = require('../save.before.close.dialog');
 const elements = require('../../libs/elements');
+const appConst = require('../../libs/app_const');
 
 var panel = {
     toolbar: `//div[contains(@id,'UserBrowseToolbar')]`,
@@ -116,7 +117,7 @@ var userBrowsePanel = Object.create(page, {
     },
     clickOnNewButton: {
         value: function () {
-            return this.waitForEnabled(this.newButton, 1000).then(()=> {
+            return this.waitForEnabled(this.newButton, appConst.TIMEOUT_3).then(()=> {
                 return this.doClick(this.newButton);
             }).catch((err)=> {
                 throw new Error('New button is not enabled! ' + err);
@@ -125,7 +126,7 @@ var userBrowsePanel = Object.create(page, {
     },
     clickOnEditButton: {
         value: function () {
-            return this.waitForEnabled(this.editButton, 1000).then(()=> {
+            return this.waitForEnabled(this.editButton, appConst.TIMEOUT_3).then(()=> {
                 return this.doClick(this.editButton);
             }).catch((err)=> {
                 this.saveScreenshot('err_browsepanel_edit');
@@ -135,7 +136,7 @@ var userBrowsePanel = Object.create(page, {
     },
     clickOnDeleteButton: {
         value: function () {
-            return this.waitForEnabled(this.deleteButton, 2000).then(()=> {
+            return this.waitForEnabled(this.deleteButton, appConst.TIMEOUT_3).then(()=> {
                 return this.doClick(this.deleteButton);
             }).catch((err)=> {
                 this.saveScreenshot('err_browsepanel_delete');
@@ -151,23 +152,23 @@ var userBrowsePanel = Object.create(page, {
     },
     waitForNewButtonEnabled: {
         value: function () {
-            return this.waitForEnabled(this.newButton, 3000);
+            return this.waitForEnabled(this.newButton, appConst.TIMEOUT_3);
         }
     },
 
     waitForEditButtonEnabled: {
         value: function () {
-            return this.waitForEnabled(this.editButton, 3000);
+            return this.waitForEnabled(this.editButton, appConst.TIMEOUT_3);
         }
     },
     waitForDeleteButtonEnabled: {
         value: function () {
-            return this.waitForEnabled(this.deleteButton, 3000);
+            return this.waitForEnabled(this.deleteButton, appConst.TIMEOUT_3);
         }
     },
     waitForDeleteButtonDisabled: {
         value: function () {
-            return this.waitForDisabled(this.deleteButton, 3000);
+            return this.waitForDisabled(this.deleteButton, appConst.TIMEOUT_3);
         }
     },
 
@@ -189,7 +190,7 @@ var userBrowsePanel = Object.create(page, {
     clickOnRowByName: {
         value: function (name) {
             var nameXpath = panel.rowByName(name);
-            return this.waitForVisible(nameXpath, 3000).then(()=> {
+            return this.waitForVisible(nameXpath, appConst.TIMEOUT_3).then(()=> {
                 return this.doClick(nameXpath);
             }).pause(400).catch((err)=> {
                 this.saveScreenshot('err_find_' + name);
@@ -200,7 +201,7 @@ var userBrowsePanel = Object.create(page, {
     waitForRowByNameVisible: {
         value: function (name) {
             var nameXpath = panel.rowByName(name);
-            return this.waitForVisible(nameXpath, 3000)
+            return this.waitForVisible(nameXpath, appConst.TIMEOUT_3)
                 .catch((err)=> {
                     this.saveScreenshot('err_find_' + name);
                     throw Error('Row with the name ' + name + ' is not visible after ' + 3000 + 'ms')
@@ -231,7 +232,7 @@ var userBrowsePanel = Object.create(page, {
             return this.doClick(`${panel.closeItemTabButton(displayName)}`).catch((err)=> {
                 throw new Error('itemTabButton was not found!' + displayName);
             }).pause(300).then(()=> {
-                return saveBeforeCloseDialog.isDialogPresent(100);
+                return saveBeforeCloseDialog.isDialogPresent(1000);
             }).then((result)=> {
                 if (result) {
                     this.saveScreenshot('err_save_close_item').then(()=> {

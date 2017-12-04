@@ -14,6 +14,7 @@ const newPrincipalDialog = require('../page_objects/browsepanel/new.principal.di
 const filterPanel = require("../page_objects/browsepanel/principal.filter.panel");
 const confirmationDialog = require("../page_objects/confirmation.dialog");
 const appConst = require("./app_const");
+const webDriverHelper = require("./WebDriverHelper");
 
 
 module.exports = {
@@ -55,12 +56,15 @@ module.exports = {
             return browsePanel.waitForSpinnerNotVisible();
         })
     },
-    confirmDelete: ()=> {
+    confirmDelete: function () {
         return confirmationDialog.waitForDialogVisible(appConst.TIMEOUT_3).then(()=> {
             return confirmationDialog.clickOnYesButton();
         }).then(()=> {
             return browsePanel.waitForSpinnerNotVisible();
-        });
+        }).catch(err=> {
+            this.saveScreenshot(webDriverHelper.browser, 'err_confirm_dialog');
+            throw new Error('Error in Confirm Delete: ' + err);
+        })
     },
     navigateToUsersApp: function (browser) {
         return launcherPanel.waitForPanelVisible(appConst.TIMEOUT_3).then(()=> {
@@ -74,7 +78,6 @@ module.exports = {
             this.saveScreenshot(browser, "err_login_page");
             throw  new Error("Login for was not loaded");
         });
-
     },
     doSwitchToUsersApp_old: function (browser) {
         console.log('testUtils:switching to users app...');
@@ -107,8 +110,8 @@ module.exports = {
         return browser.getTabIds().then(tabs => {
             let prevPromise = Promise.resolve(false);
             tabs.some((tabId)=> {
-                prevPromise = prevPromise.then((isUsers) => {
-                    if (!isUsers) {
+                prevPromise = prevPromise.then((isHome) => {
+                    if (!isHome) {
                         return this.switchAndCheckTitle(browser, tabId, "Enonic XP Home");
                     }
                     return false;
