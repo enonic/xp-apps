@@ -90,7 +90,6 @@ export class CreateIssueDialog
                 if (approvers.length > issue.getApprovers().length) {
                     api.notify.showWarning(i18n('notify.issue.assignees.norights'));
                 }
-                this.close();
                 this.reset();
                 this.notifyIssueCreated(issue);
             }).catch((reason) => {

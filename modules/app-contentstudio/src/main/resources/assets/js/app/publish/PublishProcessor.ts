@@ -24,6 +24,8 @@ export class PublishProcessor {
 
     private loadingFinishedListeners: { (): void }[] = [];
 
+    private static debug: boolean = false;
+
     constructor(itemList: PublishDialogItemList, dependantList: PublishDialogDependantList) {
         this.itemList = itemList;
         this.dependantList = dependantList;
@@ -42,7 +44,7 @@ export class PublishProcessor {
             const newIds: string[] = items.map(item => item.getId());
             this.excludedIds = this.excludedIds.filter(id => newIds.indexOf(id.toString()) < 0);
             if (!this.ignoreItemsChanged) {
-                this.reloadPublishDependencies();
+                this.reloadPublishDependencies(true);
             }
         });
 
@@ -63,6 +65,9 @@ export class PublishProcessor {
     }
 
     reloadPublishDependencies(resetDependantItems?: boolean): wemQ.Promise<void> {
+        if (PublishProcessor.debug) {
+            console.debug('PublishProcessor.reloadPublishDependencies: resetDependantItems = ' + resetDependantItems);
+        }
 
         this.notifyLoadingStarted();
 
@@ -89,7 +94,9 @@ export class PublishProcessor {
         }
 
         return resolveDependenciesRequest.then((result: ResolvePublishDependenciesResult) => {
-
+            if (PublishProcessor.debug) {
+                console.debug('PublishProcessor.reloadPublishDependencies: resolved dependencies = ', result);
+            }
             this.dependantIds = result.getDependants().slice();
 
             this.dependantList.setRequiredIds(result.getRequired());
@@ -106,6 +113,10 @@ export class PublishProcessor {
             }
 
             return resolveDescendantsRequest.then((dependants: ContentSummaryAndCompareStatus[]) => {
+                if (PublishProcessor.debug) {
+                    console.debug('PublishProcessor.reloadPublishDependencies: resolved dependants = ', dependants);
+                }
+
                 if (resetDependantItems) { // just opened or first time loading children
                     this.dependantList.setItems(dependants);
                 } else {

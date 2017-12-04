@@ -106,7 +106,7 @@ export class DependantItemsDialog
     }
 
     protected updateDependantsHeader(header?: string) {
-        const count = this.dependantList.getItemCount();
+        const count = this.countTotal();
         this.dependantsHeader.setHtml((header || this.dependantsHeaderText) + ` (${count})`, false);
     }
 
