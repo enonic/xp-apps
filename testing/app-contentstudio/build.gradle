@@ -108,5 +108,5 @@ task testContentStudioAppLocally( type: GulpTask, dependsOn: [npmInstall] ) {
     outputs.files fileTree( dir: '/test-results' )
     args = ['test']
 }
-downloadAndStudioTest.finalizedBy = ['stopServer']
+testContentStudioApp.finalizedBy = ['stopServer']
 
