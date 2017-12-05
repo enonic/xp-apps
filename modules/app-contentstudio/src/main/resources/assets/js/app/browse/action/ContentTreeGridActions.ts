@@ -165,7 +165,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         let unpublishEnabled = true;
 
         const deleteEnabled = this.anyDeletable(contentSummaries) && noManagedActionExecuting;
-        const duplicateEnabled = contentSummaries.length === 1 && noManagedActionExecuting;
+        const duplicateEnabled = contentSummaries.length >= 1 && noManagedActionExecuting;
         const moveEnabled = !this.isAllItemsSelected(contentBrowseItems.length) && noManagedActionExecuting;
 
         let allAreOnline = contentBrowseItems.length > 0;
