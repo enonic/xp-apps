@@ -3,6 +3,7 @@ import {DependantItemsDialog, DependantItemsDialogConfig} from '../dialog/Depend
 import ProgressBarManager = api.ui.dialog.ProgressBarManager;
 import TaskId = api.task.TaskId;
 import TaskState = api.task.TaskState;
+import ManagedActionExecutor = api.managedaction.ManagedActionExecutor;
 
 export interface DependantItemsWithProgressDialogConfig
     extends DependantItemsDialogConfig {
@@ -11,7 +12,8 @@ export interface DependantItemsWithProgressDialogConfig
 }
 
 export class DependantItemsWithProgressDialog
-    extends DependantItemsDialog {
+    extends DependantItemsDialog
+    implements ManagedActionExecutor {
 
     protected progressManager: ProgressBarManager;
 
@@ -45,5 +47,9 @@ export class DependantItemsWithProgressDialog
 
     show() {
         super.show(this.isProgressBarEnabled());
+    }
+
+    isExecuting(): boolean {
+        return this.progressManager.isActive();
     }
 }

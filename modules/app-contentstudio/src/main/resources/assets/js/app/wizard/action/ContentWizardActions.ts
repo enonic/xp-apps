@@ -16,6 +16,27 @@ import SaveAction = api.app.wizard.SaveAction;
 import CloseAction = api.app.wizard.CloseAction;
 import SaveAndCloseAction = api.app.wizard.SaveAndCloseAction;
 import i18n = api.util.i18n;
+import ManagedActionManager = api.managedaction.ManagedActionManager;
+import ManagedActionExecutor = api.managedaction.ManagedActionExecutor;
+import ManagedActionState = api.managedaction.ManagedActionState;
+
+type ActionsState = {
+    save?: boolean,
+    delete?: boolean,
+    duplicate?: boolean,
+    preview?: boolean,
+    publish?: boolean,
+    publishTree?: boolean,
+    createIssue?: boolean,
+    unpublish?: boolean,
+    close?: boolean,
+    showLiveEditAction?: boolean,
+    showFormAction?: boolean,
+    showSplitEditAction?: boolean,
+    saveAndClose?: boolean,
+    publishMobile?: boolean,
+    undoPendingDelete?: boolean,
+};
 
 export class ContentWizardActions extends api.app.wizard.WizardActions<api.content.Content> {
 
@@ -37,7 +58,7 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
 
     private unpublish: Action;
 
-    private publishMobile:Action;
+    private publishMobile: Action;
 
     private preview: Action;
 
@@ -52,6 +73,8 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
     private deleteOnlyMode: boolean = false;
 
     private wizardPanel: ContentWizardPanel;
+
+    private stashedActionsState: ActionsState = {};
 
     constructor(wizardPanel: ContentWizardPanel) {
         super(
@@ -92,6 +115,70 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
             this.publishMobile,
             this.undoPendingDelete,
         ] = this.getActions();
+
+        this.stashActionsState();
+
+        ManagedActionManager.instance().onManagedActionStateChanged((state: ManagedActionState, executor: ManagedActionExecutor) => {
+            if (state === ManagedActionState.PREPARING) {
+                this.stashActionsState();
+                this.updateActionsState({
+                    delete: false,
+                    duplicate: false,
+                    publish: false,
+                    publishTree: false,
+                    unpublish: false,
+                    publishMobile: false,
+                });
+            } else if (state === ManagedActionState.ENDED) {
+                this.updateActionsState(this.stashedActionsState);
+            }
+        });
+    }
+
+    private enableActions(state: ActionsState) {
+        if (ManagedActionManager.instance().isExecuting()) {
+            this.updateStashedActionsState(state);
+        } else {
+            this.updateActionsState(state);
+        }
+    }
+
+    private updateActionsState(state: ActionsState) {
+        for (const key in state) {
+            const hasProperty = state.hasOwnProperty(key) && this.hasOwnProperty(key);
+            if (hasProperty && state[key] != null && this[key] instanceof Action) {
+                const action = <Action> this[key];
+                action.setEnabled(state[key]);
+            }
+        }
+    }
+
+    private updateStashedActionsState(state: ActionsState) {
+        for (const key in state) {
+            const hasProperty = state.hasOwnProperty(key);
+            if (hasProperty && state[key] != null) {
+                this.stashedActionsState[key] = state[key];
+            }
+        }
+    }
+
+    private stashActionsState() {
+        this.stashedActionsState = this.stashedActionsState || {};
+        this.stashedActionsState.save = this.save.isEnabled();
+        this.stashedActionsState.delete = this.delete.isEnabled();
+        this.stashedActionsState.duplicate = this.duplicate.isEnabled();
+        this.stashedActionsState.preview = this.preview.isEnabled();
+        this.stashedActionsState.publish = this.publish.isEnabled();
+        this.stashedActionsState.publishTree = this.publishTree.isEnabled();
+        this.stashedActionsState.createIssue = this.createIssue.isEnabled();
+        this.stashedActionsState.unpublish = this.unpublish.isEnabled();
+        this.stashedActionsState.close = this.close.isEnabled();
+        this.stashedActionsState.showLiveEditAction = this.showLiveEditAction.isEnabled();
+        this.stashedActionsState.showFormAction = this.showFormAction.isEnabled();
+        this.stashedActionsState.showSplitEditAction = this.showSplitEditAction.isEnabled();
+        this.stashedActionsState.saveAndClose = this.saveAndClose.isEnabled();
+        this.stashedActionsState.publishMobile = this.publishMobile.isEnabled();
+        this.stashedActionsState.undoPendingDelete = this.undoPendingDelete.isEnabled();
     }
 
     refreshPendingDeleteDecorations() {
@@ -110,14 +197,11 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
     }
 
     enableActionsForNew() {
-        this.save.setEnabled(true);
-        this.delete.setEnabled(true);
+        this.enableActions({save: true, delete: true});
     }
 
     enableActionsForExisting(existing: api.content.Content) {
-        this.save.setEnabled(existing.isEditable());
-        this.delete.setEnabled(existing.isDeletable());
-
+        this.enableActions({save: existing.isEditable(), delete: existing.isDeletable()});
         this.enableActionsForExistingByPermissions(existing);
     }
 
@@ -126,19 +210,23 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
             return;
         }
         this.deleteOnlyMode = valueOn;
+        const nonDeleteMode = !valueOn;
 
-        this.save.setEnabled(!valueOn);
-        this.duplicate.setEnabled(!valueOn);
-        this.publish.setEnabled(!valueOn);
-        this.createIssue.setEnabled(!valueOn);
-        this.unpublish.setEnabled(!valueOn);
-        this.publishMobile.setEnabled(!valueOn);
+        this.enableActions({
+            save: nonDeleteMode,
+            duplicate: nonDeleteMode,
+            publish: nonDeleteMode,
+            createIssue: nonDeleteMode,
+            unpublish: nonDeleteMode,
+            publishMobile: nonDeleteMode,
+        });
+
         this.publishMobile.setVisible(!valueOn);
 
         if (valueOn) {
             this.enableDeleteIfAllowed(content);
         } else {
-            this.delete.setEnabled(true);
+            this.enableActions({delete: true});
             this.enableActionsForExistingByPermissions(content);
         }
     }
@@ -147,7 +235,7 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
         new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult: api.security.auth.LoginResult) => {
             let hasDeletePermission = api.security.acl.PermissionHelper.hasPermission(api.security.acl.Permission.DELETE,
                 loginResult, content.getPermissions());
-            this.delete.setEnabled(hasDeletePermission);
+            this.enableActions({delete: hasDeletePermission});
         });
     }
 
@@ -162,18 +250,20 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
                 loginResult, existing.getPermissions());
 
             if (!hasModifyPermission) {
-                this.save.setEnabled(false);
-                this.saveAndClose.setEnabled(false);
+                this.enableActions({save: false, saveAndClose: false});
             }
             if (!hasDeletePermission) {
-                this.delete.setEnabled(false);
+                this.enableActions({delete: false});
             }
             if (!hasPublishPermission) {
-                this.publish.setEnabled(false);
-                this.createIssue.setEnabled(true);
-                this.unpublish.setEnabled(false);
-                this.publishTree.setEnabled(false);
-                this.publishMobile.setEnabled(false);
+                this.enableActions({
+                    publish: false,
+                    createIssue: true,
+                    unpublish: false,
+                    publishTree: false,
+                    publishMobile: false,
+                });
+
                 this.publishMobile.setVisible(false);
             }
 
@@ -188,7 +278,7 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
                                     accessControlList);
 
                                 if (!hasParentCreatePermission) {
-                                    this.duplicate.setEnabled(false);
+                                    this.enableActions({duplicate: false});
                                 }
                             });
                     });
@@ -200,7 +290,7 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
                             accessControlList);
 
                         if (!hasParentCreatePermission) {
-                            this.duplicate.setEnabled(false);
+                            this.enableActions({duplicate: false});
                         }
                     });
             }
