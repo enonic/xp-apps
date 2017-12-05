@@ -24,6 +24,7 @@ import Content = api.content.Content;
 import Permission = api.security.acl.Permission;
 import GetContentByPathRequest = api.content.resource.GetContentByPathRequest;
 import i18n = api.util.i18n;
+import ManagedActionManager = api.managedaction.ManagedActionManager;
 
 export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAndCompareStatus> {
 
@@ -70,10 +71,30 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
             this.UNDO_PENDING_DELETE
         );
 
-        this.getPreviewHandler().onPreviewStateChanged((value) => {
-            this.PREVIEW_CONTENT.setEnabled(value);
-        });
+        this.initListeners();
+    }
 
+    initListeners() {
+        const previewStateChangedHandler = value => {
+            this.PREVIEW_CONTENT.setEnabled(value);
+        };
+        this.getPreviewHandler().onPreviewStateChanged(previewStateChangedHandler);
+
+        const managedActionsHandler = () => {
+            const noManagedActionExecuting = !ManagedActionManager.instance().isExecuting();
+            this.DELETE_CONTENT.setEnabled(noManagedActionExecuting);
+            this.DUPLICATE_CONTENT.setEnabled(noManagedActionExecuting);
+            this.MOVE_CONTENT.setEnabled(noManagedActionExecuting);
+            this.PUBLISH_CONTENT.setEnabled(noManagedActionExecuting);
+            this.PUBLISH_TREE_CONTENT.setEnabled(noManagedActionExecuting);
+            this.UNPUBLISH_CONTENT.setEnabled(noManagedActionExecuting);
+        };
+        ManagedActionManager.instance().onManagedActionStateChanged(managedActionsHandler);
+
+        this.grid.onRemoved(() => {
+            this.getPreviewHandler().unPreviewStateChanged(previewStateChangedHandler);
+            ManagedActionManager.instance().unManagedActionStateChanged(managedActionsHandler);
+        });
     }
 
     getPreviewHandler(): PreviewContentHandler {
@@ -138,8 +159,14 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
             return elem.getModel().getContentSummary();
         });
 
+        const noManagedActionExecuting = !ManagedActionManager.instance().isExecuting();
+
         let treePublishEnabled = true;
         let unpublishEnabled = true;
+
+        const deleteEnabled = this.anyDeletable(contentSummaries) && noManagedActionExecuting;
+        const duplicateEnabled = contentSummaries.length >= 1 && noManagedActionExecuting;
+        const moveEnabled = !this.isAllItemsSelected(contentBrowseItems.length) && noManagedActionExecuting;
 
         let allAreOnline = contentBrowseItems.length > 0;
         let allArePendingDelete = contentBrowseItems.length > 0;
@@ -163,7 +190,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
             }
         });
 
-        const publishEnabled = !allAreOnline;
+        const publishEnabled = !allAreOnline && noManagedActionExecuting;
         if (this.isEveryLeaf(contentSummaries)) {
             treePublishEnabled = false;
             unpublishEnabled = someArePublished;
@@ -173,11 +200,14 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
             unpublishEnabled = someArePublished;
         }
 
+        treePublishEnabled = treePublishEnabled && noManagedActionExecuting;
+        unpublishEnabled = unpublishEnabled && noManagedActionExecuting;
+
         this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(contentSummaries.length < 2);
         this.EDIT_CONTENT.setEnabled(!allAreReadonly && this.anyEditable(contentSummaries));
-        this.DELETE_CONTENT.setEnabled(this.anyDeletable(contentSummaries));
-        this.DUPLICATE_CONTENT.setEnabled(contentSummaries.length === 1);
-        this.MOVE_CONTENT.setEnabled(!this.isAllItemsSelected(contentBrowseItems.length));
+        this.DELETE_CONTENT.setEnabled(deleteEnabled);
+        this.DUPLICATE_CONTENT.setEnabled(duplicateEnabled);
+        this.MOVE_CONTENT.setEnabled(moveEnabled);
         this.SORT_CONTENT.setEnabled(contentSummaries.length === 1 && contentSummaries[0].hasChildren());
 
         this.PUBLISH_CONTENT.setEnabled(publishEnabled);
@@ -258,9 +288,9 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
 
                 let canCreate = allowedPermissions.indexOf(Permission.CREATE) > -1;
 
-                let canDelete = allowedPermissions.indexOf(Permission.DELETE) > -1;
+            let canDelete = allowedPermissions.indexOf(Permission.DELETE) > -1 && !ManagedActionManager.instance().isExecuting();
 
-                let canPublish = allowedPermissions.indexOf(Permission.PUBLISH) > -1;
+            let canPublish = allowedPermissions.indexOf(Permission.PUBLISH) > -1 && !ManagedActionManager.instance().isExecuting();
 
                 if (canDelete) {
                     this.DELETE_CONTENT.setEnabled(true);
@@ -287,9 +317,9 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
 
                 let canCreate = allowedPermissions.indexOf(Permission.CREATE) > -1;
 
-                let canDelete = allowedPermissions.indexOf(Permission.DELETE) > -1;
+            let canDelete = allowedPermissions.indexOf(Permission.DELETE) > -1 && !ManagedActionManager.instance().isExecuting();
 
-                let canPublish = allowedPermissions.indexOf(Permission.PUBLISH) > -1;
+            let canPublish = allowedPermissions.indexOf(Permission.PUBLISH) > -1 && !ManagedActionManager.instance().isExecuting();
 
                 if (!contentTypesAllowChildren || !canCreate) {
                     this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(false);
@@ -334,12 +364,14 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
     private updateCanDuplicateActionSingleItemSelected(selectedItem: ContentSummary) {
         // Need to check if parent allows content creation
         new GetContentByPathRequest(selectedItem.getPath().getParentPath()).sendAndParse().then((content: Content) => {
-            new api.content.resource.GetPermittedActionsRequest().addContentIds(content.getContentId()).addPermissionsToBeChecked(
-                Permission.CREATE).sendAndParse().then((allowedPermissions: Permission[]) => {
-                let canDuplicate = allowedPermissions.indexOf(Permission.CREATE) > -1;
+            new api.content.resource.GetPermittedActionsRequest()
+                .addContentIds(content.getContentId())
+                .addPermissionsToBeChecked(Permission.CREATE)
+                .sendAndParse().then((allowedPermissions: Permission[]) => {
+                const canDuplicate = allowedPermissions.indexOf(Permission.CREATE) > -1 &&
+                                     !ManagedActionManager.instance().isExecuting();
                 this.DUPLICATE_CONTENT.setEnabled(canDuplicate);
             });
-
         });
     }
 
