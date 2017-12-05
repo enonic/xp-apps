@@ -209,6 +209,9 @@ function startApplication() {
 
     api.util.AppHelper.preventDragRedirect();
 
+    // tslint:disable-next-line:no-unused-new
+    new DuplicateContentDialog();
+
     let contentDeleteDialog = new ContentDeleteDialog();
     ContentDeletePromptEvent.on((event) => {
         contentDeleteDialog
@@ -343,8 +346,6 @@ function startContentApplication(application: api.app.Application) {
     new SortContentDialog();
     // tslint:disable-next-line:no-unused-new
     new MoveContentDialog();
-    // tslint:disable-next-line:no-unused-new
-    new DuplicateContentDialog();
 }
 
 function initSearchPanelListener(panel: ContentAppPanel) {

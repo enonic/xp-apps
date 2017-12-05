@@ -5,14 +5,15 @@ import TaskId = api.task.TaskId;
 import i18n = api.util.i18n;
 import SpanEl = api.dom.SpanEl;
 import DuplicateContentRequest = api.content.resource.DuplicateContentRequest;
-import HeavyOperationPerformer = api.heavy.HeavyOperationPerformer;
+import ManagedActionExecutor = api.managedaction.ManagedActionExecutor;
 import ContentSummary = api.content.ContentSummary;
 import ContentIds = api.content.ContentIds;
-import HeavyOperationsManager = api.heavy.HeavyOperationsManager;
+import ManagedActionManager = api.managedaction.ManagedActionManager;
+import ManagedActionState = api.managedaction.ManagedActionState;
 
 export class DuplicateContentDialog
     extends api.ui.dialog.ModalDialog
-    implements HeavyOperationPerformer {
+    implements ManagedActionExecutor {
 
     private duplicatedContent: ContentSummary[];
 
@@ -21,7 +22,7 @@ export class DuplicateContentDialog
     constructor() {
         super();
 
-        this.setTitle(i18n('dialog.move'));
+        this.setTitle(i18n('dialog.duplicate'));
 
         this.addClass('duplicate-content-dialog');
 
@@ -34,7 +35,7 @@ export class DuplicateContentDialog
 
     private initProgressManager() {
         this.progressManager = new ProgressBarManager({
-            processingLabel: `${i18n('field.progress.moving')}...`,
+            processingLabel: `${i18n('field.progress.duplicating')}...`,
             processHandler: () => {
                 this.open();
             },
@@ -56,13 +57,14 @@ export class DuplicateContentDialog
         OpenDuplicateDialogEvent.on((event) => {
             this.duplicatedContent = event.getContentSummaries();
 
-            const duplicationStartedHandler = (performer: HeavyOperationPerformer) => {
-                if (performer === this) {
+            const duplicationStartedHandler = (state: ManagedActionState, executor: ManagedActionExecutor) => {
+                if (state === ManagedActionState.STARTED && executor === this) {
                     this.open();
+                } else if (state === ManagedActionState.ENDED) {
+                    ManagedActionManager.instance().unManagedActionStateChanged(duplicationStartedHandler);
                 }
-                HeavyOperationsManager.instance().unHeavyOperationStarted(duplicationStartedHandler);
             };
-            HeavyOperationsManager.instance().onHeavyOperationStarted(duplicationStartedHandler);
+            ManagedActionManager.instance().onManagedActionStateChanged(duplicationStartedHandler);
 
             this.doMove();
         });
@@ -92,7 +94,7 @@ export class DuplicateContentDialog
         super.show();
     }
 
-    isPerforming(): boolean {
-        return this.progressManager.isEnabled();
+    isExecuting(): boolean {
+        return this.progressManager.isActive();
     }
 }

@@ -24,7 +24,7 @@ import Content = api.content.Content;
 import Permission = api.security.acl.Permission;
 import GetContentByPathRequest = api.content.resource.GetContentByPathRequest;
 import i18n = api.util.i18n;
-import HeavyOperationsManager = api.heavy.HeavyOperationsManager;
+import ManagedActionManager = api.managedaction.ManagedActionManager;
 
 export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAndCompareStatus> {
 
@@ -80,22 +80,20 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         };
         this.getPreviewHandler().onPreviewStateChanged(previewStateChangedHandler);
 
-        const heavyOperationsHandler = () => {
-            const noHeavyOperationPerforming = !HeavyOperationsManager.instance().isPerforming();
-            this.DELETE_CONTENT.setEnabled(noHeavyOperationPerforming);
-            this.DUPLICATE_CONTENT.setEnabled(noHeavyOperationPerforming);
-            this.MOVE_CONTENT.setEnabled(noHeavyOperationPerforming);
-            this.PUBLISH_CONTENT.setEnabled(noHeavyOperationPerforming);
-            this.PUBLISH_TREE_CONTENT.setEnabled(noHeavyOperationPerforming);
-            this.UNPUBLISH_CONTENT.setEnabled(noHeavyOperationPerforming);
+        const managedActionsHandler = () => {
+            const noManagedActionExecuting = !ManagedActionManager.instance().isExecuting();
+            this.DELETE_CONTENT.setEnabled(noManagedActionExecuting);
+            this.DUPLICATE_CONTENT.setEnabled(noManagedActionExecuting);
+            this.MOVE_CONTENT.setEnabled(noManagedActionExecuting);
+            this.PUBLISH_CONTENT.setEnabled(noManagedActionExecuting);
+            this.PUBLISH_TREE_CONTENT.setEnabled(noManagedActionExecuting);
+            this.UNPUBLISH_CONTENT.setEnabled(noManagedActionExecuting);
         };
-        HeavyOperationsManager.instance().onHeavyOperationStarted(heavyOperationsHandler);
-        HeavyOperationsManager.instance().onHeavyOperationEnded(heavyOperationsHandler);
+        ManagedActionManager.instance().onManagedActionStateChanged(managedActionsHandler);
 
         this.grid.onRemoved(() => {
             this.getPreviewHandler().unPreviewStateChanged(previewStateChangedHandler);
-            HeavyOperationsManager.instance().unHeavyOperationStarted(heavyOperationsHandler);
-            HeavyOperationsManager.instance().onHeavyOperationEnded(heavyOperationsHandler);
+            ManagedActionManager.instance().unManagedActionStateChanged(managedActionsHandler);
         });
     }
 
@@ -161,14 +159,14 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
             return elem.getModel().getContentSummary();
         });
 
-        const noHeavyOperationPerforming = !HeavyOperationsManager.instance().isPerforming();
+        const noManagedActionExecuting = !ManagedActionManager.instance().isExecuting();
 
         let treePublishEnabled = true;
         let unpublishEnabled = true;
 
-        const deleteEnabled = this.anyDeletable(contentSummaries) && noHeavyOperationPerforming;
-        const duplicateEnabled = contentSummaries.length === 1 && noHeavyOperationPerforming;
-        const moveEnabled = !this.isAllItemsSelected(contentBrowseItems.length) && noHeavyOperationPerforming;
+        const deleteEnabled = this.anyDeletable(contentSummaries) && noManagedActionExecuting;
+        const duplicateEnabled = contentSummaries.length === 1 && noManagedActionExecuting;
+        const moveEnabled = !this.isAllItemsSelected(contentBrowseItems.length) && noManagedActionExecuting;
 
         let allAreOnline = contentBrowseItems.length > 0;
         let allArePendingDelete = contentBrowseItems.length > 0;
@@ -192,7 +190,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
             }
         });
 
-        const publishEnabled = !allAreOnline && noHeavyOperationPerforming;
+        const publishEnabled = !allAreOnline && noManagedActionExecuting;
         if (this.isEveryLeaf(contentSummaries)) {
             treePublishEnabled = false;
             unpublishEnabled = someArePublished;
@@ -202,8 +200,8 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
             unpublishEnabled = someArePublished;
         }
 
-        treePublishEnabled = treePublishEnabled && noHeavyOperationPerforming;
-        unpublishEnabled = unpublishEnabled && noHeavyOperationPerforming;
+        treePublishEnabled = treePublishEnabled && noManagedActionExecuting;
+        unpublishEnabled = unpublishEnabled && noManagedActionExecuting;
 
         this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(contentSummaries.length < 2);
         this.EDIT_CONTENT.setEnabled(!allAreReadonly && this.anyEditable(contentSummaries));
@@ -290,9 +288,9 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
 
                 let canCreate = allowedPermissions.indexOf(Permission.CREATE) > -1;
 
-            let canDelete = allowedPermissions.indexOf(Permission.DELETE) > -1 && !HeavyOperationsManager.instance().isPerforming();
+            let canDelete = allowedPermissions.indexOf(Permission.DELETE) > -1 && !ManagedActionManager.instance().isExecuting();
 
-            let canPublish = allowedPermissions.indexOf(Permission.PUBLISH) > -1 && !HeavyOperationsManager.instance().isPerforming();
+            let canPublish = allowedPermissions.indexOf(Permission.PUBLISH) > -1 && !ManagedActionManager.instance().isExecuting();
 
                 if (canDelete) {
                     this.DELETE_CONTENT.setEnabled(true);
@@ -319,9 +317,9 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
 
                 let canCreate = allowedPermissions.indexOf(Permission.CREATE) > -1;
 
-            let canDelete = allowedPermissions.indexOf(Permission.DELETE) > -1 && !HeavyOperationsManager.instance().isPerforming();
+            let canDelete = allowedPermissions.indexOf(Permission.DELETE) > -1 && !ManagedActionManager.instance().isExecuting();
 
-            let canPublish = allowedPermissions.indexOf(Permission.PUBLISH) > -1 && !HeavyOperationsManager.instance().isPerforming();
+            let canPublish = allowedPermissions.indexOf(Permission.PUBLISH) > -1 && !ManagedActionManager.instance().isExecuting();
 
                 if (!contentTypesAllowChildren || !canCreate) {
                     this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(false);
@@ -371,7 +369,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
                 .addPermissionsToBeChecked(Permission.CREATE)
                 .sendAndParse().then((allowedPermissions: Permission[]) => {
                 const canDuplicate = allowedPermissions.indexOf(Permission.CREATE) > -1 &&
-                                     !HeavyOperationsManager.instance().isPerforming();
+                                     !ManagedActionManager.instance().isExecuting();
                 this.DUPLICATE_CONTENT.setEnabled(canDuplicate);
             });
         });
