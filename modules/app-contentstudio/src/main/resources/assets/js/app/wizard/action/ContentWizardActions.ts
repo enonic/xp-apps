@@ -144,7 +144,7 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
     }
 
     private updateActionsState(state: ActionsState) {
-        for (const key in state) {
+        for (const key of Object.keys(state)) {
             const hasProperty = state.hasOwnProperty(key) && this.hasOwnProperty(key);
             if (hasProperty && state[key] != null && this[key] instanceof Action) {
                 const action = <Action> this[key];
@@ -154,7 +154,7 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
     }
 
     private updateStashedActionsState(state: ActionsState) {
-        for (const key in state) {
+        for (const key of Object.keys(state)) {
             const hasProperty = state.hasOwnProperty(key);
             if (hasProperty && state[key] != null) {
                 this.stashedActionsState[key] = state[key];
