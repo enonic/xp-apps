@@ -9,14 +9,12 @@ const studioUtils = require('../../libs/studio.utils');
 
 var component = {
     container: `//div[contains(@id,'LoaderComboBox')]`,
-    optionItemByDisplayName: "//button[contains(@class, 'icon-search')]",
 
 }
 var loaderComboBox = Object.create(page, {
-
     selectOption: {
         value: function (optionDisplayName) {
-            let optionSelector = `${component.container}` + elements.slickRowByDisplayName(optionDisplayName);
+            let optionSelector = elements.slickRowByDisplayName(`${component.container}`, optionDisplayName);
             return this.waitForVisible(optionSelector, appConst.TIMEOUT_3).catch(err=> {
                 throw new Error('option was not found! ' + optionDisplayName);
             }).then(()=> {
@@ -25,11 +23,6 @@ var loaderComboBox = Object.create(page, {
                     throw new Error('itemTabButton was not found!' + displayName);
                 })
             })
-        }
-    },
-    typeSearchTExt: {
-        value: function (itemName) {
-
         }
     },
 });

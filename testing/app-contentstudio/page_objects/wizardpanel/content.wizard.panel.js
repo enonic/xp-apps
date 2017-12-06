@@ -1,13 +1,14 @@
 /**
  * Created on 5/30/2017.
  */
-var page = require('../page');
-var elements = require('../../libs/elements');
-var appConst = require('../../libs/app_const');
+const page = require('../page');
+const elements = require('../../libs/elements');
+const appConst = require('../../libs/app_const');
+const contentStepForm = require('./content.wizard.step.form');
 var wizard = {
     container: `//div[contains(@id,'ContentWizardPanel')]`,
     displayNameInput: `//input[contains(@name,'displayName')]`,
-    saveButton: `//button[contains(@id,'ActionButton') and child::span[text()='Save']]`,
+    saveButton: `//button[contains(@id,'ActionButton') and child::span[text()='Save draft']]`,
     deleteButton: `//button[contains(@id,'ActionButton') and child::span[text()='Delete']]`,
 }
 var contentWizardPanel = Object.create(page, {
@@ -27,9 +28,20 @@ var contentWizardPanel = Object.create(page, {
             return `${wizard.container}` + `${wizard.deleteButton}`;
         }
     },
+    typeData: {
+        value: function (content) {
+            return this.typeDisplayName(content.displayName).then(()=> {
+                if (content.data != null) {
+                    return contentStepForm.type(content.data, content.contentType);
+                }
+            })
+
+        }
+    },
     waitForOpened: {
         value: function () {
             return this.waitForVisible(this.displayNameInput, appConst.TIMEOUT_3).catch((e)=> {
+                this.saveScreenshot('err_content__open_wizard')
                 throw new Error("Content wizard was not loaded! " + e);
             });
         }
@@ -67,7 +79,6 @@ var contentWizardPanel = Object.create(page, {
                 } else {
                     throw new Error(`Save button is not enabled!`);
                 }
-
             }).catch(err=> {
                 throw new Error(`Save button is not enabled!` + err);
             })
