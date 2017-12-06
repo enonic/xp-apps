@@ -167,4 +167,10 @@ Page.prototype.waitForErrorNotificationMessage = function () {
     })
 };
 
+Page.prototype.waitForNotificationWarning = function () {
+    var selector = `//div[contains(@id,'NotificationMessage') and @class='notification warning']//div[contains(@class,'notification-content')]/span`;
+    return this.getBrowser().waitForVisible(selector, appConst.TIMEOUT_3).then(()=> {
+        return this.getBrowser().getText(selector);
+    })
+};
 module.exports = new Page();
