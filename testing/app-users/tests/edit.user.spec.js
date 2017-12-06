@@ -13,7 +13,7 @@ const userItemsBuilder = require('../libs/userItems.builder.js');
 const appConst = require('../libs/app_const');
 const userStatisticsPanel = require('../page_objects/browsepanel/user.statistics.panel.js');
 
-describe('Edit an user - change name and roles', function () {
+describe('`edit.user.spec`: Edit an user - change e-mail, name and roles', function () {
     this.timeout(70000);
     webDriverHelper.setupBrowser();
     let testUser;

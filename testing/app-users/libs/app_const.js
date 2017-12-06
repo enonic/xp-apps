@@ -2,6 +2,9 @@
  * Created  on 15.09.2017.
  */
 module.exports = Object.freeze({
+    //waitforTimeout
+    TIMEOUT_3: 3000,
+    TIMEOUT_1: 1000,
     USER_STORE: 'User Store',
     ROLE: 'Role',
     ROLES: 'Roles',
@@ -36,6 +39,12 @@ module.exports = Object.freeze({
     },
     roleDeletedMessage: function (displayName) {
         return `Principal "role:${displayName}" is deleted`
+    },
+    userDeletedMessage: function (displayName) {
+        return `Principal "user:system:${displayName}" is deleted`
+    },
+    storeDeletedMessage: function (displayName) {
+        return `User Store "${displayName}" is deleted`
     },
 
 });

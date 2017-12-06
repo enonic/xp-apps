@@ -4,7 +4,7 @@ const assert = chai.assert;
 var webDriverHelper = require('../libs/WebDriverHelper');
 chai.Should();
 var loginPage = require('../page_objects/login.page');
-require("mocha-allure-reporter");
+const appConst = require('../libs/app_const');
 
 describe('Login Page specification', function () {
 
@@ -30,7 +30,7 @@ describe('Login Page specification', function () {
     it('when "user name" and "password" have typed then "login button" should be visible', () => {
         loginPage.typeUserName('su');
         loginPage.typePassword('password');
-        return loginPage.waitForLoginButtonVisible(1000).then(function (result) {
+        return loginPage.waitForLoginButtonVisible(appConst.TIMEOUT_3).then(function (result) {
             assert.isTrue(result, 'login button should be not visible');
         });
     });

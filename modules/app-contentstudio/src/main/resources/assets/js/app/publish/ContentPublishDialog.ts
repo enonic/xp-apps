@@ -1,5 +1,4 @@
 import '../../api.ts';
-import {ProgressBarConfig} from '../dialog/ProgressBarDialog';
 import {isContentSummaryValid, PublishDialogDependantList} from './PublishDialogDependantList';
 import {ContentPublishPromptEvent} from '../browse/ContentPublishPromptEvent';
 import {PublishDialogItemList} from './PublishDialogItemList';
@@ -9,6 +8,7 @@ import {PublishProcessor} from './PublishProcessor';
 import {IssueServerEventsHandler} from '../issue/event/IssueServerEventsHandler';
 import {Issue} from '../issue/Issue';
 import {ContentPublishDialogAction} from './ContentPublishDialogAction';
+import {DependantItemsWithProgressDialogConfig} from '../dialog/DependantItemsWithProgressDialog';
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import PublishContentRequest = api.content.resource.PublishContentRequest;
 import CompareStatus = api.content.CompareStatus;
@@ -40,11 +40,10 @@ export class ContentPublishDialog
     private currentUser: User;
 
     constructor() {
-        super(<ProgressBarConfig> {
-                dialogName: i18n('dialog.publish'),
+        super(<DependantItemsWithProgressDialogConfig> {
+            title: i18n('dialog.publish'),
                 dialogSubName: i18n('dialog.publish.resolving'),
                 dependantsName: i18n('dialog.publish.dependants'),
-                isProcessingClass: 'is-publishing',
                 processingLabel: `${i18n('field.progress.publishing')}...`,
                 processHandler: () => {
                     new ContentPublishPromptEvent([]).fire();

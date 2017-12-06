@@ -3,6 +3,7 @@
  */
 var wizard = require('./wizard.panel');
 var elements = require('../../libs/elements');
+var appConst = require('../../libs/app_const');
 const loaderComboBox = require('../inputs/loaderComboBox');
 
 var panel = {
@@ -35,7 +36,7 @@ var roleWizard = Object.create(wizard, {
     },
     waitForOpened: {
         value: function () {
-            return this.waitForVisible(`${panel.container}` + this.displayNameInput, 3000).catch((e)=> {
+            return this.waitForVisible(`${panel.container}` + this.displayNameInput, appConst.TIMEOUT_3).catch((e)=> {
                 throw new Error("Role wizard was not loaded! " + e);
             });
         }

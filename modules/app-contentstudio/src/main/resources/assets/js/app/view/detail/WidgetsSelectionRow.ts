@@ -1,7 +1,6 @@
 import '../../../api.ts';
 import {WidgetView} from './WidgetView';
 import {DetailsView} from './DetailsView';
-
 import Dropdown = api.ui.selector.dropdown.Dropdown;
 import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
 

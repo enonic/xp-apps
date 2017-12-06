@@ -13,6 +13,9 @@ const wizard = require('../page_objects/wizardpanel/wizard.panel');
 const newPrincipalDialog = require('../page_objects/browsepanel/new.principal.dialog');
 const filterPanel = require("../page_objects/browsepanel/principal.filter.panel");
 const confirmationDialog = require("../page_objects/confirmation.dialog");
+const appConst = require("./app_const");
+const webDriverHelper = require("./WebDriverHelper");
+
 
 module.exports = {
     xpTabs: {},
@@ -34,7 +37,7 @@ module.exports = {
         }).then(()=> {
             return filterPanel.typeSearchText(name);
         }).then(()=> {
-            return browsePanel.waitForSpinnerNotVisible(3000);
+            return browsePanel.waitForSpinnerNotVisible(appConst.TIMEOUT_3);
         });
     },
     selectAndDeleteItem: function (name) {
@@ -43,7 +46,7 @@ module.exports = {
         }).then((result)=> {
             return browsePanel.clickOnDeleteButton();
         }).then(()=> {
-            return confirmationDialog.waitForDialogVisible();
+            return confirmationDialog.waitForDialogVisible(appConst.TIMEOUT_3);
         }).then(result=> {
             if (!result) {
                 throw new Error('Confirmation dialog was not loaded!')
@@ -53,15 +56,18 @@ module.exports = {
             return browsePanel.waitForSpinnerNotVisible();
         })
     },
-    confirmDelete: ()=> {
-        return confirmationDialog.waitForDialogVisible(2000).then(()=> {
+    confirmDelete: function () {
+        return confirmationDialog.waitForDialogVisible(appConst.TIMEOUT_3).then(()=> {
             return confirmationDialog.clickOnYesButton();
         }).then(()=> {
             return browsePanel.waitForSpinnerNotVisible();
-        });
+        }).catch(err=> {
+            this.saveScreenshot(webDriverHelper.browser, 'err_confirm_dialog');
+            throw new Error('Error in Confirm Delete: ' + err);
+        })
     },
     navigateToUsersApp: function (browser) {
-        return launcherPanel.waitForPanelVisible(2000).then(()=> {
+        return launcherPanel.waitForPanelVisible(appConst.TIMEOUT_3).then(()=> {
             console.log("'user browse panel' should be loaded");
             return launcherPanel.clickOnUsersLink();
         }).then(()=> {
@@ -72,7 +78,6 @@ module.exports = {
             this.saveScreenshot(browser, "err_login_page");
             throw  new Error("Login for was not loaded");
         });
-
     },
     doSwitchToUsersApp_old: function (browser) {
         console.log('testUtils:switching to users app...');
@@ -80,7 +85,7 @@ module.exports = {
             this.xpTabs = tabs;
             return browser.switchTab(this.xpTabs[1]);
         }).then(()=> {
-            return browsePanel.waitForUsersGridLoaded(5000);
+            return browsePanel.waitForUsersGridLoaded(appConst.TIMEOUT_3);
         });
     },
     doSwitchToUsersApp: function (browser) {
@@ -97,7 +102,7 @@ module.exports = {
             });
             return prevPromise;
         }).then(()=> {
-            return browsePanel.waitForUsersGridLoaded(5000);
+            return browsePanel.waitForUsersGridLoaded(appConst.TIMEOUT_3);
         });
     },
     doSwitchToHome: function (browser) {
@@ -105,8 +110,8 @@ module.exports = {
         return browser.getTabIds().then(tabs => {
             let prevPromise = Promise.resolve(false);
             tabs.some((tabId)=> {
-                prevPromise = prevPromise.then((isUsers) => {
-                    if (!isUsers) {
+                prevPromise = prevPromise.then((isHome) => {
+                    if (!isHome) {
                         return this.switchAndCheckTitle(browser, tabId, "Enonic XP Home");
                     }
                     return false;
@@ -114,7 +119,7 @@ module.exports = {
             });
             return prevPromise;
         }).then(()=> {
-            return homePage.waitForLoaded(2000);
+            return homePage.waitForLoaded(appConst.TIMEOUT_3);
         });
     },
     switchAndCheckTitle: function (browser, tabId, reqTitle) {
@@ -128,7 +133,7 @@ module.exports = {
 
     doLoginAndSwitchToUsers: function (browser) {
         return loginPage.doLogin().then(()=> {
-            return homePage.waitForXpTourVisible(5000);
+            return homePage.waitForXpTourVisible(appConst.TIMEOUT_3);
         }).then(()=> {
             return homePage.doCloseXpTourDialog();
         }).then(()=> {

@@ -25,7 +25,7 @@ import {ContentUnpublishDialog} from './app/publish/ContentUnpublishDialog';
 import {NewContentDialog} from './app/create/NewContentDialog';
 import {ShowNewContentDialogEvent} from './app/browse/ShowNewContentDialogEvent';
 import {SortContentDialog} from './app/browse/SortContentDialog';
-import {MoveContentDialog} from './app/browse/MoveContentDialog';
+import {MoveContentDialog} from './app/move/MoveContentDialog';
 import {EditPermissionsDialog} from './app/wizard/EditPermissionsDialog';
 import {ContentWizardPanelParams} from './app/wizard/ContentWizardPanelParams';
 import {ContentWizardPanel} from './app/wizard/ContentWizardPanel';
@@ -38,6 +38,7 @@ import {IssueDialogsManager} from './app/issue/IssueDialogsManager';
 import {ShowIssuesDialogEvent} from './app/browse/ShowIssuesDialogEvent';
 import {ToggleSearchPanelWithDependenciesGlobalEvent} from './app/browse/ToggleSearchPanelWithDependenciesGlobalEvent';
 import {ToggleSearchPanelWithDependenciesEvent} from './app/browse/ToggleSearchPanelWithDependenciesEvent';
+import {DuplicateContentDialog} from './app/duplicate/DuplicateContentDialog';
 
 function getApplication(): api.app.Application {
     let application = new api.app.Application('content-studio', i18n('app.name'), i18n('app.abbr'), CONFIG.appIconUrl);
@@ -92,14 +93,14 @@ function initToolTip() {
         if (left + tooltipWidth >= windowWidth) {
             left = windowWidth - tooltipWidth;
         }
-        wemjq('#' + ID).html(tooltipText).css({
+        wemjq(`#${ID}`).remove();
+        wemjq(`<div id='${ID}' />`).html(tooltipText).css({
             position: 'absolute', top, left
-        }).show();
+        }).appendTo('body').show();
     };
     wemjq(document).on('mouseenter', '*[title]:not([title=""]):not([disabled]):visible', function (e: any) {
         wemjq(e.target).data(DATA, wemjq(e.target).attr('title'));
         wemjq(e.target).removeAttr('title').addClass(CLS_ON);
-        wemjq(`<div id='${ID}' />`).appendTo('body');
         if (e.pageX) {
             pageX = e.pageX;
         }
@@ -208,6 +209,9 @@ function startApplication() {
 
     api.util.AppHelper.preventDragRedirect();
 
+    // tslint:disable-next-line:no-unused-new
+    new DuplicateContentDialog();
+
     let contentDeleteDialog = new ContentDeleteDialog();
     ContentDeletePromptEvent.on((event) => {
         contentDeleteDialog
@@ -225,7 +229,7 @@ function startApplication() {
             .open();
     });
 
-    let contentUnpublishDialog = new ContentUnpublishDialog();
+    const contentUnpublishDialog = new ContentUnpublishDialog();
     ContentUnpublishPromptEvent.on((event) => {
         contentUnpublishDialog
             .setContentToUnpublish(event.getModels())

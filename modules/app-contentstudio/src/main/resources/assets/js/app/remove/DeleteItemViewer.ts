@@ -1,12 +1,11 @@
 import '../../api.ts';
-import ContentSummaryAndCompareStatusViewer = api.content.ContentSummaryAndCompareStatusViewer;
-import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
-import AEl = api.dom.AEl;
-import AppBarTabId = api.app.bar.AppBarTabId;
 import {ContentWizardPanelParams} from '../wizard/ContentWizardPanelParams';
 import {ContentEventsProcessor} from '../ContentEventsProcessor';
-import i18n = api.util.i18n;
 import {ToggleSearchPanelWithDependenciesGlobalEvent} from '../browse/ToggleSearchPanelWithDependenciesGlobalEvent';
+import ContentSummaryAndCompareStatusViewer = api.content.ContentSummaryAndCompareStatusViewer;
+import AEl = api.dom.AEl;
+import AppBarTabId = api.app.bar.AppBarTabId;
+import i18n = api.util.i18n;
 
 export class DeleteItemViewer
     extends ContentSummaryAndCompareStatusViewer {

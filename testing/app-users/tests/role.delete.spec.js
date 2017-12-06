@@ -31,7 +31,8 @@ describe('Role - confirm and delete in wizard and in browse panel', function () 
                 return roleWizard.clickOnDelete();
             }).then(result=> {
                 testUtils.saveScreenshot(webDriverHelper.browser, "role_wizard_confirm_delete1");
-                return assert.eventually.isTrue(confirmationDialog.waitForDialogVisible(), "`Confirmation Dialog` should be displayed");
+                return assert.eventually.isTrue(confirmationDialog.waitForDialogVisible(appConst.TIMEOUT_3),
+                    "`Confirmation Dialog` should be displayed");
             });
         });
 
@@ -55,10 +56,10 @@ describe('Role - confirm and delete in wizard and in browse panel', function () 
             });
         });
 
-    it('GIVEN `Role` is saved WHEN Delete button on toolbar has been pressed THEN Confirmation dialog should appear',
+    it('GIVEN `Role` is saved WHEN Delete button on browse-toolbar has been pressed THEN Confirmation dialog should appear',
         () => {
             testRole =
-                userItemsBuilder.buildGroup(userItemsBuilder.generateRandomName('role'), 'test role 2');
+                userItemsBuilder.buildRole(userItemsBuilder.generateRandomName('role'), 'test role 2');
             return testUtils.openWizardAndSaveRole(testRole).then(()=> {
                 testUtils.findAndSelectItem(testRole.displayName);
             }).then(()=> {
@@ -67,7 +68,8 @@ describe('Role - confirm and delete in wizard and in browse panel', function () 
                 return userBrowsePanel.clickOnDeleteButton();
             }).then(()=> {
                 testUtils.saveScreenshot(webDriverHelper.browser, "role_confirm_delete2");
-                return assert.eventually.isTrue(confirmationDialog.waitForDialogVisible(), "`Confirmation Dialog` should be displayed");
+                return assert.eventually.isTrue(confirmationDialog.waitForDialogVisible(appConst.TIMEOUT_3),
+                    "`Confirmation Dialog` should be displayed");
             });
         });
 

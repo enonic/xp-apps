@@ -3,6 +3,7 @@
  */
 var page = require('../page');
 var elements = require('../../libs/elements');
+var appConst = require('../../libs/app_const');
 var wizard = {
     displayNameInput: `//input[contains(@name,'displayName')]`,
     saveButton: `//button[contains(@id,'ActionButton') and child::span[text()='Save']]`,
@@ -27,12 +28,12 @@ var wizardPanel = Object.create(page, {
     },
     waitForSaveButtonEnabled: {
         value: function () {
-            return this.waitForEnabled(this.saveButton, 1000);
+            return this.waitForEnabled(this.saveButton, appConst.TIMEOUT_3);
         }
     },
     waitForSaveButtonDisabled: {
         value: function () {
-            return this.waitForDisabled(this.saveButton, 1000);
+            return this.waitForDisabled(this.saveButton, appConst.TIMEOUT_3);
         }
     },
     typeDisplayName: {
