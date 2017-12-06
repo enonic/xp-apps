@@ -110,7 +110,11 @@ export abstract class IssueDialog
     }
 
     public countTotal(): number {
-        return this.getItemList().getItemCount();
+        return this.publishProcessor.countTotal();
+    }
+
+    protected countDependantItems(): number {
+        return this.publishProcessor.getDependantIds().length;
     }
 
     open(opener?: ModalDialog) {

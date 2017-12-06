@@ -83,7 +83,7 @@ export class DependantItemsDialog
         this.dependantsContainer.appendChildren(this.dependantsHeader, this.dependantList);
 
         let dependantsChangedListener = (items) => {
-            let count = this.dependantList.getItemCount();
+            let count = this.countDependantItems();
             const isShown = count > 0;
             this.dependantsContainer.setVisible(isShown);
             this.updateDependantsHeader(i18n(`dialog.issue.${isShown ? 'hide' : 'show'}Dependents`));
@@ -106,7 +106,7 @@ export class DependantItemsDialog
     }
 
     protected updateDependantsHeader(header?: string) {
-        const count = this.countTotal();
+        const count = this.countDependantItems();
         this.dependantsHeader.setHtml((header || this.dependantsHeaderText) + ` (${count})`, false);
     }
 
@@ -235,7 +235,11 @@ export class DependantItemsDialog
     }
 
     protected countTotal(): number {
-        return this.getItemList().getItemCount() + this.getDependantIds().length;
+        return this.getItemList().getItemCount() + this.countDependantItems();
+    }
+
+    protected countDependantItems(): number {
+        return this.getDependantIds().length;
     }
 
     protected getDependantIds(): ContentId[] {

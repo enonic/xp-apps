@@ -14,6 +14,7 @@ import {PublishRequestItem} from '../PublishRequestItem';
 import {IssueDetailsDialogButtonRow} from './IssueDetailsDialogDropdownButtonRow';
 import {DetailsDialogSubTitle} from './IssueDetailsDialogSubTitle';
 import {PublishProcessor} from '../../publish/PublishProcessor';
+import {AssigneesLine} from './IssueList';
 import AEl = api.dom.AEl;
 import DialogButton = api.ui.dialog.DialogButton;
 import ContentSummaryAndCompareStatusFetcher = api.content.resource.ContentSummaryAndCompareStatusFetcher;
@@ -32,11 +33,14 @@ import TabBarItemBuilder = api.ui.tab.TabBarItemBuilder;
 import Panel = api.ui.panel.Panel;
 import PEl = api.dom.PEl;
 import AppHelper = api.util.AppHelper;
+import GetPrincipalsByKeysRequest = api.security.GetPrincipalsByKeysRequest;
 
 export class IssueDetailsDialog
     extends SchedulableDialog {
 
     private issue: Issue;
+
+    private assignees: User[];
 
     private currentUser: User;
 
@@ -60,6 +64,7 @@ export class IssueDetailsDialog
     private skipNextServerUpdatedEvent: boolean;
     private ignoreNextExcludeChildrenEvent: boolean;
     private debouncedUpdateIssue: Function;
+    private assigneesLine: AssigneesLine;
 
     private constructor() {
         super(<ProgressBarConfig> {
@@ -91,6 +96,9 @@ export class IssueDetailsDialog
 
     doRender(): Q.Promise<boolean> {
         return super.doRender().then((rendered: boolean) => {
+
+            this.assigneesLine = new AssigneesLine([], this.currentUser);
+            this.prependChildToHeader(this.assigneesLine);
 
             this.createSubTitle();
             this.createBackButton();
@@ -291,16 +299,42 @@ export class IssueDetailsDialog
                 this.getItemList().clearItems();
             }
             this.description.setHtml(issue.getDescription(), false);
-            this.setTitle(issue.getTitleWithId());
+            this.setTitle(this.createTitleText(issue), false);
 
             this.detailsSubTitle.setIssue(issue, true);
             this.toggleControlsAccordingToStatus(issue.getIssueStatus());
 
+            if (this.assignees) {
+                this.assigneesLine.setAssignees(this.assignees);
+            }
         }
-        this.setReadOnly(issue && issue.getIssueStatus() == IssueStatus.CLOSED);
 
+        if (this.assigneesUpdateRequired(issue)) {
+            const assigneeIds = issue && issue.getApprovers();
+            let assigneesPromise;
+            if (assigneeIds && assigneeIds.length > 0) {
+                assigneesPromise = new GetPrincipalsByKeysRequest(assigneeIds).sendAndParse().catch(api.DefaultErrorHandler.handle);
+            } else {
+                assigneesPromise = wemQ([]);
+            }
+
+            assigneesPromise.then(assignees => {
+                this.assignees = assignees;
+                if (this.isRendered()) {
+                    this.assigneesLine.setAssignees(this.assignees);
+                }
+            });
+        }
+
+        this.setReadOnly(issue && issue.getIssueStatus() == IssueStatus.CLOSED);
         this.issue = issue;
+
         return this;
+    }
+
+    assigneesUpdateRequired(issue: Issue): boolean {
+        const issueId = issue ? issue.getId() : null;
+        return this.issue ? this.issue.getId() !== issueId : !!issueId;
     }
 
     getButtonRow(): IssueDetailsDialogButtonRow {
@@ -411,7 +445,11 @@ export class IssueDetailsDialog
     }
 
     protected countTotal(): number {
-        return this.publishProcessor.getContentToPublishIds().length + this.publishProcessor.getDependantIds().length;
+        return this.publishProcessor.countTotal();
+    }
+
+    protected countDependantItems(): number {
+        return this.publishProcessor.getDependantIds().length;
     }
 
     private doPublishAndClose(scheduled: boolean) {
@@ -535,5 +573,9 @@ export class IssueDetailsDialog
 
     protected hasSubDialog(): boolean {
         return true;
+    }
+
+    private createTitleText(issue: Issue) {
+        return `${issue.getTitle()}<span class="title-id">#${issue.getIndex()}</span>`;
     }
 }

@@ -57,7 +57,7 @@ export class PublishDialogItemList
 
         itemView.setRemoveHandlerFn(() => {
             this.removeItem(item);
-            this.notifyItemRemoveClicked(item)
+            this.notifyItemRemoveClicked(item);
         });
 
         this.updateRemovableState(itemView);
