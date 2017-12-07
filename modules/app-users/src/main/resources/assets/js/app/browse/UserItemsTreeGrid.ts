@@ -44,7 +44,7 @@ export class UserItemsTreeGrid
         const [nameColumn] = columns;
 
         const updateColumns = () => {
-            let checkSelIsMoved = ResponsiveRanges._360_540.isFitOrSmaller(api.dom.Body.get().getEl().getWidth());
+            let checkSelIsMoved = ResponsiveRanges._540_720.isFitOrSmaller(api.dom.Body.get().getEl().getWidth());
 
             const curClass = nameColumn.getCssClass();
 
