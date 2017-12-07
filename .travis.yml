@@ -17,3 +17,11 @@ addons:
   apt:
     packages:
       - oracle-java8-installer
+
+notifications:
+  email:
+    recipients:
+      - ase@enonic.com
+      - jsi@enonic.com
+    on_success: change
+    on_failure: always

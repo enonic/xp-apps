@@ -6,9 +6,9 @@ buildscript {
 }
 plugins {
     id 'maven'
-    id 'com.enonic.defaults' version '1.0.3'
     id 'com.enonic.xp.app' version '1.0.13'
 }
+apply plugin: 'com.enonic.defaults'
 version = '2.0.0'
 app {
     name = 'com.enonic.xp.testing.second_app'

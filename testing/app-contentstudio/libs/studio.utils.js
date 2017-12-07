@@ -1,5 +1,5 @@
 /**
- * Created on 6/28/2017.
+ * Created on 12/2/2017.
  */
 const launcherPanel = require('../page_objects/launcher.panel');
 const homePage = require('../page_objects/home.page');
@@ -11,9 +11,15 @@ const confirmationDialog = require("../page_objects/confirmation.dialog");
 const appConst = require("./app_const");
 const newContentDialog = require('../page_objects/browsepanel/new.content.dialog');
 const contentWizardPanel = require('../page_objects/wizardpanel/content.wizard.panel');
+const webDriverHelper = require("./WebDriverHelper");
+const shortcutFormViewPanel = require('../page_objects/wizardpanel/shortcut.form.panel.js');
+
 
 module.exports = {
     xpTabs: {},
+    doCloseCurrentBrowserTab: function(){
+        webDriverHelper.browser.close();
+    },
     openContentWizard: function (contentType) {
         return browsePanel.waitForGridLoaded(appConst.TIMEOUT_3).then(()=> {
             return browsePanel.clickOnNewButton();
@@ -22,13 +28,21 @@ module.exports = {
         }).then(()=> {
             return newContentDialog.clickOnContentType(contentType);
         }).then(()=> {
+            return this.doSwitchToNewWizard(webDriverHelper.browser);
+        }).then(()=> {
             return contentWizardPanel.waitForOpened();
         })
     },
-    doSaveShortcut: function (shortcutData) {
+    doAddShortcut: function (shortcut) {
         return this.openContentWizard(appConst.contentTypes.SHORTCUT).then(()=> {
-
-        })
+            return contentWizardPanel.typeData(shortcut);
+        }).then(()=>{
+            return contentWizardPanel.waitAndClickOnSave();
+        }).then(()=>{
+            return this.doCloseCurrentBrowserTab();
+        }).then(()=>{
+            this.doSwitchToContentBrowsePanel(webDriverHelper.browser);
+        }).pause(2000);
     },
     findAndSelectItem: function (name) {
         return this.typeNameInFilterPanel(name).then(()=> {
