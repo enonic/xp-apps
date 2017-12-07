@@ -2,7 +2,6 @@ import '../../api.ts';
 import {ApplicationBrowseActions} from '../browse/ApplicationBrowseActions';
 
 import ContentTypeSummary = api.schema.content.ContentTypeSummary;
-import Mixin = api.schema.mixin.Mixin;
 import RelationshipType = api.schema.relationshiptype.RelationshipType;
 import PageDescriptor = api.content.page.PageDescriptor;
 import PartDescriptor = api.content.page.region.PartDescriptor;
@@ -13,6 +12,8 @@ import Application = api.application.Application;
 import MacroDescriptor = api.macro.MacroDescriptor;
 import i18n = api.util.i18n;
 import DivEl = api.dom.DivEl;
+import {GetApplicationInfoRequest} from '../resource/GetApplicationInfoRequest';
+import {ApplicationInfo} from '../resource/ApplicationInfo';
 import DateTimeFormatter = api.ui.treegrid.DateTimeFormatter;
 
 export class ApplicationItemStatisticsPanel
@@ -78,129 +79,90 @@ export class ApplicationItemStatisticsPanel
         infoGroup.addDataList(i18n('field.key'), currentApplication.getApplicationKey().toString());
         infoGroup.addDataList(i18n('field.systemRequired'), i18n('field.systemRequired.value', minVersion));
 
-        let descriptorResponse = this.initDescriptors(currentApplication.getApplicationKey());
-        let schemaResponse = this.initSchemas(currentApplication.getApplicationKey());
-        let macroResponse = this.initMacros(currentApplication.getApplicationKey());
-        let providerResponse = this.initProviders(currentApplication.getApplicationKey());
+        new GetApplicationInfoRequest(currentApplication.getApplicationKey()).sendAndParse().then((applicationInfo: ApplicationInfo) => {
+            const descriptors = this.initDescriptors(applicationInfo);
+            const schemas = this.initSchemas(applicationInfo);
+            const macros = this.initMacros(applicationInfo);
+            const providers = this.initProviders(currentApplication, applicationInfo);
 
-        wemQ.all([descriptorResponse, schemaResponse, macroResponse, providerResponse])
-            .spread((descriptorsGroup, schemasGroup, macrosGroup, providersGroup) => {
-                if (!infoGroup.isEmpty()) {
-                    this.applicationDataContainer.appendChild(infoGroup);
-                }
-                if (descriptorsGroup && !descriptorsGroup.isEmpty()) {
-                    this.applicationDataContainer.appendChild(descriptorsGroup);
-                }
+            if (descriptors && !descriptors.isEmpty()) {
+                this.applicationDataContainer.appendChild(descriptors);
+            }
 
-                if (schemasGroup && !schemasGroup.isEmpty()) {
-                    this.applicationDataContainer.appendChild(schemasGroup);
-                }
+            if (schemas && !schemas.isEmpty()) {
+                this.applicationDataContainer.appendChild(schemas);
+            }
 
-                if (macrosGroup && !macrosGroup.isEmpty()) {
-                    this.applicationDataContainer.appendChild(macrosGroup);
-                }
+            if (macros && !macros.isEmpty()) {
+                this.applicationDataContainer.appendChild(macros);
+            }
 
-                if (providersGroup && !providersGroup.isEmpty()) {
-                    this.applicationDataContainer.appendChild(providersGroup);
-                }
-            });
-
+            if (providers && !providers.isEmpty()) {
+                this.applicationDataContainer.appendChild(providers);
+            }
+        });
     }
 
-    private initMacros(applicationKey: ApplicationKey): wemQ.Promise<any> {
-        let macroRequest = new api.macro.resource.GetMacrosRequest();
-        macroRequest.setApplicationKeys([applicationKey]);
+    private initMacros(applicationInfo: ApplicationInfo): ItemDataGroup {
 
-        let macroPromises = [macroRequest.sendAndParse()];
+        let macrosGroup = new ItemDataGroup(i18n('field.macros'), 'macros');
 
-        return wemQ.all(macroPromises).spread((macros: MacroDescriptor[]) => {
+        let macroNames = applicationInfo.getMacros().filter((macro: MacroDescriptor) => {
+            return !ApplicationKey.SYSTEM.equals(macro.getKey().getApplicationKey());
+        }).map((macro: MacroDescriptor) => {
+            return macro.getDisplayName();
+        });
+        macrosGroup.addDataArray(i18n('field.name'), macroNames);
 
-            let macrosGroup = new ItemDataGroup(i18n('field.macros'), 'macros');
-
-            let macroNames = macros.filter((macro: MacroDescriptor) => {
-                return !ApplicationKey.SYSTEM.equals(macro.getKey().getApplicationKey());
-            }).map((macro: MacroDescriptor) => {
-                return macro.getDisplayName();
-            });
-            macrosGroup.addDataArray(i18n('field.name'), macroNames);
-
-            return macrosGroup;
-        }).catch((reason: any) => api.DefaultErrorHandler.handle(reason));
+        return macrosGroup;
     }
 
-    private initDescriptors(applicationKey: ApplicationKey): wemQ.Promise<any> {
+    private initDescriptors(applicationInfo: ApplicationInfo): ItemDataGroup {
 
-        let descriptorPromises = [
-            new api.content.page.GetPageDescriptorsByApplicationRequest(applicationKey).sendAndParse(),
-            new api.content.page.region.GetPartDescriptorsByApplicationRequest(applicationKey).sendAndParse(),
-            new api.content.page.region.GetLayoutDescriptorsByApplicationRequest(applicationKey).sendAndParse()
-        ];
+        let descriptorsGroup = new ItemDataGroup(i18n('field.descriptors'), 'descriptors');
 
-        return wemQ.all(descriptorPromises).spread(
-            (pageDescriptors: PageDescriptor[], partDescriptors: PartDescriptor[], layoutDescriptors: LayoutDescriptor[]) => {
+        let pageNames = applicationInfo.getPages().map((descriptor: PageDescriptor) => descriptor.getName().toString()).sort(
+            this.sortAlphabeticallyAsc);
+        descriptorsGroup.addDataArray(i18n('field.page'), pageNames);
 
-                let descriptorsGroup = new ItemDataGroup(i18n('field.descriptors'), 'descriptors');
+        let partNames = applicationInfo.getParts().map((descriptor: PartDescriptor) => descriptor.getName().toString()).sort(
+            this.sortAlphabeticallyAsc);
+        descriptorsGroup.addDataArray(i18n('field.part'), partNames);
 
-                let pageNames = pageDescriptors.map((descriptor: PageDescriptor) => descriptor.getName().toString()).sort(
-                    this.sortAlphabeticallyAsc);
-                descriptorsGroup.addDataArray(i18n('field.page'), pageNames);
+        let layoutNames = applicationInfo.getLayouts().map((descriptor: LayoutDescriptor) => descriptor.getName().toString()).sort(
+            this.sortAlphabeticallyAsc);
+        descriptorsGroup.addDataArray(i18n('field.layout'), layoutNames);
 
-                let partNames = partDescriptors.map((descriptor: PartDescriptor) => descriptor.getName().toString()).sort(
-                    this.sortAlphabeticallyAsc);
-                descriptorsGroup.addDataArray(i18n('field.part'), partNames);
-
-                let layoutNames = layoutDescriptors.map((descriptor: LayoutDescriptor) => descriptor.getName().toString()).sort(
-                    this.sortAlphabeticallyAsc);
-                descriptorsGroup.addDataArray(i18n('field.layout'), layoutNames);
-
-                return descriptorsGroup;
-            }).catch((reason: any) => api.DefaultErrorHandler.handle(reason));
+        return descriptorsGroup;
     }
 
-    private initSchemas(applicationKey: ApplicationKey): wemQ.Promise<any> {
+    private initSchemas(applicationInfo: ApplicationInfo): ItemDataGroup {
 
-        let schemaPromises = [
-            new api.schema.content.GetContentTypesByApplicationRequest(applicationKey).sendAndParse(),
-            new api.schema.mixin.GetMixinsByApplicationRequest(applicationKey).sendAndParse(),
-            new api.schema.relationshiptype.GetRelationshipTypesByApplicationRequest(applicationKey).sendAndParse()
-        ];
+        let schemasGroup = new ItemDataGroup(i18n('field.schemas'), 'schemas');
 
-        return wemQ.all(schemaPromises).spread<any>(
-            (contentTypes: ContentTypeSummary[], mixins: Mixin[], relationshipTypes: RelationshipType[]) => {
-                let schemasGroup = new ItemDataGroup(i18n('field.schemas'), 'schemas');
+        let contentTypeNames = applicationInfo.getContentTypes().map(
+            (contentType: ContentTypeSummary) => contentType.getContentTypeName().getLocalName()).sort(this.sortAlphabeticallyAsc);
+        schemasGroup.addDataArray(i18n('field.contentTypes'), contentTypeNames);
 
-                let contentTypeNames = contentTypes.map(
-                    (contentType: ContentTypeSummary) => contentType.getContentTypeName().getLocalName()).sort(this.sortAlphabeticallyAsc);
-                schemasGroup.addDataArray(i18n('field.contentTypes'), contentTypeNames);
+        let relationshipTypeNames = applicationInfo.getRelations().map(
+            (relationshipType: RelationshipType) => relationshipType.getRelationshiptypeName().getLocalName()).sort(
+            this.sortAlphabeticallyAsc);
+        schemasGroup.addDataArray(i18n('field.relationshipTypes'), relationshipTypeNames);
 
-                let mixinsNames = mixins.map((mixin: Mixin) => mixin.getMixinName().getLocalName()).sort(this.sortAlphabeticallyAsc);
-                schemasGroup.addDataArray(i18n('field.mixins'), mixinsNames);
-
-                let relationshipTypeNames = relationshipTypes.map(
-                    (relationshipType: RelationshipType) => relationshipType.getRelationshiptypeName().getLocalName()).sort(
-                    this.sortAlphabeticallyAsc);
-                schemasGroup.addDataArray(i18n('field.relationshipTypes'), relationshipTypeNames);
-
-                return schemasGroup;
-
-            }).catch((reason: any) => api.DefaultErrorHandler.handle(reason));
+        return schemasGroup;
     }
 
-    private initProviders(applicationKey: ApplicationKey): wemQ.Promise<ItemDataGroup> {
-        let providersPromises = [new api.application.AuthApplicationRequest(applicationKey).sendAndParse()];
+    private initProviders(application: Application, applicationInfo: ApplicationInfo): ItemDataGroup {
 
-        return wemQ.all(providersPromises).spread<ItemDataGroup>(
-            (application: Application) => {
-                if (application) {
-                    const providersGroup = new ItemDataGroup(i18n('field.idProviders'), 'providers');
+        if (applicationInfo.getIdProvider().getMode() != null) {
+            const providersGroup = new ItemDataGroup(i18n('field.idProviders'), 'providers');
 
-                    providersGroup.addDataList(i18n('field.key'), application.getApplicationKey().toString());
-                    providersGroup.addDataList(i18n('field.name'), application.getDisplayName());
+            providersGroup.addDataList(i18n('field.key'), application.getApplicationKey().toString());
+            providersGroup.addDataList(i18n('field.name'), application.getDisplayName());
 
-                    return providersGroup;
-                }
-                return null;
-            });
+            return providersGroup;
+        }
+        return null;
     }
 
     private sortAlphabeticallyAsc(a: string, b: string): number {
