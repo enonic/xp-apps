@@ -56,8 +56,28 @@ export class PrincipalServerEventsHandler {
         }
     }
 
+    private isIgnoredItem(item: PrincipalServerChangeItem): boolean {
+        const id = this.getId(item);
+        if (!id) {
+            return true;
+        }
+        const path = Path.fromString(item.getPath());
+        const name = path.getElement(path.getElements().length - 1);
+
+        if (name === 'groups' || name === 'users' || name === 'roles') {
+            return true;
+        }
+
+        return false;
+    }
+
     private loadUserItems(event: PrincipalServerEvent) {
         event.getNodeChange().getChangeItems().forEach((item: PrincipalServerChangeItem) => {
+
+            if (this.isIgnoredItem(item)) {
+                return;
+            }
+
             const path = Path.fromString(item.getPath());
             const id = this.getId(item);
             if (!path.hasParent()) {
@@ -66,15 +86,12 @@ export class PrincipalServerEventsHandler {
                     if (PrincipalServerEventsHandler.debug) {
                         console.debug('PrincipalServerEventsHandler.loaded userstore:', userStore);
                     }
-                    this.onUserItemLoaded(event, null, userStore);
+                    if (userStore) {
+                        this.onUserItemLoaded(event, null, userStore);
+                    }
                 }).catch(api.DefaultErrorHandler.handle);
             } else {
                 // it's a principal, fetch him as well as userStore
-                const name = path.getElement(path.getElements().length - 1);
-                if (name === 'groups' || name === 'users') {
-                    // ignore groups and users nodes of userstore
-                    return;
-                }
                 const key = PrincipalKey.fromString(id);
                 if (key.isRole()) {
                     new GetPrincipalByKeyRequest(key).sendAndParse().then(principal => {

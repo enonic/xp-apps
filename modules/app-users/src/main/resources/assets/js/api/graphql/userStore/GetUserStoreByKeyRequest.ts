@@ -50,8 +50,8 @@ export class GetUserStoreByKeyRequest
     }
 
     userStorefromJson(us: UserStoreJson) {
-        if (!us) {
-            throw `UserStore[${this.key.toString()}] not found`;
+        if (!us || Object.keys(us).length === 0) {
+            return null;
         }
         if (us.authConfig && typeof us.authConfig.config === 'string') {
             // config is passed as string
