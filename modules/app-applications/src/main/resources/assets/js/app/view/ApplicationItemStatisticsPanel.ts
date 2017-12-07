@@ -13,6 +13,7 @@ import Application = api.application.Application;
 import MacroDescriptor = api.macro.MacroDescriptor;
 import i18n = api.util.i18n;
 import DivEl = api.dom.DivEl;
+import DateTimeFormatter = api.ui.treegrid.DateTimeFormatter;
 
 export class ApplicationItemStatisticsPanel
     extends api.app.view.ItemStatisticsPanel<api.application.Application> {
@@ -71,7 +72,7 @@ export class ApplicationItemStatisticsPanel
         const modifiedTime = currentApplication.getModifiedTime();
 
         if (modifiedTime) {
-            infoGroup.addDataList(i18n('field.installed'), modifiedTime.toDateString() + ' ' + modifiedTime.toLocaleTimeString());
+            infoGroup.addDataList(i18n('field.installed'), DateTimeFormatter.createHtml(modifiedTime));
         }
         infoGroup.addDataList(i18n('field.version'), currentApplication.getVersion());
         infoGroup.addDataList(i18n('field.key'), currentApplication.getApplicationKey().toString());
