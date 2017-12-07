@@ -13,8 +13,10 @@ import Application = api.application.Application;
 import MacroDescriptor = api.macro.MacroDescriptor;
 import i18n = api.util.i18n;
 import DivEl = api.dom.DivEl;
+import DateTimeFormatter = api.ui.treegrid.DateTimeFormatter;
 
-export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsPanel<api.application.Application> {
+export class ApplicationItemStatisticsPanel
+    extends api.app.view.ItemStatisticsPanel<api.application.Application> {
 
     private applicationDataContainer: api.dom.DivEl;
     private actionMenu: api.ui.menu.ActionMenu;
@@ -65,13 +67,16 @@ export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsP
 
         this.applicationDataContainer.removeChildren();
 
-        const infoGroup = new ItemDataGroup(i18n('field.info'), 'info');
+        const infoGroup = new ItemDataGroup(i18n('field.application'), 'application');
         const minVersion = currentApplication.getMinSystemVersion();
-        const maxVersion = currentApplication.getMaxSystemVersion();
-        infoGroup.addDataList(i18n('field.buildDate'), 'TBA');
+        const modifiedTime = currentApplication.getModifiedTime();
+
+        if (modifiedTime) {
+            infoGroup.addDataList(i18n('field.installed'), DateTimeFormatter.createHtml(modifiedTime));
+        }
         infoGroup.addDataList(i18n('field.version'), currentApplication.getVersion());
         infoGroup.addDataList(i18n('field.key'), currentApplication.getApplicationKey().toString());
-        infoGroup.addDataList(i18n('field.systemRequired'), i18n('field.systemRequired.value', minVersion, maxVersion));
+        infoGroup.addDataList(i18n('field.systemRequired'), i18n('field.systemRequired.value', minVersion));
 
         let descriptorResponse = this.initDescriptors(currentApplication.getApplicationKey());
         let schemaResponse = this.initSchemas(currentApplication.getApplicationKey());
@@ -108,12 +113,11 @@ export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsP
 
         let macroPromises = [macroRequest.sendAndParse()];
 
-        return wemQ.all(macroPromises).spread((macros: MacroDescriptor[])=> {
+        return wemQ.all(macroPromises).spread((macros: MacroDescriptor[]) => {
 
             let macrosGroup = new ItemDataGroup(i18n('field.macros'), 'macros');
 
-            let macroNames = macros.
-            filter((macro: MacroDescriptor) => {
+            let macroNames = macros.filter((macro: MacroDescriptor) => {
                 return !ApplicationKey.SYSTEM.equals(macro.getKey().getApplicationKey());
             }).map((macro: MacroDescriptor) => {
                 return macro.getDisplayName();
