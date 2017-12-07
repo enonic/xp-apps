@@ -109,7 +109,7 @@ export class PublishProcessor {
                 // spare the request if there're no dependants
                 resolveDescendantsRequest = wemQ([]);
             } else {
-                resolveDescendantsRequest = this.loadDescendants(this.dependantIds, 0, 20);
+                resolveDescendantsRequest = this.loadDescendants(this.dependantIds, 0, this.dependantIds.length);
             }
 
             return resolveDescendantsRequest.then((dependants: ContentSummaryAndCompareStatus[]) => {

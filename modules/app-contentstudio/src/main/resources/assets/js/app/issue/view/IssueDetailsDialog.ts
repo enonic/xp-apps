@@ -70,7 +70,7 @@ export class IssueDetailsDialog
         super(<DependantItemsWithProgressDialogConfig> {
             title: i18n('dialog.issue'),
                 dialogSubName: i18n('dialog.issue.resolving'),
-                dependantsName: i18n('dialog.issue.hideDependents'),
+            dependantsName: i18n('dialog.issue.showDependents'),
                 processingLabel: `${i18n('field.progress.publishing')}...`,
                 buttonRow: new IssueDetailsDialogButtonRow(),
                 processHandler: () => {
@@ -137,6 +137,10 @@ export class IssueDetailsDialog
         });
     }
 
+    protected getDependantsHeader(listVisible: boolean): string {
+        return i18n(`dialog.issue.${listVisible ? 'hide' : 'show' }Dependents`);
+    }
+
     private updateCountsAndActions() {
         const count = this.countTotal();
         this.itemsTab.setLabel(i18n('field.items') + (count > 0 ? ` (${count})` : ''));
@@ -181,6 +185,13 @@ export class IssueDetailsDialog
         });
         itemsPanel.appendChildren<api.dom.DivEl>(this.itemSelector, this.getItemList(), this.getDependantsContainer());
         return itemsPanel;
+    }
+
+    open() {
+        super.open();
+        if (this.isRendered()) {
+            this.tabPanel.selectPanelByIndex(0);
+        }
     }
 
     private createSubTitle() {
@@ -234,7 +245,7 @@ export class IssueDetailsDialog
         this.publishProcessor.onLoadingFinished(() => {
             this.updateCountsAndActions();
             if (this.saveOnLoaded) {
-                this.debouncedUpdateIssue();
+                this.debouncedUpdateIssue(this.issue.getIssueStatus(), true);
                 this.saveOnLoaded = false;
             }
         });
@@ -457,12 +468,13 @@ export class IssueDetailsDialog
         });
     }
 
-    private doUpdateIssue(newStatus: IssueStatus = this.issue.getIssueStatus()): wemQ.Promise<void> {
+    private doUpdateIssue(newStatus: IssueStatus, autoSave: boolean = false): wemQ.Promise<void> {
         const publishRequest = this.createPublishRequest();
         const statusChanged = newStatus != this.issue.getIssueStatus();
 
         return new UpdateIssueRequest(this.issue.getId())
             .setStatus(newStatus)
+            .setAutoSave(autoSave)
             .setPublishRequest(publishRequest)
             .sendAndParse().then(() => {
                 if (statusChanged) {

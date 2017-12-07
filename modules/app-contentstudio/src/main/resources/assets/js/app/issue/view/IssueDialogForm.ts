@@ -37,6 +37,7 @@ export class IssueDialogForm
     private contentItemsRemovedListeners: { (items: ContentTreeSelectorItem[]): void }[] = [];
     private addItemsButtonItem: api.ui.form.FormItem;
     private contentItemsFormItem: api.ui.form.FormItem;
+    private contentItemsSelectorLocked: boolean;
 
     constructor(compactAssigneesView?: boolean) {
 
@@ -52,7 +53,6 @@ export class IssueDialogForm
 
     public doRender(): wemQ.Promise<boolean> {
         return super.doRender().then(() => {
-            this.setContentItemSelectorVisible(this.contentItemsSelector.getSelectedValues().length > 0);
             return this.approversSelector.getLoader().load().then(() => {
                 this.title.giveFocus();
                 return true;
@@ -135,9 +135,11 @@ export class IssueDialogForm
         this.add(fieldSet);
     }
 
-    private setContentItemSelectorVisible(value: boolean) {
-        this.contentItemsFormItem.setVisible(value);
-        this.addItemsButtonItem.setVisible(!value);
+    private toggleContentItemsSelector(value: boolean) {
+        if (!this.contentItemsSelectorLocked) {
+            this.contentItemsFormItem.setVisible(value);
+            this.addItemsButtonItem.setVisible(!value);
+        }
     }
 
     public setReadOnly(readOnly: boolean) {
@@ -156,15 +158,18 @@ export class IssueDialogForm
         const selectorFormItem = <FormItem>this.approversSelector.getParentElement();
         selectorFormItem.setLabel(readOnly ? i18n('field.assignees') + ':' : i18n('dialog.issue.inviteUsers'));
 
-        const contentItemsFormItem = <FormItem>this.contentItemsSelector.getParentElement();
-        contentItemsFormItem.setVisible(!readOnly);
-
+        this.contentItemsFormItem.setVisible(!readOnly);
         this.addItemsButtonItem.setVisible(!readOnly);
     }
 
-    toggleContentItemsSelector(enabled: boolean) {
-        const contentItemsFormItem = <FormItem>this.contentItemsSelector.getParentElement();
-        contentItemsFormItem.setVisible(enabled);
+    lockContentItemsSelector(lock: boolean) {
+        this.contentItemsSelectorLocked = lock;
+        if (lock) {
+            this.contentItemsFormItem.hide();
+            this.addItemsButtonItem.hide();
+        } else {
+            this.toggleContentItemsSelector(this.contentItemsSelector.getSelectedValues().length > 0);
+        }
     }
 
     public setIssue(issue: Issue) {
@@ -224,11 +229,11 @@ export class IssueDialogForm
 
         this.contentItemsSelector.clearCombobox();
         this.contentItemsSelector.clearSelection();
-        this.toggleContentItemsSelector(true);
+        this.lockContentItemsSelector(false);
     }
 
     public setContentItems(ids: ContentId[], silent: boolean = false) {
-        this.setContentItemSelectorVisible(ids && ids.length > 0);
+        this.toggleContentItemsSelector(ids && ids.length > 0);
         this.contentItemsSelector.clearSelection();
         ids.forEach((id) => {
             this.contentItemsSelector.selectOptionByValue(id.toString(), silent);
@@ -239,7 +244,7 @@ export class IssueDialogForm
         if (!contents) {
             return;
         }
-        this.setContentItemSelectorVisible(contents && contents.length > 0);
+        this.toggleContentItemsSelector(contents && contents.length > 0);
         contents.forEach((value) => {
             this.contentItemsSelector.select(value, false, silent);
         });
@@ -252,7 +257,7 @@ export class IssueDialogForm
         contents.forEach((value) => {
             this.contentItemsSelector.deselect(value, silent);
         });
-        this.setContentItemSelectorVisible(this.contentItemsSelector.getSelectedValues().length > 0);
+        this.toggleContentItemsSelector(this.contentItemsSelector.getSelectedValues().length > 0);
     }
 
     private addValidationViewer(formItem: FormItem): FormItem {

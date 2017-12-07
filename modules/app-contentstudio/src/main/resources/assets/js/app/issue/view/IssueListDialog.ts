@@ -34,7 +34,7 @@ export class IssueListDialog
 
     private constructor() {
         super(<api.ui.dialog.ModalDialogConfig>{title: i18n('text.publishingissues')});
-        this.addClass('issue-list-dialog grey-header');
+        this.addClass('issue-dialog issue-list-dialog grey-header');
 
         this.createAction = new Action(i18n('action.newIssueMore'));
 
@@ -75,6 +75,8 @@ export class IssueListDialog
 
         dockedPanel.addItem(i18n('field.issue.openIssues'), true, this.openIssuesPanel);
         dockedPanel.addItem(i18n('field.issue.closedIssues'), true, this.closedIssuesPanel);
+
+        dockedPanel.getDeck().onPanelShown(panel => this.centerMyself());
 
         return dockedPanel;
     }
@@ -239,6 +241,9 @@ export class IssueListDialog
         const issuePanel = new IssuesPanel(issueStatus);
 
         issuePanel.onIssueSelected(issue => this.notifyIssueSelected(issue.getIssue()));
+        const handleItemsChanged = () => setTimeout(this.centerMyself.bind(this), 100);
+        issuePanel.getIssueList().onItemsAdded(handleItemsChanged);
+        issuePanel.getIssueList().onItemsRemoved(handleItemsChanged);
 
         return issuePanel;
     }
