@@ -13,25 +13,25 @@ import {ApplicationIdProvider} from './ApplicationIdProvider';
 
 export class ApplicationInfo {
 
-    contentTypes: ContentTypeSummary[];
+    private contentTypes: ContentTypeSummary[];
 
-    pages: PageDescriptor[];
+    private pages: PageDescriptor[];
 
-    parts: PartDescriptor[];
+    private parts: PartDescriptor[];
 
-    layouts: LayoutDescriptor[];
+    private layouts: LayoutDescriptor[];
 
-    relations: RelationshipType[];
+    private relations: RelationshipType[];
 
-    references: ContentReference[];
+    private references: ContentReference[];
 
-    macros: MacroDescriptor[];
+    private macros: MacroDescriptor[];
 
-    tasks: ApplicationTask[];
+    private tasks: ApplicationTask[];
 
-    idProvider: ApplicationIdProvider;
+    private idProvider: ApplicationIdProvider;
 
-    deployment: ApplicationDeployment;
+    private deployment: ApplicationDeployment;
 
     static fromJson(json: ApplicationInfoJson): ApplicationInfo {
         let result = new ApplicationInfo();
@@ -72,5 +72,45 @@ export class ApplicationInfo {
         result.deployment = json.deployment;
 
         return result;
+    }
+
+    getContentTypes(): api.schema.content.ContentTypeSummary[] {
+        return this.contentTypes;
+    }
+
+    getPages(): api.content.page.PageDescriptor[] {
+        return this.pages;
+    }
+
+    getParts(): api.content.page.region.PartDescriptor[] {
+        return this.parts;
+    }
+
+    getLayouts(): api.content.page.region.LayoutDescriptor[] {
+        return this.layouts;
+    }
+
+    getRelations(): api.schema.relationshiptype.RelationshipType[] {
+        return this.relations;
+    }
+
+    getReferences(): ContentReference[] {
+        return this.references;
+    }
+
+    getMacros(): api.macro.MacroDescriptor[] {
+        return this.macros;
+    }
+
+    getTasks(): ApplicationTask[] {
+        return this.tasks;
+    }
+
+    getIdProvider(): ApplicationIdProvider {
+        return this.idProvider;
+    }
+
+    getDeployment(): ApplicationDeployment {
+        return this.deployment;
     }
 }
