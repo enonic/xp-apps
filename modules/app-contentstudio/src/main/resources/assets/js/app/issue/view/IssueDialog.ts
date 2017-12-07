@@ -1,4 +1,4 @@
-import {DependantItemsDialog} from '../../dialog/DependantItemsDialog';
+import {DependantItemsDialog, DependantItemsDialogConfig} from '../../dialog/DependantItemsDialog';
 import {IssueDialogForm} from './IssueDialogForm';
 import {PublishProcessor} from '../../publish/PublishProcessor';
 import {PublishRequestItem} from '../PublishRequestItem';
@@ -28,7 +28,7 @@ export abstract class IssueDialog
     private newItems: ContentSummary[] = [];
 
     protected constructor(title: string) {
-        super(title);
+        super(<DependantItemsDialogConfig>{title});
 
         this.publishProcessor = new PublishProcessor(this.getItemList(), this.getDependantList());
 
