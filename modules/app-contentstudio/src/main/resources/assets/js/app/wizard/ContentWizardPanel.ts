@@ -657,7 +657,9 @@ export class ContentWizardPanel
                 this.liveEditModel.setContent(content);
                 if (this.reloadPageEditorOnSave) {
                     this.updateLiveForm().then(() => {
-                        this.contentWizardStepForm.update(content.getContentData(), false);
+                        if (content.isSite()) {
+                            this.updateWizardStepForms(content, false);
+                        }
                     });
                 }
             }
