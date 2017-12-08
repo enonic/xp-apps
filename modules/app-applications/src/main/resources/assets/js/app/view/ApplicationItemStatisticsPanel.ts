@@ -15,6 +15,8 @@ import DivEl = api.dom.DivEl;
 import {GetApplicationInfoRequest} from '../resource/GetApplicationInfoRequest';
 import {ApplicationInfo} from '../resource/ApplicationInfo';
 import DateTimeFormatter = api.ui.treegrid.DateTimeFormatter;
+import StringHelper = api.util.StringHelper;
+import AEl = api.dom.AEl;
 
 export class ApplicationItemStatisticsPanel
     extends api.app.view.ItemStatisticsPanel<api.application.Application> {
@@ -84,6 +86,7 @@ export class ApplicationItemStatisticsPanel
             const schemas = this.initSchemas(applicationInfo);
             const macros = this.initMacros(applicationInfo);
             const providers = this.initProviders(currentApplication, applicationInfo);
+            const deployment = this.initDeployment(applicationInfo);
 
             if (descriptors && !descriptors.isEmpty()) {
                 this.applicationDataContainer.appendChild(descriptors);
@@ -99,6 +102,14 @@ export class ApplicationItemStatisticsPanel
 
             if (providers && !providers.isEmpty()) {
                 this.applicationDataContainer.appendChild(providers);
+            }
+
+            if (providers && !providers.isEmpty()) {
+                this.applicationDataContainer.appendChild(providers);
+            }
+
+            if (deployment && !deployment.isEmpty()) {
+                this.applicationDataContainer.appendChild(deployment);
             }
         });
     }
@@ -161,6 +172,18 @@ export class ApplicationItemStatisticsPanel
             providersGroup.addDataList(i18n('field.name'), application.getDisplayName());
 
             return providersGroup;
+        }
+        return null;
+    }
+
+    private initDeployment(applicationInfo: ApplicationInfo): ItemDataGroup {
+
+        if (!StringHelper.isBlank(applicationInfo.getDeployment().url)) {
+            const deploymentGroup = new ItemDataGroup(i18n('field.webApp'), 'deployment');
+            deploymentGroup.addDataElements(i18n('field.deployment'),
+                [new AEl().setUrl(applicationInfo.getDeployment().url).setHtml(applicationInfo.getDeployment().url)]);
+
+            return deploymentGroup;
         }
         return null;
     }
