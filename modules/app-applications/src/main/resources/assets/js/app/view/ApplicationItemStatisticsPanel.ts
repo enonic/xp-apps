@@ -104,10 +104,6 @@ export class ApplicationItemStatisticsPanel
                 this.applicationDataContainer.appendChild(providers);
             }
 
-            if (providers && !providers.isEmpty()) {
-                this.applicationDataContainer.appendChild(providers);
-            }
-
             if (deployment && !deployment.isEmpty()) {
                 this.applicationDataContainer.appendChild(deployment);
             }
