@@ -239,8 +239,6 @@ export class IssueDetailsDialog
         dependantList.onItemsAdded(handleDependantsChanged);
         dependantList.onItemsRemoved(handleDependantsChanged);
         dependantList.onItemRemoveClicked(handleRemoveItemClicked);
-        dependantList.onShown(handleDependantsChanged);
-        dependantList.onHidden(handleDependantsChanged);
 
         this.publishProcessor.onLoadingFinished(() => {
             this.updateCountsAndActions();
@@ -249,6 +247,10 @@ export class IssueDetailsDialog
                 this.saveOnLoaded = false;
             }
         });
+    }
+
+    protected getDependantIds(): ContentId[] {
+        return this.publishProcessor.getDependantIds();
     }
 
     private loadCurrentUser() {

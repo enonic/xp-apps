@@ -3,6 +3,7 @@ import {isContentSummaryValid, PublishDialogDependantList} from './PublishDialog
 import ResolvePublishDependenciesResult = api.content.resource.result.ResolvePublishDependenciesResult;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import CompareStatus = api.content.CompareStatus;
+import GetDescendantsOfContentsRequest = api.content.resource.GetDescendantsOfContentsRequest;
 
 export class PublishProcessor {
 
@@ -109,7 +110,7 @@ export class PublishProcessor {
                 // spare the request if there're no dependants
                 resolveDescendantsRequest = wemQ([]);
             } else {
-                resolveDescendantsRequest = this.loadDescendants(this.dependantIds, 0, this.dependantIds.length);
+                resolveDescendantsRequest = this.loadDescendants(this.dependantIds, 0, GetDescendantsOfContentsRequest.LOAD_SIZE);
             }
 
             return resolveDescendantsRequest.then((dependants: ContentSummaryAndCompareStatus[]) => {

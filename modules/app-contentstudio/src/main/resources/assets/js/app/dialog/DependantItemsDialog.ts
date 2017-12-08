@@ -2,7 +2,7 @@ import '../../api.ts';
 import {StatusSelectionItem} from './StatusSelectionItem';
 import {DependantItemViewer} from './DependantItemViewer';
 import ContentId = api.content.ContentId;
-import GetDescendantsOfContents = api.content.resource.GetDescendantsOfContentsRequest;
+import GetDescendantsOfContentsRequest = api.content.resource.GetDescendantsOfContentsRequest;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import CompareStatus = api.content.CompareStatus;
 import BrowseItem = api.app.browse.BrowseItem;
@@ -113,6 +113,7 @@ export class DependantItemsDialog
     private setDependantListVisible(visible: boolean) {
         this.dependantList.setVisible(visible);
         this.updateDependantsHeader(this.getDependantsHeader(visible));
+        this.centerMyself();
     }
 
     protected getDependantsHeader(listVisible: boolean): string {
@@ -291,12 +292,12 @@ export class DependantItemsDialog
         let size = this.getDependantList().getItemCount();
 
         if (!this.loading) {
-            if (lastVisible + GetDescendantsOfContents.LOAD_SIZE / 2 >= size && size < this.getDependantIds().length) {
+            if (lastVisible + GetDescendantsOfContentsRequest.LOAD_SIZE / 2 >= size && size < this.getDependantIds().length) {
 
                 this.loadMask.show();
                 this.loading = true;
 
-                this.loadDescendants(size, GetDescendantsOfContents.LOAD_SIZE).then((newItems) => {
+                this.loadDescendants(size, GetDescendantsOfContentsRequest.LOAD_SIZE).then((newItems) => {
 
                     this.addDependantItems(newItems);
                     this.loading = false;
