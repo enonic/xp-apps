@@ -17,6 +17,7 @@ import {ApplicationInfo} from '../resource/ApplicationInfo';
 import DateTimeFormatter = api.ui.treegrid.DateTimeFormatter;
 import StringHelper = api.util.StringHelper;
 import AEl = api.dom.AEl;
+import {ContentReference} from '../resource/ContentReference';
 
 export class ApplicationItemStatisticsPanel
     extends api.app.view.ItemStatisticsPanel<api.application.Application> {
@@ -82,19 +83,14 @@ export class ApplicationItemStatisticsPanel
         infoGroup.addDataList(i18n('field.systemRequired'), i18n('field.systemRequired.value', minVersion));
 
         new GetApplicationInfoRequest(currentApplication.getApplicationKey()).sendAndParse().then((applicationInfo: ApplicationInfo) => {
-            const descriptors = this.initDescriptors(applicationInfo);
-            const schemas = this.initSchemas(applicationInfo);
+            const site = this.initSite(applicationInfo);
             const macros = this.initMacros(applicationInfo);
             const providers = this.initProviders(currentApplication, applicationInfo);
             const tasks = this.initTasks(applicationInfo);
             const deployment = this.initDeployment(applicationInfo);
 
-            if (descriptors && !descriptors.isEmpty()) {
-                this.applicationDataContainer.appendChild(descriptors);
-            }
-
-            if (schemas && !schemas.isEmpty()) {
-                this.applicationDataContainer.appendChild(schemas);
+            if (site && !site.isEmpty()) {
+                this.applicationDataContainer.appendChild(site);
             }
 
             if (macros && !macros.isEmpty()) {
@@ -129,39 +125,36 @@ export class ApplicationItemStatisticsPanel
         return macrosGroup;
     }
 
-    private initDescriptors(applicationInfo: ApplicationInfo): ItemDataGroup {
+    private initSite(applicationInfo: ApplicationInfo): ItemDataGroup {
 
-        let descriptorsGroup = new ItemDataGroup(i18n('field.descriptors'), 'descriptors');
-
-        let pageNames = applicationInfo.getPages().map((descriptor: PageDescriptor) => descriptor.getName().toString()).sort(
-            this.sortAlphabeticallyAsc);
-        descriptorsGroup.addDataArray(i18n('field.page'), pageNames);
-
-        let partNames = applicationInfo.getParts().map((descriptor: PartDescriptor) => descriptor.getName().toString()).sort(
-            this.sortAlphabeticallyAsc);
-        descriptorsGroup.addDataArray(i18n('field.part'), partNames);
-
-        let layoutNames = applicationInfo.getLayouts().map((descriptor: LayoutDescriptor) => descriptor.getName().toString()).sort(
-            this.sortAlphabeticallyAsc);
-        descriptorsGroup.addDataArray(i18n('field.layout'), layoutNames);
-
-        return descriptorsGroup;
-    }
-
-    private initSchemas(applicationInfo: ApplicationInfo): ItemDataGroup {
-
-        let schemasGroup = new ItemDataGroup(i18n('field.schemas'), 'schemas');
+        let siteGroup = new ItemDataGroup(i18n('field.site'), 'site');
 
         let contentTypeNames = applicationInfo.getContentTypes().map(
             (contentType: ContentTypeSummary) => contentType.getContentTypeName().getLocalName()).sort(this.sortAlphabeticallyAsc);
-        schemasGroup.addDataArray(i18n('field.contentTypes'), contentTypeNames);
+        siteGroup.addDataArray(i18n('field.contentTypes'), contentTypeNames);
+
+        let pageNames = applicationInfo.getPages().map((descriptor: PageDescriptor) => descriptor.getName().toString()).sort(
+            this.sortAlphabeticallyAsc);
+        siteGroup.addDataArray(i18n('field.page'), pageNames);
+
+        let partNames = applicationInfo.getParts().map((descriptor: PartDescriptor) => descriptor.getName().toString()).sort(
+            this.sortAlphabeticallyAsc);
+        siteGroup.addDataArray(i18n('field.part'), partNames);
+
+        let layoutNames = applicationInfo.getLayouts().map((descriptor: LayoutDescriptor) => descriptor.getName().toString()).sort(
+            this.sortAlphabeticallyAsc);
+        siteGroup.addDataArray(i18n('field.layout'), layoutNames);
 
         let relationshipTypeNames = applicationInfo.getRelations().map(
             (relationshipType: RelationshipType) => relationshipType.getRelationshiptypeName().getLocalName()).sort(
             this.sortAlphabeticallyAsc);
-        schemasGroup.addDataArray(i18n('field.relationshipTypes'), relationshipTypeNames);
+        siteGroup.addDataArray(i18n('field.relationshipTypes'), relationshipTypeNames);
 
-        return schemasGroup;
+        let referencesPaths = applicationInfo.getReferences().map(
+            (reference: ContentReference) => reference.getContentPath().toString()).sort(this.sortAlphabeticallyAsc);
+        siteGroup.addDataArray(i18n('field.usedBy'), referencesPaths);
+
+        return siteGroup;
     }
 
     private initProviders(application: Application, applicationInfo: ApplicationInfo): ItemDataGroup {
@@ -190,7 +183,7 @@ export class ApplicationItemStatisticsPanel
     }
 
     private initTasks(applicationInfo: ApplicationInfo): ItemDataGroup {
-        if(applicationInfo.getTasks()) {
+        if (applicationInfo.getTasks()) {
             const tasksGroup = new ItemDataGroup(i18n('field.tasks'), 'tasks');
 
             tasksGroup.addDataArray(i18n('field.key'), applicationInfo.getTasks().map(task => task.getKey().toString()));
