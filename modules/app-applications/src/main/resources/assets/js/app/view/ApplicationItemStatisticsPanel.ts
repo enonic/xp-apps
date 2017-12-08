@@ -18,6 +18,7 @@ import DateTimeFormatter = api.ui.treegrid.DateTimeFormatter;
 import StringHelper = api.util.StringHelper;
 import AEl = api.dom.AEl;
 import {ContentReference} from '../resource/ContentReference';
+import IdProviderMode = api.security.IdProviderMode;
 
 export class ApplicationItemStatisticsPanel
     extends api.app.view.ItemStatisticsPanel<api.application.Application> {
@@ -85,7 +86,7 @@ export class ApplicationItemStatisticsPanel
         new GetApplicationInfoRequest(currentApplication.getApplicationKey()).sendAndParse().then((applicationInfo: ApplicationInfo) => {
             const site = this.initSite(applicationInfo);
             const macros = this.initMacros(applicationInfo);
-            const providers = this.initProviders(currentApplication, applicationInfo);
+            const providers = this.initProviders(applicationInfo);
             const tasks = this.initTasks(applicationInfo);
             const deployment = this.initDeployment(applicationInfo);
 
@@ -157,13 +158,14 @@ export class ApplicationItemStatisticsPanel
         return siteGroup;
     }
 
-    private initProviders(application: Application, applicationInfo: ApplicationInfo): ItemDataGroup {
+    private initProviders(applicationInfo: ApplicationInfo): ItemDataGroup {
 
         if (applicationInfo.getIdProvider().getMode() != null) {
             const providersGroup = new ItemDataGroup(i18n('field.idProviders'), 'providers');
 
-            providersGroup.addDataList(i18n('field.key'), application.getApplicationKey().toString());
-            providersGroup.addDataList(i18n('field.name'), application.getDisplayName());
+            providersGroup.addDataList(i18n('field.mode'), IdProviderMode[applicationInfo.getIdProvider().getMode()]);
+            providersGroup.addDataArray(i18n('field.usedBy'),
+                applicationInfo.getIdProvider().getUserStores().map(userStore => userStore.getPath().toString()));
 
             return providersGroup;
         }
@@ -187,7 +189,7 @@ export class ApplicationItemStatisticsPanel
             const tasksGroup = new ItemDataGroup(i18n('field.tasks'), 'tasks');
 
             tasksGroup.addDataArray(i18n('field.key'), applicationInfo.getTasks().map(task => task.getKey().toString()));
-            tasksGroup.addDataArray(i18n('field.namedTask'), applicationInfo.getTasks().map(task => task.getDescription()));
+            tasksGroup.addDataArray(i18n('field.description'), applicationInfo.getTasks().map(task => task.getDescription()));
             return tasksGroup;
         }
         return null;
