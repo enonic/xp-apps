@@ -16,4 +16,12 @@ export class ApplicationTask {
 
         return result;
     }
+
+    public getDescription(): string {
+        return this.description;
+    }
+
+    public getKey(): DescriptorKey {
+        return this.key;
+    }
 }
