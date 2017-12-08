@@ -32,7 +32,7 @@ export class PreviewContentHandler {
             return;
         }
         if (PreviewContentHandler.BLOCK_COUNT < contentBrowseItems.length) {
-            this.setBlocked(true);
+            this.setBlocked(true, true);
 
             return;
         }
@@ -109,11 +109,11 @@ export class PreviewContentHandler {
         });
     }
 
-    private setBlocked(blocked: boolean) {
+    private setBlocked(blocked: boolean, forceEnablePreview: boolean = false) {
         this.blocked = blocked;
         this.isPreviewAllowed = (!blocked) && (this.renderableIds.length > 0);
 
-        this.notifyPreviewStateChangedIfNeeded();
+        this.notifyPreviewStateChangedIfNeeded(forceEnablePreview);
     }
 
     isBlocked(): boolean {
@@ -160,10 +160,11 @@ export class PreviewContentHandler {
         }
     }
 
-    private notifyPreviewStateChangedIfNeeded() {
-        let hasRenderableItems = (this.renderableIds.length > 0);
-        if (hasRenderableItems !== this.isPreviewAllowed) {
-            this.notifyPreviewStateChanged(hasRenderableItems);
+    private notifyPreviewStateChangedIfNeeded(forceEnablePreview: boolean = false) {
+        const hasRenderableItems = (this.renderableIds.length > 0);
+
+        if (forceEnablePreview || hasRenderableItems !== this.isPreviewAllowed) {
+            this.notifyPreviewStateChanged(forceEnablePreview || hasRenderableItems);
             this.isPreviewAllowed = hasRenderableItems;
         }
     }

@@ -23,7 +23,7 @@ export class PreviewContentAction
 
                 this.openWindows(contentSummaries);
             } else {
-                api.notify.showWarning(i18n('notify.preview', PreviewContentHandler.BLOCK_COUNT));
+                api.notify.showWarning(i18n('notify.preview.tooMuch', PreviewContentHandler.BLOCK_COUNT));
             }
         });
     }
