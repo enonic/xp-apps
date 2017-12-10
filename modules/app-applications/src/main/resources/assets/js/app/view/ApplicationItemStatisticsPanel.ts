@@ -90,6 +90,10 @@ export class ApplicationItemStatisticsPanel
             const tasks = this.initTasks(applicationInfo);
             const deployment = this.initDeployment(applicationInfo);
 
+            if (!infoGroup.isEmpty()) {
+                this.applicationDataContainer.appendChild(infoGroup);
+            }
+
             if (site && !site.isEmpty()) {
                 this.applicationDataContainer.appendChild(site);
             }
