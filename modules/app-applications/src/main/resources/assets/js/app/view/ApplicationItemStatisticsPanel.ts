@@ -2,7 +2,6 @@ import '../../api.ts';
 import {ApplicationBrowseActions} from '../browse/ApplicationBrowseActions';
 
 import ContentTypeSummary = api.schema.content.ContentTypeSummary;
-import Mixin = api.schema.mixin.Mixin;
 import RelationshipType = api.schema.relationshiptype.RelationshipType;
 import PageDescriptor = api.content.page.PageDescriptor;
 import PartDescriptor = api.content.page.region.PartDescriptor;
@@ -13,8 +12,16 @@ import Application = api.application.Application;
 import MacroDescriptor = api.macro.MacroDescriptor;
 import i18n = api.util.i18n;
 import DivEl = api.dom.DivEl;
+import {GetApplicationInfoRequest} from '../resource/GetApplicationInfoRequest';
+import {ApplicationInfo} from '../resource/ApplicationInfo';
+import DateTimeFormatter = api.ui.treegrid.DateTimeFormatter;
+import StringHelper = api.util.StringHelper;
+import AEl = api.dom.AEl;
+import {ContentReference} from '../resource/ContentReference';
+import IdProviderMode = api.security.IdProviderMode;
 
-export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsPanel<api.application.Application> {
+export class ApplicationItemStatisticsPanel
+    extends api.app.view.ItemStatisticsPanel<api.application.Application> {
 
     private applicationDataContainer: api.dom.DivEl;
     private actionMenu: api.ui.menu.ActionMenu;
@@ -65,138 +72,131 @@ export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsP
 
         this.applicationDataContainer.removeChildren();
 
-        const infoGroup = new ItemDataGroup(i18n('field.info'), 'info');
+        const infoGroup = new ItemDataGroup(i18n('field.application'), 'application');
         const minVersion = currentApplication.getMinSystemVersion();
-        const maxVersion = currentApplication.getMaxSystemVersion();
-        infoGroup.addDataList(i18n('field.buildDate'), 'TBA');
+        const modifiedTime = currentApplication.getModifiedTime();
+
+        if (modifiedTime) {
+            infoGroup.addDataList(i18n('field.installed'), DateTimeFormatter.createHtml(modifiedTime));
+        }
         infoGroup.addDataList(i18n('field.version'), currentApplication.getVersion());
         infoGroup.addDataList(i18n('field.key'), currentApplication.getApplicationKey().toString());
-        infoGroup.addDataList(i18n('field.systemRequired'), i18n('field.systemRequired.value', minVersion, maxVersion));
+        infoGroup.addDataList(i18n('field.systemRequired'), i18n('field.systemRequired.value', minVersion));
 
-        let descriptorResponse = this.initDescriptors(currentApplication.getApplicationKey());
-        let schemaResponse = this.initSchemas(currentApplication.getApplicationKey());
-        let macroResponse = this.initMacros(currentApplication.getApplicationKey());
-        let providerResponse = this.initProviders(currentApplication.getApplicationKey());
+        new GetApplicationInfoRequest(currentApplication.getApplicationKey()).sendAndParse().then((applicationInfo: ApplicationInfo) => {
+            const site = this.initSite(applicationInfo);
+            const macros = this.initMacros(applicationInfo);
+            const providers = this.initProviders(applicationInfo);
+            const tasks = this.initTasks(applicationInfo);
+            const deployment = this.initDeployment(applicationInfo);
 
-        wemQ.all([descriptorResponse, schemaResponse, macroResponse, providerResponse])
-            .spread((descriptorsGroup, schemasGroup, macrosGroup, providersGroup) => {
-                if (!infoGroup.isEmpty()) {
-                    this.applicationDataContainer.appendChild(infoGroup);
-                }
-                if (descriptorsGroup && !descriptorsGroup.isEmpty()) {
-                    this.applicationDataContainer.appendChild(descriptorsGroup);
-                }
+            if (!infoGroup.isEmpty()) {
+                this.applicationDataContainer.appendChild(infoGroup);
+            }
 
-                if (schemasGroup && !schemasGroup.isEmpty()) {
-                    this.applicationDataContainer.appendChild(schemasGroup);
-                }
+            if (site && !site.isEmpty()) {
+                this.applicationDataContainer.appendChild(site);
+            }
 
-                if (macrosGroup && !macrosGroup.isEmpty()) {
-                    this.applicationDataContainer.appendChild(macrosGroup);
-                }
+            if (macros && !macros.isEmpty()) {
+                this.applicationDataContainer.appendChild(macros);
+            }
 
-                if (providersGroup && !providersGroup.isEmpty()) {
-                    this.applicationDataContainer.appendChild(providersGroup);
-                }
-            });
+            if (providers && !providers.isEmpty()) {
+                this.applicationDataContainer.appendChild(providers);
+            }
 
+            if (tasks && !tasks.isEmpty()) {
+                this.applicationDataContainer.appendChild(tasks);
+            }
+
+            if (deployment && !deployment.isEmpty()) {
+                this.applicationDataContainer.appendChild(deployment);
+            }
+        });
     }
 
-    private initMacros(applicationKey: ApplicationKey): wemQ.Promise<any> {
-        let macroRequest = new api.macro.resource.GetMacrosRequest();
-        macroRequest.setApplicationKeys([applicationKey]);
+    private initMacros(applicationInfo: ApplicationInfo): ItemDataGroup {
 
-        let macroPromises = [macroRequest.sendAndParse()];
+        let macrosGroup = new ItemDataGroup(i18n('field.macros'), 'macros');
 
-        return wemQ.all(macroPromises).spread((macros: MacroDescriptor[])=> {
+        let macroNames = applicationInfo.getMacros().filter((macro: MacroDescriptor) => {
+            return !ApplicationKey.SYSTEM.equals(macro.getKey().getApplicationKey());
+        }).map((macro: MacroDescriptor) => {
+            return macro.getDisplayName();
+        });
+        macrosGroup.addDataArray(i18n('field.name'), macroNames);
 
-            let macrosGroup = new ItemDataGroup(i18n('field.macros'), 'macros');
-
-            let macroNames = macros.
-            filter((macro: MacroDescriptor) => {
-                return !ApplicationKey.SYSTEM.equals(macro.getKey().getApplicationKey());
-            }).map((macro: MacroDescriptor) => {
-                return macro.getDisplayName();
-            });
-            macrosGroup.addDataArray(i18n('field.name'), macroNames);
-
-            return macrosGroup;
-        }).catch((reason: any) => api.DefaultErrorHandler.handle(reason));
+        return macrosGroup;
     }
 
-    private initDescriptors(applicationKey: ApplicationKey): wemQ.Promise<any> {
+    private initSite(applicationInfo: ApplicationInfo): ItemDataGroup {
 
-        let descriptorPromises = [
-            new api.content.page.GetPageDescriptorsByApplicationRequest(applicationKey).sendAndParse(),
-            new api.content.page.region.GetPartDescriptorsByApplicationRequest(applicationKey).sendAndParse(),
-            new api.content.page.region.GetLayoutDescriptorsByApplicationRequest(applicationKey).sendAndParse()
-        ];
+        let siteGroup = new ItemDataGroup(i18n('field.site'), 'site');
 
-        return wemQ.all(descriptorPromises).spread(
-            (pageDescriptors: PageDescriptor[], partDescriptors: PartDescriptor[], layoutDescriptors: LayoutDescriptor[]) => {
+        let contentTypeNames = applicationInfo.getContentTypes().map(
+            (contentType: ContentTypeSummary) => contentType.getContentTypeName().getLocalName()).sort(this.sortAlphabeticallyAsc);
+        siteGroup.addDataArray(i18n('field.contentTypes'), contentTypeNames);
 
-                let descriptorsGroup = new ItemDataGroup(i18n('field.descriptors'), 'descriptors');
+        let pageNames = applicationInfo.getPages().map((descriptor: PageDescriptor) => descriptor.getName().toString()).sort(
+            this.sortAlphabeticallyAsc);
+        siteGroup.addDataArray(i18n('field.page'), pageNames);
 
-                let pageNames = pageDescriptors.map((descriptor: PageDescriptor) => descriptor.getName().toString()).sort(
-                    this.sortAlphabeticallyAsc);
-                descriptorsGroup.addDataArray(i18n('field.page'), pageNames);
+        let partNames = applicationInfo.getParts().map((descriptor: PartDescriptor) => descriptor.getName().toString()).sort(
+            this.sortAlphabeticallyAsc);
+        siteGroup.addDataArray(i18n('field.part'), partNames);
 
-                let partNames = partDescriptors.map((descriptor: PartDescriptor) => descriptor.getName().toString()).sort(
-                    this.sortAlphabeticallyAsc);
-                descriptorsGroup.addDataArray(i18n('field.part'), partNames);
+        let layoutNames = applicationInfo.getLayouts().map((descriptor: LayoutDescriptor) => descriptor.getName().toString()).sort(
+            this.sortAlphabeticallyAsc);
+        siteGroup.addDataArray(i18n('field.layout'), layoutNames);
 
-                let layoutNames = layoutDescriptors.map((descriptor: LayoutDescriptor) => descriptor.getName().toString()).sort(
-                    this.sortAlphabeticallyAsc);
-                descriptorsGroup.addDataArray(i18n('field.layout'), layoutNames);
+        let relationshipTypeNames = applicationInfo.getRelations().map(
+            (relationshipType: RelationshipType) => relationshipType.getRelationshiptypeName().getLocalName()).sort(
+            this.sortAlphabeticallyAsc);
+        siteGroup.addDataArray(i18n('field.relationshipTypes'), relationshipTypeNames);
 
-                return descriptorsGroup;
-            }).catch((reason: any) => api.DefaultErrorHandler.handle(reason));
+        let referencesPaths = applicationInfo.getReferences().map(
+            (reference: ContentReference) => reference.getContentPath().toString()).sort(this.sortAlphabeticallyAsc);
+        siteGroup.addDataArray(i18n('field.usedBy'), referencesPaths);
+
+        return siteGroup;
     }
 
-    private initSchemas(applicationKey: ApplicationKey): wemQ.Promise<any> {
+    private initProviders(applicationInfo: ApplicationInfo): ItemDataGroup {
 
-        let schemaPromises = [
-            new api.schema.content.GetContentTypesByApplicationRequest(applicationKey).sendAndParse(),
-            new api.schema.mixin.GetMixinsByApplicationRequest(applicationKey).sendAndParse(),
-            new api.schema.relationshiptype.GetRelationshipTypesByApplicationRequest(applicationKey).sendAndParse()
-        ];
+        if (applicationInfo.getIdProvider().getMode() != null) {
+            const providersGroup = new ItemDataGroup(i18n('field.idProviders'), 'providers');
 
-        return wemQ.all(schemaPromises).spread<any>(
-            (contentTypes: ContentTypeSummary[], mixins: Mixin[], relationshipTypes: RelationshipType[]) => {
-                let schemasGroup = new ItemDataGroup(i18n('field.schemas'), 'schemas');
+            providersGroup.addDataList(i18n('field.mode'), IdProviderMode[applicationInfo.getIdProvider().getMode()]);
+            providersGroup.addDataArray(i18n('field.usedBy'),
+                applicationInfo.getIdProvider().getUserStores().map(userStore => userStore.getPath().toString()));
 
-                let contentTypeNames = contentTypes.map(
-                    (contentType: ContentTypeSummary) => contentType.getContentTypeName().getLocalName()).sort(this.sortAlphabeticallyAsc);
-                schemasGroup.addDataArray(i18n('field.contentTypes'), contentTypeNames);
-
-                let mixinsNames = mixins.map((mixin: Mixin) => mixin.getMixinName().getLocalName()).sort(this.sortAlphabeticallyAsc);
-                schemasGroup.addDataArray(i18n('field.mixins'), mixinsNames);
-
-                let relationshipTypeNames = relationshipTypes.map(
-                    (relationshipType: RelationshipType) => relationshipType.getRelationshiptypeName().getLocalName()).sort(
-                    this.sortAlphabeticallyAsc);
-                schemasGroup.addDataArray(i18n('field.relationshipTypes'), relationshipTypeNames);
-
-                return schemasGroup;
-
-            }).catch((reason: any) => api.DefaultErrorHandler.handle(reason));
+            return providersGroup;
+        }
+        return null;
     }
 
-    private initProviders(applicationKey: ApplicationKey): wemQ.Promise<ItemDataGroup> {
-        let providersPromises = [new api.application.AuthApplicationRequest(applicationKey).sendAndParse()];
+    private initDeployment(applicationInfo: ApplicationInfo): ItemDataGroup {
 
-        return wemQ.all(providersPromises).spread<ItemDataGroup>(
-            (application: Application) => {
-                if (application) {
-                    const providersGroup = new ItemDataGroup(i18n('field.idProviders'), 'providers');
+        if (!StringHelper.isBlank(applicationInfo.getDeployment().url)) {
+            const deploymentGroup = new ItemDataGroup(i18n('field.webApp'), 'deployment');
+            deploymentGroup.addDataElements(i18n('field.deployment'),
+                [new AEl().setUrl(applicationInfo.getDeployment().url, '_blank').setHtml(applicationInfo.getDeployment().url)]);
 
-                    providersGroup.addDataList(i18n('field.key'), application.getApplicationKey().toString());
-                    providersGroup.addDataList(i18n('field.name'), application.getDisplayName());
+            return deploymentGroup;
+        }
+        return null;
+    }
 
-                    return providersGroup;
-                }
-                return null;
-            });
+    private initTasks(applicationInfo: ApplicationInfo): ItemDataGroup {
+        if (applicationInfo.getTasks()) {
+            const tasksGroup = new ItemDataGroup(i18n('field.tasks'), 'tasks');
+
+            tasksGroup.addDataArray(i18n('field.key'), applicationInfo.getTasks().map(task => task.getKey().toString()));
+            tasksGroup.addDataArray(i18n('field.description'), applicationInfo.getTasks().map(task => task.getDescription()));
+            return tasksGroup;
+        }
+        return null;
     }
 
     private sortAlphabeticallyAsc(a: string, b: string): number {

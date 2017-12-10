@@ -869,14 +869,14 @@ export class LiveEditPageProxy {
 
     private resetControllerForIE() {
         if (this.controllerCopyForIE) {
-            let controller = new api.content.page.PageDescriptorBuilder().fromJson(this.controllerCopyForIE).build();
+            let controller = api.content.page.PageDescriptor.fromJson(this.controllerCopyForIE);
             this.liveEditModel.getPageModel().setControllerDescriptor(controller);
         }
     }
 
     private resetRegionsForIE() {
         if (this.regionsCopyForIE) {
-            let regions = api.content.page.region.Regions.create().fromJson(this.regionsCopyForIE, null).build();
+            let regions = api.content.page.region.Regions.fromJson(this.regionsCopyForIE, null);
             this.liveEditModel.getPageModel().setRegions(regions);
         }
     }
