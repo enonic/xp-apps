@@ -2,7 +2,7 @@ import '../../api.ts';
 import {StatusSelectionItem} from './StatusSelectionItem';
 import {DependantItemViewer} from './DependantItemViewer';
 import ContentId = api.content.ContentId;
-import GetDescendantsOfContents = api.content.resource.GetDescendantsOfContentsRequest;
+import GetDescendantsOfContentsRequest = api.content.resource.GetDescendantsOfContentsRequest;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import CompareStatus = api.content.CompareStatus;
 import BrowseItem = api.app.browse.BrowseItem;
@@ -75,6 +75,10 @@ export class DependantItemsDialog
 
         this.dependantsHeaderText = config.dependantsName;
         this.dependantsHeader = new api.dom.H6El('dependants-header').setHtml(this.dependantsHeaderText, false);
+        this.dependantsHeader.onClicked(e => {
+            const doShow = !this.dependantList.isVisible();
+            this.setDependantListVisible(doShow);
+        });
 
         this.dependantList = this.createDependantList();
         this.dependantList.addClass('dependant-list');
@@ -83,8 +87,11 @@ export class DependantItemsDialog
         this.dependantsContainer.appendChildren(this.dependantsHeader, this.dependantList);
 
         let dependantsChangedListener = () => {
-            let count = this.dependantList.getItemCount();
-            this.dependantsContainer.setVisible(count > 0);
+            let doShow = this.countDependantItems() > 0;
+            this.dependantsContainer.setVisible(doShow);
+
+            // update dependants header according to its visibility
+            this.setDependantListVisible(this.dependantList.isVisible());
         };
         this.dependantList.onItemsRemoved(dependantsChangedListener);
         this.dependantList.onItemsAdded(dependantsChangedListener);
@@ -103,8 +110,19 @@ export class DependantItemsDialog
 
     }
 
+    private setDependantListVisible(visible: boolean) {
+        this.dependantList.setVisible(visible);
+        this.updateDependantsHeader(this.getDependantsHeader(visible));
+        this.centerMyself();
+    }
+
+    protected getDependantsHeader(listVisible: boolean): string {
+        return null;
+    }
+
     protected updateDependantsHeader(header?: string) {
-        this.dependantsHeader.setHtml(header || this.dependantsHeaderText, false);
+        const count = this.countDependantItems();
+        this.dependantsHeader.setHtml((header || this.dependantsHeaderText) + ` (${count})`, false);
     }
 
     private initLoadMask() {
@@ -127,6 +145,10 @@ export class DependantItemsDialog
         return this.dependantList;
     }
 
+    protected getDependantsContainer(): api.dom.DivEl {
+        return this.dependantsContainer;
+    }
+
     protected isIgnoreItemsChanged(): boolean {
         return this.ignoreItemsChanged;
     }
@@ -137,6 +159,7 @@ export class DependantItemsDialog
 
     show(hideLoadMask: boolean = false) {
         api.dom.Body.get().appendChild(this);
+        this.setDependantListVisible(false);
         super.show();
         if (!hideLoadMask) {
             this.appendChildToContentPanel(this.loadMask);
@@ -144,11 +167,13 @@ export class DependantItemsDialog
         }
     }
 
-    close() {
+    close(clearItems: boolean = true) {
         super.close();
         this.remove();
-        this.itemList.clearItems(true);
-        this.dependantList.clearItems(true);
+        if (clearItems) {
+            this.itemList.clearItems(true);
+            this.dependantList.clearItems(true);
+        }
         this.dependantsContainer.setVisible(false);
         this.unlockControls();
     }
@@ -226,7 +251,11 @@ export class DependantItemsDialog
     }
 
     protected countTotal(): number {
-        return this.getItemList().getItemCount() + this.getDependantIds().length;
+        return this.getItemList().getItemCount() + this.countDependantItems();
+    }
+
+    protected countDependantItems(): number {
+        return this.getDependantIds().length;
     }
 
     protected getDependantIds(): ContentId[] {
@@ -263,12 +292,12 @@ export class DependantItemsDialog
         let size = this.getDependantList().getItemCount();
 
         if (!this.loading) {
-            if (lastVisible + GetDescendantsOfContents.LOAD_SIZE / 2 >= size && size < this.getDependantIds().length) {
+            if (lastVisible + GetDescendantsOfContentsRequest.LOAD_SIZE / 2 >= size && size < this.getDependantIds().length) {
 
                 this.loadMask.show();
                 this.loading = true;
 
-                this.loadDescendants(size, GetDescendantsOfContents.LOAD_SIZE).then((newItems) => {
+                this.loadDescendants(size, GetDescendantsOfContentsRequest.LOAD_SIZE).then((newItems) => {
 
                     this.addDependantItems(newItems);
                     this.loading = false;

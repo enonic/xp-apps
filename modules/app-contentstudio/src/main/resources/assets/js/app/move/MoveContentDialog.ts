@@ -49,7 +49,7 @@ export class MoveContentDialog
 
         this.listenOpenMoveDialogEvent();
 
-        this.appendChildToContentPanel(this.contentPathSubHeader);
+        this.appendChildToHeader(this.contentPathSubHeader);
         this.appendChildToContentPanel(this.descriptionHeader);
         this.appendChildToContentPanel(this.destinationSearchInput);
         this.addCancelButtonToBottom();

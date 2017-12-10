@@ -36,10 +36,19 @@ export class IssueDialogsManager {
 
     private listenCreateDialog(dialog: CreateIssueDialog) {
         // Create dialog
+        let ignoreNextClosedEvent = false;
         dialog.onIssueCreated(issue => {
+            ignoreNextClosedEvent = true;
             this.openDetailsDialog(issue);
+            dialog.close();
         });
-        dialog.onClosed(() => this.revealDialog(this.listDialog));
+        dialog.onClosed(() => {
+            if (!ignoreNextClosedEvent) {
+                this.revealDialog(this.listDialog);
+            } else {
+                ignoreNextClosedEvent = false;
+            }
+        });
         dialog.onCloseButtonClicked((e: MouseEvent) => this.closeDialog(this.listDialog));
     }
 

@@ -184,7 +184,7 @@ export class IssueListItem
     }
 }
 
-class AssigneesLine
+export class AssigneesLine
     extends DivEl {
 
     private assignees: User[];
@@ -217,6 +217,12 @@ class AssigneesLine
         });
     }
 
+    setAssignees(value: api.security.User[]) {
+        this.assignees = value;
+        this.removeChildren();
+        this.doRender();
+    }
+
     private createPrincipalViewer(assignee: User): PrincipalViewerCompact {
         const principalViewer: PrincipalViewerCompact = new PrincipalViewerCompact();
         principalViewer.setObject(assignee);
@@ -228,8 +234,9 @@ class AssigneesLine
     private createElemWithAssigneesAsTooltip(): Element {
         const span: SpanEl = new SpanEl('all-assignees-tooltip');
         span.setHtml('...');
-        new Tooltip(span, this.assignees.map(user => user.getDisplayName()).join('\n'), 200).setMode(
-            Tooltip.MODE_GLOBAL_STATIC);
+        new Tooltip(span, this.assignees.map(user => user.getDisplayName())
+            .join('\n'), 200)
+            .setMode(Tooltip.MODE_GLOBAL_STATIC);
 
         return span;
     }

@@ -34,6 +34,10 @@ export class IssuesPanel
         this.assignedToMeCheckbox = this.createAssignedToMeCheckbox();
     }
 
+    getIssueList(): IssueList {
+        return this.issuesList;
+    }
+
     doRender(): Q.Promise<boolean> {
         return super.doRender().then((rendered: boolean) => {
             const checkboxesDiv: DivEl = new DivEl('filters').appendChildren(this.myIssuesCheckbox, this.assignedToMeCheckbox);

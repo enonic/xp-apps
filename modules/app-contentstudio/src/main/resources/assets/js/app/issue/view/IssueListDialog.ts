@@ -34,7 +34,7 @@ export class IssueListDialog
 
     private constructor() {
         super(<api.ui.dialog.ModalDialogConfig>{title: i18n('text.publishingissues')});
-        this.addClass('issue-list-dialog');
+        this.addClass('issue-dialog issue-list-dialog grey-header');
 
         this.createAction = new Action(i18n('action.newIssueMore'));
 
@@ -73,8 +73,10 @@ export class IssueListDialog
     private createDockedPanel(): DockedPanel {
         const dockedPanel = new DockedPanel();
 
-        dockedPanel.addItem(i18n('field.issue.status.open'), true, this.openIssuesPanel);
-        dockedPanel.addItem(i18n('field.issue.status.closed'), true, this.closedIssuesPanel);
+        dockedPanel.addItem(i18n('field.issue.openIssues'), true, this.openIssuesPanel);
+        dockedPanel.addItem(i18n('field.issue.closedIssues'), true, this.closedIssuesPanel);
+
+        dockedPanel.getDeck().onPanelShown(panel => this.centerMyself());
 
         return dockedPanel;
     }
@@ -206,8 +208,8 @@ export class IssueListDialog
 
     private updateTabAndFiltersLabels() {
         new GetIssueStatsRequest().sendAndParse().then((stats: IssueStatsJson) => {
-            this.updateTabLabel(0, i18n('field.issue.status.open'), stats.open);
-            this.updateTabLabel(1, i18n('field.issue.status.closed'), stats.closed);
+            this.updateTabLabel(0, i18n('field.issue.openIssues'), stats.open);
+            this.updateTabLabel(1, i18n('field.issue.closedIssues'), stats.closed);
             this.openIssuesPanel.updateMyIssuesCheckbox(stats.openCreatedByMe);
             this.openIssuesPanel.updateAssignedToMeCheckbox(stats.openAssignedToMe);
             this.closedIssuesPanel.updateMyIssuesCheckbox(stats.closedCreatedByMe);
@@ -239,6 +241,9 @@ export class IssueListDialog
         const issuePanel = new IssuesPanel(issueStatus);
 
         issuePanel.onIssueSelected(issue => this.notifyIssueSelected(issue.getIssue()));
+        const handleItemsChanged = () => setTimeout(this.centerMyself.bind(this), 100);
+        issuePanel.getIssueList().onItemsAdded(handleItemsChanged);
+        issuePanel.getIssueList().onItemsRemoved(handleItemsChanged);
 
         return issuePanel;
     }

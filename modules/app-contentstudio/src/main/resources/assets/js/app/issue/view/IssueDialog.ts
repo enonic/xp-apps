@@ -11,6 +11,7 @@ import ListBox = api.ui.selector.list.ListBox;
 import ModalDialog = api.ui.dialog.ModalDialog;
 import ArrayHelper = api.util.ArrayHelper;
 import ContentTreeSelectorItem = api.content.resource.ContentTreeSelectorItem;
+import i18n = api.util.i18n;
 
 export abstract class IssueDialog
     extends DependantItemsDialog {
@@ -32,7 +33,7 @@ export abstract class IssueDialog
 
         this.publishProcessor = new PublishProcessor(this.getItemList(), this.getDependantList());
 
-        this.getEl().addClass('issue-dialog');
+        this.getEl().addClass('issue-dialog grey-header');
 
         this.initForm();
 
@@ -93,6 +94,11 @@ export abstract class IssueDialog
         throw new Error('must be implemented in inheritors');
     }
 
+    protected getDependantsHeader(listVisible: boolean): string {
+        return i18n(`dialog.issue.${listVisible ? 'hide' : 'show' }Dependents`);
+        ;
+    }
+
     public setItems(items: ContentSummaryAndCompareStatus[]) {
         this.setListItems(items);
     }
@@ -110,7 +116,11 @@ export abstract class IssueDialog
     }
 
     public countTotal(): number {
-        return this.getItemList().getItemCount();
+        return this.publishProcessor.countTotal();
+    }
+
+    protected countDependantItems(): number {
+        return this.publishProcessor.getDependantIds().length;
     }
 
     open(opener?: ModalDialog) {
@@ -206,13 +216,13 @@ export abstract class IssueDialog
     public lockPublishItems() {
         this.getItemList().setReadOnly(true);
         this.getDependantList().setReadOnly(true);
-        this.form.toggleContentItemsSelector(false);
+        this.form.lockContentItemsSelector(true);
     }
 
     public unlockPublishItems() {
         this.getItemList().setReadOnly(false);
         this.getDependantList().setReadOnly(false);
-        this.form.toggleContentItemsSelector(true);
+        this.form.lockContentItemsSelector(false);
     }
 
     protected getDependantIds(): ContentId[] {

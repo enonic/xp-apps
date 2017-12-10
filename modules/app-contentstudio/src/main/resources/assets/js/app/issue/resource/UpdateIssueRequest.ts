@@ -5,7 +5,8 @@ import {IssueStatus} from '../IssueStatus';
 import {PublishRequest} from '../PublishRequest';
 import PrincipalKey = api.security.PrincipalKey;
 
-export class UpdateIssueRequest extends IssueResourceRequest<IssueJson, Issue> {
+export class UpdateIssueRequest
+    extends IssueResourceRequest<IssueJson, Issue> {
 
     private id: string;
 
@@ -16,6 +17,8 @@ export class UpdateIssueRequest extends IssueResourceRequest<IssueJson, Issue> {
     private status: IssueStatus;
 
     private isPublish: boolean = false;
+
+    private autoSave: boolean = false;
 
     private approvers: PrincipalKey[];
 
@@ -52,6 +55,11 @@ export class UpdateIssueRequest extends IssueResourceRequest<IssueJson, Issue> {
         return this;
     }
 
+    setAutoSave(value: boolean): UpdateIssueRequest {
+        this.autoSave = value;
+        return this;
+    }
+
     setApprovers(approvers: PrincipalKey[]): UpdateIssueRequest {
         this.approvers = approvers;
         return this;
@@ -71,6 +79,7 @@ export class UpdateIssueRequest extends IssueResourceRequest<IssueJson, Issue> {
             description: this.description,
             status: IssueStatus[this.status],
             isPublish: this.isPublish,
+            autoSave: this.autoSave,
             approvers,
             publishRequest,
         };

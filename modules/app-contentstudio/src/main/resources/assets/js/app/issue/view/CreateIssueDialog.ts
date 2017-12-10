@@ -46,7 +46,7 @@ export class CreateIssueDialog
 
     private initElementsListeners() {
         let onItemsChanged = (items) => {
-            (<CreateIssueAction>this.actionButton.getAction()).updateLabel(items.length);
+            (<CreateIssueAction>this.actionButton.getAction()).updateLabel(this.getItemList().getItemCount());
         };
 
         this.getItemList().onItemsAdded(onItemsChanged);
@@ -90,7 +90,6 @@ export class CreateIssueDialog
                 if (approvers.length > issue.getApprovers().length) {
                     api.notify.showWarning(i18n('notify.issue.assignees.norights'));
                 }
-                this.close();
                 this.reset();
                 this.notifyIssueCreated(issue);
             }).catch((reason) => {
