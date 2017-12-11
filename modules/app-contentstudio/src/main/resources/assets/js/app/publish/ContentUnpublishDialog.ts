@@ -15,7 +15,8 @@ export class ContentUnpublishDialog
         super(<DependantItemsWithProgressDialogConfig> {
             title: i18n('dialog.unpublish'),
                 dialogSubName: i18n('dialog.unpublish.subname'),
-                dependantsName: i18n('dialog.unpublish.dependants'),
+            dependantsName: i18n('dialog.showDependants'),
+            dependantsDescription: i18n('dialog.unpublish.dependants'),
                 processingLabel: `${i18n('field.progress.unpublishing')}...`,
                 processHandler: () => {
                     new ContentUnpublishPromptEvent([]).fire();

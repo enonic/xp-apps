@@ -14,11 +14,14 @@ import ContentSummaryAndCompareStatusViewer = api.content.ContentSummaryAndCompa
 import DivEl = api.dom.DivEl;
 import ModalDialogConfig = api.ui.dialog.ModalDialogConfig;
 import WindowDOM = api.dom.WindowDOM;
+import i18n = api.util.i18n;
 
 export interface DependantItemsDialogConfig
     extends ModalDialogConfig {
     dialogSubName?: string;
     dependantsName?: string;
+    dependantsDescription?: string;
+    showDependantList?: boolean;
 }
 
 export class DependantItemsDialog
@@ -36,7 +39,9 @@ export class DependantItemsDialog
 
     private dependantsContainer: api.dom.DivEl;
 
-    private dependantsHeader: api.dom.H6El;
+    private dependantContainerHeader: api.dom.H6El;
+
+    private dependantContainerBody: api.dom.DivEl;
 
     private dependantList: ListBox<ContentSummaryAndCompareStatus>;
 
@@ -51,6 +56,8 @@ export class DependantItemsDialog
     protected previousScrollTop: number;
 
     protected dependantIds: ContentId[] = [];
+
+    private showDependantList: boolean;
 
     constructor(config: DependantItemsDialogConfig) {
         super(config);
@@ -73,25 +80,35 @@ export class DependantItemsDialog
         this.itemList.onItemsRemoved(itemsChangedListener);
         this.itemList.onItemsAdded(itemsChangedListener);
 
-        this.dependantsHeaderText = config.dependantsName;
-        this.dependantsHeader = new api.dom.H6El('dependants-header').setHtml(this.dependantsHeaderText, false);
-        this.dependantsHeader.onClicked(e => {
+        this.dependantsHeaderText = config.dependantsName || this.getDependantsHeader(config.showDependantList);
+        this.dependantContainerHeader = new api.dom.H6El('dependants-header').setHtml(this.dependantsHeaderText, false);
+        this.dependantContainerHeader.onClicked(e => {
             const doShow = !this.dependantList.isVisible();
             this.setDependantListVisible(doShow);
         });
 
+        this.dependantContainerBody = new api.dom.DivEl('dependants-body');
+        if (config.dependantsDescription) {
+            const desc = new api.dom.PEl('dependants-desc').setHtml(config.dependantsDescription, false);
+            this.dependantContainerBody.appendChild(desc);
+        }
+
         this.dependantList = this.createDependantList();
         this.dependantList.addClass('dependant-list');
+        this.showDependantList = config.showDependantList;
+        this.dependantContainerBody.appendChild(this.dependantList);
 
         this.dependantsContainer = new api.dom.DivEl('dependants');
-        this.dependantsContainer.appendChildren(this.dependantsHeader, this.dependantList);
+        this.dependantsContainer.appendChildren(this.dependantContainerHeader, this.dependantContainerBody);
 
         let dependantsChangedListener = () => {
             let doShow = this.countDependantItems() > 0;
             this.dependantsContainer.setVisible(doShow);
 
-            // update dependants header according to its visibility
-            this.setDependantListVisible(this.dependantList.isVisible());
+            if (doShow) {
+                // update dependants header according to list visibility
+                this.updateDependantsHeader(this.getDependantsHeader(this.dependantList.isVisible()));
+            }
         };
         this.dependantList.onItemsRemoved(dependantsChangedListener);
         this.dependantList.onItemsAdded(dependantsChangedListener);
@@ -111,18 +128,18 @@ export class DependantItemsDialog
     }
 
     private setDependantListVisible(visible: boolean) {
-        this.dependantList.setVisible(visible);
+        this.dependantContainerBody.setVisible(visible);
         this.updateDependantsHeader(this.getDependantsHeader(visible));
         this.centerMyself();
     }
 
     protected getDependantsHeader(listVisible: boolean): string {
-        return null;
+        return i18n(`dialog.${listVisible ? 'hide' : 'show' }Dependents`);
     }
 
     protected updateDependantsHeader(header?: string) {
         const count = this.countDependantItems();
-        this.dependantsHeader.setHtml((header || this.dependantsHeaderText) + ` (${count})`, false);
+        this.dependantContainerHeader.setHtml((header || this.dependantsHeaderText) + ` (${count})`, false);
     }
 
     private initLoadMask() {
@@ -159,7 +176,7 @@ export class DependantItemsDialog
 
     show(hideLoadMask: boolean = false) {
         api.dom.Body.get().appendChild(this);
-        this.setDependantListVisible(false);
+        this.setDependantListVisible(this.showDependantList);
         super.show();
         if (!hideLoadMask) {
             this.appendChildToContentPanel(this.loadMask);
