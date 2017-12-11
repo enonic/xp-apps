@@ -47,8 +47,6 @@
 
 .xp-about-dialog {
   max-width: 496px;
-  padding-left: 3em;
-  padding-right: 3em;
   background-color: rgba(0, 0, 0, 0.8);
 
   .modal-dialog-content-wrapper {
@@ -67,16 +65,17 @@
   }
 
   .modal-dialog-header {
-    margin-bottom: 0px;
+    padding: 0;
+  }
+
+  .modal-dialog-body {
+    padding: 30px;
+    padding-bottom: 20px;
   }
 
   .xp-about-dialog-app-icon {
     float: left;
-    margin: 0 18px 50px -15px;
-
-    img {
-      margin: 12px 10px 10px 10px;
-    }
+    margin: 0 30px 50px 0px;
   }
 
   h1 {
@@ -136,6 +135,7 @@
       font-size: 13px;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
+      .outline(none);
     }
   }
 
