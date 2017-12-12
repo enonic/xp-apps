@@ -21,15 +21,6 @@ var homePage = Object.create(page, {
             return this.waitForVisible(`${xpTourDialog.container}`, ms);
         }
     },
-    waitForXpTourClosed: {
-        value: function () {
-            return this.waitForNotVisible(`${xpTourDialog.container}`, 3000).catch(error=> {
-                this.saveScreenshot('err_xp_tour_dialog_not_closed');
-                throw new Error('Xp-tour dialog not closed');
-            });
-        }
-    },
-   
     waitForLoaded: {
         value: function (ms) {
             return this.waitForVisible(`${home.container}`, ms);
@@ -37,6 +28,7 @@ var homePage = Object.create(page, {
     },
     doCloseXpTourDialog: {
         value: function () {
+            browser.debug();
             return this.doClick(this.closeXpTourButton);
         }
     },
