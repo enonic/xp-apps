@@ -11,7 +11,6 @@ import ListBox = api.ui.selector.list.ListBox;
 import ModalDialog = api.ui.dialog.ModalDialog;
 import ArrayHelper = api.util.ArrayHelper;
 import ContentTreeSelectorItem = api.content.resource.ContentTreeSelectorItem;
-import i18n = api.util.i18n;
 
 export abstract class IssueDialog
     extends DependantItemsDialog {
@@ -28,8 +27,11 @@ export abstract class IssueDialog
 
     private newItems: ContentSummary[] = [];
 
-    protected constructor(title: string) {
-        super(<DependantItemsDialogConfig>{title});
+    protected constructor(title: string, showDepenantList?: boolean) {
+        super(<DependantItemsDialogConfig>{
+            title: title,
+            showDependantList: showDepenantList
+        });
 
         this.publishProcessor = new PublishProcessor(this.getItemList(), this.getDependantList());
 
@@ -92,11 +94,6 @@ export abstract class IssueDialog
 
     protected initActions() {
         throw new Error('must be implemented in inheritors');
-    }
-
-    protected getDependantsHeader(listVisible: boolean): string {
-        return i18n(`dialog.issue.${listVisible ? 'hide' : 'show' }Dependents`);
-        ;
     }
 
     public setItems(items: ContentSummaryAndCompareStatus[]) {

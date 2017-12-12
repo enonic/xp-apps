@@ -70,7 +70,6 @@ export class IssueDetailsDialog
         super(<DependantItemsWithProgressDialogConfig> {
             title: i18n('dialog.issue'),
                 dialogSubName: i18n('dialog.issue.resolving'),
-            dependantsName: i18n('dialog.issue.showDependents'),
                 processingLabel: `${i18n('field.progress.publishing')}...`,
                 buttonRow: new IssueDetailsDialogButtonRow(),
                 processHandler: () => {
@@ -135,10 +134,6 @@ export class IssueDetailsDialog
 
             return rendered;
         });
-    }
-
-    protected getDependantsHeader(listVisible: boolean): string {
-        return i18n(`dialog.issue.${listVisible ? 'hide' : 'show' }Dependents`);
     }
 
     private updateCountsAndActions() {
