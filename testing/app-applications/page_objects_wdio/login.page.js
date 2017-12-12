@@ -1,9 +1,7 @@
 var page = require('./page')
 
 var loginPage = Object.create(page, {
-    /**
-     * define elements
-     */
+    
     usernameInput: {
         get: function () {
             return `input[id^='username-input']`
@@ -54,6 +52,11 @@ var loginPage = Object.create(page, {
             return this.waitForVisible(this.loginButton, ms);
         }
     },
+    waitForPageLoaded: {
+        value: function (ms) {
+            return this.waitForVisible(this.usernameInput, ms);
+        }
+    },
 
     clickOnLoginButton: {
         value: function () {
@@ -63,15 +66,10 @@ var loginPage = Object.create(page, {
 
     doLogin: {
         value: function () {
-            return this.typeTextInInput(this.usernameInput, 'su')
-                .then(() => this.typeTextInInput(loginPage.passwordInput, 'password'))
-                .then(() => this.waitForLoginButtonVisible(1000))
-                .then(() => this.doClick(loginPage.loginButton));
-        }
-    },
-    waitForPageLoaded: {
-        value: function (ms) {
-            return this.waitForVisible(this.usernameInput, ms);
+            this.typeTextInInput(this.usernameInput, 'su');
+            this.typeTextInInput(loginPage.passwordInput, 'password');
+            this.waitForLoginButtonVisible(1000);
+            this.doClick(loginPage.loginButton);
         }
     },
 });

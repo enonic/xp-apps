@@ -2,8 +2,8 @@ const chai = require('chai');
 chai.use(require('chai-as-promised'));
 const expect = chai.expect;
 const assert = chai.assert;
-var webDriverHelper = require('../libs/WebDriverHelper');
-var appConstant = require('../libs/app_const');
+const webDriverHelper = require('../libs/WebDriverHelper');
+const appConstant = require('../libs/app_const');
 const studioUtils = require('../libs/studio.utils.js');
 
 
