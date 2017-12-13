@@ -5,8 +5,6 @@ const assert = chai.assert;
 const webDriverHelper = require('../libs/WebDriverHelper');
 const userBrowsePanel = require('../page_objects/browsepanel/userbrowse.panel');
 const testUtils = require('../libs/test.utils');
-const userItemsBuilder = require('../libs/userItems.builder.js');
-const appConst = require('../libs/app_const');
 const filterPanel = require('../page_objects/browsepanel/principal.filter.panel');
 
 describe('filter.panel.spec Principal Filter Panel specification', function () {
@@ -43,14 +41,14 @@ describe('filter.panel.spec Principal Filter Panel specification', function () {
                 return filterPanel.typeSearchText('test');
             }).then(()=> {
                 return filterPanel.waitForClearLinkVisible();
-            }).then(()=>{
+            }).then(()=> {
                 return filterPanel.clickOnClearLink();
-            }).then(()=>{
+            }).then(()=> {
                 return filterPanel.waitForClearLinkNotVisible();
             });
         });
 
-    it('WHEN `Principal Filter Panel` is opened WHEN three aggregation items THEN should be present on the panel',
+    it('GIVEN `Principal Filter Panel` is opened THEN three aggregation items should be present on the panel',
         () => {
             return userBrowsePanel.clickOnSearchButton().then(()=> {
                 return filterPanel.waitForOpened();
