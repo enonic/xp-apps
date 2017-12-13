@@ -10,6 +10,7 @@ var panel = {
     toolbar: `//div[contains(@id,'UserBrowseToolbar')]`,
     grid: `//div[@class='grid-canvas']`,
     searchButton: "//button[contains(@class, 'icon-search')]",
+    hideFilterPanelButton: "//span[contains(@class, 'hide-filter-panel-button')]",
     appHomeButton: "//div[contains(@id,'TabbedAppBar')]/div[contains(@class,'home-button')]",
 
     rowByName: function (name) {
@@ -40,6 +41,11 @@ var userBrowsePanel = Object.create(page, {
     searchButton: {
         get: function () {
             return `${panel.toolbar}` + `${panel.searchButton}`;
+        }
+    },
+    hideFilterPanelButton: {
+        get: function () {
+            return `//div[contains(@id,'PrincipalBrowseFilterPanel')]` + `${panel.hideFilterPanelButton}`;
         }
     },
     newButton: {
@@ -106,6 +112,17 @@ var userBrowsePanel = Object.create(page, {
     clickOnSearchButton: {
         value: function () {
             return this.doClick(this.searchButton);
+        }
+    },
+    clickOnHideFilterButton: {
+        value: function () {
+            return this.waitForVisible(this.hideFilterPanelButton, appConst.TIMEOUT_3).then(()=> {
+                return this.doClick(this.hideFilterPanelButton);
+            }).catch(err=> {
+                this.saveScreenshot('err_click_on_hide_filter_button');
+                throw new Error(err);
+            })
+
         }
     },
     clickOnAppHomeButton: {
