@@ -1,13 +1,17 @@
 /**
- * Created on 12.09.2017.
+ * Created on 12.12.2017.
  */
 
-var page = require('../page');
-var elements = require('../../libs/elements');
+const page = require('../page');
+const elements = require('../../libs/elements');
+const appConst = require('../../libs/app_const');
 var panel = {
     container: "//div[contains(@id,'PrincipalBrowseFilterPanel')]",
-    clearFilterButton: "//a[contains(@id,'ClearFilterButton']",
-    searchInput: "//input[contains(@id,'browse.filter.TextSearchField')]"
+    clearFilterButton: "//a[contains(@id,'ClearFilterButton')]",
+    searchInput: "//input[contains(@id,'browse.filter.TextSearchField')]",
+    aggregationGroupView: "//div[contains(@id,'PrincipalTypeAggregationGroupView')]",
+    userAggregationCheckbox: "//div[contains(@id,'Checkbox') and child::label[contains(.,'User (')]]",
+    userAggregationItems: "//div[contains(@id,'BucketView')]//div[contains(@id,'Checkbox') ]/label",
 };
 var browseFilterPanel = Object.create(page, {
 
@@ -21,6 +25,18 @@ var browseFilterPanel = Object.create(page, {
             return `${panel.container}` + `${panel.searchInput}`;
         }
     },
+    getNumberAggregatedUsers: {
+        value: function () {
+            let userSelector = `${panel.container}` + `${panel.aggregationGroupView}` + `${panel.userAggregationCheckbox}` + `/label`;
+            return this.getText(userSelector);
+        }
+    },
+    getAggregationItems: {
+        value: function () {
+            let selector = `${panel.container}` + `${panel.aggregationGroupView}` + `${panel.userAggregationItems}`;
+            return this.getTextFromElements(selector);
+        }
+    },
     typeSearchText: {
         value: function (text) {
             return this.typeTextInInput(this.searchTextInput, text);
@@ -28,19 +44,31 @@ var browseFilterPanel = Object.create(page, {
     },
     waitForOpened: {
         value: function () {
-            return this.waitForVisible(`${panel.container}`, 3000);
+            return this.waitForVisible(`${panel.userAggregationCheckbox}`, appConst.TIMEOUT_3);
 
+        }
+    },
+    waitForClosed: {
+        value: function () {
+            return this.waitForNotVisible(`${panel.container}`, appConst.TIMEOUT_1).catch(error=> {
+                this.saveScreenshot('err_filter_panel_close');
+                throw new Error('Filter Panel was not closed');
+            });
         }
     },
     isPanelVisible: {
         value: function () {
             return this.isVisible(`${panel.container}`);
-
         }
     },
     waitForClearLinkVisible: {
         value: function () {
             return this.waitForVisible(this.clearFilterLink)
+        }
+    },
+    waitForClearLinkNotVisible: {
+        value: function () {
+            return this.waitForNotVisible(this.clearFilterLink)
         }
     },
     clickOnClearLink: {
