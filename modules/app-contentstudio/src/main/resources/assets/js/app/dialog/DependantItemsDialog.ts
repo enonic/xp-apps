@@ -117,11 +117,11 @@ export class DependantItemsDialog
 
         this.initLoadMask();
 
-        this.getContentPanel().onScrolled(() => {
+        this.getBody().onScrolled(() => {
             this.doPostLoad();
         });
 
-        this.getContentPanel().onScroll(() => {
+        this.getBody().onScroll(() => {
             this.doPostLoad();
         });
 
@@ -280,7 +280,7 @@ export class DependantItemsDialog
     }
 
     private doPostLoad() {
-        if (this.previousScrollTop !== this.getContentPanel().getEl().getScrollTop()) {
+        if (this.previousScrollTop !== this.getBody().getEl().getScrollTop()) {
             setTimeout(this.postLoad.bind(this), 150);
         }
     }
@@ -288,10 +288,11 @@ export class DependantItemsDialog
     protected postLoad() {
         let lastVisible;
 
-        this.previousScrollTop = this.getContentPanel().getEl().getScrollTop();
+        const dialogBodyEl = this.getBody().getEl();
+        this.previousScrollTop = dialogBodyEl.getScrollTop();
 
-        let start = this.getContentPanel().getEl().getOffsetTop();
-        let end = this.getContentPanel().getEl().getHeight() + start;
+        let start = dialogBodyEl.getOffsetTop();
+        let end = dialogBodyEl.getHeight() + start;
 
         let items = this.getDependantList().getItemViews();
 

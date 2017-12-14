@@ -53,19 +53,18 @@
     margin-bottom: -4em;
   }
 
-  .cancel-button-top, .cancel-button-top:hover {
-    background-color: rgba(0, 0, 0, 0);
-    &:before {
-      color: #bfbfbf;
+  .cancel-button-top {
+    background-color: rgba(0, 0, 0, 0) !important;
+
+    &:hover {
+      &:before, &:after {
+        background-color: @admin-white !important;
+      }
     }
   }
 
   .xp-about-dialog-content {
     color: #bfbfbf;
-  }
-
-  .modal-dialog-header {
-    padding: 0;
   }
 
   .modal-dialog-body {

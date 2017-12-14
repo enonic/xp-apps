@@ -91,12 +91,10 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
                 this.marketAppPanel = new MarketAppPanel(this.applicationInput);
             }
 
+            this.header.appendChildren(...[this.applicationInput, this.statusMessage, this.clearButton = this.createClearFilterButton()]);
+
             const marketAppPanelWrapper: DivEl = new DivEl('market-app-panel-wrapper');
             marketAppPanelWrapper.appendChild(this.marketAppPanel);
-
-            this.appendChildToContentPanel(this.applicationInput);
-            this.appendChildToContentPanel(this.statusMessage);
-            this.appendChildToContentPanel(this.clearButton = this.createClearFilterButton());
             this.appendChildToContentPanel(marketAppPanelWrapper);
 
             return rendered;
