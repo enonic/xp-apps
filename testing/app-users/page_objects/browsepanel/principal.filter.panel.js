@@ -11,6 +11,8 @@ var panel = {
     searchInput: "//input[contains(@id,'browse.filter.TextSearchField')]",
     aggregationGroupView: "//div[contains(@id,'PrincipalTypeAggregationGroupView')]",
     userAggregationCheckbox: "//div[contains(@id,'Checkbox') and child::label[contains(.,'User (')]]",
+    roleAggregationCheckbox: "//div[contains(@id,'Checkbox') and child::label[contains(.,'Role (')]]",
+    storeAggregationCheckbox: "//div[contains(@id,'Checkbox') and child::label[contains(.,'User Store (')]]",
     userAggregationItems: "//div[contains(@id,'BucketView')]//div[contains(@id,'Checkbox') ]/label",
 };
 var browseFilterPanel = Object.create(page, {
@@ -35,6 +37,24 @@ var browseFilterPanel = Object.create(page, {
         value: function () {
             let selector = `${panel.container}` + `${panel.aggregationGroupView}` + `${panel.userAggregationItems}`;
             return this.getTextFromElements(selector);
+        }
+    },
+    clickOnUserAggregation:{
+      value:function(){
+          let userSelector = `${panel.container}` + `${panel.aggregationGroupView}` + `${panel.userAggregationCheckbox}`+'/label'
+          return this.doClick(userSelector);
+      }
+    },
+    clickOnRoleAggregation:{
+        value:function(){
+            let userSelector = `${panel.container}` + `${panel.aggregationGroupView}` + `${panel.roleAggregationCheckbox}`+'/label'
+            return this.doClick(userSelector);
+        }
+    },
+    clickOnStoreAggregation:{
+        value:function(){
+            let userSelector = `${panel.container}` + `${panel.aggregationGroupView}` + `${panel.storeAggregationCheckbox}`+'/label'
+            return this.doClick(userSelector);
         }
     },
     typeSearchText: {

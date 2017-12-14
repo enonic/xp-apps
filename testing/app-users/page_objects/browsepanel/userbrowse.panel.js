@@ -7,6 +7,8 @@ const elements = require('../../libs/elements');
 const appConst = require('../../libs/app_const');
 
 var panel = {
+    container: `//div[contains(@id,'UserBrowsePanel')]`,
+    selectionToggler: `//button[contains(@id,'SelectionPanelToggler')]`,
     toolbar: `//div[contains(@id,'UserBrowseToolbar')]`,
     grid: `//div[@class='grid-canvas']`,
     searchButton: "//button[contains(@class, 'icon-search')]",
@@ -18,6 +20,11 @@ var panel = {
     },
     checkboxByName: function (name) {
         return `${elements.itemByName(name)}` +
+               `/ancestor::div[contains(@class,'slick-row')]/div[contains(@class,'slick-cell-checkboxsel')]/label`
+    },
+
+    checkboxByDisplayName: function (displayName) {
+        return `${elements.itemByDisplayName(displayName)}` +
                `/ancestor::div[contains(@class,'slick-row')]/div[contains(@class,'slick-cell-checkboxsel')]/label`
     },
 
@@ -33,6 +40,11 @@ var panel = {
 var userBrowsePanel = Object.create(page, {
 
     /////////Getters
+    selectionToggler: {
+        get: function () {
+            return `${panel.container}` + `${panel.selectionToggler}`
+        }
+    },
     appHomeButton: {
         get: function () {
             return `${panel.appHomeButton}`;
@@ -227,7 +239,7 @@ var userBrowsePanel = Object.create(page, {
     },
     clickCheckboxAndSelectRowByDisplayName: {
         value: function (displayName) {
-            var displayNameXpath = panel.rowByName(displayName);
+            var displayNameXpath = panel.checkboxByDisplayName(displayName);
             return this.waitForVisible(displayNameXpath, 2000).then(()=> {
                 return this.doClick(displayNameXpath);
             }).catch((err)=> {
@@ -269,6 +281,44 @@ var userBrowsePanel = Object.create(page, {
         value: function (name) {
             var expanderIcon = panel.expanderIconByName(name);
             return this.doClick(expanderIcon);
+        }
+    },
+    getGridItemDisplayNames: {
+        value: function () {
+            let selector = `${panel.container}` + `${elements.SLICK_ROW}` + `${elements.H6_DISPLAY_NAME}`
+            //return this.elements(selector);
+            return this.getTextFromElements(selector);
+        }
+    },
+    waitForSelectionTogglerVisible: {
+        value: function () {
+            let selector = `${panel.container}` + `${panel.selectionToggler}`;
+            return this.getBrowser().waitUntil(function () {
+                return this.getAttribute(selector, 'class').then(result=> {
+                    return result.includes('any-selected');
+                })
+            }, 3000, 'expected style not present after 3s');
+        }
+    },
+    clickOnSelectionToggler: {
+        value: function () {
+            let selector = `${panel.container}` + `${panel.selectionToggler}`;
+            return this.doClick(selector);
+        }
+    },
+
+    isSelectionTogglerVisible: {
+        value: function () {
+            let selector = `${panel.container}` + `${panel.selectionToggler}`;
+            return this.getAttribute(selector, 'class').then(result=> {
+                return result.includes('any-selected');
+            });
+        }
+    },
+    getNumberInSelectionToggler: {
+        value: function () {
+            let selector = `${panel.selectionToggler}` + `/span`;
+            return this.getText(selector);
         }
     }
 });
