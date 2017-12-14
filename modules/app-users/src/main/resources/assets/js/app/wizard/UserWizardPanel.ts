@@ -111,13 +111,14 @@ export class UserWizardPanel extends PrincipalWizardPanel {
     }
 
     produceCreateUserRequest(): CreateUserRequest {
-        let wizardHeader = this.getWizardHeader();
-        let login = wizardHeader.getName();
-        let key = PrincipalKey.ofUser(this.getUserStore().getKey(), login);
-        let name = wizardHeader.getDisplayName();
-        let email = this.userEmailWizardStepForm.getEmail();
-        let password = this.userPasswordWizardStepForm.getPassword();
-        let memberships = this.membershipsWizardStepForm.getMemberships().map(el => el.getKey());
+        const wizardHeader = this.getWizardHeader();
+        wizardHeader.normalizeNames();
+        const login = wizardHeader.getName();
+        const key = PrincipalKey.ofUser(this.getUserStore().getKey(), login);
+        const name = wizardHeader.getDisplayName();
+        const email = this.userEmailWizardStepForm.getEmail();
+        const password = this.userPasswordWizardStepForm.getPassword();
+        const memberships = this.membershipsWizardStepForm.getMemberships().map(el => el.getKey());
         return new CreateUserRequest()
             .setKey(key)
             .setDisplayName(name)
@@ -159,7 +160,8 @@ export class UserWizardPanel extends PrincipalWizardPanel {
     }
 
     assembleViewedItem(): Principal {
-        let wizardHeader = this.getWizardHeader();
+        const wizardHeader = this.getWizardHeader();
+        wizardHeader.normalizeNames();
         return <Principal>new UserBuilder(this.getPersistedItem() ? this.getPersistedItem().asUser() : null)
             .setEmail(this.userEmailWizardStepForm.getEmail())
             .setLogin(wizardHeader.getName())

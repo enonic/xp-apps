@@ -63,6 +63,7 @@ export class GroupWizardPanel extends GroupRoleWizardPanel {
 
     produceCreateGroupRequest(): CreateGroupRequest {
         const wizardHeader = this.getWizardHeader();
+        wizardHeader.normalizeNames();
         const key = PrincipalKey.ofGroup(this.getUserStore().getKey(), wizardHeader.getName());
         const name = wizardHeader.getDisplayName();
         const members = this.getMembersWizardStepForm().getMembers().map(el => el.getKey());
