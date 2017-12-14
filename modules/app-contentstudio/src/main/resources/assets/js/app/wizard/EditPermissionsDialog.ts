@@ -9,7 +9,8 @@ import AccessControlList = api.security.acl.AccessControlList;
 import ContentPath = api.content.ContentPath;
 import i18n = api.util.i18n;
 
-export class EditPermissionsDialog extends api.ui.dialog.ModalDialog {
+export class EditPermissionsDialog
+    extends api.ui.dialog.ModalDialog {
 
     private contentId: ContentId;
 
@@ -81,9 +82,9 @@ export class EditPermissionsDialog extends api.ui.dialog.ModalDialog {
             const inheritPermissions = this.inheritPermissionsCheck.isChecked();
 
             this.comboBox.toggleClass('disabled', inheritPermissions);
-            if (inheritPermissions) {
-                this.layoutInheritedPermissions();
-            }
+
+            inheritPermissions ? this.layoutInheritedPermissions() : this.layoutOriginalPermissions();
+
             this.comboBox.getComboBox().setVisible(!inheritPermissions);
             this.comboBox.setReadOnly(inheritPermissions);
 
@@ -170,7 +171,6 @@ export class EditPermissionsDialog extends api.ui.dialog.ModalDialog {
     }
 
     private setUpDialog() {
-        this.comboBox.clearSelection(true);
         this.overwriteChildPermissionsCheck.setChecked(false);
 
         let contentPermissionsEntries: AccessControlEntry[] = this.permissions.getEntries();
@@ -178,11 +178,7 @@ export class EditPermissionsDialog extends api.ui.dialog.ModalDialog {
         this.originalInherit = this.inheritPermissions;
         this.originalOverwrite = this.overwritePermissions;
 
-        this.originalValues.forEach((item) => {
-            if (!this.comboBox.isSelected(item)) {
-                this.comboBox.select(item);
-            }
-        });
+        this.layoutOriginalPermissions();
 
         this.inheritPermissionsCheck.setChecked(this.inheritPermissions);
 
@@ -192,6 +188,15 @@ export class EditPermissionsDialog extends api.ui.dialog.ModalDialog {
     private layoutInheritedPermissions() {
         this.comboBox.clearSelection(true);
         this.parentPermissions.forEach((item) => {
+            if (!this.comboBox.isSelected(item)) {
+                this.comboBox.select(item);
+            }
+        });
+    }
+
+    private layoutOriginalPermissions() {
+        this.comboBox.clearSelection(true);
+        this.originalValues.forEach((item) => {
             if (!this.comboBox.isSelected(item)) {
                 this.comboBox.select(item);
             }
@@ -243,7 +248,8 @@ export class EditPermissionsDialog extends api.ui.dialog.ModalDialog {
     }
 }
 
-export class EditPermissionsDialogHeader extends api.ui.dialog.ModalDialogHeader {
+export class EditPermissionsDialogHeader
+    extends api.ui.dialog.ModalDialogHeader {
 
     private pathEl: api.dom.PEl;
 
