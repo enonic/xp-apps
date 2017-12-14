@@ -26,6 +26,11 @@ module.exports = {
             return browsePanel.clickOnRowByName(name);
         });
     },
+    openFilterPanel: function () {
+        return browsePanel.clickOnSearchButton().then(()=> {
+            return filterPanel.waitForOpened();
+        })
+    },
     typeNameInFilterPanel: function (name) {
         return filterPanel.isPanelVisible().then((result)=> {
             if (!result) {
@@ -76,7 +81,7 @@ module.exports = {
             return this.doLoginAndSwitchToUsers(browser);
         }).catch((err)=> {
             this.saveScreenshot(browser, "err_login_page");
-            throw  new Error("Login for was not loaded");
+            throw  new Error("Login Page is not loaded");
         });
     },
     doSwitchToUsersApp_old: function (browser) {

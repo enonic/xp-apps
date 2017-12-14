@@ -70,6 +70,9 @@ Page.prototype.typeTextInInput = function (selector, text) {
 Page.prototype.clearElement = function (selector) {
     return this.getBrowser().clearElement(selector);
 };
+Page.prototype.elements = function (selector) {
+    return this.getBrowser().elements(selector);
+};
 
 Page.prototype.getText = function (selector) {
     return this.getBrowser().getText(selector);
