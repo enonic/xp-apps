@@ -5,12 +5,15 @@ var authLib = require('/lib/xp/auth');
 exports.create = function createUser(params) {
     var key = common.required(params, 'key');
     var userStoreKey = common.userStoreFromKey(key);
+    var name = common.required(params, 'login');
+    var displayName = common.required(params, 'displayName');
+    var email = common.required(params, 'email');
 
     var createdUser = authLib.createUser({
         userStore: userStoreKey,
-        name: common.required(params, 'login'),
-        displayName: common.required(params, 'displayName'),
-        email: common.required(params, 'email')
+        name: name,
+        displayName: displayName,
+        email: email
     });
 
     var mms = params.memberships;
@@ -18,7 +21,8 @@ exports.create = function createUser(params) {
         principals.addMemberships(key, mms);
     }
 
-    exports.updatePwd(key, common.required(params, 'password'));
+    var password = common.required(params, 'password');
+    exports.updatePwd(key, password);
 
     populateMemberships(createdUser);
 
@@ -27,12 +31,13 @@ exports.create = function createUser(params) {
 
 exports.update = function updateUser(params) {
     var key = common.required(params, 'key');
+    var displayName = common.required(params, 'displayName');
 
     var updatedUser = authLib.modifyUser({
         key: key,
         editor: function(user) {
             var newUser = user;
-            newUser.displayName = params.displayName;
+            newUser.displayName = displayName;
             newUser.email = params.email;
             newUser.login = params.login;
             return newUser;
