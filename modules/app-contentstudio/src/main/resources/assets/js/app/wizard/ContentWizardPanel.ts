@@ -773,6 +773,7 @@ export class ContentWizardPanel
                         this.defaultModels = defaultModels;
                         return this.liveEditModel.init(defaultModels.getPageTemplate(), defaultModels.getPageDescriptor()).then(model => {
                             this.getLivePanel().setModel(this.liveEditModel);
+                            this.updateButtonsState();
                             return true;
                         });
                     });
