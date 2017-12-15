@@ -68,13 +68,14 @@ export class EditPermissionsDialog extends api.ui.dialog.ModalDialog {
         form.appendChild(this.comboBox);
 
         let comboBoxChangeListener = () => {
-            let currentEntries: AccessControlEntry[] = this.getEntries().sort();
+            const currentEntries: AccessControlEntry[] = this.getEntries().sort();
 
-            let permissionsModified: boolean = !api.ObjectHelper.arrayEquals(currentEntries, this.originalValues);
-            let inheritCheckModified: boolean = this.inheritPermissionsCheck.isChecked() !== this.originalInherit;
-            let overwriteModified: boolean = this.overwriteChildPermissionsCheck.isChecked() !== this.originalOverwrite;
+            const permissionsModified: boolean = !api.ObjectHelper.arrayEquals(currentEntries, this.originalValues);
+            const inheritCheckModified: boolean = this.inheritPermissionsCheck.isChecked() !== this.originalInherit;
+            const overwriteModified: boolean = this.overwriteChildPermissionsCheck.isChecked() !== this.originalOverwrite;
+            const isNotEmpty: boolean = currentEntries && currentEntries.length > 0;
 
-            this.applyAction.setEnabled(permissionsModified || inheritCheckModified || overwriteModified);
+            this.applyAction.setEnabled((permissionsModified || inheritCheckModified || overwriteModified) && isNotEmpty);
         };
 
         let changeListener = () => {
