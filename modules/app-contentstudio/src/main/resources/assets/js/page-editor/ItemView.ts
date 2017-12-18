@@ -533,7 +533,14 @@ export class ItemView
 
         // Notify parent ItemView is entered.
         if (this.parentItemView) {
-            this.parentItemView.notifyMouseOverView();
+            const rect = this.getEl().getBoundingClientRect();
+
+            if (event.clientX < rect.left || event.clientX > rect.right || // if mouse leave cur element
+                event.clientY < rect.top || event.clientY > rect.bottom) {
+                this.parentItemView.notifyMouseOverView();
+            } else {
+                this.parentItemView.notifyMouseLeaveView();
+            }
         }
 
         if (ItemView.debug) {
