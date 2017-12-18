@@ -246,7 +246,6 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
             this.toggleUploadersEnabled();
             this.loadMask.hide();
             this.mostPopularContentTypes.showIfNotEmpty();
-            this.centerMyself();
         }).done();
     }
 

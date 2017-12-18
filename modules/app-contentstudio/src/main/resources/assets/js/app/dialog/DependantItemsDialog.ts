@@ -130,7 +130,6 @@ export class DependantItemsDialog
     private setDependantListVisible(visible: boolean) {
         this.dependantContainerBody.setVisible(visible);
         this.updateDependantsHeader(this.getDependantsHeader(visible));
-        this.centerMyself();
     }
 
     protected getDependantsHeader(listVisible: boolean): string {
@@ -207,32 +206,13 @@ export class DependantItemsDialog
         this.itemList.addItems(items, silent);
     }
 
-    private extendsWindowHeightSize(): boolean {
-        if (ResponsiveRanges._540_720.isFitOrBigger(this.getEl().getWidthWithBorder())) {
-            let el = this.getEl();
-            let bottomPosition: number = (el.getTopPx() || parseFloat(el.getComputedProperty('top')) || 0) +
-                                         el.getMarginTop() +
-                                         el.getHeightWithBorder() +
-                                         el.getMarginBottom();
-
-            if (WindowDOM.get().asWindow().innerHeight < bottomPosition) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     setDependantItems(items: ContentSummaryAndCompareStatus[]) {
         this.dependantList.setItems(items);
-
-        if (this.extendsWindowHeightSize()) {
-            this.centerMyself();
-        }
     }
 
     addDependantItems(items: ContentSummaryAndCompareStatus[]) {
         this.dependantList.addItems(items);
-    }
+    }s
 
     setSubTitle(text: string, escapeHtml?: boolean) {
         this.subTitle.setHtml(text, escapeHtml);

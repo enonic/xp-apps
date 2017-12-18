@@ -104,7 +104,6 @@ export class ContentDeleteDialog
                 this.setDependantItems(descendants);
                 this.manageInstantDeleteStatus(this.getItemList().getItems());
                 this.countItemsToDeleteAndUpdateButtonCounter();
-                this.centerMyself();
             }).finally(() => {
                 this.loadMask.hide();
                 this.unlockControls();

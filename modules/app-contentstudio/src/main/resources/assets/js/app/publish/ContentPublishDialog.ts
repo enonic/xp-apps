@@ -82,8 +82,6 @@ export class ContentPublishDialog
 
             this.loadMask.hide();
             this.updateSubTitleShowScheduleAndButtonCount();
-
-            this.centerMyself();
         });
 
         this.getEl().addClass('publish-dialog');

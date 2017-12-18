@@ -76,8 +76,6 @@ export class IssueListDialog
         dockedPanel.addItem(i18n('field.issue.openIssues'), true, this.openIssuesPanel);
         dockedPanel.addItem(i18n('field.issue.closedIssues'), true, this.closedIssuesPanel);
 
-        dockedPanel.getDeck().onPanelShown(panel => this.centerMyself());
-
         return dockedPanel;
     }
 
@@ -241,9 +239,6 @@ export class IssueListDialog
         const issuePanel = new IssuesPanel(issueStatus);
 
         issuePanel.onIssueSelected(issue => this.notifyIssueSelected(issue.getIssue()));
-        const handleItemsChanged = () => setTimeout(this.centerMyself.bind(this), 100);
-        issuePanel.getIssueList().onItemsAdded(handleItemsChanged);
-        issuePanel.getIssueList().onItemsRemoved(handleItemsChanged);
 
         return issuePanel;
     }

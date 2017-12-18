@@ -63,7 +63,6 @@ export class ContentUnpublishDialog
                 this.unlockControls();
             }).finally(() => {
                 this.loadMask.hide();
-                this.centerMyself();
             });
         });
 

@@ -69,10 +69,6 @@ export abstract class IssueDialog
             this.form.selectContentItems(items.map(item => item.getContentSummary()), true);
         });
 
-        this.getDependantList().onItemsAdded(() => {
-            setTimeout(() => this.centerMyself(), 100);
-        });
-
         this.closeIcon.onClicked(() => this.opener ? this.opener.close() : true);
 
         this.debouncedAddItems = api.util.AppHelper.debounce(() => {
@@ -176,7 +172,6 @@ export abstract class IssueDialog
 
     private initFormView() {
         this.prependChildToContentPanel(this.form);
-        this.centerMyself();
     }
 
     protected displayValidationErrors(value: boolean) {

@@ -114,7 +114,6 @@ export class IssueDetailsDialog
             const tabBar = new TabBar();
             this.tabPanel = new NavigatedDeckPanel(tabBar);
             this.tabPanel.onPanelShown(event => {
-                this.centerMyself();
                 const isIssue = event.getPanel() == issuePanel;
                 this.toggleClass('tab-issue', isIssue);
                 this.toggleClass('tab-items', !isIssue);
@@ -229,11 +228,7 @@ export class IssueDetailsDialog
             this.ignoreNextExcludeChildrenEvent = false;
         });
 
-        const handleDependantsChanged = () => setTimeout(this.centerMyself.bind(this), 100);
-        const dependantList = this.getDependantList();
-        dependantList.onItemsAdded(handleDependantsChanged);
-        dependantList.onItemsRemoved(handleDependantsChanged);
-        dependantList.onItemRemoveClicked(handleRemoveItemClicked);
+        this.getDependantList().onItemRemoveClicked(handleRemoveItemClicked);
 
         this.publishProcessor.onLoadingFinished(() => {
             this.updateCountsAndActions();

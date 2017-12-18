@@ -79,7 +79,6 @@ export class SchedulePublishDialog
                 this.formView.validate();
             });
             this.appendChildToContentPanel(this.formView);
-            this.centerMyself();
 
         });
     }

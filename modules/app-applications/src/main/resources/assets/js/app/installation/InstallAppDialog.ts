@@ -39,8 +39,6 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
                 this.statusMessage.removeClass('empty');
             }
             this.statusMessage.addClass('loaded');
-
-            this.centerMyself();
         };
 
         api.dom.Body.get().appendChild(this);
@@ -73,8 +71,6 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
 
                 this.statusMessage.addClass('empty failed');
                 this.statusMessage.setHtml(message);
-
-                setTimeout(this.centerMyself.bind(this), 100);
             });
 
             this.initUploaderListeners();
