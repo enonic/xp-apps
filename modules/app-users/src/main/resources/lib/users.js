@@ -56,10 +56,11 @@ exports.update = function updateUser(params) {
 };
 
 exports.updatePwd = function(key, pwd) {
+    var password = pwd.replace(/\s/g, '');
     try {
         authLib.changePassword({
             userKey: key,
-            password: pwd
+            password: password
         });
         return true;
     } catch (e) {

@@ -1,6 +1,5 @@
 import '../../api.ts';
 import {OpenChangePasswordDialogEvent} from './OpenChangePasswordDialogEvent';
-
 import Principal = api.security.Principal;
 import PasswordGenerator = api.ui.text.PasswordGenerator;
 import DialogButton = api.ui.dialog.DialogButton;
@@ -72,11 +71,7 @@ export class ChangeUserPasswordDialog extends api.ui.dialog.ModalDialog {
     }
 
     private toggleChangePasswordButton() {
-        if (this.password.getValue().length === 0) {
-            this.changePasswordButton.setEnabled(false);
-        } else {
-            this.changePasswordButton.setEnabled(true);
-        }
+        this.changePasswordButton.setEnabled(this.password.isValid());
     }
 
     open() {

@@ -29,7 +29,7 @@ export class UserWizardPanel extends PrincipalWizardPanel {
 
     saveChanges(): wemQ.Promise<Principal> {
         if (!this.isRendered() ||
-            (this.userEmailWizardStepForm.isValid() && (this.getPersistedItem() || this.userPasswordWizardStepForm.isValid()))) {
+            (this.userEmailWizardStepForm.isValid() && this.userPasswordWizardStepForm.isValid())) {
 
             return super.saveChanges();
         } else {
