@@ -5,10 +5,11 @@ var authLib = require('/lib/xp/auth');
 exports.create = function createRole(params) {
     var key = common.required(params, 'key');
     var name = common.nameFromKey(key);
+    var displayName = common.required(params, 'displayName');
 
     var createdRole = authLib.createRole({
         name: name,
-        displayName: common.required(params, 'displayName'),
+        displayName: displayName,
         description: params.description
     });
 
@@ -24,12 +25,13 @@ exports.create = function createRole(params) {
 
 exports.update = function updateRole(params) {
     var key = common.required(params, 'key');
+    var displayName = common.required(params, 'displayName');
 
     var modifiedRole = authLib.modifyRole({
         key: key,
         editor: function(role) {
             var newRole = role;
-            newRole.displayName = params.displayName;
+            newRole.displayName = displayName;
             newRole.description = params.description;
             return newRole;
         }

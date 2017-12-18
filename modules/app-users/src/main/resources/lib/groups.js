@@ -6,11 +6,12 @@ exports.create = function createGroup(params) {
     var key = common.required(params, 'key');
     var userStoreKey = common.userStoreFromKey(key);
     var name = common.nameFromKey(key);
+    var displayName = common.required(params, 'displayName');
 
     var createdGroup = authLib.createGroup({
         userStore: userStoreKey,
         name: name,
-        displayName: common.required(params, 'displayName'),
+        displayName: displayName,
         description: params.description
     });
 
@@ -30,12 +31,13 @@ exports.create = function createGroup(params) {
 
 exports.update = function updateGroup(params) {
     var key = common.required(params, 'key');
+    var displayName = common.required(params, 'displayName');
 
     var updatedGroup = authLib.modifyGroup({
         key: key,
         editor: function(group) {
             var newGroup = group;
-            newGroup.displayName = params.displayName;
+            newGroup.displayName = displayName;
             newGroup.description = params.description;
             return newGroup;
         }

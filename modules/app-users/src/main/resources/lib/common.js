@@ -35,14 +35,23 @@ exports.singleOrArray = function(value) {
     return value && value.length === 1 ? value[0] : value;
 };
 
+function isString(str) {
+    return (typeof str === 'string') || (str instanceof String);
+}
+
+exports.isString = isString;
+
 exports.refresh = function() {
     newConnection().refresh('SEARCH');
 };
 
-exports.required = function(params, name) {
+exports.required = function (params, name, skipTrimming) {
     var value = params[name];
     if (value === undefined || value === null) {
         throw new Error("Parameter '" + name + "' is required");
+    }
+    if (!skipTrimming && isString(value)) {
+        return value.trim();
     }
     return value;
 };
@@ -188,11 +197,11 @@ function typeFromKey(key) {
 }
 exports.typeFromKey = typeFromKey;
 
-exports.prettifyName = function(text) {
+exports.prettifyName = function (text) {
     return namePrettyfier.create(text);
 };
 
-exports.querySingle = function(query) {
+exports.querySingle = function (query) {
     var results = queryAll({
         start: 0,
         count: 1,
@@ -202,11 +211,11 @@ exports.querySingle = function(query) {
     return results.total === 1 ? results.hits[0] : null;
 };
 
-exports.create = function(params) {
+exports.create = function (params) {
     return newConnection().create(params);
 };
 
-exports.update = function(params) {
+exports.update = function (params) {
     return newConnection().modify(params);
 };
 

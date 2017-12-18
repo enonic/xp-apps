@@ -152,9 +152,10 @@ export class UserStoreWizardPanel
     }
 
     private produceCreateUserStoreRequest(): CreateUserStoreRequest {
-        let header = this.getWizardHeader();
-        let key = new UserStoreKey(header.getName());
-        let name = header.getDisplayName();
+        let wizardHeader = this.getWizardHeader();
+        wizardHeader.normalizeNames();
+        let key = new UserStoreKey(wizardHeader.getName());
+        let name = wizardHeader.getDisplayName();
         let description = this.userStoreWizardStepForm.getDescription();
         let authConfig = this.userStoreWizardStepForm.getAuthConfig();
         let permissions = this.permissionsWizardStepForm.getPermissions();

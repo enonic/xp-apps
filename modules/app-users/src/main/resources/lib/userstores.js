@@ -74,11 +74,14 @@ module.exports = {
         return result;
     },
     create: function(params) {
+        var name = common.required(params, 'key');
+        var displayName = common.required(params, 'displayName');
+
         var createdStore = common.create({
             _parentPath: '/identity',
-            _name: common.prettifyName(params.key),
+            _name: common.prettifyName(name),
             _permissions: calculateUserStorePermissions(params.permissions),
-            displayName: params.displayName,
+            displayName: displayName,
             description: params.description,
             idProvider: calculateIdProvider(params.authConfig)
         });
@@ -109,12 +112,13 @@ module.exports = {
     },
     update: function(params) {
         var key = common.required(params, 'key');
+        var displayName = common.required(params, 'displayName');
 
         var updatedStore = common.update({
             key: '/identity/' + key,
             editor: function(store) {
                 var newStore = store;
-                newStore.displayName = params.displayName;
+                newStore.displayName = displayName;
                 newStore.description = params.description;
                 newStore._permissions = calculateUserStorePermissions(
                     params.permissions

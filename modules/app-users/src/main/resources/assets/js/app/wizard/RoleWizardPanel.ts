@@ -52,6 +52,7 @@ export class RoleWizardPanel
 
     produceCreateRoleRequest(): CreateRoleRequest {
         let wizardHeader = this.getWizardHeader();
+        wizardHeader.normalizeNames();
         let key = PrincipalKey.ofRole(wizardHeader.getName());
         let name = wizardHeader.getDisplayName();
         let members = this.getMembersWizardStepForm().getMembers().map(el => el.getKey());
