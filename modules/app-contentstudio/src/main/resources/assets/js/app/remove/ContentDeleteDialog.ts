@@ -142,7 +142,7 @@ export class ContentDeleteDialog
         this.instantDeleteCheckbox.setChecked(false);
         if (this.messageId) {
 
-            this.removeClickIgnoredEl(api.notify.NotifyManager.get().getNotification(this.messageId));
+            this.removeClickIgnoredElement(api.notify.NotifyManager.get().getNotification(this.messageId));
             api.notify.NotifyManager.get().hide(this.messageId);
 
             this.messageId = '';
