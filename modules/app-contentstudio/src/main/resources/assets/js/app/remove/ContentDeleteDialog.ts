@@ -8,6 +8,7 @@ import {DeleteItemViewer} from './DeleteItemViewer';
 import CompareStatus = api.content.CompareStatus;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import i18n = api.util.i18n;
+import NotifyManager = api.notify.NotifyManager;
 
 export class ContentDeleteDialog
     extends DependantItemsWithProgressDialog {
@@ -26,7 +27,7 @@ export class ContentDeleteDialog
 
     constructor() {
         super(<DependantItemsWithProgressDialogConfig> {
-            title: i18n('dialog.delete'),
+                title: i18n('dialog.delete'),
                 dialogSubName: i18n('dialog.delete.subname'),
                 dependantsDescription: i18n('dialog.delete.dependants'),
                 showDependantList: true,
@@ -84,6 +85,8 @@ export class ContentDeleteDialog
                 this.messageId = api.notify.showWarning(
                     i18n('dialog.delete.dependency.warning'), false);
 
+                this.addClickIgnoredElement(NotifyManager.get().getNotification(this.messageId));
+
                 this.getItemList().getItemViews().forEach((itemView) => {
                     const contentId = itemView.getBrowseItem().getModel().getContentId().toString();
 
@@ -137,7 +140,10 @@ export class ContentDeleteDialog
         super.close();
         this.instantDeleteCheckbox.setChecked(false);
         if (this.messageId) {
+
+            this.removeClickIgnoredElement(api.notify.NotifyManager.get().getNotification(this.messageId));
             api.notify.NotifyManager.get().hide(this.messageId);
+
             this.messageId = '';
         }
     }
