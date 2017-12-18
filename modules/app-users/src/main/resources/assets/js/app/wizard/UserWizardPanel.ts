@@ -29,7 +29,7 @@ export class UserWizardPanel extends PrincipalWizardPanel {
 
     saveChanges(): wemQ.Promise<Principal> {
         if (!this.isRendered() ||
-            (this.userEmailWizardStepForm.isValid() && (this.getPersistedItem() || this.userPasswordWizardStepForm.isValid()))) {
+            (this.userEmailWizardStepForm.isValid() && this.userPasswordWizardStepForm.isValid())) {
 
             return super.saveChanges();
         } else {
@@ -185,7 +185,7 @@ export class UserWizardPanel extends PrincipalWizardPanel {
         if (api.util.StringHelper.isEmpty(formEmail)) {
             throw i18n('notify.empty.email');
         } else if (!this.userEmailWizardStepForm.isValid()) {
-            throw i18n('notify.invalid.email');
+            throw `${i18n('field.email.invalid')}.`;
         }
 
     }
@@ -195,7 +195,7 @@ export class UserWizardPanel extends PrincipalWizardPanel {
         if (api.util.StringHelper.isEmpty(password)) {
             throw i18n('notify.empty.password');
         } else if (!this.userEmailWizardStepForm.isValid()) {
-            throw i18n('notify.invalid.password');
+            throw `${i18n('field.password.invalid')}.`;
         }
     }
 

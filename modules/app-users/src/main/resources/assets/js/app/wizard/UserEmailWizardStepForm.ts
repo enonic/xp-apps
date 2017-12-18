@@ -1,5 +1,4 @@
 import '../../api.ts';
-
 import Principal = api.security.Principal;
 
 import EmailInput = api.ui.text.EmailInput;
@@ -37,7 +36,7 @@ export class UserEmailWizardStepForm
 
         form.onValidityChanged((event: api.ValidityChangedEvent) => {
             this.notifyValidityChanged(new api.app.wizard.WizardStepValidityChangedEvent(event.isValid()));
-            emailFormItem.toggleClass('invalid', !event.isValid());
+            emailFormItem.toggleClass(api.ui.form.FormItem.INVALID_CLASS, !event.isValid());
         });
 
         this.appendChild(form);

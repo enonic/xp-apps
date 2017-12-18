@@ -42,10 +42,12 @@ export class UserPasswordWizardStepForm extends api.app.wizard.WizardStepForm {
         this.fieldSet.add(this.createPasswordFormItem);
         this.fieldSet.add(this.updatePasswordFormItem);
 
-        let passwordForm = new api.ui.form.Form().add(this.fieldSet);
+        let passwordForm = new api.ui.form.Form(api.form.FormView.VALIDATION_CLASS).add(this.fieldSet);
 
         passwordForm.onValidityChanged((event: api.ValidityChangedEvent) => {
             this.notifyValidityChanged(new api.app.wizard.WizardStepValidityChangedEvent(event.isValid()));
+            this.createPasswordFormItem.toggleClass(api.ui.form.FormItem.INVALID_CLASS, !event.isValid());
+            this.updatePasswordFormItem.toggleClass(api.ui.form.FormItem.INVALID_CLASS, !event.isValid());
         });
 
         this.changePasswordButton.onClicked(() => {
@@ -68,7 +70,7 @@ export class UserPasswordWizardStepForm extends api.app.wizard.WizardStepForm {
     }
 
     isValid(): boolean {
-        return !!this.principal || !!this.password.getValue();
+        return !!this.principal || this.password.isValid();
     }
 
     getPassword(): string {
