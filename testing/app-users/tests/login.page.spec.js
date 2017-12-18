@@ -1,10 +1,11 @@
 const chai = require('chai');
 const expect = chai.expect;
 const assert = chai.assert;
-var webDriverHelper = require('../libs/WebDriverHelper');
+const webDriverHelper = require('../libs/WebDriverHelper');
 chai.Should();
-var loginPage = require('../page_objects/login.page');
+const loginPage = require('../page_objects/login.page');
 const appConst = require('../libs/app_const');
+const testUtils = require('../libs/test.utils');
 
 describe('Login Page specification', function () {
 
@@ -13,6 +14,7 @@ describe('Login Page specification', function () {
 
     it('check login page', () => {
         return loginPage.getTitle().then(function (title) {
+            testUtils.saveScreenshot(webDriverHelper.browser,'login_page');
             assert.strictEqual(title, "Enonic XP - Login");
         })
     });
