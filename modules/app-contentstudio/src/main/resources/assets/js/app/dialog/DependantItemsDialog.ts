@@ -212,7 +212,7 @@ export class DependantItemsDialog
 
     addDependantItems(items: ContentSummaryAndCompareStatus[]) {
         this.dependantList.addItems(items);
-    }s
+    }
 
     setSubTitle(text: string, escapeHtml?: boolean) {
         this.subTitle.setHtml(text, escapeHtml);
