@@ -14,7 +14,28 @@ module.exports = {
             data: {
                 targetDisplayName: targetDisplayName
             },
-            parameters: parameters,
+            parameters: parameters
+        };
+    },
+    buildSite: function (displayName, description, applications) {
+        return {
+            contentType: appConst.contentTypes.SITE,
+            displayName: displayName,
+
+            data: {
+                description: description,
+                applications: applications
+            },
+        };
+    },
+    buildContentWithImageSelector: function (displayName, contentType, images) {
+        return {
+            contentType: contentType,
+            displayName: displayName,
+
+            data: {
+                images: images,
+            },
         };
     },
 

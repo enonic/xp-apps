@@ -17,11 +17,11 @@ const shortcutFormViewPanel = require('../page_objects/wizardpanel/shortcut.form
 
 module.exports = {
     xpTabs: {},
-    doCloseCurrentBrowserTab: function(){
-        webDriverHelper.browser.close();
+    doCloseCurrentBrowserTab: function () {
+        return webDriverHelper.browser.close();
     },
     openContentWizard: function (contentType) {
-        return browsePanel.waitForGridLoaded(appConst.TIMEOUT_3).then(()=> {
+        return browsePanel.waitForNewButtonEnabled(appConst.TIMEOUT_3).then(()=> {
             return browsePanel.clickOnNewButton();
         }).then(()=> {
             return newContentDialog.waitForOpened();
@@ -36,11 +36,25 @@ module.exports = {
     doAddShortcut: function (shortcut) {
         return this.openContentWizard(appConst.contentTypes.SHORTCUT).then(()=> {
             return contentWizardPanel.typeData(shortcut);
-        }).then(()=>{
+        }).then(()=> {
             return contentWizardPanel.waitAndClickOnSave();
-        }).then(()=>{
+        }).then(()=> {
+            return this.doCloseWizardAndSwitchToGrid()
+        }).pause(1000);
+    },
+    doCloseWizardAndSwitchToGrid: function () {
+        return this.doCloseCurrentBrowserTab().then(()=> {
+            return this.doSwitchToContentBrowsePanel(webDriverHelper.browser);
+        });
+    },
+    doAddSite: function (site) {
+        return this.openContentWizard(appConst.contentTypes.SITE).then(()=> {
+            return contentWizardPanel.typeData(site);
+        }).then(()=> {
+            return contentWizardPanel.waitAndClickOnSave();
+        }).then(()=> {
             return this.doCloseCurrentBrowserTab();
-        }).then(()=>{
+        }).then(()=> {
             this.doSwitchToContentBrowsePanel(webDriverHelper.browser);
         }).pause(2000);
     },
@@ -49,6 +63,24 @@ module.exports = {
             return browsePanel.waitForRowByNameVisible(name);
         }).pause(400).then(()=> {
             return browsePanel.clickOnRowByName(name);
+        });
+    },
+    
+    selectSiteAndOpenNewWizard: function (siteName, contentType) {
+        return this.findAndSelectItem(siteName).then(()=> {
+            return browsePanel.waitForNewButtonEnabled();
+        }).then(()=> {
+            return browsePanel.clickOnNewButton();
+        }).then(()=> {
+            return newContentDialog.waitForOpened();
+        }).then(()=> {
+            return newContentDialog.typeSearchText(contentType);
+        }).then(()=> {
+            return newContentDialog.clickOnContentType(contentType);
+        }).then(()=> {
+            return this.doSwitchToNewWizard(webDriverHelper.browser);
+        }).then(()=> {
+            return contentWizardPanel.waitForOpened();
         });
     },
     typeNameInFilterPanel: function (name) {
