@@ -2,10 +2,8 @@
  * Created on 01.12.2017.
  */
 const page = require('../page');
-const saveBeforeCloseDialog = require('../save.before.close.dialog');
 const elements = require('../../libs/elements');
 const appConst = require('../../libs/app_const');
-const studioUtils = require('../../libs/studio.utils');
 
 var component = {
     container: `//div[contains(@id,'LoaderComboBox')]`,

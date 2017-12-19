@@ -39,7 +39,7 @@ describe('userbrowse.panel.spec User Browse Panel specification', function () {
             });
         });
 
-    it('GIVEN navigate to the browse panel WHEN `/system` folder has been expanded THEN `Groups` and `Users`',
+    it('GIVEN navigate to the browse panel WHEN `/system` folder has been expanded THEN `Groups` and `Users` folders should be listed in the grid',
         () => {
             return userBrowsePanel.clickOnExpanderIcon('/system').then(()=> {
                 return userBrowsePanel.isItemDisplayed('groups');
@@ -68,7 +68,7 @@ describe('userbrowse.panel.spec User Browse Panel specification', function () {
                 return userBrowsePanel.clickOnSelectionToggler();
             }).then(result=> {
                 return userBrowsePanel.getGridItemDisplayNames();
-            }).then(names=>{
+            }).then(names=> {
                 testUtils.saveScreenshot(webDriverHelper.browser, 'selection_toggler_clicked');
                 assert.isTrue(names.length == 1, 'one folder should be listed in the grid');
                 assert.isTrue(names[0] == 'Roles', 'The name of the folder should be Roles');
