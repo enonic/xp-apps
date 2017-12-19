@@ -27,6 +27,8 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
 
         this.addClass('install-application-dialog hidden');
 
+        this.getBody().addClass('mask-wrapper');
+
         this.statusMessage = new api.dom.DivEl('status-message');
 
         this.onMarketLoaded = () => {
