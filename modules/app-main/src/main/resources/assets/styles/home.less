@@ -49,6 +49,10 @@
   max-width: 496px;
   background-color: rgba(0, 0, 0, 0.8);
 
+  .modal-dialog-header {
+    padding: 0;
+  }
+
   .modal-dialog-content-wrapper {
     margin-bottom: -4em;
   }
@@ -382,6 +386,10 @@
 body {
   &._0-240, &._240-360, &._360-540, &._540-720 {
     .xp-about-dialog {
+      .modal-dialog-body {
+        padding-bottom: 40px;
+        padding-top: 0;
+      }
       .cancel-button-top {
 
         background-color: rgba(0, 0, 0, 0.8);
