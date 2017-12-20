@@ -57,6 +57,7 @@ export class CreateGroupRequest
                 memberships {
                     key
                     displayName
+                    description
                 }
             }
         }`;
