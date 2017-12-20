@@ -113,6 +113,10 @@ export class PageComponentsView
     show() {
         api.ui.KeyBindings.get().bindKeys(this.keyBinding);
         super.show();
+
+        if(this.tree) {
+            this.tree.getGrid().resizeCanvas();
+        }
     }
 
     hide() {
