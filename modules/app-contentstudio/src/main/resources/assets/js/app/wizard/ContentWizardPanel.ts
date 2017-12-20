@@ -842,11 +842,11 @@ export class ContentWizardPanel
                     }
                 });
 
-                const templateUpdated = updatedContent.getType().isPageTemplate();
+                const isPageTemplate = updatedContent.getType().isPageTemplate();
                 const item = this.getPersistedItem();
                 const site = item instanceof Site ? item : null;
                 let templateUpdatedPromise: wemQ.Promise<boolean>;
-                if (templateUpdated && site && updatedContent.getPath().isDescendantOf(site.getPath())) {
+                if (isPageTemplate && site && updatedContent.getPath().isDescendantOf(site.getPath())) {
                     templateUpdatedPromise = loadDefaultModelsAndUpdatePageModel(false);
                 } else {
                     templateUpdatedPromise = wemQ(false);
