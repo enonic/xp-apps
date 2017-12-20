@@ -33,7 +33,9 @@ var launcherPanel = Object.create(page, {
 
     clickOnUsersLink: {
         value: function () {
-            return this.doClick(this.usersLink);
+            return this.waitForVisible(this.usersLink, 2000).then(()=> {
+                return this.doClick(this.usersLink);
+            }).pause(400);
         }
     },
     waitForPanelVisible: {

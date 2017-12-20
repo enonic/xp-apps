@@ -5,6 +5,9 @@ module.exports = {
     generateRandomName: function (part) {
         return part + Math.round(Math.random() * 1000000);
     },
+    generateRandomNumber: function () {
+        return Math.round(Math.random() * 1000000);
+    },
     generateEmail: function (userName) {
         return userName + '@gmail.com'
     },

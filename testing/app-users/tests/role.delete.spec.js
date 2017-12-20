@@ -61,7 +61,7 @@ describe('Role - confirm and delete in wizard and in browse panel', function () 
             testRole =
                 userItemsBuilder.buildRole(userItemsBuilder.generateRandomName('role'), 'test role 2');
             return testUtils.openWizardAndSaveRole(testRole).then(()=> {
-                testUtils.findAndSelectItem(testRole.displayName);
+                return testUtils.findAndSelectItem(testRole.displayName);
             }).then(()=> {
                 return userBrowsePanel.waitForDeleteButtonEnabled();
             }).then(()=> {

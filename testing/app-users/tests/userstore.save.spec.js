@@ -66,9 +66,11 @@ describe('User Store spec - save and edit', function () {
                 userItemsBuilder.buildUserStore(userItemsBuilder.generateRandomName('store'), 'test user store', null, permissions);
             return testUtils.clickOnNewOpenUserStoreWizard(testStore).then(()=> {
                 return userStoreWizard.typeData(testStore);
-            }).then(()=> {
+            }).then(()=>{
+                return userStoreWizard.waitAndClickOnSave();
+            }).pause(1000).then(()=> {
                 return userBrowsePanel.doClickOnCloseTabAndWaitGrid(testStore.displayName);
-            }).pause(1000)
+            }).pause(500)
                 .then(()=>userBrowsePanel.isItemDisplayed(testStore.displayName)).then(result=> {
                     assert.isTrue(result, 'new user store should be present in the grid');
                 })

@@ -3,6 +3,7 @@
  */
 const wizard = require('./wizard.panel');
 const elements = require('../../libs/elements');
+const appConst = require('../../libs/app_const');
 const loaderComboBox = require('../inputs/loaderComboBox');
 
 var panel = {
@@ -18,6 +19,11 @@ var panel = {
 
 var userWizard = Object.create(wizard, {
 
+    deleteButton: {
+        get: function () {
+            return `${panel.container}` + `${wizard.deleteButton}`;
+        }
+    },
     emailInput: {
         get: function () {
             return `${panel.container}` + `${panel.emailInput}`;
@@ -188,10 +194,17 @@ var userWizard = Object.create(wizard, {
     },
     clickOnDelete: {
         value: function () {
-            let deleteSelector = `${panel.container}` + `${wizard.deleteButton}`;
-            return this.doClick(deleteSelector).catch(err=> {
-                console.log(err);
-                this.doCatch('err_delete_in_user_wizard', 'Error when Delete button has been clicked ');
+            return this.waitForDeleteButtonEnabled().then(()=> {
+                return this.doClick(this.deleteButton);
+            }).catch(err=> {
+                return this.doCatch('err_delete_in_user_wizard', err);
+            });
+        }
+    },
+    waitForDeleteButtonEnabled: {
+        value: function () {
+            return this.waitForEnabled(this.deleteButton, appConst.TIMEOUT_3).catch(err=> {
+                return this.doCatch('err_delete_user_button_disabled', err);
             });
         }
     },
