@@ -2,14 +2,15 @@
  * Created on 1.12.2017.
  */
 
-var page = require('../page');
-var elements = require('../../libs/elements');
-var dialog = {
+const page = require('../page');
+const elements = require('../../libs/elements');
+const appConst = require('../../libs/app_const');
+const dialog = {
     container: `//div[contains(@id,'NewContentDialog')]`,
     searchInput: `//div[contains(@id,'FileInput')]/input`,
     header: `//div[contains(@class,'dialog-header')`,
     contentTypeByName: function (name) {
-        return `//li[contains(@class,'content-types-list-item') and descendant::p[contains(@class,'sub-name') and text()='${name}']]`;
+        return `//li[contains(@class,'content-types-list-item') and descendant::p[contains(@class,'sub-name') and contains(.,'${name}')]]`;
     },
 
 };
@@ -45,7 +46,7 @@ var newContentDialog = Object.create(page, {
     },
     waitForOpened: {
         value: function () {
-            return this.waitForVisible(`${dialog.container}`, 3000).catch(err=> {
+            return this.waitForVisible(`${dialog.searchInput}`, appConst.TIMEOUT_3).catch(err=> {
                 this.saveScreenshot('err_new_content_dialog_load');
                 throw new Error('New Content dialog was not loaded! ' + err);
             });
@@ -53,7 +54,7 @@ var newContentDialog = Object.create(page, {
     },
     waitForClosed: {
         value: function () {
-            return this.waitForNotVisible(`${dialog.container}`, 3000).catch(error=> {
+            return this.waitForNotVisible(`${dialog.container}`, appConst.TIMEOUT_3).catch(error=> {
                 this.saveScreenshot('err_new_content_dialog_close');
                 throw new Error('New Content Dialog was not closed');
             });
@@ -64,10 +65,15 @@ var newContentDialog = Object.create(page, {
             return this.getText(this.header);
         }
     },
+    typeSearchText:{
+      value:function(text){
+          return this.typeTextInInput(this.searchInput, text);
+      }  
+    },
     clickOnContentType: {
         value: function (contentTypeName) {
             let typeSelector = `${dialog.contentTypeByName(contentTypeName)}`;
-            return this.waitForVisible(typeSelector, 3000).then(()=> {
+            return this.waitForVisible(typeSelector, appConst.TIMEOUT_3).then(()=> {
                 return this.doClick(typeSelector).catch(err=> {
                     this.saveScreenshot('err_find_content_type');
                     throw new Error('The content type was not found! ' + contentTypeName);
