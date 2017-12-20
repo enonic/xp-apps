@@ -36,6 +36,8 @@ export class IssueListDialog
         super(<api.ui.dialog.ModalDialogConfig>{title: i18n('text.publishingissues')});
         this.addClass('issue-dialog issue-list-dialog grey-header');
 
+        this.getBody().addClass('mask-wrapper');
+
         this.createAction = new Action(i18n('action.newIssueMore'));
 
         this.initDeboundcedReloadFunc();

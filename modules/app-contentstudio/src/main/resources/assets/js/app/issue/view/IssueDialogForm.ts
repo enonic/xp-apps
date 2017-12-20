@@ -106,8 +106,7 @@ export class IssueDialogForm
         fieldSet.add(descriptionFormItem);
 
         const selectorFormItem = this.addValidationViewer(
-            new FormItemBuilder(this.approversSelector).setLabel(i18n('field.assignees')).setValidator(
-                Validators.required).build());
+            new FormItemBuilder(this.approversSelector).setLabel(i18n('field.assignees')).build());
         selectorFormItem.addClass('issue-approver-selector');
         fieldSet.add(selectorFormItem);
 

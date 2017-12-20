@@ -202,6 +202,7 @@ export class AssigneesLine
 
     doRender(): Q.Promise<boolean> {
         return super.doRender().then((rendered) => {
+            this.removeChildren();
             if (this.assignees.length > this.limitToShow) {
                 for (let i = 0; i < this.limitToShow; i++) {
                     this.appendChild(this.createPrincipalViewer(this.assignees[i]));
@@ -219,7 +220,6 @@ export class AssigneesLine
 
     setAssignees(value: api.security.User[]) {
         this.assignees = value;
-        this.removeChildren();
         this.doRender();
     }
 

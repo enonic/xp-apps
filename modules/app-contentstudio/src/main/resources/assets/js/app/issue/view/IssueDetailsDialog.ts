@@ -305,10 +305,6 @@ export class IssueDetailsDialog
 
             this.detailsSubTitle.setIssue(issue, true);
             this.toggleControlsAccordingToStatus(issue.getIssueStatus());
-
-            if (this.assignees) {
-                this.assigneesLine.setAssignees(this.assignees);
-            }
         }
 
         if (this.assigneesUpdateRequired(issue)) {
@@ -334,9 +330,21 @@ export class IssueDetailsDialog
         return this;
     }
 
+    private hasAssigneeListChanged(issue: Issue) {
+        const currentAssigneeCount = this.assignees ? this.assignees.length : 0;
+
+        if (currentAssigneeCount !== issue.getApprovers().length) {
+            return true;
+        }
+
+        const assigneeIds = this.assignees.map(assignee => assignee.getKey().toString());
+
+        return issue.getApprovers().some(approver => assigneeIds.indexOf(approver.toString()) === -1);
+    }
+
     assigneesUpdateRequired(issue: Issue): boolean {
         const issueId = issue ? issue.getId() : null;
-        return this.issue ? this.issue.getId() !== issueId : !!issueId;
+        return this.issue ? this.issue.getId() !== issueId || this.hasAssigneeListChanged(issue) : !!issueId;
     }
 
     getButtonRow(): IssueDetailsDialogButtonRow {

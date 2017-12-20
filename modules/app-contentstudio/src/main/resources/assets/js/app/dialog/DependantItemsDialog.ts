@@ -64,6 +64,8 @@ export class DependantItemsDialog
 
         this.addClass('dependant-dialog');
 
+        this.getBody().addClass('mask-wrapper');
+
         this.subTitle = new api.dom.H6El('sub-title').setHtml(config.dialogSubName, false);
         this.appendChildToHeader(this.subTitle);
 
