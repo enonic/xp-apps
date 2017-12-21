@@ -17,6 +17,11 @@ var roleWizard = Object.create(wizard, {
             return `${panel.container}//div[contains(@id,'PrincipalDescriptionWizardStepForm')]` + `${elements.TEXT_INPUT}`;
         }
     },
+    deleteButton: {
+        get: function () {
+            return `${panel.container}` + `${wizard.deleteButton}`;
+        }
+    },
     typeData: {
         value: function (data) {
             return this.typeTextInInput(this.displayNameInput, data.displayName)
@@ -76,10 +81,17 @@ var roleWizard = Object.create(wizard, {
     },
     clickOnDelete: {
         value: function () {
-            let deleteSelector = `${panel.container}` + `${wizard.deleteButton}`;
-            return this.doClick(deleteSelector).catch(err=> {
-                console.log(err);
-                this.doCatch('err_delete_in_role_wizard', 'Error when Delete button has been clicked ');
+            return this.waitForDeleteButtonEnabled().then(()=> {
+                return this.doClick(this.deleteButton);
+            }).catch(err=> {
+                return this.doCatch('err_delete_in_role_wizard', err);
+            });
+        }
+    },
+    waitForDeleteButtonEnabled: {
+        value: function () {
+            return this.waitForEnabled(this.deleteButton, appConst.TIMEOUT_3).catch(err=> {
+                return this.doCatch('err_delete_role_button_disabled', err);
             });
         }
     },

@@ -79,9 +79,6 @@ module.exports = {
             return this.doSwitchToUsersApp(browser);
         }).catch((err)=> {
             return this.doLoginAndSwitchToUsers(browser);
-        }).catch((err)=> {
-            this.saveScreenshot(browser, "err_login_page");
-            throw  new Error("Login Page is not loaded");
         });
     },
     doSwitchToUsersApp_old: function (browser) {

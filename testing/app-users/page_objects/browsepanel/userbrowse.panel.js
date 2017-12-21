@@ -5,6 +5,7 @@ const page = require('../page');
 const saveBeforeCloseDialog = require('../save.before.close.dialog');
 const elements = require('../../libs/elements');
 const appConst = require('../../libs/app_const');
+const itemBuilder = require('../../libs/userItems.builder');
 
 var panel = {
     container: `//div[contains(@id,'UserBrowsePanel')]`,
@@ -192,7 +193,9 @@ var userBrowsePanel = Object.create(page, {
     },
     waitForDeleteButtonEnabled: {
         value: function () {
-            return this.waitForEnabled(this.deleteButton, appConst.TIMEOUT_3);
+            return this.waitForEnabled(this.deleteButton, appConst.TIMEOUT_3).catch(err=> {
+                return this.doCatch('err_delete_button_state', err);
+            });
         }
     },
     waitForDeleteButtonDisabled: {
@@ -250,15 +253,22 @@ var userBrowsePanel = Object.create(page, {
     },
     doClickOnCloseTabButton: {
         value: function (displayName) {
-            return this.doClick(`${panel.closeItemTabButton(displayName)}`).catch((err)=> {
-                this.saveScreenshot('err_item_tab');
-                throw new Error('itemTabButton was not found!' + displayName);
+            let closeIcon = `${panel.closeItemTabButton(displayName)}`;
+            return this.waitForVisible(closeIcon).then(()=> {
+                return this.doClick(closeIcon);
+            }).catch(err=> {
+                this.saveScreenshot('err_closing_' + itemBuilder.generateRandomNumber());
+                throw new Error('itemTabButton was not found! ' + displayName + '  ' + err);
             })
+
         }
     },
     doClickOnCloseTabAndWaitGrid: {
         value: function (displayName) {
-            return this.doClick(`${panel.closeItemTabButton(displayName)}`).catch((err)=> {
+            let closeIcon = `${panel.closeItemTabButton(displayName)}`;
+            return this.waitForVisible(closeIcon).then(()=> {
+                return this.doClick(closeIcon);
+            }).catch((err)=> {
                 throw new Error('itemTabButton was not found!' + displayName);
             }).pause(300).then(()=> {
                 return saveBeforeCloseDialog.isDialogPresent(1000);
@@ -286,7 +296,6 @@ var userBrowsePanel = Object.create(page, {
     getGridItemDisplayNames: {
         value: function () {
             let selector = `${panel.container}` + `${elements.SLICK_ROW}` + `${elements.H6_DISPLAY_NAME}`
-            //return this.elements(selector);
             return this.getTextFromElements(selector);
         }
     },

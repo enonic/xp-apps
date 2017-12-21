@@ -18,6 +18,11 @@ var panel = {
 };
 var groupWizard = Object.create(wizard, {
 
+    deleteButton: {
+        get: function () {
+            return `${panel.container}` + `${wizard.deleteButton}`;
+        }
+    },
     descriptionInput: {
         get: function () {
             return `${panel.container}//div[contains(@id,'PrincipalDescriptionWizardStepForm')]` + `${elements.TEXT_INPUT}`;
@@ -179,20 +184,26 @@ var groupWizard = Object.create(wizard, {
                                  `${elements.selectedPrincipalByDisplayName(displayName)}` +
                                  `${elements.REMOVE_ICON}`;
             return this.clickOnMembersLink().pause(500).then(()=>this.doClick(removeRoleIcon)).pause(1000).catch(err=> {
-                console.log(err);
-                this.doCatch('err_group_wizard_remove_role_icon', 'Group wizard: error, when click on the `remove role` button');
+                return this.doCatch('err_group_wizard_remove_role_icon', err);
             })
         }
     },
     clickOnDelete: {
         value: function () {
-            let deleteSelector = `${panel.container}` + `${wizard.deleteButton}`
-            return this.doClick(deleteSelector).catch(err=> {
-                console.log(err);
-                this.doCatch('err_group_wizard_delete_button', 'Group wizard: error, when click on the `delete` button');
-            })
+            return this.waitForDeleteButtonEnabled().then(()=> {
+                return this.doClick(this.deleteButton);
+            }).catch(err=> {
+                return this.doCatch('err_delete_in_group_wizard', err);
+            });
         }
-    }
+    },
+    waitForDeleteButtonEnabled: {
+        value: function () {
+            return this.waitForEnabled(this.deleteButton, appConst.TIMEOUT_3).catch(err=> {
+                return this.doCatch('err_delete_group_button_disabled', err);
+            });
+        }
+    },
 
 });
 module.exports = groupWizard;
