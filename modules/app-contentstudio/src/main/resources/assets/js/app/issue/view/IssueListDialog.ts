@@ -81,6 +81,15 @@ export class IssueListDialog
         return dockedPanel;
     }
 
+    private reloadDockPanel(): wemQ.Promise<any> {
+        let promises: wemQ.Promise<any>[] = [
+            this.openIssuesPanel.reload(),
+            this.closedIssuesPanel.reload()
+        ];
+
+        return wemQ.all(promises);
+    }
+
     show() {
         api.dom.Body.get().appendChild(this);
         super.show();
@@ -106,7 +115,6 @@ export class IssueListDialog
         wemQ.all([this.openIssuesPanel.reload(), this.closedIssuesPanel.reload()])
             .then(() => {
                 this.updateTabAndFiltersLabels();
-                this.dockedPanel.selectPanel(this.getTabToOpen(updatedIssues));
                 if (this.isNotificationToBeShown(updatedIssues)) {
                     api.notify.NotifyManager.get().showFeedback(i18n('notify.issue.listUpdated'));
                 }
@@ -155,26 +163,8 @@ export class IssueListDialog
         return issue.getCreator() === this.currentUser.getKey().toString();
     }
 
-    private getTabToOpen(issues?: Issue[]): IssuesPanel {
-        if (!issues) {
-            return this.getFirstNonEmptyTab();
-        }
-
-        if (issues[0].getModifier()) {
-            if (this.isIssueModifiedByCurrentUser(issues[0])) {
-                if (issues[0].getIssueStatus() === IssueStatus.CLOSED) {
-                    return this.closedIssuesPanel;
-                }
-            }
-
-            return <IssuesPanel>this.dockedPanel.getDeck().getPanelShown();
-        }
-
-        if (this.isIssueCreatedByCurrentUser(issues[0])) {
-            return this.openIssuesPanel;
-        }
-
-        return <IssuesPanel>this.dockedPanel.getDeck().getPanelShown();
+    private openTab(issuePanel: IssuesPanel) {
+        this.dockedPanel.selectPanel(issuePanel);
     }
 
     protected hasSubDialog(): boolean {
@@ -196,16 +186,6 @@ export class IssueListDialog
 
     private updateTabLabel(tabIndex: number, label: string, issuesFound: number) {
         this.dockedPanel.getNavigator().getNavigationItem(tabIndex).setLabel(issuesFound > 0 ? (label + ' (' + issuesFound + ')') : label);
-    }
-
-    private getFirstNonEmptyTab(): IssuesPanel {
-        if (this.openIssuesPanel.getItemCount() > 0) {
-            return this.openIssuesPanel;
-        } else if (this.closedIssuesPanel.getItemCount() > 0) {
-            return this.closedIssuesPanel;
-        }
-
-        return this.openIssuesPanel;
     }
 
     onCreateButtonClicked(listener: (action: Action) => void) {
