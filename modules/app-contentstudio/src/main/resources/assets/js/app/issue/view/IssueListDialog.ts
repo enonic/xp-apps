@@ -111,12 +111,18 @@ export class IssueListDialog
     }
 
     private doReload(updatedIssues?: Issue[]) {
-        this.loadData().then(() => {
-            this.updateTabAndFiltersLabels();
-            if (this.isNotificationToBeShown(updatedIssues)) {
-                api.notify.NotifyManager.get().showFeedback(i18n('notify.issue.listUpdated'));
-            }
-        });
+        this.loadMask.show();
+        wemQ.all([this.openIssuesPanel.reload(), this.closedIssuesPanel.reload()])
+            .then(() => {
+                this.updateTabAndFiltersLabels();
+                this.dockedPanel.selectPanel(this.getTabToOpen(updatedIssues));
+                if (this.isNotificationToBeShown(updatedIssues)) {
+                    api.notify.NotifyManager.get().showFeedback(i18n('notify.issue.listUpdated'));
+                }
+            })
+            .catch(api.DefaultErrorHandler.handle)
+            .finally(() => this.loadMask.hide())
+            .done();
     }
 
     private handleIssueGlobalEvents() {
@@ -140,18 +146,10 @@ export class IssueListDialog
         }
 
         if (issues[0].getModifier()) {
-            if (this.isIssueModifiedByCurrentUser(issues[0])) {
-                return false;
-            }
-
-            return true;
+            return !this.isIssueModifiedByCurrentUser(issues[0]);
         }
 
-        if (this.isIssueCreatedByCurrentUser(issues[0])) {
-            return false;
-        }
-
-        return true;
+        return !this.isIssueCreatedByCurrentUser(issues[0]);
     }
 
     private isIssueModifiedByCurrentUser(issue: Issue): boolean {
@@ -172,15 +170,6 @@ export class IssueListDialog
 
     protected hasSubDialog(): boolean {
         return true;
-    }
-
-    private loadData(): wemQ.Promise<void> {
-        this.loadMask.show();
-        return this.reloadDockPanel().catch((reason: any) => {
-            api.DefaultErrorHandler.handle(reason);
-        }).finally(() => {
-            this.loadMask.hide();
-        });
     }
 
     private updateTabAndFiltersLabels() {
