@@ -78,7 +78,7 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
 
     constructor(wizardPanel: ContentWizardPanel) {
         super(
-            new SaveAction(wizardPanel, i18n('action.saveDraft')),
+            new SaveAction(wizardPanel),
             new DeleteContentAction(wizardPanel),
             new DuplicateContentAction(wizardPanel),
             new PreviewAction(wizardPanel),
@@ -197,11 +197,11 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
     }
 
     enableActionsForNew() {
-        this.enableActions({save: true, delete: true});
+        this.enableActions({ delete: true});
     }
 
     enableActionsForExisting(existing: api.content.Content) {
-        this.enableActions({save: existing.isEditable(), delete: existing.isDeletable()});
+        this.enableActions({delete: existing.isDeletable()});
         this.enableActionsForExistingByPermissions(existing);
     }
 
@@ -213,7 +213,6 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
         const nonDeleteMode = !valueOn;
 
         this.enableActions({
-            save: nonDeleteMode,
             duplicate: nonDeleteMode,
             publish: nonDeleteMode,
             createIssue: nonDeleteMode,
