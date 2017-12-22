@@ -194,6 +194,7 @@ export class IssueListDialog
 
     private createIssuePanel(issueStatus: IssueStatus): IssuesPanel {
         const issuePanel = new IssuesPanel(issueStatus);
+        issuePanel.setLoadMask(this.loadMask);
 
         issuePanel.onIssueSelected(issue => this.notifyIssueSelected(issue.getIssue()));
 
