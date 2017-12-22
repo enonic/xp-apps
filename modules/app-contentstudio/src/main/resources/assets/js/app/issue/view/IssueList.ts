@@ -84,11 +84,12 @@ export class IssueList
     private doFetchItems(): wemQ.Promise<IssueResponse> {
         const listIssuesRequest: ListIssuesRequest = new ListIssuesRequest();
 
-        listIssuesRequest.setIssueStatus(this.issueStatus);
-        listIssuesRequest.setAssignedToMe(this.loadAssignedToMe);
-        listIssuesRequest.setCreatedByMe(this.loadMyIssues);
-        listIssuesRequest.setResolveAssignees(true);
-        listIssuesRequest.setFrom(this.getItemCount());
+        listIssuesRequest.setIssueStatus(this.issueStatus)
+            .setAssignedToMe(this.loadAssignedToMe)
+            .setCreatedByMe(this.loadMyIssues)
+            .setResolveAssignees(true)
+            .setFrom(this.getItemCount())
+            .setSize(20);
 
         return listIssuesRequest.sendAndParse();
     }

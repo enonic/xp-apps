@@ -81,15 +81,6 @@ export class IssueListDialog
         return dockedPanel;
     }
 
-    private reloadDockPanel(): wemQ.Promise<any> {
-        let promises: wemQ.Promise<any>[] = [
-            this.openIssuesPanel.reload(),
-            this.closedIssuesPanel.reload()
-        ];
-
-        return wemQ.all(promises);
-    }
-
     show() {
         api.dom.Body.get().appendChild(this);
         super.show();
@@ -111,13 +102,18 @@ export class IssueListDialog
     }
 
     private doReload(updatedIssues?: Issue[]) {
-        this.loadData().then(() => {
-            this.updateTabAndFiltersLabels();
-            this.openTab(this.getTabToOpen(updatedIssues));
-            if (this.isNotificationToBeShown(updatedIssues)) {
-                api.notify.NotifyManager.get().showFeedback(i18n('notify.issue.listUpdated'));
-            }
-        });
+        this.loadMask.show();
+        wemQ.all([this.openIssuesPanel.reload(), this.closedIssuesPanel.reload()])
+            .then(() => {
+                this.updateTabAndFiltersLabels();
+                this.dockedPanel.selectPanel(this.getTabToOpen(updatedIssues));
+                if (this.isNotificationToBeShown(updatedIssues)) {
+                    api.notify.NotifyManager.get().showFeedback(i18n('notify.issue.listUpdated'));
+                }
+            })
+            .catch(api.DefaultErrorHandler.handle)
+            .finally(() => this.loadMask.hide())
+            .done();
     }
 
     private handleIssueGlobalEvents() {
@@ -141,18 +137,10 @@ export class IssueListDialog
         }
 
         if (issues[0].getModifier()) {
-            if (this.isIssueModifiedByCurrentUser(issues[0])) {
-                return false;
-            }
-
-            return true;
+            return !this.isIssueModifiedByCurrentUser(issues[0]);
         }
 
-        if (this.isIssueCreatedByCurrentUser(issues[0])) {
-            return false;
-        }
-
-        return true;
+        return !this.isIssueCreatedByCurrentUser(issues[0]);
     }
 
     private isIssueModifiedByCurrentUser(issue: Issue): boolean {
@@ -165,10 +153,6 @@ export class IssueListDialog
         }
 
         return issue.getCreator() === this.currentUser.getKey().toString();
-    }
-
-    private openTab(issuePanel: IssuesPanel) {
-        this.dockedPanel.selectPanel(issuePanel);
     }
 
     private getTabToOpen(issues?: Issue[]): IssuesPanel {
@@ -195,15 +179,6 @@ export class IssueListDialog
 
     protected hasSubDialog(): boolean {
         return true;
-    }
-
-    private loadData(): wemQ.Promise<void> {
-        this.loadMask.show();
-        return this.reloadDockPanel().catch((reason: any) => {
-            api.DefaultErrorHandler.handle(reason);
-        }).finally(() => {
-            this.loadMask.hide();
-        });
     }
 
     private updateTabAndFiltersLabels() {
