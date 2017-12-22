@@ -7,6 +7,7 @@ module.exports = Object.freeze({
     CONTENT_SELECTOR:"//div[contains(@id,'ContentSelector')]",
     NAMES_VIEW_BY_NAME: "//div[contains(@id,'NamesView') and child::p[contains(@class,'sub-name') and contains(.,'%s')]]",
     NAMES_VIEW_BY_DISPLAY_NAME: "//div[contains(@id,'NamesView') and child::h6[contains(@class,'main-name') and contains(.,'%s')]]",
+    SLICK_VIEW_PORT:`//div[@class='slick-viewport']`,
     SLICK_ROW: "//div[@class='slick-viewport']//div[contains(@class,'slick-row')]",
     SLICK_ROW_BY_NAME: "//div[@class='slick-viewport']//div[contains(@class,'slick-row') and descendant::p[contains(@class,'sub-name') and contains(.,'%s')]]",
     SLICK_ROW_BY_DISPLAY_NAME: "//div[@class='slick-viewport']//div[contains(@class,'slick-row') and descendant::h6[contains(@class,'main-name') and contains(.,'%s')]]",

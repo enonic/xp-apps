@@ -9,7 +9,7 @@ var component = {
     container: `//div[contains(@id,'LoaderComboBox')]`,
 
 }
-var loaderComboBox = Object.create(page, {
+const loaderComboBox = Object.create(page, {
     selectOption: {
         value: function (optionDisplayName) {
             let optionSelector = elements.slickRowByDisplayName(`${component.container}`, optionDisplayName);
@@ -23,6 +23,12 @@ var loaderComboBox = Object.create(page, {
             })
         }
     },
+    getOptionDisplayNames: {
+        value: function () {
+            //TODO implement it 
+        }
+    },
+
 });
 module.exports = loaderComboBox;
 
