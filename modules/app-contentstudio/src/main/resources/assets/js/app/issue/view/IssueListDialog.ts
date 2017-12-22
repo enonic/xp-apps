@@ -115,7 +115,6 @@ export class IssueListDialog
         wemQ.all([this.openIssuesPanel.reload(), this.closedIssuesPanel.reload()])
             .then(() => {
                 this.updateTabAndFiltersLabels();
-                this.dockedPanel.selectPanel(this.getTabToOpen(updatedIssues));
                 if (this.isNotificationToBeShown(updatedIssues)) {
                     api.notify.NotifyManager.get().showFeedback(i18n('notify.issue.listUpdated'));
                 }
