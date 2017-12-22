@@ -441,6 +441,11 @@ export class ContentWizardPanel
             const thumbnailUploader = this.getFormIcon();
 
             this.onValidityChanged((event: api.ValidityChangedEvent) => {
+
+                if (!this.persistedContent) {
+                    return;
+                }
+
                 let isThisValid = this.isValid(); // event.isValid() = false will prevent the call to this.isValid()
                 this.isContentFormValid = isThisValid;
                 if (thumbnailUploader) {
