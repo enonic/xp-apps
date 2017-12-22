@@ -65,6 +65,7 @@ export class CreateUserRequest
                 memberships {
                     key
                     displayName
+                    description
                 }
             }
         }`;

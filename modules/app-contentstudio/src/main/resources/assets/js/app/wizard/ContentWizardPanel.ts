@@ -16,6 +16,7 @@ import {UpdatePersistedContentRoutine} from './UpdatePersistedContentRoutine';
 import {ContentWizardDataLoader} from './ContentWizardDataLoader';
 import {ThumbnailUploaderEl} from './ThumbnailUploaderEl';
 import {LiveEditModel} from '../../page-editor/LiveEditModel';
+import {PageModel} from '../../page-editor/PageModel';
 import PropertyTree = api.data.PropertyTree;
 import FormView = api.form.FormView;
 import ContentFormContext = api.content.form.ContentFormContext;
@@ -722,6 +723,28 @@ export class ContentWizardPanel
 
         let serverEvents = api.content.event.ContentServerEventsHandler.getInstance();
 
+        const loadDefaultModelsAndUpdatePageModel = (reloadPage: boolean = true) => {
+            const item = this.getPersistedItem();
+            const site = item instanceof Site ? item : null;
+
+            return new ContentWizardDataLoader().loadDefaultModels(site, this.contentType.getContentTypeName()).then(
+                defaultModels => {
+                    this.defaultModels = defaultModels;
+                    return this.initPageModel(this.liveEditModel, defaultModels).then(pageModel => {
+                        const livePanel = this.getLivePanel();
+                        const needsReload = !this.isSaving(); // pageModel is updated so we need reload unless we're saving already
+                        if (livePanel) {
+                            livePanel.setModel(this.liveEditModel);
+                            if (needsReload && reloadPage) {
+                                livePanel.skipNextReloadConfirmation(true);
+                                livePanel.loadPage();
+                            }
+                        }
+                        return needsReload;
+                    });
+                });
+        };
+
         let deleteHandler = (event: api.content.event.ContentDeletedEvent) => {
             if (!this.getPersistedItem()) {
                 return;
@@ -748,6 +771,19 @@ export class ContentWizardPanel
 
                 return true;
             });
+
+            [].concat(event.getDeletedItems(), event.getUndeletedItems()).some(deletedItem => {
+                const defaultTemplate = this.defaultModels.getPageTemplate();
+                const pageTemplate = this.liveEditModel.getPageModel().getTemplate();
+                if (defaultTemplate && deletedItem.getContentId().equals(defaultTemplate.getKey())
+                    || pageTemplate && deletedItem.getContentId().equals(pageTemplate.getKey())) {
+
+                    loadDefaultModelsAndUpdatePageModel().done();
+
+                    return true;
+                }
+            });
+
         };
 
         let publishOrUnpublishHandler = (contents: ContentSummaryAndCompareStatus[]) => {
@@ -760,26 +796,6 @@ export class ContentWizardPanel
                     this.getWizardHeader().disableNameGeneration(content.getCompareStatus() === CompareStatus.EQUAL);
                 }
             });
-        };
-
-        const updateLiveEditModelIfNeeded = (updatedContent: ContentSummaryAndCompareStatus) => {
-            const templateUpdated = updatedContent.getType().isPageTemplate();
-            const item = this.getPersistedItem();
-            const site = item instanceof Site ? item : null;
-
-            if (templateUpdated && site && updatedContent.getPath().isDescendantOf(site.getPath())) {
-                return new ContentWizardDataLoader().loadDefaultModels(site, this.contentType.getContentTypeName()).then(
-                    defaultModels => {
-                        this.defaultModels = defaultModels;
-                        return this.liveEditModel.init(defaultModels.getPageTemplate(), defaultModels.getPageDescriptor()).then(model => {
-                            this.getLivePanel().setModel(this.liveEditModel);
-                            this.updateButtonsState();
-                            return true;
-                        });
-                    });
-            } else {
-                return wemQ(false);
-            }
         };
 
         let updateHandler = (updatedContent: ContentSummaryAndCompareStatus) => {
@@ -822,16 +838,25 @@ export class ContentWizardPanel
                             }
                         }).catch(api.DefaultErrorHandler.handle).done();
                     } else {
-                        return wemQ(false);
+                        return false;
                     }
                 });
 
-                const templateUpdatedPromise: wemQ.Promise<boolean> = updateLiveEditModelIfNeeded(updatedContent);
+                const isPageTemplate = updatedContent.getType().isPageTemplate();
+                const item = this.getPersistedItem();
+                const site = item instanceof Site ? item : null;
+                let templateUpdatedPromise: wemQ.Promise<boolean>;
+                if (isPageTemplate && site && updatedContent.getPath().isDescendantOf(site.getPath())) {
+                    templateUpdatedPromise = loadDefaultModelsAndUpdatePageModel(false);
+                } else {
+                    templateUpdatedPromise = wemQ(false);
+                }
 
                 wemQ.all([containsIdPromise, templateUpdatedPromise]).spread((containsId, templateUpdated) => {
                     if (containsId || templateUpdated) {
-                        this.getLivePanel().skipNextReloadConfirmation(true);
-                        this.getLivePanel().loadPage(false);
+                        const livePanel = this.getLivePanel();
+                        livePanel.skipNextReloadConfirmation(true);
+                        livePanel.loadPage(false);
                     }
                 });
             }
@@ -853,6 +878,18 @@ export class ContentWizardPanel
             });
             if (wasSorted) {
                 this.getContentWizardToolbarPublishControls().setContent(data[indexOfCurrentContent]);
+            }
+
+            const content = this.getPersistedItem();
+            if (content instanceof Site) {
+                data.some(sortedItem => {
+                    if (sortedItem.getType().isTemplateFolder() && sortedItem.getPath().isDescendantOf(content.getPath())) {
+
+                        loadDefaultModelsAndUpdatePageModel().done();
+
+                        return true;
+                    }
+                });
             }
         };
 
@@ -913,15 +950,13 @@ export class ContentWizardPanel
             this.siteModel = this.siteModel ? this.siteModel.update(site) : new SiteModel(site);
             this.initSiteModelListeners();
 
-            return this.initLiveEditModel(content, this.siteModel, formContext).then(() => {
+            return this.initLiveEditModel(content, this.siteModel, formContext).then((liveEditModel) => {
+                this.liveEditModel = liveEditModel;
+
                 liveFormPanel.setModel(this.liveEditModel);
                 liveFormPanel.skipNextReloadConfirmation(true);
                 liveFormPanel.loadPage(false);
 
-                this.updateButtonsState();
-                if (this.liveEditModel.getPageModel()) {
-                    this.liveEditModel.getPageModel().onPageModeChanged(this.updateButtonsState.bind(this));
-                }
                 return wemQ(null);
             });
 
@@ -1118,13 +1153,12 @@ export class ContentWizardPanel
                 this.siteModel = this.siteModel ? this.siteModel.update(site) : new SiteModel(site);
                 this.initSiteModelListeners();
 
-                this.initLiveEditModel(content, this.siteModel, formContext).then(() => {
+                this.initLiveEditModel(content, this.siteModel, formContext).then((liveEditModel) => {
+                    this.liveEditModel = liveEditModel;
+
                     liveFormPanel.setModel(this.liveEditModel);
                     liveFormPanel.loadPage();
                     this.setupWizardLiveEdit();
-                    if (this.liveEditModel.getPageModel()) {
-                        this.liveEditModel.getPageModel().onPageModeChanged(this.updateButtonsState.bind(this));
-                    }
 
                     deferred.resolve(null);
                 });
@@ -1358,15 +1392,27 @@ export class ContentWizardPanel
         }).done();
     }
 
-    private initLiveEditModel(content: Content, siteModel: SiteModel, formContext: ContentFormContext): wemQ.Promise<void> {
-        this.liveEditModel = LiveEditModel.create()
+    private initLiveEditModel(content: Content, siteModel: SiteModel, formContext: ContentFormContext): wemQ.Promise<LiveEditModel> {
+        const liveEditModel = LiveEditModel.create()
             .setParentContent(this.parentContent)
             .setContent(content)
             .setContentFormContext(formContext)
             .setSiteModel(siteModel)
             .build();
 
-        return this.liveEditModel.init(this.defaultModels.getPageTemplate(), this.defaultModels.getPageDescriptor());
+        return this.initPageModel(liveEditModel, this.defaultModels).then(pageModel => {
+
+            this.updateButtonsState();
+            if (pageModel) {
+                pageModel.onPageModeChanged(this.updateButtonsState.bind(this));
+            }
+
+            return liveEditModel;
+        });
+    }
+
+    private initPageModel(liveEditModel: LiveEditModel, defaultModels: DefaultModels): wemQ.Promise<PageModel> {
+        return liveEditModel.init(defaultModels.getPageTemplate(), defaultModels.getPageDescriptor());
     }
 
     persistNewItem(): wemQ.Promise<Content> {
