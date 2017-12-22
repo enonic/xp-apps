@@ -13,6 +13,10 @@ export class PageTemplateOptionViewer extends api.ui.NamesAndIconViewer<PageTemp
         this.defaultPageTemplate = defaultPageTemplate;
     }
 
+    getCloneArgs(): any[] {
+        return [this.defaultPageTemplate];
+    }
+
     resolveDisplayName(object: PageTemplateOption): string {
         let pageTemplateDisplayName = api.content.page.PageTemplateDisplayName;
 

@@ -73,6 +73,7 @@ export class UpdateGroupRequest
                 memberships {
                     key
                     displayName
+                    description
                 }
             }
         }`;

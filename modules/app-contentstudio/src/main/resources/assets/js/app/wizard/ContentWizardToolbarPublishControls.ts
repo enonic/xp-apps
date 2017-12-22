@@ -79,6 +79,11 @@ export class ContentWizardToolbarPublishControls
     }
 
     private refreshState() {
+
+        if (!this.content) {
+            return;
+        }
+
         let canBePublished = !this.isOnline() && this.contentCanBePublished && this.userCanPublish;
         let canTreeBePublished = !this.leafContent && this.contentCanBePublished && this.userCanPublish;
         let canBeUnpublished = this.content.isPublished() && this.userCanPublish;
@@ -96,11 +101,11 @@ export class ContentWizardToolbarPublishControls
     }
 
     public isOnline(): boolean {
-        return this.content.isOnline();
+        return !!this.content && this.content.isOnline();
     }
 
     public isPendingDelete(): boolean {
-        return this.content.isPendingDelete();
+        return !!this.content && this.content.isPendingDelete();
     }
 
     public enableActionsForExisting(existing: api.content.Content) {

@@ -64,6 +64,7 @@ export class UpdateUserRequest
                 memberships {
                     key
                     displayName
+                    description
                 }
             }
         }`;

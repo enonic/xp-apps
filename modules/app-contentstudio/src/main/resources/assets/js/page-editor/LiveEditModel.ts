@@ -13,6 +13,7 @@ import PageTemplateKey = api.content.page.PageTemplateKey;
 import GetPageTemplateByKeyRequest = api.content.page.GetPageTemplateByKeyRequest;
 import SiteModel = api.content.site.SiteModel;
 import ContentFormContext = api.content.form.ContentFormContext;
+import ContentTypeName = api.schema.content.ContentTypeName;
 import i18n = api.util.i18n;
 
 export class LiveEditModel {
@@ -34,11 +35,12 @@ export class LiveEditModel {
         this.formContext = builder.formContext;
     }
 
-    init(defaultTemplate: PageTemplate, defaultTemplateDescriptor: PageDescriptor): wemQ.Promise<void> {
+    init(defaultTemplate: PageTemplate, defaultTemplateDescriptor: PageDescriptor): wemQ.Promise<PageModel> {
 
         return LiveEditModelInitializer.initPageModel(this, this.content, defaultTemplate, defaultTemplateDescriptor)
             .then((pageModel: PageModel) => {
                 this.pageModel = pageModel;
+                return pageModel;
             });
     }
 
@@ -137,22 +139,33 @@ export class LiveEditModelInitializer {
         if (content && content.isPage()) {
             if (content.getPage().hasTemplate()) {
                 return this.loadPageTemplate(content.getPage().getTemplate())
-                    .then(pageTemplate => pageTemplate)
-                    .fail(reason => null);
+                    .then(pageTemplate => {
+                        // despite listed in page, template might have lost its support for rendering site
+                        return pageTemplate.isCanRender(ContentTypeName.SITE) ? pageTemplate : null;
+                    })
+                    .fail(reason => {
+                        // template might have been deleted
+                        return null;
+                    });
             }
         }
         return wemQ(<PageTemplate>null);
     }
 
     static initPageModel(liveEditModel: LiveEditModel, content: Content, defaultPageTemplate: PageTemplate,
-                         defaultTemplateDescriptor: PageDescriptor): Q.Promise<PageModel> {
+                         defaultTemplateDescriptor: PageDescriptor): wemQ.Promise<PageModel> {
 
         const promises: wemQ.Promise<any>[] = [];
 
         return this.loadForcedPageTemplate(content).then(forcedPageTemplate => {
             const pageMode = LiveEditModelInitializer.getPageMode(content, !!defaultPageTemplate, forcedPageTemplate);
 
-            const pageModel: PageModel = new PageModel(liveEditModel, defaultPageTemplate, defaultTemplateDescriptor, pageMode);
+            let pageModel: PageModel = liveEditModel.getPageModel();
+            if (!pageModel) {
+                pageModel = new PageModel(liveEditModel, defaultPageTemplate, defaultTemplateDescriptor, pageMode);
+            } else {
+                pageModel.update(defaultPageTemplate, defaultTemplateDescriptor, pageMode);
+            }
 
             if (content.isPageTemplate()) {
                 this.initPageTemplate(content, pageMode, pageModel, promises);

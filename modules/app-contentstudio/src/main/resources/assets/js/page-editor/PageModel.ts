@@ -159,6 +159,13 @@ export class PageModel {
         };
     }
 
+    update(defaultTemplate: PageTemplate, defaultTemplateDescriptor: PageDescriptor, pageMode: PageMode) {
+        this.defaultTemplate = defaultTemplate;
+        this.defaultTemplateDescriptor = defaultTemplateDescriptor;
+
+        this.setMode(pageMode);
+    }
+
     /**
      * Whether to ignore changes happening with properties (regions, properties) or not.
      */
