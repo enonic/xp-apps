@@ -113,7 +113,6 @@ export class IssueListDialog
     private doReload(updatedIssues?: Issue[]) {
         this.loadData().then(() => {
             this.updateTabAndFiltersLabels();
-            this.openTab(this.getTabToOpen(updatedIssues));
             if (this.isNotificationToBeShown(updatedIssues)) {
                 api.notify.NotifyManager.get().showFeedback(i18n('notify.issue.listUpdated'));
             }
@@ -171,28 +170,6 @@ export class IssueListDialog
         this.dockedPanel.selectPanel(issuePanel);
     }
 
-    private getTabToOpen(issues?: Issue[]): IssuesPanel {
-        if (!issues) {
-            return this.getFirstNonEmptyTab();
-        }
-
-        if (issues[0].getModifier()) {
-            if (this.isIssueModifiedByCurrentUser(issues[0])) {
-                if (issues[0].getIssueStatus() === IssueStatus.CLOSED) {
-                    return this.closedIssuesPanel;
-                }
-            }
-
-            return <IssuesPanel>this.dockedPanel.getDeck().getPanelShown();
-        }
-
-        if (this.isIssueCreatedByCurrentUser(issues[0])) {
-            return this.openIssuesPanel;
-        }
-
-        return <IssuesPanel>this.dockedPanel.getDeck().getPanelShown();
-    }
-
     protected hasSubDialog(): boolean {
         return true;
     }
@@ -221,16 +198,6 @@ export class IssueListDialog
 
     private updateTabLabel(tabIndex: number, label: string, issuesFound: number) {
         this.dockedPanel.getNavigator().getNavigationItem(tabIndex).setLabel(issuesFound > 0 ? (label + ' (' + issuesFound + ')') : label);
-    }
-
-    private getFirstNonEmptyTab(): IssuesPanel {
-        if (this.openIssuesPanel.getItemCount() > 0) {
-            return this.openIssuesPanel;
-        } else if (this.closedIssuesPanel.getItemCount() > 0) {
-            return this.closedIssuesPanel;
-        }
-
-        return this.openIssuesPanel;
     }
 
     onCreateButtonClicked(listener: (action: Action) => void) {
