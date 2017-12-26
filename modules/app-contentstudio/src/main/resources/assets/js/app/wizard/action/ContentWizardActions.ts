@@ -11,6 +11,7 @@ import {ShowLiveEditAction} from './ShowLiveEditAction';
 import {ShowFormAction} from './ShowFormAction';
 import {ShowSplitEditAction} from './ShowSplitEditAction';
 import {UndoPendingDeleteAction} from './UndoPendingDeleteAction';
+import {ContentSaveAction} from './ContentSaveAction';
 import Action = api.ui.Action;
 import SaveAction = api.app.wizard.SaveAction;
 import CloseAction = api.app.wizard.CloseAction;
@@ -85,7 +86,7 @@ export class ContentWizardActions
 
     constructor(wizardPanel: ContentWizardPanel) {
         super(
-            new SaveAction(wizardPanel),
+            new ContentSaveAction(wizardPanel),
             new DeleteContentAction(wizardPanel),
             new DuplicateContentAction(wizardPanel),
             new PreviewAction(wizardPanel),
