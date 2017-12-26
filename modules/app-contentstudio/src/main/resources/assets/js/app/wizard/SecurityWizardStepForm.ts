@@ -10,6 +10,7 @@ import LabelEl = api.dom.LabelEl;
 import Button = api.ui.button.Button;
 import OpenEditPermissionsDialogEvent = api.content.event.OpenEditPermissionsDialogEvent;
 import ContentPath = api.content.ContentPath;
+import AccessControlEntry = api.security.acl.AccessControlEntry;
 import i18n = api.util.i18n;
 
 export class SecurityWizardStepForm extends api.app.wizard.WizardStepForm {
@@ -154,4 +155,27 @@ export class SecurityWizardStepForm extends api.app.wizard.WizardStepForm {
         return this.accessListView.giveFocus();
     }
 
+    onPermissionItemChanged(listener: (item: AccessControlEntry) => void) {
+        this.accessListView.onItemValueChanged(listener);
+    }
+
+    unPermissionItemChanged(listener: (item: AccessControlEntry) => void) {
+        this.accessListView.unItemValueChanged(listener);
+    }
+
+    onPermissionItemsAdded(listener: (items: AccessControlEntry[]) => void) {
+        this.accessListView.onItemsAdded(listener);
+    }
+
+    unPermissionItemsAdded(listener: (items: AccessControlEntry[]) => void) {
+        this.accessListView.unItemsAdded(listener);
+    }
+
+    onPermissionItemsRemoved(listener: (items: AccessControlEntry[]) => void) {
+        this.accessListView.onItemsRemoved(listener);
+    }
+
+    unPermissionItemsRemoved(listener: (items: AccessControlEntry[]) => void) {
+        this.accessListView.unItemsRemoved(listener);
+    }
 }

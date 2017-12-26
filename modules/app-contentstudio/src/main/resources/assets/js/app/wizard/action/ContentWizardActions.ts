@@ -38,7 +38,8 @@ type ActionsState = {
     undoPendingDelete?: boolean,
 };
 
-export class ContentWizardActions extends api.app.wizard.WizardActions<api.content.Content> {
+export class ContentWizardActions
+    extends api.app.wizard.WizardActions<api.content.Content> {
 
     private save: Action;
 
@@ -72,9 +73,15 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
 
     private deleteOnlyMode: boolean = false;
 
+    private persistedContent: Content;
+
+    private hasModifyPermission: boolean;
+
     private wizardPanel: ContentWizardPanel;
 
     private stashedActionsState: ActionsState = {};
+
+    private hasUnsavedChanges: () => boolean;
 
     constructor(wizardPanel: ContentWizardPanel) {
         super(
@@ -133,6 +140,27 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
                 this.updateActionsState(this.stashedActionsState);
             }
         });
+    }
+
+    setUnsavedChangesCallback(callback: () => boolean) {
+        this.hasUnsavedChanges = callback;
+
+        const checkSaveActionState = () => {
+            setTimeout(() => {
+                let result = this.hasUnsavedChanges();
+                if (this.persistedContent) {
+                    result = result && this.persistedContent.isEditable() && this.hasModifyPermission;
+                }
+                this.updateActionsState({
+                    save: result
+                });
+            }, 100);
+        };
+
+        this.wizardPanel.onPermissionItemsAdded(checkSaveActionState);
+        this.wizardPanel.onPermissionItemsRemoved(checkSaveActionState);
+        this.wizardPanel.onPermissionItemChanged(checkSaveActionState);
+        this.wizardPanel.onDataChanged(checkSaveActionState);
     }
 
     private enableActions(state: ActionsState) {
@@ -197,12 +225,26 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
     }
 
     enableActionsForNew() {
-        this.enableActions({ delete: true});
+        this.persistedContent = null;
+
+        this.enableActions({
+            save: this.hasUnsavedChanges(),
+            delete: true
+        });
     }
 
     enableActionsForExisting(existing: api.content.Content) {
-        this.enableActions({delete: existing.isDeletable()});
-        this.enableActionsForExistingByPermissions(existing);
+        this.persistedContent = existing;
+
+        this.enableActions({
+            delete: existing.isDeletable()
+        });
+
+        this.enableActionsForExistingByPermissions(existing).then(() => {
+            this.enableActions({
+                save: existing.isEditable() && this.hasUnsavedChanges()
+            });
+        });
     }
 
     setDeleteOnlyMode(content: api.content.Content, valueOn: boolean = true) {
@@ -238,17 +280,17 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
         });
     }
 
-    private enableActionsForExistingByPermissions(existing: api.content.Content) {
-        new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult: api.security.auth.LoginResult) => {
+    private enableActionsForExistingByPermissions(existing: api.content.Content): wemQ.Promise<any> {
+        return new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult: api.security.auth.LoginResult) => {
 
-            let hasModifyPermission = api.security.acl.PermissionHelper.hasPermission(api.security.acl.Permission.MODIFY,
+            this.hasModifyPermission = api.security.acl.PermissionHelper.hasPermission(api.security.acl.Permission.MODIFY,
                 loginResult, existing.getPermissions());
             let hasDeletePermission = api.security.acl.PermissionHelper.hasPermission(api.security.acl.Permission.DELETE,
                 loginResult, existing.getPermissions());
             let hasPublishPermission = api.security.acl.PermissionHelper.hasPermission(api.security.acl.Permission.PUBLISH,
                 loginResult, existing.getPermissions());
 
-            if (!hasModifyPermission) {
+            if (!this.hasModifyPermission) {
                 this.enableActions({save: false, saveAndClose: false});
             }
             if (!hasDeletePermission) {
@@ -345,7 +387,7 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
         return this.showSplitEditAction;
     }
 
-    getPublishMobileAction():Action {
+    getPublishMobileAction(): Action {
         return this.publishMobile;
     }
 
