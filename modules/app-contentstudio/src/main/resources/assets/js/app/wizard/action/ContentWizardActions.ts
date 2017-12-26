@@ -19,62 +19,46 @@ import i18n = api.util.i18n;
 import ManagedActionManager = api.managedaction.ManagedActionManager;
 import ManagedActionExecutor = api.managedaction.ManagedActionExecutor;
 import ManagedActionState = api.managedaction.ManagedActionState;
+import ActionsStateManager = api.ui.ActionsStateManager;
+
+type ActionNames =
+    'SAVE' |
+    'DELETE' |
+    'DUPLICATE' |
+    'PREVIEW' |
+    'PUBLISH' |
+    'PUBLISH_TREE' |
+    'CREATE_ISSUE' |
+    'UNPUBLISH' |
+    'CLOSE' |
+    'SHOW_LIVE_EDIT' |
+    'SHOW_FORM' |
+    'SHOW_SPLIT_EDIT' |
+    'SAVE_AND_CLOSE' |
+    'PUBLISH_MOBILE' |
+    'UNDO_PENDING_DELETE';
+
+type ActionsMap = {
+    [key in ActionNames]?: Action
+};
 
 type ActionsState = {
-    save?: boolean,
-    delete?: boolean,
-    duplicate?: boolean,
-    preview?: boolean,
-    publish?: boolean,
-    publishTree?: boolean,
-    createIssue?: boolean,
-    unpublish?: boolean,
-    close?: boolean,
-    showLiveEditAction?: boolean,
-    showFormAction?: boolean,
-    showSplitEditAction?: boolean,
-    saveAndClose?: boolean,
-    publishMobile?: boolean,
-    undoPendingDelete?: boolean,
+    [key in ActionNames]: boolean
+};
+
+type ShallowActionsState = {
+    [key in ActionNames]?: boolean
 };
 
 export class ContentWizardActions extends api.app.wizard.WizardActions<api.content.Content> {
-
-    private save: Action;
-
-    private close: Action;
-
-    private saveAndClose: Action;
-
-    private delete: Action;
-
-    private duplicate: Action;
-
-    private publish: Action;
-
-    private publishTree: Action;
-
-    private createIssue: Action;
-
-    private unpublish: Action;
-
-    private publishMobile: Action;
-
-    private preview: Action;
-
-    private showLiveEditAction: Action;
-
-    private showFormAction: Action;
-
-    private showSplitEditAction: Action;
-
-    private undoPendingDelete: Action;
 
     private deleteOnlyMode: boolean = false;
 
     private wizardPanel: ContentWizardPanel;
 
-    private stashedActionsState: ActionsState = {};
+    private actionsMap: ActionsMap;
+
+    private stateManager: ActionsStateManager;
 
     constructor(wizardPanel: ContentWizardPanel) {
         super(
@@ -98,110 +82,73 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
 
         this.wizardPanel = wizardPanel;
 
-        [
-            this.save,
-            this.delete,
-            this.duplicate,
-            this.preview,
-            this.publish,
-            this.publishTree,
-            this.createIssue,
-            this.unpublish,
-            this.close,
-            this.showLiveEditAction,
-            this.showFormAction,
-            this.showSplitEditAction,
-            this.saveAndClose,
-            this.publishMobile,
-            this.undoPendingDelete,
-        ] = this.getActions();
+        const actions = this.getActions();
 
-        this.stashActionsState();
+        this.actionsMap = {
+            SAVE: actions[0],
+            DELETE: actions[1],
+            DUPLICATE: actions[2],
+            PREVIEW: actions[3],
+            PUBLISH: actions[4],
+            PUBLISH_TREE: actions[5],
+            CREATE_ISSUE: actions[6],
+            UNPUBLISH: actions[7],
+            CLOSE: actions[8],
+            SHOW_LIVE_EDIT: actions[9],
+            SHOW_FORM: actions[10],
+            SHOW_SPLIT_EDIT: actions[11],
+            SAVE_AND_CLOSE: actions[12],
+            PUBLISH_MOBILE: actions[13],
+            UNDO_PENDING_DELETE: actions[14]
+        };
+
+        const stashableActionsMap: ActionsMap = {
+            DELETE: this.actionsMap.DELETE,
+            DUPLICATE: this.actionsMap.DUPLICATE,
+            PUBLISH: this.actionsMap.PUBLISH,
+            PUBLISH_TREE: this.actionsMap.PUBLISH_TREE,
+            UNPUBLISH: this.actionsMap.UNPUBLISH,
+            PUBLISH_MOBILE: this.actionsMap.PUBLISH_MOBILE,
+        };
+
+        this.stateManager = new ActionsStateManager(this.actionsMap);
 
         ManagedActionManager.instance().onManagedActionStateChanged((state: ManagedActionState, executor: ManagedActionExecutor) => {
             if (state === ManagedActionState.PREPARING) {
-                this.stashActionsState();
-                this.updateActionsState({
-                    delete: false,
-                    duplicate: false,
-                    publish: false,
-                    publishTree: false,
-                    unpublish: false,
-                    publishMobile: false,
-                });
+                this.stateManager.stashActions(stashableActionsMap, false);
             } else if (state === ManagedActionState.ENDED) {
-                this.updateActionsState(this.stashedActionsState);
+                this.stateManager.unstashActions(stashableActionsMap);
             }
         });
     }
 
-    private enableActions(state: ActionsState) {
-        if (ManagedActionManager.instance().isExecuting()) {
-            this.updateStashedActionsState(state);
-        } else {
-            this.updateActionsState(state);
-        }
+    private enableActions(state: ShallowActionsState) {
+        this.stateManager.enableActions(state);
     }
 
-    private updateActionsState(state: ActionsState) {
-        for (const key of Object.keys(state)) {
-            const hasProperty = state.hasOwnProperty(key) && this.hasOwnProperty(key);
-            if (hasProperty && state[key] != null && this[key] instanceof Action) {
-                const action = <Action> this[key];
-                action.setEnabled(state[key]);
-            }
-        }
-    }
-
-    private updateStashedActionsState(state: ActionsState) {
-        for (const key of Object.keys(state)) {
-            const hasProperty = state.hasOwnProperty(key);
-            if (hasProperty && state[key] != null) {
-                this.stashedActionsState[key] = state[key];
-            }
-        }
-    }
-
-    private stashActionsState() {
-        this.stashedActionsState = this.stashedActionsState || {};
-        this.stashedActionsState.save = this.save.isEnabled();
-        this.stashedActionsState.delete = this.delete.isEnabled();
-        this.stashedActionsState.duplicate = this.duplicate.isEnabled();
-        this.stashedActionsState.preview = this.preview.isEnabled();
-        this.stashedActionsState.publish = this.publish.isEnabled();
-        this.stashedActionsState.publishTree = this.publishTree.isEnabled();
-        this.stashedActionsState.createIssue = this.createIssue.isEnabled();
-        this.stashedActionsState.unpublish = this.unpublish.isEnabled();
-        this.stashedActionsState.close = this.close.isEnabled();
-        this.stashedActionsState.showLiveEditAction = this.showLiveEditAction.isEnabled();
-        this.stashedActionsState.showFormAction = this.showFormAction.isEnabled();
-        this.stashedActionsState.showSplitEditAction = this.showSplitEditAction.isEnabled();
-        this.stashedActionsState.saveAndClose = this.saveAndClose.isEnabled();
-        this.stashedActionsState.publishMobile = this.publishMobile.isEnabled();
-        this.stashedActionsState.undoPendingDelete = this.undoPendingDelete.isEnabled();
+    private isActionEnabled(name: ActionNames) {
+        this.stateManager.isActionEnabled(name);
     }
 
     refreshPendingDeleteDecorations() {
         let compareStatus = this.wizardPanel.getCompareStatus();
         let isPendingDelete = api.content.CompareStatusChecker.isPendingDelete(compareStatus);
 
-        this.undoPendingDelete.setVisible(isPendingDelete);
-        [
-            this.save,
-            this.delete,
-            this.duplicate,
-            this.unpublish
-        ].forEach(action => action.setVisible(!isPendingDelete));
-
-        this.preview.setVisible(this.preview.isEnabled() && !isPendingDelete);
+        this.actionsMap.UNDO_PENDING_DELETE.setVisible(isPendingDelete);
+        this.actionsMap.SAVE.setVisible(!isPendingDelete);
+        this.actionsMap.DELETE.setVisible(!isPendingDelete);
+        this.actionsMap.DUPLICATE.setVisible(!isPendingDelete);
+        this.actionsMap.UNPUBLISH.setVisible(!isPendingDelete);
+        this.actionsMap.PREVIEW.setVisible(this.isActionEnabled('PREVIEW') && !isPendingDelete);
     }
 
     enableActionsForNew() {
-        this.enableActions({save: true, delete: true});
+        this.stateManager.enableActions({});
+        this.enableActions({SAVE: true, DELETE: true});
     }
 
     enableActionsForExisting(existing: api.content.Content) {
-        this.enableActions({save: existing.isEditable(), delete: existing.isDeletable()});
+        this.enableActions({SAVE: existing.isEditable(), DELETE: existing.isDeletable()});
         this.enableActionsForExistingByPermissions(existing);
     }
 
@@ -213,20 +160,20 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
         const nonDeleteMode = !valueOn;
 
         this.enableActions({
-            save: nonDeleteMode,
-            duplicate: nonDeleteMode,
-            publish: nonDeleteMode,
-            createIssue: nonDeleteMode,
-            unpublish: nonDeleteMode,
-            publishMobile: nonDeleteMode,
+            SAVE: nonDeleteMode,
+            DUPLICATE: nonDeleteMode,
+            PUBLISH: nonDeleteMode,
+            CREATE_ISSUE: nonDeleteMode,
+            UNPUBLISH: nonDeleteMode,
+            PUBLISH_MOBILE: nonDeleteMode,
         });
 
-        this.publishMobile.setVisible(!valueOn);
+        this.actionsMap.PUBLISH_MOBILE.setVisible(!valueOn);
 
         if (valueOn) {
             this.enableDeleteIfAllowed(content);
         } else {
-            this.enableActions({delete: true});
+            this.enableActions({DELETE: true});
             this.enableActionsForExistingByPermissions(content);
         }
     }
@@ -235,7 +182,7 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
         new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult: api.security.auth.LoginResult) => {
             let hasDeletePermission = api.security.acl.PermissionHelper.hasPermission(api.security.acl.Permission.DELETE,
                 loginResult, content.getPermissions());
-            this.enableActions({delete: hasDeletePermission});
+            this.enableActions({DELETE: hasDeletePermission});
         });
     }
 
@@ -250,21 +197,21 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
                 loginResult, existing.getPermissions());
 
             if (!hasModifyPermission) {
-                this.enableActions({save: false, saveAndClose: false});
+                this.enableActions({SAVE: false, SAVE_AND_CLOSE: false});
             }
             if (!hasDeletePermission) {
-                this.enableActions({delete: false});
+                this.enableActions({DELETE: false});
             }
             if (!hasPublishPermission) {
                 this.enableActions({
-                    publish: false,
-                    createIssue: true,
-                    unpublish: false,
-                    publishTree: false,
-                    publishMobile: false,
+                    PUBLISH: false,
+                    CREATE_ISSUE: true,
+                    UNPUBLISH: false,
+                    PUBLISH_TREE: false,
+                    PUBLISH_MOBILE: false,
                 });
 
-                this.publishMobile.setVisible(false);
+                this.actionsMap.PUBLISH_MOBILE.setVisible(false);
             }
 
             if (existing.hasParent()) {
@@ -278,7 +225,7 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
                                     accessControlList);
 
                                 if (!hasParentCreatePermission) {
-                                    this.enableActions({duplicate: false});
+                                    this.enableActions({DUPLICATE: false});
                                 }
                             });
                     });
@@ -290,7 +237,7 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
                             accessControlList);
 
                         if (!hasParentCreatePermission) {
-                            this.enableActions({duplicate: false});
+                            this.enableActions({DUPLICATE: false});
                         }
                     });
             }
@@ -299,58 +246,58 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
     }
 
     getDeleteAction(): Action {
-        return this.delete;
+        return this.actionsMap.DELETE;
     }
 
     getSaveAction(): Action {
-        return this.save;
+        return this.actionsMap.SAVE;
     }
 
     getDuplicateAction(): Action {
-        return this.duplicate;
+        return this.actionsMap.DUPLICATE;
     }
 
     getCloseAction(): Action {
-        return this.close;
+        return this.actionsMap.CLOSE;
     }
 
     getPublishAction(): Action {
-        return this.publish;
+        return this.actionsMap.PUBLISH;
     }
 
     getPublishTreeAction(): Action {
-        return this.publishTree;
+        return this.actionsMap.PUBLISH_TREE;
     }
 
     getCreateIssueAction(): Action {
-        return this.createIssue;
+        return this.actionsMap.CREATE_ISSUE;
     }
 
     getUnpublishAction(): Action {
-        return this.unpublish;
+        return this.actionsMap.UNPUBLISH;
     }
 
     getPreviewAction(): Action {
-        return this.preview;
+        return this.actionsMap.PREVIEW;
     }
 
     getShowLiveEditAction(): Action {
-        return this.showLiveEditAction;
+        return this.actionsMap.SHOW_LIVE_EDIT;
     }
 
     getShowFormAction(): Action {
-        return this.showFormAction;
+        return this.actionsMap.SHOW_FORM;
     }
 
     getShowSplitEditAction(): Action {
-        return this.showSplitEditAction;
+        return this.actionsMap.SHOW_SPLIT_EDIT;
     }
 
-    getPublishMobileAction():Action {
-        return this.publishMobile;
+    getPublishMobileAction(): Action {
+        return this.actionsMap.PUBLISH_MOBILE;
     }
 
     getUndoPendingDeleteAction(): Action {
-        return this.undoPendingDelete;
+        return this.actionsMap.UNDO_PENDING_DELETE;
     }
 }

@@ -115,7 +115,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
 
     // tslint:disable-next-line:max-line-length
     updateActionsEnabledState(browseItems: ContentBrowseItem[], changes?: BrowseItemsChanges<ContentSummaryAndCompareStatus>): wemQ.Promise<void> {
-
+    // stash
         if (changes && changes.getAdded().length == 0 && changes.getRemoved().length == 0) {
             return wemQ<void>(null);
         }
