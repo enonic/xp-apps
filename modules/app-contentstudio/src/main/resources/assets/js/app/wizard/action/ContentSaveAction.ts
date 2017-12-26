@@ -14,6 +14,7 @@ export class ContentSaveAction
         this.setLabel(i18n('action.saving'));
 
         return wizardPanel.saveChanges().
-        catch((reason: any) => api.DefaultErrorHandler.handle(reason));
+        catch((reason: any) => api.DefaultErrorHandler.handle(reason)).
+        finally(() => this.setLabel(i18n('action.saved')));
     }
 }

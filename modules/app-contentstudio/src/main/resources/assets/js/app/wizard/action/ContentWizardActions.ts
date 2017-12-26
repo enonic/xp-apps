@@ -148,13 +148,16 @@ export class ContentWizardActions
 
         const checkSaveActionState = () => {
             setTimeout(() => {
-                let result = this.hasUnsavedChanges();
+                let isEnable = this.hasUnsavedChanges();
                 if (this.persistedContent) {
-                    result = result && this.persistedContent.isEditable() && this.hasModifyPermission;
+                    isEnable = isEnable && this.persistedContent.isEditable() && this.hasModifyPermission;
                 }
                 this.updateActionsState({
-                    save: result
+                    save: isEnable
                 });
+
+                this.save.setLabel(i18n(isEnable ? 'action.save' : 'action.saved'));
+
             }, 100);
         };
 
