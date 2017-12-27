@@ -13,7 +13,8 @@ import ContentPath = api.content.ContentPath;
 import AccessControlEntry = api.security.acl.AccessControlEntry;
 import i18n = api.util.i18n;
 
-export class SecurityWizardStepForm extends api.app.wizard.WizardStepForm {
+export class SecurityWizardStepForm
+    extends api.app.wizard.WizardStepForm {
 
     private label: LabelEl;
     private inheritance: DivEl;
@@ -153,6 +154,10 @@ export class SecurityWizardStepForm extends api.app.wizard.WizardStepForm {
 
     giveFocus(): boolean {
         return this.accessListView.giveFocus();
+    }
+
+    isOverwritePermissions() {
+        return this.overwritePermissions;
     }
 
     onPermissionItemChanged(listener: (item: AccessControlEntry) => void) {

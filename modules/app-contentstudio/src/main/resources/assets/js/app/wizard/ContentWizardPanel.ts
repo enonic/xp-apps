@@ -1778,6 +1778,10 @@ export class ContentWizardPanel
         this.securityWizardStepForm.update(contentCopy, unchangedOnly);
     }
 
+    getSecurityWizardStepForm() {
+        return this.securityWizardStepForm;
+    }
+
     private updateWizardHeader(content: Content) {
 
         this.updateThumbnailWithContent(content);

@@ -146,20 +146,22 @@ export class ContentWizardActions
     setUnsavedChangesCallback(callback: () => boolean) {
         this.hasUnsavedChanges = callback;
 
-        const checkSaveActionState = () => {
-            setTimeout(() => {
-                let isEnable = this.hasUnsavedChanges();
-                if (this.persistedContent) {
-                    isEnable = isEnable && this.persistedContent.isEditable() && this.hasModifyPermission;
-                }
-                this.updateActionsState({
-                    save: isEnable
-                });
+        const checkSaveActionState = api.util.AppHelper.debounce(() => {
+            let isEnable = this.hasUnsavedChanges();
+            if (this.persistedContent) {
 
-                this.save.setLabel(i18n(isEnable ? 'action.save' : 'action.saved'));
+                const overwritePermissions = this.wizardPanel.getSecurityWizardStepForm() &&
+                                             this.wizardPanel.getSecurityWizardStepForm().isOverwritePermissions();
 
-            }, 100);
-        };
+                isEnable = (isEnable || overwritePermissions) && this.persistedContent.isEditable() && this.hasModifyPermission;
+            }
+            this.updateActionsState({
+                save: isEnable
+            });
+
+            this.save.setLabel(i18n(isEnable ? 'action.save' : 'action.saved'));
+
+        }, 100, false);
 
         this.wizardPanel.onPermissionItemsAdded(checkSaveActionState);
         this.wizardPanel.onPermissionItemsRemoved(checkSaveActionState);
@@ -232,7 +234,7 @@ export class ContentWizardActions
         this.persistedContent = null;
 
         this.enableActions({
-            save: this.hasUnsavedChanges(),
+            save: false,
             delete: true
         });
     }
