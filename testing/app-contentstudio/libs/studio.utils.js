@@ -58,6 +58,19 @@ module.exports = {
             this.doSwitchToContentBrowsePanel(webDriverHelper.browser);
         }).pause(2000);
     },
+    doAddArticleContent: function (siteName, article) {
+        return this.findAndSelectItem(siteName).then(()=> {
+            return this.openContentWizard(article.contentType);
+        }).then(()=> {
+            return contentWizardPanel.typeData(article);
+        }).then(()=> {
+            return contentWizardPanel.waitAndClickOnSave();
+        }).then(()=> {
+            return this.doCloseCurrentBrowserTab();
+        }).then(()=> {
+            this.doSwitchToContentBrowsePanel(webDriverHelper.browser);
+        }).pause(2000);
+    },
     findAndSelectItem: function (name) {
         return this.typeNameInFilterPanel(name).then(()=> {
             return browsePanel.waitForRowByNameVisible(name);
@@ -93,6 +106,8 @@ module.exports = {
             return;
         }).then(()=> {
             return filterPanel.typeSearchText(name);
+        }).catch((err)=> {
+            throw new Error(err);
         }).then(()=> {
             return browsePanel.waitForSpinnerNotVisible(appConst.TIMEOUT_3);
         });

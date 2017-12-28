@@ -10,7 +10,7 @@ var wizard = {
     displayNameInput: `//input[contains(@name,'displayName')]`,
     saveButton: `//button[contains(@id,'ActionButton') and child::span[text()='Save draft']]`,
     deleteButton: `//button[contains(@id,'ActionButton') and child::span[text()='Delete']]`,
-}
+};
 var contentWizardPanel = Object.create(page, {
 
     displayNameInput: {
@@ -138,7 +138,6 @@ var contentWizardPanel = Object.create(page, {
             throw new Error(errString);
         }
     }
-
 });
 module.exports = contentWizardPanel;
 

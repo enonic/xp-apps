@@ -2,8 +2,8 @@
  * Created  on 1.12.2017.
  */
 module.exports = Object.freeze({
-    
     TEST_FOLDER_WIT_IMAGES:`All Content types images`,
+    APP_CONTENT_TYPES: 'All Content Types App',
     //waitForTimeout
     TIMEOUT_3: 3000,
     TIMEOUT_1: 1000,
@@ -23,5 +23,7 @@ module.exports = Object.freeze({
         IMG_SELECTOR_0_0: 'contenttypes:imageselector0_0',
         IMG_SELECTOR_1_1: 'contenttypes:imageselector1_1',
         IMG_SELECTOR_2_4: ':imageselector2_4',
+        ARTICLE: `:article`,
+        CUSTOM_RELATIONSHIP: ':custom-relationship2_4',
     },
 });
