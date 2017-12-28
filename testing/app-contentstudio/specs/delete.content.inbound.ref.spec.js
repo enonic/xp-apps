@@ -16,7 +16,7 @@ const deleteContentDialog= require('../page_objects/delete.content.dialog');
 
 
 describe('Delete a content that has inbound references spec', function () {
-    this.timeout(70000);
+    this.timeout(appConstant.SUITE_TIMEOUT);
     webDriverHelper.setupBrowser();
 
     it(`GIVEN existing shortcut with a target WHEN the target-content has been selected AND 'Delete' button pressed THEN notification message should appear`, () => {

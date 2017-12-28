@@ -10,7 +10,6 @@ var contentWizardStepForm = Object.create(page, {
 
     type: {
         value: function (data, contentType) {
-            let formPanel = null;
             if (contentType.includes('base:shortcut')) {
                 return shortcutForm.type(data);
             }
