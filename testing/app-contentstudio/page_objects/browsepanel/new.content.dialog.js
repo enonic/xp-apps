@@ -78,6 +78,8 @@ var newContentDialog = Object.create(page, {
                 return this.getDisplayedElements(typeSelector);
             }).then((result)=> {
                 return this.getBrowser().elementIdClick(result[0].ELEMENT);
+            }).catch(err=> {
+                throw new Error('clickOnContentType:' + err);
             })
 
         }
