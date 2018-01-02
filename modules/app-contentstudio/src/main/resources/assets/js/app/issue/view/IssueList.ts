@@ -80,6 +80,7 @@ export class IssueList
                     if (issues.length > 0) {
                         this.setItems(issues);
                     } else {
+                        this.clearItems();
                         this.appendChild(new PEl('no-issues-message').setHtml(i18n('dialog.issue.noIssuesFound')));
                     }
                 }
