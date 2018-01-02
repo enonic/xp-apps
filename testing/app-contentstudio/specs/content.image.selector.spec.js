@@ -59,7 +59,7 @@ describe('content.image.selector: Image content specification', function () {
             });
         });
 
-    it(`GIVEN wizard for content with image-selector is opened WHEN data has been typed AND image selected  AND all hsa been saved THEN new content should be listed in the grid`,
+    it(`GIVEN wizard for content with image-selector is opened WHEN image has been selected AND data saved THEN new content should be listed in the grid`,
         () => {
             let images = [appConstant.TEST_IMAGES.RENAULT];
             let displayName = contentBuilder.generateRandomName('imgselector');

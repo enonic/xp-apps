@@ -25,5 +25,7 @@ module.exports = Object.freeze({
         IMG_SELECTOR_2_4: ':imageselector2_4',
         ARTICLE: `:article`,
         CUSTOM_RELATIONSHIP: ':custom-relationship2_4',
+        DOUBLE_MIN_MAX:':double_max',
+        LONG_MIN_MAX:':long_max'
     },
 });
