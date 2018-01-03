@@ -1,7 +1,7 @@
 import UserStore = api.security.UserStore;
 import UserStoreJson = api.security.UserStoreJson;
-import {GraphQlRequest} from '../GraphQlRequest';
 import UserStoreKey = api.security.UserStoreKey;
+import {GraphQlRequest} from '../GraphQlRequest';
 
 export class GetUserStoreByKeyRequest
     extends GraphQlRequest<any, UserStore> {
@@ -26,7 +26,7 @@ export class GetUserStoreByKeyRequest
                 key,
                 name,
                 path,
-                displayName,    
+                displayName,
                 description,
                 authConfig {
                     applicationKey

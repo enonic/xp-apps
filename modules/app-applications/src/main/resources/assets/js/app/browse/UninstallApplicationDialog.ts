@@ -13,7 +13,7 @@ export class UninstallApplicationDialog extends api.ui.dialog.ModalDialog {
     private noAction: Action = new Action(i18n('action.no'));
 
     constructor(applications: Application[]) {
-        super(i18n('dialog.uninstall'));
+        super({title: i18n('dialog.uninstall')});
 
         this.applications = applications;
         this.addClass('uninstall-dialog');

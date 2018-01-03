@@ -209,7 +209,7 @@ function startApplication() {
 
     api.util.AppHelper.preventDragRedirect();
 
-    // tslint:disable-next-line:no-unused-new
+    // tslint:disable-next-line:no-unused-expression
     new DuplicateContentDialog();
 
     let contentDeleteDialog = new ContentDeleteDialog();
@@ -240,7 +240,7 @@ function startApplication() {
 
     ShowIssuesDialogEvent.on((event) => IssueDialogsManager.get().openListDialog());
 
-    // tslint:disable-next-line:no-unused-new
+    // tslint:disable-next-line:no-unused-expression
     new EditPermissionsDialog();
 
     application.setLoaded(true);
@@ -342,9 +342,9 @@ function startContentApplication(application: api.app.Application) {
     });
 
     IssueListDialog.get();
-    // tslint:disable-next-line:no-unused-new
+    // tslint:disable-next-line:no-unused-expression
     new SortContentDialog();
-    // tslint:disable-next-line:no-unused-new
+    // tslint:disable-next-line:no-unused-expression
     new MoveContentDialog();
 }
 

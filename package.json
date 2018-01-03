@@ -11,9 +11,9 @@
     "build:app-contentstudio": "npm run --prefix modules/app-contentstudio/ build",
     "build:app-main": "npm run --prefix modules/app-main/ build",
     "build:app-users": "npm run --prefix modules/app-users/ build",
-    "lint:ts": "tslint -c tslint.json modules/**/**/src/main/resources/**/*.ts --exclude **/*.d.ts --noUnusedLocals",
+    "lint:ts": "tslint -c tslint.json modules/**/**/src/main/resources/**/*.ts --exclude **/*.d.ts",
     "lint:js": "eslint -c .eslintrc.js modules/app-{applications,contentstudio,users}/src/main/**/*.js",
-    "fix:ts": "tslint -c tslint.json modules/**/src/main/resources/**/*.ts --fix --exclude **/*.d.ts --noUnusedLocals",
+    "fix:ts": "tslint -c tslint.json modules/**/src/main/resources/**/*.ts --fix --exclude **/*.d.ts",
     "fix:js": "eslint -c .eslintrc.js modules/app-{applications,contentstudio,users}/src/main/**/*.js --fix"
   },
   "devDependencies": {
@@ -26,8 +26,8 @@
     "prettier": "^1.5.3",
     "runwith": "^0.3.0",
     "simple-git": "^1.77.0",
-    "tslint": "^4.2.0",
-    "typescript": "^2.0.10"
+    "tslint": "5.8.0",
+    "typescript": "2.6.2"
   },
   "engines": {
     "node": ">= 6.9.2",

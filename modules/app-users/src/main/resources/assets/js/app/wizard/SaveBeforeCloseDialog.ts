@@ -12,7 +12,7 @@ export class SaveBeforeCloseDialog extends ModalDialog {
     private noAction: Action = new Action(i18n('action.no'), i18n('action.no').slice(0, 1).toLowerCase());
 
     constructor(wizardPanel: WizardPanel<any>) {
-        super(i18n('dialog.saveBeforeClose.title'));
+        super({title: i18n('dialog.saveBeforeClose.title')});
 
         this.wizardPanel = wizardPanel;
 
