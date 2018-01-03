@@ -36,4 +36,7 @@ describe('Login Page specification', function () {
             assert.isTrue(result, 'login button should be not visible');
         });
     });
+    before(()=> {
+        return console.log('specification starting: ' + this.title);
+    });
 });

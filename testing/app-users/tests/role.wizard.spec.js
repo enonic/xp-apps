@@ -83,4 +83,7 @@ describe('Role Wizard and Statistics Panel spec', function () {
 
     beforeEach(() => testUtils.navigateToUsersApp(webDriverHelper.browser));
     afterEach(() => testUtils.doCloseUsersApp(webDriverHelper.browser));
+    before(()=> {
+        return console.log('specification starting: ' + this.title);
+    });
 });

@@ -11,9 +11,9 @@ Before trying to run tests, you need to verify that the following software are i
 * Git installed on system;
 * Chrome browser installed on system.
 
-Run all tests including integration tests:
-  1. `gradle testApp`
-  2. `gradle testAppLocally`
+Run tests for Users Application:
+  1. `gradle testUsersApp'
+  2. `gradle testUsersAppLocally'
 
 ### Reporting
 

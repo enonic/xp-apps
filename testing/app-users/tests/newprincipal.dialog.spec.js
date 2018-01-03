@@ -87,4 +87,7 @@ describe('New Principal dialog specification', function () {
     afterEach(() => {
         return testUtils.doCloseUsersApp(webDriverHelper.browser)
     });
+    before(()=> {
+        return console.log('specification starting: ' + this.title);
+    })
 });
