@@ -13,7 +13,7 @@ const userItemsBuilder = require('../libs/userItems.builder.js');
 const appConst = require('../libs/app_const');
 const confirmationDialog = require("../page_objects/confirmation.dialog");
 
-describe('UseStore confirm and delete in wizard and in browse panel', function () {
+describe('User Store confirm and delete in wizard and in browse panel', function () {
     this.timeout(70000);
     webDriverHelper.setupBrowser();
     let userStore;
