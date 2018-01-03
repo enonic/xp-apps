@@ -31,7 +31,7 @@ describe('Group Wizard and `Save Before Close dialog`', function () {
 
     it('WHEN new group has been added THEN the group should be present in the grid',
         () => {
-            this.bail(true);
+            //this.bail(true);
             let groupName = userItemsBuilder.generateRandomName('group');
             testGroup = userItemsBuilder.buildGroup(groupName, 'description', null);
             return testUtils.openWizardAndSaveGroup(testGroup).then(()=> {
