@@ -118,7 +118,7 @@ export class LiveEditPage {
             if (!this.skipNextReloadConfirmation) {
                 const message = 'This will close this wizard!';
                 const e = event || window.event || {returnValue: ''};
-                e['returnValue'] = message;
+                e['returnValue'] = message as any;
                 return message;
             }
         };

@@ -127,7 +127,7 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
     }
 
     private isActionEnabled(name: ActionNames) {
-        this.stateManager.isActionEnabled(name);
+        return this.stateManager.isActionEnabled(name);
     }
 
     refreshPendingDeleteDecorations() {
