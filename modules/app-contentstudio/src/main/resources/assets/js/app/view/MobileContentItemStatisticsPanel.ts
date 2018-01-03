@@ -5,7 +5,6 @@ import {MobileDetailsPanelToggleButton} from './detail/button/MobileDetailsPanel
 import {ContentTreeGridActions} from '../browse/action/ContentTreeGridActions';
 import {DetailsView} from './detail/DetailsView';
 import {MobilePreviewFoldButton} from './MobilePreviewFoldButton';
-
 import ViewItem = api.app.view.ViewItem;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import StringHelper = api.util.StringHelper;
@@ -74,14 +73,14 @@ export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatistic
 
     private createFoldButton(browseActions: ContentTreeGridActions) {
         this.foldButton = new MobilePreviewFoldButton([
-            browseActions.UNPUBLISH_CONTENT,
-            browseActions.PUBLISH_CONTENT,
-            browseActions.MOVE_CONTENT,
-            browseActions.SORT_CONTENT,
-            browseActions.DELETE_CONTENT,
-            browseActions.DUPLICATE_CONTENT,
-            browseActions.EDIT_CONTENT,
-            browseActions.SHOW_NEW_CONTENT_DIALOG_ACTION
+            browseActions.getUnpublishAction(),
+            browseActions.getPublishAction(),
+            browseActions.getMoveAction(),
+            browseActions.getSortAction(),
+            browseActions.getDeleteAction(),
+            browseActions.getDuplicateAction(),
+            browseActions.getEditAction(),
+            browseActions.getShowNewDialogAction()
         ], this.itemHeader);
     }
 

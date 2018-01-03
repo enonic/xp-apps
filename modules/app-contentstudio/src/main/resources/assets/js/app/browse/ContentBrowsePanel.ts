@@ -56,7 +56,7 @@ export class ContentBrowsePanel
         });
 
         ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
-            this.getBrowseActions().TOGGLE_SEARCH_PANEL.setVisible(item.isInRangeOrSmaller(ResponsiveRanges._540_720));
+            this.getBrowseActions().getToggleSearchPanelAction().setVisible(item.isInRangeOrSmaller(ResponsiveRanges._540_720));
         });
 
         this.getBrowseActions().updateActionsEnabledState([]); // to enable/disable actions correctly
