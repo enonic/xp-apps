@@ -61,7 +61,7 @@ describe('`user.delete.spec`:User - confirm and delete it in the wizard and in t
             let userName = userItemsBuilder.generateRandomName('user');
             testUser = userItemsBuilder.buildUser(userName, '1q2w3e', userItemsBuilder.generateEmail(userName), null);
             return testUtils.addSystemUser(testUser).then(()=> {
-                testUtils.findAndSelectItem(testUser.displayName);
+                return testUtils.findAndSelectItem(testUser.displayName);
             }).then(()=> {
                 return userBrowsePanel.waitForDeleteButtonEnabled();
             }).then(()=> {

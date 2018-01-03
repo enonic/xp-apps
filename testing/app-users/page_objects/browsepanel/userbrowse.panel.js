@@ -224,7 +224,7 @@ var userBrowsePanel = Object.create(page, {
             var nameXpath = panel.rowByName(name);
             return this.waitForVisible(nameXpath, appConst.TIMEOUT_3).then(()=> {
                 return this.doClick(nameXpath);
-            }).pause(400).catch((err)=> {
+            }).pause(500).catch((err)=> {
                 this.saveScreenshot('err_find_' + name);
                 throw Error('Row with the name ' + name + ' was not found')
             })
@@ -328,6 +328,12 @@ var userBrowsePanel = Object.create(page, {
         value: function () {
             let selector = `${panel.selectionToggler}` + `/span`;
             return this.getText(selector);
+        }
+    },
+    doCatch: {
+        value: function (screenshotName, errString) {
+            this.saveScreenshot(screenshotName);
+            throw new Error(errString);
         }
     }
 });
