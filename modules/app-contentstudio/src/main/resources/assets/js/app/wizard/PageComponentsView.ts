@@ -62,6 +62,10 @@ export class PageComponentsView
 
     private keyBinding: KeyBinding[];
 
+    private beforeActionHandler: (action: Action) => void;
+
+    private afterActionHandler: (action: Action) => void;
+
     constructor(liveEditPage: LiveEditPageProxy, private saveAsTemplateAction: SaveAsTemplateAction) {
         super('page-components-view');
 
@@ -114,7 +118,7 @@ export class PageComponentsView
         api.ui.KeyBindings.get().bindKeys(this.keyBinding);
         super.show();
 
-        if(this.tree) {
+        if (this.tree) {
             this.tree.getGrid().resizeCanvas();
         }
     }
@@ -701,24 +705,37 @@ export class PageComponentsView
             this.contextMenu.setActions(contextMenuActions);
         }
 
-        this.contextMenu.getMenu().onBeforeAction((action: Action) => {
-            PageViewController.get().setContextMenuDisabled(true);
-            if (action.hasParentAction() && action.getParentAction().getLabel() === i18n('field.insert')) {
-                this.notifyBeforeInsertAction();
-            }
-        });
+        if (this.beforeActionHandler) {
+            this.contextMenu.getMenu().unBeforeAction(this.beforeActionHandler);
+        } else {
+            this.beforeActionHandler = (action: Action) => {
 
-        this.contextMenu.getMenu().onAfterAction((action: Action) => {
-            this.hidePageComponentsIfInMobileView(action);
-
-            setTimeout(() => {
-                PageViewController.get().setContextMenuDisabled(false);
-                this.contextMenu.getMenu().clearActionListeners();
-                if (this.getHTMLElement().offsetHeight === 0) { // if PCV not visible, for example fragment created, hide highlighter
-                    Highlighter.get().hide();
+                PageViewController.get().setContextMenuDisabled(true);
+                if (action.hasParentAction() && action.getParentAction().getLabel() === i18n('field.insert')) {
+                    this.notifyBeforeInsertAction();
                 }
-            }, 500);
-        });
+            };
+        }
+
+        if (this.afterActionHandler) {
+            this.contextMenu.getMenu().unAfterAction(this.afterActionHandler);
+        } else {
+            this.afterActionHandler = (action: Action) => {
+
+                this.hidePageComponentsIfInMobileView(action);
+
+                setTimeout(() => {
+                    PageViewController.get().setContextMenuDisabled(false);
+                    if (this.getHTMLElement().offsetHeight === 0) { // if PCV not visible, for example fragment created, hide highlighter
+
+                        Highlighter.get().hide();
+                    }
+                }, 500);
+            };
+        }
+
+        this.contextMenu.getMenu().onBeforeAction(this.beforeActionHandler);
+        this.contextMenu.getMenu().onAfterAction(this.afterActionHandler);
 
         this.setMenuOpenStyleOnMenuIcon(row);
 
@@ -752,6 +769,14 @@ export class PageComponentsView
     }
 
     private hideContextMenu() {
+       /* if (this.beforeActionHandler) {
+            this.contextMenu.getMenu().unBeforeAction(this.beforeActionHandler);
+        }
+
+        if (this.afterActionHandler) {
+            this.contextMenu.getMenu().unAfterAction(this.afterActionHandler);
+        }
+*/
         if (this.contextMenu && this.contextMenu.isVisible()) {
             this.contextMenu.hide();
         }
