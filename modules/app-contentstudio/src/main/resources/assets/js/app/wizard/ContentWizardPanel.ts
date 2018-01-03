@@ -67,6 +67,7 @@ import CycleButton = api.ui.button.CycleButton;
 import Permission = api.security.acl.Permission;
 import AccessControlEntry = api.security.acl.AccessControlEntry;
 import i18n = api.util.i18n;
+import {PageModel} from '../../page-editor/PageModel';
 
 export class ContentWizardPanel
     extends api.app.wizard.WizardPanel<Content> {
@@ -1161,8 +1162,6 @@ export class ContentWizardPanel
 
                 contentData.onChanged(this.dataChangedHandler);
 
-                this.wizardActions.setUnsavedChangesCallback(this.hasUnsavedChanges.bind(this));
-
                 let formViewLayoutPromises: wemQ.Promise<void>[] = [];
                 formViewLayoutPromises.push(this.contentWizardStepForm.layout(formContext, contentData, this.contentType.getForm()));
                 // Must pass FormView from contentWizardStepForm displayNameScriptExecutor,
@@ -1206,6 +1205,9 @@ export class ContentWizardPanel
                         this.siteModel = new SiteModel(<Site>content);
                         this.initSiteModelListeners();
                     }
+
+                    this.wizardActions.setUnsavedChangesCallback(this.hasUnsavedChanges.bind(this));
+
                     return wemQ(null);
                 });
             });
@@ -1883,6 +1885,30 @@ export class ContentWizardPanel
 
     onFormPanelAdded() {
         super.onFormPanelAdded(!this.isSplitEditModeActive());
+    }
+
+    onLiveModelChanged(listener: () => void) {
+        const pageModel: PageModel = this.liveEditModel ? this.liveEditModel.getPageModel() : null;
+
+        if (pageModel) {
+            pageModel.onPropertyChanged(listener);
+            pageModel.onComponentPropertyChangedEvent(listener);
+            pageModel.onCustomizeChanged(listener);
+            pageModel.onPageModeChanged(listener);
+            pageModel.onReset(listener);
+        }
+    }
+
+    unLiveModelChanged(listener: () => void) {
+        const pageModel: PageModel = this.liveEditModel ? this.liveEditModel.getPageModel() : null;
+
+        if (pageModel) {
+            pageModel.unPropertyChanged(listener);
+            pageModel.unComponentPropertyChangedEvent(listener);
+            pageModel.unCustomizeChanged(listener);
+            pageModel.unPageModeChanged(listener);
+            pageModel.unReset(listener);
+        }
     }
 
     onPermissionItemChanged(listener: (item: AccessControlEntry) => void) {

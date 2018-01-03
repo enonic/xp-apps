@@ -167,6 +167,7 @@ export class ContentWizardActions
         this.wizardPanel.onPermissionItemsRemoved(checkSaveActionState);
         this.wizardPanel.onPermissionItemChanged(checkSaveActionState);
         this.wizardPanel.onDataChanged(checkSaveActionState);
+        this.wizardPanel.onLiveModelChanged(checkSaveActionState);
     }
 
     private enableActions(state: ActionsState) {
