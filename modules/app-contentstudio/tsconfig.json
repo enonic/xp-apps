@@ -3,5 +3,9 @@
     "src/main/resources/assets/js/main.ts",
     "src/main/resources/assets/js/page-editor.ts",
     "src/main/resources/assets/page-editor/lib/_include.js"
+  ],
+  "include": [
+    "src/main/resources/assets/js/api.ts",
+    ".xp/dev/d.ts/admin.d.ts"
   ]
 }

@@ -46,15 +46,11 @@ type ActionNames =
 
 type ActionsMap = {
     [key in ActionNames]?: Action
-    };
+};
 
 type ActionsState = {
-    [key in ActionNames]: boolean
-    };
-
-type ShallowActionsState = {
     [key in ActionNames]?: boolean
-    };
+};
 
 export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAndCompareStatus> {
 
@@ -104,7 +100,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         };
 
         const previewStateChangedHandler = value => {
-            this.stateManager.enableActions({PREVIEW: value});
+            this.enableActions({PREVIEW: value});
         };
 
         this.getPreviewHandler().onPreviewStateChanged(previewStateChangedHandler);
@@ -123,6 +119,10 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
             this.getPreviewHandler().unPreviewStateChanged(previewStateChangedHandler);
             ManagedActionManager.instance().unManagedActionStateChanged(managedActionsHandler);
         });
+    }
+
+    private enableActions(state: ActionsState) {
+        this.stateManager.enableActions(state);
     }
 
     getPreviewHandler(): PreviewContentHandler {
@@ -168,7 +168,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
     }
 
     private resetDefaultActionsNoItemsSelected() {
-        this.stateManager.enableActions({
+        this.enableActions({
             SHOW_NEW_DIALOG: true,
             EDIT: false,
             DELETE: false,
@@ -250,7 +250,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         treePublishEnabled = treePublishEnabled && noManagedActionExecuting;
         unpublishEnabled = unpublishEnabled && noManagedActionExecuting;
 
-        this.stateManager.enableActions({
+        this.enableActions({
             SHOW_NEW_DIALOG: contentSummaries.length < 2,
             EDIT: !allAreReadonly && this.anyEditable(contentSummaries),
             DELETE: deleteEnabled,
@@ -308,7 +308,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
 
                 const canCreate = allowedPermissions.indexOf(Permission.CREATE) > -1;
 
-                this.stateManager.enableActions({SHOW_NEW_DIALOG: canCreate});
+                this.enableActions({SHOW_NEW_DIALOG: canCreate});
             });
     }
 
@@ -331,7 +331,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
             sendAndParse().
             then((allowedPermissions: Permission[]) => {
                 this.resetDefaultActionsNoItemsSelected();
-            this.stateManager.enableActions({SHOW_NEW_DIALOG: false});
+            this.enableActions({SHOW_NEW_DIALOG: false});
 
             const canCreate = allowedPermissions.indexOf(Permission.CREATE) > -1;
 
@@ -340,15 +340,15 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
             const canPublish = allowedPermissions.indexOf(Permission.PUBLISH) > -1 && !ManagedActionManager.instance().isExecuting();
 
                 if (canDelete) {
-                    this.stateManager.enableActions({DELETE: true});
+                    this.enableActions({DELETE: true});
                 }
 
                 if (canCreate && canDelete) {
-                    this.stateManager.enableActions({MOVE: true});
+                    this.enableActions({MOVE: true});
                 }
 
                 if (canPublish) {
-                    this.stateManager.enableActions({UNPUBLISH: true});
+                    this.enableActions({UNPUBLISH: true});
                 }
             });
     }
@@ -369,21 +369,21 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
             let canPublish = allowedPermissions.indexOf(Permission.PUBLISH) > -1 && !ManagedActionManager.instance().isExecuting();
 
                 if (!contentTypesAllowChildren || !canCreate) {
-                    this.stateManager.enableActions({
+                    this.enableActions({
                         SHOW_NEW_DIALOG: false,
                         SORT: false
                     });
                 }
 
                 if (!canDelete) {
-                    this.stateManager.enableActions({
+                    this.enableActions({
                         DELETE: false,
                         MOVE: false
                     });
                 }
 
                 if (!canPublish) {
-                    this.stateManager.enableActions({
+                    this.enableActions({
                         PUBLISH: false,
                         PUBLISH_TREE: false,
                         UNPUBLISH: false
@@ -423,7 +423,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
                 .sendAndParse().then((allowedPermissions: Permission[]) => {
                 const canDuplicate = allowedPermissions.indexOf(Permission.CREATE) > -1 &&
                                      !ManagedActionManager.instance().isExecuting();
-                this.stateManager.enableActions({DUPLICATE: canDuplicate});
+                this.enableActions({DUPLICATE: canDuplicate});
             });
         });
     }

@@ -18,12 +18,23 @@ export class CompareContentGrid
     private content: api.content.Content;
 
     constructor(content: api.content.Content) {
+        const nameFormatter = (row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) => {
+
+            let viewer = <ContentSummaryViewer>node.getViewer('name');
+            if (!viewer) {
+                viewer = new ContentSummaryViewer();
+                viewer.setObject(node.getData().getContentSummary());
+                node.setViewer('name', viewer);
+            }
+            return viewer.toString();
+        };
+
         super(new TreeGridBuilder<ContentSummaryAndCompareStatus>().setColumns([
                 new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>()
                     .setName(i18n('field.name'))
                     .setId('displayName')
                     .setField('displayName')
-                    .setFormatter(this.nameFormatter)
+                    .setFormatter(nameFormatter)
                     .build()
             ]).setPartialLoadEnabled(true).setLoadBufferSize(20).// rows count
             prependClasses('compare-content-grid')
@@ -34,17 +45,6 @@ export class CompareContentGrid
         this.onLoaded(() => {
             this.selectAll();
         });
-    }
-
-    private nameFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {
-
-        let viewer = <ContentSummaryViewer>node.getViewer('name');
-        if (!viewer) {
-            viewer = new ContentSummaryViewer();
-            viewer.setObject(node.getData().getContentSummary());
-            node.setViewer('name', viewer);
-        }
-        return viewer.toString();
     }
 
     fetchChildren(parentNode?: TreeNode<ContentSummaryAndCompareStatus>): wemQ.Promise<ContentSummaryAndCompareStatus[]> {

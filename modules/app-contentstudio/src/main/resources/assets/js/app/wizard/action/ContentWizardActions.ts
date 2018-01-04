@@ -43,10 +43,6 @@ type ActionsMap = {
 };
 
 type ActionsState = {
-    [key in ActionNames]: boolean
-};
-
-type ShallowActionsState = {
     [key in ActionNames]?: boolean
 };
 
@@ -122,7 +118,7 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
         });
     }
 
-    private enableActions(state: ShallowActionsState) {
+    private enableActions(state: ActionsState) {
         this.stateManager.enableActions(state);
     }
 
