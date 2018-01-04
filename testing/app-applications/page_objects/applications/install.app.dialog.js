@@ -7,15 +7,14 @@ var elements = require('../../libs/elements');
 var dialog = {
     container: `//div[contains(@id,'InstallAppDialog')]`,
     filterInput:`//div[contains(@id,'ApplicationInput')]/input`,
+    appByDisplayName: function (displayName) {
+        return `//div[contains(@id,'InstallAppDialog')//div[contains(@id,'NamesView') and child::h6[contains(@class,'main-name')]//a[contains(.,'${displayName}')]`
+    },
 };
 var installAppDialog = Object.create(page, {
 
-    header: {
-        get: function () {
-            return `${dialog.container}${dialog.header}`;
-        }
-    },
-    applicationFilterInput: {
+    
+    searchInput: {
         get: function () {
             return `${dialog.container}${dialog.filterInput}`;
         }
@@ -35,7 +34,7 @@ var installAppDialog = Object.create(page, {
     },
     waitForOpened: {
         value: function () {
-            return this.waitForVisible(`${dialog.container}`, 3000).catch(err=> {
+            return this.waitForVisible(this.searchInput, 3000).catch(err=> {
                 this.saveScreenshot('err_install_dialog_load');
                 throw new Error('New Content dialog was not loaded! ' + err);
             });
@@ -49,13 +48,24 @@ var installAppDialog = Object.create(page, {
             });
         }
     },
-    getHeaderText: {
+    getPlaceholderMessage: {
         value: function () {
-            return this.getText(this.header);
+            return this.getAttribute(this.searchInput,'placeholder');
         }
     },
     clickOnInstallAppLink: {
         //TODO 
-    }
+    },
+    typeSearchText: {
+        value: function (text) {
+            return this.typeTextInInput(this.searchInput, text);
+        }
+    },
+    isApplicationPresent: {
+        value: function (displayName) {
+            let selector = `${dialog.appByDisplayName()}`
+            return this.waitForVisible(this.searchInput, text);
+        }
+    },
 });
 module.exports = installAppDialog;
