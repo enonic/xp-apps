@@ -2,6 +2,7 @@ var page = require('../page');
 var elements = require('../../libs/elements');
 var dialog = {
     container: `//div[contains(@id,'UninstallApplicationDialog')]`,
+    content: `//div[contains(@id,'ModalDialogContentPanel')]/h6`,
     yesButton: `//button[contains(@id,'DialogButton')]/span[text()='Yes']`,
     noButton:  `//button[contains(@id,'DialogButton')]/span[text()='No']`
 };
@@ -20,6 +21,18 @@ var uninstallAppDialog = Object.create(page, {
     noButton:               {
         get: function () {
             return `${dialog.container}${dialog.noButton}`;
+        }
+    },
+    getDialogMessage: {
+        value: function () {
+            return this.getText(`${dialog.content}`);
+        }
+    },
+    clickOnYesButton: {
+        value: function () {
+            return this.doClick(this.yesButton).catch((err)=> {
+                throw new Error('Error when try click on no button ' + err);
+            })
         }
     },
     clickOnCancelButtonTop: {
