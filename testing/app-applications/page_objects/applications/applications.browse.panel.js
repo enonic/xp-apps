@@ -4,14 +4,17 @@ const appConst = require('../../libs/app_const');
 
 var panel = {
     toolbar: `//div[contains(@id,'ApplicationBrowseToolbar')]`,
-    installButton: `//button[contains(@id, 'ActionButton') and child::span[contains(.,'Install')]]`,
-    unInstallButton: `//button[contains(@id, 'ActionButton') and child::span[contains(.,'Uninstall')]]`,
-    stopButton: `//button[contains(@id, 'ActionButton') and child::span[contains(.,'Stop')]]`,
-    startButton: `//button[contains(@id, 'ActionButton') and child::span[contains(.,'Start')]]`,
-    rowByName: function (name) {
+    installButton:    `//button[contains(@id, 'ActionButton') and child::span[contains(.,'Install')]]`,
+    unInstallButton:  `//button[contains(@id, 'ActionButton') and child::span[contains(.,'Uninstall')]]`,
+    stopButton:       `//button[contains(@id, 'ActionButton') and child::span[contains(.,'Stop')]]`,
+    startButton:      `//button[contains(@id, 'ActionButton') and child::span[contains(.,'Start')]]`,
+    rowByName:        function (name) {
         return `//div[contains(@id,'NamesView') and child::p[contains(@class,'sub-name') and contains(.,'${name}')]]`
     },
-    checkboxByName: function (name) {
+    rowByDisplayName: function (displayName) {
+        return `//div[contains(@id,'NamesView') and child::h6[contains(@class,'main-name') and contains(.,'${displayName}')]]`
+    },
+    checkboxByName:   function (name) {
         return `${elements.itemByName(name)}` +
                `/ancestor::div[contains(@class,'slick-row')]/div[contains(@class,'slick-cell-checkboxsel')]/label`
     },
@@ -78,16 +81,25 @@ var applicationBrowsePanel = Object.create(page, {
     },
 
 
-    clickOnInstallButton: {
+    clickOnInstallButton:   {
         value: function () {
             return this.waitForEnabled(this.installButton, 1000).then(()=> {
                 return this.doClick(this.installButton);
             }).catch((err)=> {
-                throw new Error('New button is not enabled! ' + err);
+                throw new Error('Install button is not enabled! ' + err);
             })
         }
     },
-    clickOnStopButton: {
+    clickOnUninstallButton: {
+        value: function () {
+            return this.waitForEnabled(this.unInstallButton, 1000).then(() => {
+                return this.doClick(this.unInstallButton);
+            }).catch((err) => {
+                throw new Error('Uninstall button is not enabled! ' + err);
+            })
+        }
+    },
+    clickOnStopButton:      {
         value: function () {
             return this.waitForEnabled(this.stopButton, 1000).then(()=> {
                 return this.doClick(this.stopButton);
