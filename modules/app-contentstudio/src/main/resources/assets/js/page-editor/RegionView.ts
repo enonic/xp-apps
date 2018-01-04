@@ -352,13 +352,15 @@ export class RegionView
         new ComponentAddedEvent(componentView, this, dragged).fire();
     }
 
-    removeComponentView(componentView: ComponentView<Component>) {
+    removeComponentView(componentView: ComponentView<Component>, silent: boolean = false) {
         if (RegionView.debug) {
             console.log('RegionView[' + this.toString() + '].removeComponentView: ' + componentView.toString());
         }
 
         this.unregisterComponentView(componentView);
-        this.removeChild(componentView);
+        if (!silent) {
+            this.removeChild(componentView);
+        }
 
         if (componentView.getComponent()) {
             componentView.getComponent().remove();
