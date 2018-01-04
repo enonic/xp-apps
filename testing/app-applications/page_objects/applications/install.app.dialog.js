@@ -8,7 +8,7 @@ var dialog = {
     container: `//div[contains(@id,'InstallAppDialog')]`,
     filterInput:`//div[contains(@id,'ApplicationInput')]/input`,
     appByDisplayName: function (displayName) {
-        return `//div[contains(@id,'InstallAppDialog')//div[contains(@id,'NamesView') and child::h6[contains(@class,'main-name')]//a[contains(.,'${displayName}')]`
+        return `//div[contains(@id,'InstallAppDialog')]//div[contains(@id,'NamesView') and child::h6[contains(@class,'main-name')]]//a[contains(.,'${displayName}')]`
     },
 };
 var installAppDialog = Object.create(page, {
@@ -63,8 +63,8 @@ var installAppDialog = Object.create(page, {
     },
     isApplicationPresent: {
         value: function (displayName) {
-            let selector = `${dialog.appByDisplayName()}`
-            return this.waitForVisible(this.searchInput, text);
+            let selector = `${dialog.appByDisplayName(displayName)}`;
+            return this.waitForVisible(selector,1000);
         }
     },
 });

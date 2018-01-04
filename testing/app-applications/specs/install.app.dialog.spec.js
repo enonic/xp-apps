@@ -7,7 +7,7 @@ const installAppDialog = require('../page_objects/applications/install.app.dialo
 const studioUtils = require('../libs/studio.utils.js');
 
 describe('Install Application Dialog specification', function () {
-    this.timeout(70000);
+    this.timeout(180000);
     webDriverHelper.setupBrowser();
 
     it(`WHEN Install button has been clicked THEN Install App dialog should be present`, () => {
@@ -26,7 +26,7 @@ describe('Install Application Dialog specification', function () {
         }).then(()=> {
             return installAppDialog.typeSearchText('Chuck Norris');
         }).then(()=> {
-            return installAppDialog.isApplicationPresent();
+            return installAppDialog.isApplicationPresent('Chuck Norris');
         }).then(isPresent=> {
             assert.isTrue(isPresent, 'required application should be filtered');
         })
