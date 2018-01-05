@@ -2,69 +2,92 @@
  * Created on 8.12.2017.
  */
 
-var page = require('../page');
-var elements = require('../../libs/elements');
-var dialog = {
-    container: `//div[contains(@id,'InstallAppDialog')]`,
-    filterInput:`//div[contains(@id,'ApplicationInput')]/input`,
-    appByDisplayName: function (displayName) {
+const page = require('../page');
+const elements = require('../../libs/elements');
+const dialog = {
+    container:             `//div[contains(@id,'InstallAppDialog')]`,
+    grid:                  `//div[contains(@id,'MarketAppsTreeGrid')]`,
+    filterInput:           `//div[contains(@id,'ApplicationInput')]/input`,
+    appByDisplayName:      function (displayName) {
         return `//div[contains(@id,'InstallAppDialog')]//div[contains(@id,'NamesView') and child::h6[contains(@class,'main-name')]]//a[contains(.,'${displayName}')]`
     },
+    installLinkByName:     function (displayName) {
+        return `${elements.slickRowByDisplayName(dialog.container, displayName)}//a[@class='install']`
+    },
+    installedStatusByName: function (displayName) {
+        return `${elements.slickRowByDisplayName(dialog.container, displayName)}//a[@class='installed']`;
+    }
 };
-var installAppDialog = Object.create(page, {
+const installAppDialog = Object.create(page, {
 
-    
-    searchInput: {
+    searchInput:            {
         get: function () {
             return `${dialog.container}${dialog.filterInput}`;
         }
     },
-    cancelButton: {
+    grid:                   {
+        get: function () {
+            return `${dialog.container}${dialog.grid}`;
+        }
+    },
+    cancelButton:           {
         get: function () {
             return `${dialog.container}${elements.CANCEL_BUTTON_TOP}`;
         }
     },
+    waitForAppInstalled:    {
+        value: function (displayName) {
+            return this.waitForVisible(dialog.installedStatusByName(displayName), 20000);
+        }
+    },
     clickOnCancelButtonTop: {
         value: function () {
-            return this.doClick(this.cancelButton).catch((err)=> {
+            return this.doClick(this.cancelButton).catch((err) => {
                 this.saveScreenshot('err_install_dialog_cancel');
                 throw new Error('Error when try click on cancel button ' + err);
             })
         }
     },
-    waitForOpened: {
+    waitForOpened:          {
         value: function () {
-            return this.waitForVisible(this.searchInput, 3000).catch(err=> {
+            return this.waitForVisible(this.searchInput, 3000).catch(err => {
                 this.saveScreenshot('err_install_dialog_load');
                 throw new Error('New Content dialog was not loaded! ' + err);
             });
         }
     },
-    waitForClosed: {
+    waitForClosed:          {
         value: function () {
-            return this.waitForNotVisible(`${dialog.container}`, 3000).catch(error=> {
+            return this.waitForNotVisible(`${dialog.container}`, 3000).catch(error => {
                 this.saveScreenshot('err_install_dialog_close');
                 throw new Error('Install Dialog was not closed');
             });
         }
     },
-    getPlaceholderMessage: {
+    getPlaceholderMessage:  {
         value: function () {
-            return this.getAttribute(this.searchInput,'placeholder');
+            return this.getAttribute(this.searchInput, 'placeholder');
         }
     },
-    clickOnInstallAppLink: {
-        //TODO 
+    clickOnInstallAppLink:  {
+        value: function (displayName) {
+            const selector = dialog.installLinkByName(displayName);
+            return this.waitForVisible(selector, 5000).then(() => {
+                return this.doClick(selector);
+            }).catch(e => {
+                throw `Couldn't find install link for app ${displayName}`;
+            });
+        }
     },
-    typeSearchText: {
+    typeSearchText:         {
         value: function (text) {
             return this.typeTextInInput(this.searchInput, text);
         }
     },
-    isApplicationPresent: {
+    isApplicationPresent:   {
         value: function (displayName) {
             let selector = `${dialog.appByDisplayName(displayName)}`;
-            return this.waitForVisible(selector,1000);
+            return this.waitForVisible(selector, 2000);
         }
     },
 });
