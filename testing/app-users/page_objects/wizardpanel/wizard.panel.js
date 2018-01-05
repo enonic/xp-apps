@@ -1,10 +1,11 @@
 /**
  * Created on 5/30/2017.
  */
-var page = require('../page');
-var elements = require('../../libs/elements');
-var appConst = require('../../libs/app_const');
-var wizard = {
+const page = require('../page');
+const elements = require('../../libs/elements');
+const appConst = require('../../libs/app_const');
+const itemBuilders = require('../../libs/userItems.builder');
+const wizard = {
     displayNameInput: `//input[contains(@name,'displayName')]`,
     saveButton: `//button[contains(@id,'ActionButton') and child::span[text()='Save']]`,
     deleteButton: `//button[contains(@id,'ActionButton') and child::span[text()='Delete']]`,
@@ -59,7 +60,6 @@ var wizardPanel = Object.create(page, {
                 } else {
                     throw new Error(`Save button is not enabled!`);
                 }
-
             }).catch(err=> {
                 throw new Error(`Save button is not enabled!` + err);
             })
@@ -95,7 +95,8 @@ var wizardPanel = Object.create(page, {
             }, 2000).then(()=> {
                 return true;
             }).catch((err)=> {
-                throw new Error('group-wizard:invalid-icon was not found' + err);
+                this.saveScreenshot(itemBuilders.generateRandomName("err_icon"));
+                throw new Error('group-wizard:invalid-icon should be displayed');
             });
         }
     },
@@ -119,7 +120,6 @@ var wizardPanel = Object.create(page, {
             throw new Error(errString);
         }
     }
-
 });
 module.exports = wizardPanel;
 

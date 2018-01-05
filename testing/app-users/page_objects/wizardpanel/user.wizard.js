@@ -177,11 +177,6 @@ var userWizard = Object.create(wizard, {
             })
         }
     },
-    clearEmailInput: {
-        value: function () {
-            return this.clearElement(this.emailInput);
-        }
-    },
     typeEmail: {
         value: function (email) {
             return this.typeTextInInput(this.emailInput, email);
@@ -209,6 +204,5 @@ var userWizard = Object.create(wizard, {
         }
     },
 });
-
 module.exports = userWizard;
 
