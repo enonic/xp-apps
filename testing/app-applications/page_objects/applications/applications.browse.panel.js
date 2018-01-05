@@ -109,14 +109,19 @@ var applicationBrowsePanel = Object.create(page, {
         }
     },
 
+    waitForStartButtonEnabled: {
+        value: function (reverse) {
+            return this.waitForEnabled(this.startButton, 3000, reverse);
+        }
+    },
     waitForStopButtonEnabled: {
-        value: function () {
-            return this.waitForEnabled(this.stopButton, 3000);
+        value: function (reverse) {
+            return this.waitForEnabled(this.stopButton, 3000, reverse);
         }
     },
     waitForUninstallButtonEnabled: {
-        value: function () {
-            return this.waitForEnabled(this.unInstallButton, 3000);
+        value: function (reverse) {
+            return this.waitForEnabled(this.unInstallButton, 3000, reverse);
         }
     },
 

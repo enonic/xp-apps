@@ -4,6 +4,7 @@ const assert = chai.assert;
 var webDriverHelper = require('../libs/WebDriverHelper');
 const appBrowsePanel = require('../page_objects/applications/applications.browse.panel');
 const installAppDialog = require('../page_objects/applications/install.app.dialog');
+const uninstallAppDialog = require('../page_objects/applications/uninstall.app.dialog');
 const studioUtils = require('../libs/studio.utils.js');
 
 describe('Application Browse Panel,  check buttons on the toolbar', function () {
@@ -14,6 +15,12 @@ describe('Application Browse Panel,  check buttons on the toolbar', function () 
     const appDisplayName2 = 'ContentHive';
     const appDescription1 = 'Inspect your content';
     const appDescription2 = 'Widget generating';
+
+    it('Uninstall previously installed applications', () => {
+        return uninstallIfPresent(appDescription1)
+            .then(() => uninstallIfPresent(appDescription2));
+    });
+
 
     it('WHEN Install button has been clicked for two applications THEN two rows should be present in the grid', () => {
         return appBrowsePanel.clickOnInstallButton()
@@ -28,9 +35,30 @@ describe('Application Browse Panel,  check buttons on the toolbar', function () 
             .then(() => Promise.all([appBrowsePanel.isItemDisplayed(appDescription1), appBrowsePanel.isItemDisplayed(appDescription2)]));
     });
 
+    it('WHEN An installed application is selected or unselected THEN the toolbar buttons must be updated', () => {
+        return appBrowsePanel.clickOnRowByName(appDescription1)
+            .then(() => Promise.all([appBrowsePanel.waitForUninstallButtonEnabled(), appBrowsePanel.waitForStopButtonEnabled(),
+                appBrowsePanel.waitForStartButtonEnabled(true)]))
+            .then(() => appBrowsePanel.clickOnRowByName(appDescription1))
+            .then(() => Promise.all([appBrowsePanel.waitForUninstallButtonEnabled(true), appBrowsePanel.waitForStopButtonEnabled(true),
+                appBrowsePanel.waitForStartButtonEnabled(true)]));
+    });
+
     beforeEach(() => studioUtils.navigateToApplicationsApp(webDriverHelper.browser));
     afterEach(() => studioUtils.doCloseCurrentBrowserTab(webDriverHelper.browser));
 });
+
+function uninstallIfPresent(appDescription) {
+    return appBrowsePanel.isItemDisplayed(appDescription)
+        .then(() => appBrowsePanel.clickOnRowByName(appDescription))
+        .then(() => appBrowsePanel.waitForUninstallButtonEnabled())
+        .then(() => appBrowsePanel.clickOnUninstallButton())
+        .then(() => uninstallAppDialog.waitForOpened())
+        .then(() => uninstallAppDialog.clickOnYesButton())
+        .then(() => appBrowsePanel.waitForNotificationMessage())
+        .catch(() => {
+        });
+}
 
 
 

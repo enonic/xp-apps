@@ -78,8 +78,8 @@ Page.prototype.waitForExist = function (selector, ms) {
     return this.getBrowser().waitForExist(selector, ms);
 };
 
-Page.prototype.waitForEnabled = function (selector, ms) {
-    return this.getBrowser().waitForEnabled(selector, ms);
+Page.prototype.waitForEnabled = function (selector, ms, reverse) {
+    return this.getBrowser().waitForEnabled(selector, ms, reverse);
 };
 
 Page.prototype.waitForDisabled = function (selector, ms) {
