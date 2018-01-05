@@ -3,21 +3,30 @@ const elements = require('../../libs/elements');
 const appConst = require('../../libs/app_const');
 
 var panel = {
+    container: `//div[contains(@class, 'application-grid')]`,
     toolbar: `//div[contains(@id,'ApplicationBrowseToolbar')]`,
+    contextMenu: `//ul[contains(@id,'TreeGridContextMenu')]`,
     installButton: `//button[contains(@id, 'ActionButton') and child::span[contains(.,'Install')]]`,
     unInstallButton: `//button[contains(@id, 'ActionButton') and child::span[contains(.,'Uninstall')]]`,
     stopButton: `//button[contains(@id, 'ActionButton') and child::span[contains(.,'Stop')]]`,
     startButton: `//button[contains(@id, 'ActionButton') and child::span[contains(.,'Start')]]`,
+    contextMenuButton: function (name, state) {
+        return `${panel.contextMenu}/li[contains(@id,'MenuItem') and contains(@class,'${state}') and contains(.,'${name}')]`;
+    },
+
     rowByName: function (name) {
-        return `//div[contains(@id,'NamesView') and child::p[contains(@class,'sub-name') and contains(.,'${name}')]]`
+        return `//div[contains(@id,'NamesView') and child::p[contains(@class,'sub-name') and contains(.,'${name}')]]`;
     },
     rowByDisplayName: function (displayName) {
-        return `//div[contains(@id,'NamesView') and child::h6[contains(@class,'main-name') and contains(.,'${displayName}')]]`
+        return `//div[contains(@id,'NamesView') and child::h6[contains(@class,'main-name') and contains(.,'${displayName}')]]`;
     },
     checkboxByName: function (name) {
         return `${elements.itemByName(name)}` +
-               `/ancestor::div[contains(@class,'slick-row')]/div[contains(@class,'slick-cell-checkboxsel')]/label`
+               `/ancestor::div[contains(@class,'slick-row')]/div[contains(@class,'slick-cell-checkboxsel')]/label`;
     },
+    selectedApplicationByName: function (displayName) {
+        return `${elements.slickRowSelectedByDisplayName(panel.container, displayName)}`;
+    }
 
 }
 var applicationBrowsePanel = Object.create(page, {
@@ -155,6 +164,17 @@ var applicationBrowsePanel = Object.create(page, {
             })
         }
     },
+    clickOnRowByDisplayName: {
+        value: function (name) {
+            var nameXpath = panel.rowByDisplayName(name);
+            return this.waitForVisible(nameXpath, 3000).then(() => {
+                return this.doClick(nameXpath);
+            }).pause(400).catch((err) => {
+                this.saveScreenshot('err_find_' + name);
+                throw Error('Row with the name ' + name + ' was not found')
+            })
+        }
+    },
     rightClickOnRowByDisplayName: {
         value: function (name) {
             var nameXpath = panel.rowByDisplayName(name);
@@ -188,6 +208,43 @@ var applicationBrowsePanel = Object.create(page, {
         }
     },
 
+    getSelectedRowByDisplayName: {
+        value: function (displayName) {
+            var displayNameXpath = panel.selectedApplicationByName(displayName);
+            return this.waitForVisible(displayNameXpath, 2000)
+            .catch((err) => {
+                throw Error('Row with the displayName ' + displayName + ' was not found')
+            })
+        }
+    },
+
+    waitForContextMenuNotDisplayed: {
+        value: function () {
+            return this.waitForNotVisible(`${panel.contextMenu}`, 1000).catch((err) => {
+                console.log("Context menu is still displayed");
+                throw Error('Context menu is still visible');
+            });
+        }
+    },
+
+    waitForContextMenuDisplayed: {
+        value: function (name) {
+            return this.waitForVisible(`${panel.contextMenu}`, 1000).catch((err) => {
+                console.log("Context menu is not displayed");
+                throw Error('Context menu is not visible');
+            });
+        }
+    },
+
+    getContextButton: {
+        value: function (name, state) {
+            var nameXpath = panel.contextMenuButton(name, state || '');
+            return this.waitForVisible(nameXpath, 1000).catch((err) => {
+                console.log("Failed to find context menu button");
+                throw Error('Failed to find context menu button ' + name);
+            });
+        }
+    }
 
 });
 module.exports = applicationBrowsePanel;
