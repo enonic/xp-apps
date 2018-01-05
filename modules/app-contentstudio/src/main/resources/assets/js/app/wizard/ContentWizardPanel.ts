@@ -1888,7 +1888,25 @@ export class ContentWizardPanel
     }
 
     onLiveModelChanged(listener: () => void) {
-        const pageModel: PageModel = this.liveEditModel ? this.liveEditModel.getPageModel() : null;
+
+        if (this.getLivePanel().getPageView()) {
+            this.onPageChanged(listener);
+        }
+
+        this.getLivePanel().onPageViewReady((pageView) => {
+            this.onPageChanged(listener);
+        });
+    }
+
+    private onPageChanged(listener: () => void) {
+        const pageView = this.getLivePanel().getPageView();
+
+        if (pageView) {
+            pageView.onItemViewAdded(listener);
+            pageView.onItemViewRemoved(listener);
+            pageView.onPageLocked(listener);
+        }
+        const pageModel = this.liveEditModel ? this.liveEditModel.getPageModel() : null;
 
         if (pageModel) {
             pageModel.onPropertyChanged(listener);
