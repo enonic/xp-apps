@@ -64,6 +64,15 @@ const installAppDialog = Object.create(page, {
             });
         }
     },
+    waitForInstallLink:          {
+        value: function (displayName) {
+            const selector = dialog.installLinkByName(displayName);
+            return this.waitForVisible(selector, 3000).catch(err => {
+                this.saveScreenshot('err_install_link_load');
+                throw new Error('Install link was not loaded! ' + err);
+            });
+        }
+    },
     getPlaceholderMessage:  {
         value: function () {
             return this.getAttribute(this.searchInput, 'placeholder');

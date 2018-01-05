@@ -4,10 +4,13 @@ const appConst = require('../../libs/app_const');
 
 const XPath = {
     toolbar: `//div[contains(@id,'ApplicationBrowseToolbar')]`,
+    treeGridToolbar: `//div[contains(@id,'api.ui.treegrid.TreeGridToolbar')]`,
     installButton: `//div[contains(@id,'ApplicationBrowseToolbar')]/button[contains(@id, 'ActionButton') and child::span[contains(.,'Install')]]`,
     unInstallButton: `//div[contains(@id,'ApplicationBrowseToolbar')]/button[contains(@id, 'ActionButton') and child::span[contains(.,'Uninstall')]]`,
     stopButton: `//div[contains(@id,'ApplicationBrowseToolbar')]/button[contains(@id, 'ActionButton') and child::span[contains(.,'Stop')]]`,
     startButton: `//div[contains(@id,'ApplicationBrowseToolbar')]/button[contains(@id, 'ActionButton') and child::span[contains(.,'Start')]]`,
+    selectAllCheckbox: `//div[@id='api.ui.treegrid.actions.SelectionController']`,
+    checkboxes: `(//div[contains(@class,'slick-cell-checkboxsel')])`,
     rowByName: name => `//div[contains(@id,'NamesView') and child::p[contains(@class,'sub-name') and contains(.,'${name}')]]`,
     rowByDisplayName:
         displayName => `//div[contains(@id,'NamesView') and child::h6[contains(@class,'main-name') and contains(.,'${displayName}')]]`,
@@ -99,14 +102,19 @@ module.exports = Object.create(page, {
                 });
         }
     },
+    waitForStartButtonEnabled: {
+        value: function (reverse) {
+            return this.waitForEnabled(XPath.startButton, 2000, reverse);
+        }
+    },
     waitForStopButtonEnabled: {
-        value: function () {
-            return this.waitForEnabled(XPath.stopButton, 2000);
+        value: function (reverse) {
+            return this.waitForEnabled(XPath.stopButton, 2000, reverse);
         }
     },
     waitForUninstallButtonEnabled: {
-        value: function () {
-            return this.waitForEnabled(XPath.unInstallButton, 3000);
+        value: function (reverse) {
+            return this.waitForEnabled(XPath.unInstallButton, 3000, reverse);
         }
     },
     isInstallButtonEnabled: {
@@ -127,6 +135,17 @@ module.exports = Object.create(page, {
     isStopButtonEnabled: {
         value: function () {
             return this.isEnabled(XPath.stopButton);
+        }
+    },
+    clickOnSelectAll: {
+        value: function () {
+            var checkboxXpath = `${XPath.treeGridToolbar}` + `${XPath.selectAllCheckbox}`;
+            return this.waitForVisible(checkboxXpath, 3000).then(() => {
+                return this.doClick(checkboxXpath);
+            }).pause(400).catch((err) => {
+                this.saveScreenshot('err_find_selectall_checkbox');
+                throw Error('Select all checkbox was not found')
+            })
         }
     },
     clickOnRowByName: {
@@ -171,6 +190,19 @@ module.exports = Object.create(page, {
                     this.saveScreenshot(`err_find_${name}`);
                     throw Error(`Row with the name ${name} is not visible in 3000ms.`)
                 })
+        }
+    },
+    waitForRowByIndexSelected: {
+        value: function (index, reverse) {
+            return this.getAttribute(XPath.checkboxes + '[' + (index + 1) + ']', 'class').then((classAttributeValue) => {
+                if (!reverse && classAttributeValue.indexOf('selected') === -1) {
+                    this.saveScreenshot('err_checkbox_selected');
+                    throw Error('Row was not selected');
+                } else if (reverse && classAttributeValue.indexOf('selected') !== -1) {
+                    this.saveScreenshot('err_checkbox_selected');
+                    throw Error('Row was selected');
+                }
+            });
         }
     },
     clickCheckboxAndSelectRowByDisplayName: {
