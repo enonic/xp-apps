@@ -11,10 +11,10 @@ describe('Application Browse Panel,  check buttons on the toolbar', function () 
     this.timeout(70000);
     webDriverHelper.setupBrowser();
 
-    const appDisplayName1 = 'Content viewer';
-    const appDisplayName2 = 'ContentHive';
-    const appDescription1 = 'Inspect your content';
-    const appDescription2 = 'Widget generating';
+    const appDisplayName1 = 'Auth0 ID Provider';
+    const appDisplayName2 = 'Chatrify app';
+    const appDescription1 = 'Add Auth0 authentication';
+    const appDescription2 = 'Add full-featured chat';
 
     it('Uninstall previously installed applications', () => {
         return uninstallIfPresent(appDescription1)
@@ -42,6 +42,18 @@ describe('Application Browse Panel,  check buttons on the toolbar', function () 
             .then(() => appBrowsePanel.clickOnRowByName(appDescription1))
             .then(() => Promise.all([appBrowsePanel.waitForUninstallButtonEnabled(true), appBrowsePanel.waitForStopButtonEnabled(true),
                 appBrowsePanel.waitForStartButtonEnabled(true)]));
+    });
+
+    it('WHEN The select all checkbox is selected/unselected THEN the rows should be selected/unselected', () => {
+        return appBrowsePanel.clickOnSelectAll()
+            .then(() => Promise.all([appBrowsePanel.waitForRowByIndexSelected(0), appBrowsePanel.waitForRowByIndexSelected(1)]))
+            .then(() => appBrowsePanel.clickOnSelectAll())
+            .then(() => Promise.all([appBrowsePanel.waitForRowByIndexSelected(0, true), appBrowsePanel.waitForRowByIndexSelected(1, true)]))
+    });
+
+    it('Uninstall installed applications', () => {
+        return uninstallIfPresent(appDescription1)
+            .then(() => uninstallIfPresent(appDescription2));
     });
 
     beforeEach(() => studioUtils.navigateToApplicationsApp(webDriverHelper.browser));

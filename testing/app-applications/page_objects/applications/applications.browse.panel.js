@@ -4,10 +4,13 @@ const appConst = require('../../libs/app_const');
 
 var panel = {
     toolbar: `//div[contains(@id,'ApplicationBrowseToolbar')]`,
+    treeGridToolbar: `//div[contains(@id,'api.ui.treegrid.TreeGridToolbar')]`,
     installButton: `//button[contains(@id, 'ActionButton') and child::span[contains(.,'Install')]]`,
     unInstallButton: `//button[contains(@id, 'ActionButton') and child::span[contains(.,'Uninstall')]]`,
     stopButton: `//button[contains(@id, 'ActionButton') and child::span[contains(.,'Stop')]]`,
     startButton: `//button[contains(@id, 'ActionButton') and child::span[contains(.,'Start')]]`,
+    selectAllCheckbox: `//div[@id='api.ui.treegrid.actions.SelectionController']`,
+    checkboxes: `(//div[contains(@class,'slick-cell-checkboxsel')])`,
     rowByName: function (name) {
         return `//div[contains(@id,'NamesView') and child::p[contains(@class,'sub-name') and contains(.,'${name}')]]`
     },
@@ -140,6 +143,17 @@ var applicationBrowsePanel = Object.create(page, {
             return this.isEnabled(this.startButton);
         }
     },
+    clickOnSelectAll: {
+        value: function () {
+            var checkboxXpath = `${panel.treeGridToolbar}` + `${panel.selectAllCheckbox}`;
+            return this.waitForVisible(checkboxXpath, 3000).then(() => {
+                return this.doClick(checkboxXpath);
+            }).pause(400).catch((err) => {
+                this.saveScreenshot('err_find_selectall_checkbox');
+                throw Error('Select all checkbox was not found')
+            })
+        }
+    },
     clickOnRowByName: {
         value: function (name) {
             var nameXpath = panel.rowByName(name);
@@ -159,6 +173,19 @@ var applicationBrowsePanel = Object.create(page, {
                     this.saveScreenshot('err_find_' + name);
                     throw Error('Row with the name ' + name + ' is not visible in ' + 3000 + 'ms')
                 })
+        }
+    },
+    waitForRowByIndexSelected: {
+        value: function (index, reverse) {
+            return this.getAttribute(panel.checkboxes + '[' + (index + 1) + ']', 'class').then((classAttributeValue) => {
+                if (!reverse && classAttributeValue.indexOf('selected') === -1) {
+                    this.saveScreenshot('err_checkbox_selected');
+                    throw Error('Row was not selected');
+                } else if (reverse && classAttributeValue.indexOf('selected') !== -1) {
+                    this.saveScreenshot('err_checkbox_selected');
+                    throw Error('Row was selected');
+                }
+            });
         }
     },
     clickCheckboxAndSelectRowByDisplayName: {
