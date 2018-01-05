@@ -61,6 +61,14 @@ Page.prototype.doClick = function (selector) {
     })
 };
 
+Page.prototype.doRightClick = function (selector) {
+    return this.getBrowser().element(selector).then((result)=> {
+        return this.getBrowser().rightClick(selector, 0, 0);
+    }).catch(function (err) {
+        throw Error(err.message + ` ` + selector);
+    })
+};
+
 Page.prototype.typeTextInInput = function (selector, text) {
     return this.getBrowser().setValue(selector, text).catch((err)=> {
         throw new Error('text was not set in the input ' + err);
