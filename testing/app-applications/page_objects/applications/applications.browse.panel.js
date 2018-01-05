@@ -51,6 +51,15 @@ var applicationBrowsePanel = Object.create(page, {
             });
         }
     },
+    isItemDisplayedByDisplayName: {
+        value: function (itemName) {
+            return this.waitForVisible(`${panel.rowByDisplayName(itemName)}`, 1000).catch((err) => {
+                console.log("item is not displayed:" + itemName);
+                this.saveScreenshot('err_find_' + itemName)
+                throw new Error('Item was not found! ' + itemName);
+            });
+        }
+    },
     isItemDisplayed: {
         value: function (itemName) {
             return this.waitForVisible(`${panel.rowByName(itemName)}`, 1000).catch((err) => {
@@ -140,6 +149,17 @@ var applicationBrowsePanel = Object.create(page, {
             var nameXpath = panel.rowByName(name);
             return this.waitForVisible(nameXpath, 3000).then(() => {
                 return this.doClick(nameXpath);
+            }).pause(400).catch((err) => {
+                this.saveScreenshot('err_find_' + name);
+                throw Error('Row with the name ' + name + ' was not found')
+            })
+        }
+    },
+    rightClickOnRowByDisplayName: {
+        value: function (name) {
+            var nameXpath = panel.rowByDisplayName(name);
+            return this.waitForVisible(nameXpath, 3000).then(() => {
+                return this.doRightClick(nameXpath);
             }).pause(400).catch((err) => {
                 this.saveScreenshot('err_find_' + name);
                 throw Error('Row with the name ' + name + ' was not found')
