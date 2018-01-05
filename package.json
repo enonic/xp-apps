@@ -27,7 +27,7 @@
     "runwith": "^0.3.0",
     "simple-git": "^1.77.0",
     "tslint": "^4.2.0",
-    "typescript": "^2.0.10"
+    "typescript": "2.0.10"
   },
   "engines": {
     "node": ">= 6.9.2",
