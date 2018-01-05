@@ -21,15 +21,14 @@ describe('Application Browse Panel,  check buttons on the toolbar', function () 
             .then(() => uninstallIfPresent(appDescription2));
     });
 
-
     it('WHEN Install button has been clicked for two applications THEN two rows should be present in the grid', () => {
         return appBrowsePanel.clickOnInstallButton()
-            .then(() => Promise.all(
-                [installAppDialog.waitForInstallLink(appDisplayName1), installAppDialog.waitForInstallLink(appDisplayName2)]))
-            .then(() => Promise.all(
-                [installAppDialog.clickOnInstallAppLink(appDisplayName1), installAppDialog.clickOnInstallAppLink(appDisplayName2)]))
-            .then(() => Promise.all(
-                [installAppDialog.waitForAppInstalled(appDisplayName1), installAppDialog.waitForAppInstalled(appDisplayName2)]))
+            .then(() => installAppDialog.waitForInstallLink(appDisplayName1))
+            .then(() => installAppDialog.clickOnInstallAppLink(appDisplayName1))
+            .then(() => installAppDialog.waitForAppInstalled(appDisplayName1))
+            .then(() => installAppDialog.waitForInstallLink(appDisplayName2))
+            .then(() => installAppDialog.clickOnInstallAppLink(appDisplayName2))
+            .then(() => installAppDialog.waitForAppInstalled(appDisplayName2))
             .then(() => installAppDialog.clickOnCancelButtonTop)
             .then(() => installAppDialog.waitForClosed)
             .then(() => Promise.all([appBrowsePanel.isItemDisplayed(appDescription1), appBrowsePanel.isItemDisplayed(appDescription2)]));
