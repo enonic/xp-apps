@@ -170,7 +170,7 @@ var userBrowsePanel = Object.create(page, {
                 return this.doClick(this.deleteButton);
             }).catch((err)=> {
                 this.saveScreenshot('err_browsepanel_delete');
-                throw new Error('Delete button is not enabled! ' + err);
+                throw new Error('Delete button should be enabled! ' + err);
             })
         }
     },

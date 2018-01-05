@@ -61,7 +61,7 @@ describe('`group.delete.spec`: confirm and delete it in the wizard and in the br
             testGroup =
                 userItemsBuilder.buildGroup(userItemsBuilder.generateRandomName('group'), 'test group 2');
             return testUtils.openWizardAndSaveGroup(testGroup).then(()=> {
-                testUtils.findAndSelectItem(testGroup.displayName);
+                return testUtils.findAndSelectItem(testGroup.displayName);
             }).then(()=> {
                 return userBrowsePanel.waitForDeleteButtonEnabled();
             }).then(()=> {
