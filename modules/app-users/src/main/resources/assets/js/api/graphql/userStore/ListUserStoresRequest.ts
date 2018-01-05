@@ -13,7 +13,7 @@ export class ListUserStoresRequest
                 key,
                 name,
                 path,
-                displayName,    
+                displayName,
                 description,
                 authConfig {
                     applicationKey

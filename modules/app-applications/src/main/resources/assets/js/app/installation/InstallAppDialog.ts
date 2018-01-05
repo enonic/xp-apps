@@ -23,7 +23,7 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
     private clearButton: api.dom.ButtonEl;
 
     constructor() {
-        super(i18n('dialog.install'));
+        super({title: i18n('dialog.install')});
 
         this.addClass('install-application-dialog hidden');
 

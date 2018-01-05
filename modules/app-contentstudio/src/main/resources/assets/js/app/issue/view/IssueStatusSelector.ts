@@ -2,7 +2,7 @@ import {IssueStatus, IssueStatusFormatter} from '../IssueStatus';
 import TabMenuItem = api.ui.tab.TabMenuItem;
 import TabMenu = api.ui.tab.TabMenu;
 
-type IssueOptions = [{ value: IssueStatus, name: String }];
+type IssueOptions = [{ value: IssueStatus, name: string }];
 
 export class IssueStatusSelector
     extends TabMenu {
