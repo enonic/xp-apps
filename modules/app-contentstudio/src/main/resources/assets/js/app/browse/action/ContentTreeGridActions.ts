@@ -16,6 +16,7 @@ import {PreviewContentHandler} from './handler/PreviewContentHandler';
 import {UndoPendingDeleteContentAction} from './UndoPendingDeleteContentAction';
 import {CreateIssueAction} from './CreateIssueAction';
 import Action = api.ui.Action;
+import ActionsStateManager = api.ui.ActionsStateManager;
 import TreeGridActions = api.ui.treegrid.actions.TreeGridActions;
 import BrowseItemsChanges = api.app.browse.BrowseItemsChanges;
 import ContentSummary = api.content.ContentSummary;
@@ -25,70 +26,102 @@ import Permission = api.security.acl.Permission;
 import GetContentByPathRequest = api.content.resource.GetContentByPathRequest;
 import i18n = api.util.i18n;
 import ManagedActionManager = api.managedaction.ManagedActionManager;
+import ManagedActionState = api.managedaction.ManagedActionState;
+import ManagedActionExecutor = api.managedaction.ManagedActionExecutor;
+
+type ActionsMap = {
+    SHOW_NEW_DIALOG?: Action,
+    PREVIEW?: Action,
+    EDIT?: Action,
+    DELETE?: Action,
+    DUPLICATE?: Action,
+    MOVE?: Action,
+    SORT?: Action,
+    PUBLISH?: Action,
+    PUBLISH_TREE?: Action,
+    UNPUBLISH?: Action,
+    CREATE_ISSUE?: Action,
+    TOGGLE_SEARCH_PANEL?: Action,
+    UNDO_PENDING_DELETE?: Action,
+};
+
+type ActionsState = {
+    SHOW_NEW_DIALOG?: boolean,
+    PREVIEW?: boolean,
+    EDIT?: boolean,
+    DELETE?: boolean,
+    DUPLICATE?: boolean,
+    MOVE?: boolean,
+    SORT?: boolean,
+    PUBLISH?: boolean,
+    PUBLISH_TREE?: boolean,
+    UNPUBLISH?: boolean,
+    CREATE_ISSUE?: boolean,
+    TOGGLE_SEARCH_PANEL?: boolean,
+    UNDO_PENDING_DELETE?: boolean
+};
 
 export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAndCompareStatus> {
 
-    public SHOW_NEW_CONTENT_DIALOG_ACTION: Action;
-    public PREVIEW_CONTENT: Action;
-    public EDIT_CONTENT: Action;
-    public DELETE_CONTENT: Action;
-    public DUPLICATE_CONTENT: Action;
-    public MOVE_CONTENT: Action;
-    public SORT_CONTENT: Action;
-    public PUBLISH_CONTENT: Action;
-    public PUBLISH_TREE_CONTENT: Action;
-    public UNPUBLISH_CONTENT: Action;
-    public CREATE_ISSUE: Action;
-    public TOGGLE_SEARCH_PANEL: Action;
-    public UNDO_PENDING_DELETE: Action;
-
-    private actions: api.ui.Action[] = [];
-
     private grid: ContentTreeGrid;
+
+    private actionsMap: ActionsMap;
+
+    private stateManager: ActionsStateManager;
 
     constructor(grid: ContentTreeGrid) {
         this.grid = grid;
-        this.TOGGLE_SEARCH_PANEL = new ToggleSearchPanelAction();
 
-        this.SHOW_NEW_CONTENT_DIALOG_ACTION = new ShowNewContentDialogAction(grid);
-        this.PREVIEW_CONTENT = new PreviewContentAction(grid);
-        this.EDIT_CONTENT = new EditContentAction(grid);
-        this.DELETE_CONTENT = new DeleteContentAction(grid);
-        this.DUPLICATE_CONTENT = new DuplicateContentAction(grid);
-        this.MOVE_CONTENT = new MoveContentAction(grid);
-        this.SORT_CONTENT = new SortContentAction(grid);
-        this.PUBLISH_CONTENT = new PublishContentAction(grid);
-        this.PUBLISH_TREE_CONTENT = new PublishTreeContentAction(grid);
-        this.UNPUBLISH_CONTENT = new UnpublishContentAction(grid);
-        this.CREATE_ISSUE = new CreateIssueAction(grid);
-        this.UNDO_PENDING_DELETE = new UndoPendingDeleteContentAction(grid);
+        this.actionsMap = {
+            SHOW_NEW_DIALOG: new ShowNewContentDialogAction(grid),
+            PREVIEW: new PreviewContentAction(grid),
+            EDIT: new EditContentAction(grid),
+            DELETE: new DeleteContentAction(grid),
+            DUPLICATE: new DuplicateContentAction(grid),
+            MOVE: new MoveContentAction(grid),
+            SORT: new SortContentAction(grid),
+            PUBLISH: new PublishContentAction(grid),
+            PUBLISH_TREE: new PublishTreeContentAction(grid),
+            UNPUBLISH: new UnpublishContentAction(grid),
+            CREATE_ISSUE: new CreateIssueAction(grid),
+            TOGGLE_SEARCH_PANEL: new ToggleSearchPanelAction(),
+            UNDO_PENDING_DELETE: new UndoPendingDeleteContentAction(grid)
+        };
 
-        this.actions.push(
-            this.SHOW_NEW_CONTENT_DIALOG_ACTION,
-            this.EDIT_CONTENT, this.DELETE_CONTENT,
-            this.DUPLICATE_CONTENT, this.MOVE_CONTENT,
-            this.SORT_CONTENT, this.PREVIEW_CONTENT,
-            this.UNDO_PENDING_DELETE
-        );
+        this.stateManager = new ActionsStateManager(this.actionsMap);
 
         this.initListeners();
     }
 
     initListeners() {
-        const previewStateChangedHandler = value => {
-            this.PREVIEW_CONTENT.setEnabled(value);
+        const stashableActionsMap: ActionsMap = {
+            PREVIEW: this.actionsMap.PREVIEW,
+            EDIT: this.actionsMap.EDIT,
+            DELETE: this.actionsMap.DELETE,
+            DUPLICATE: this.actionsMap.DUPLICATE,
+            MOVE: this.actionsMap.MOVE,
+            SORT: this.actionsMap.SORT,
+            PUBLISH: this.actionsMap.PUBLISH,
+            PUBLISH_TREE: this.actionsMap.PUBLISH_TREE,
+            UNPUBLISH: this.actionsMap.UNPUBLISH,
+            CREATE_ISSUE: this.actionsMap.CREATE_ISSUE,
+            UNDO_PENDING_DELETE: this.actionsMap.UNDO_PENDING_DELETE
         };
+
+        const previewStateChangedHandler = value => {
+            this.enableActions({PREVIEW: value});
+        };
+
         this.getPreviewHandler().onPreviewStateChanged(previewStateChangedHandler);
 
-        const managedActionsHandler = () => {
-            const noManagedActionExecuting = !ManagedActionManager.instance().isExecuting();
-            this.DELETE_CONTENT.setEnabled(noManagedActionExecuting);
-            this.DUPLICATE_CONTENT.setEnabled(noManagedActionExecuting);
-            this.MOVE_CONTENT.setEnabled(noManagedActionExecuting);
-            this.PUBLISH_CONTENT.setEnabled(noManagedActionExecuting);
-            this.PUBLISH_TREE_CONTENT.setEnabled(noManagedActionExecuting);
-            this.UNPUBLISH_CONTENT.setEnabled(noManagedActionExecuting);
+        const managedActionsHandler = (state: ManagedActionState, executor: ManagedActionExecutor) => {
+            if (state === ManagedActionState.PREPARING) {
+                this.stateManager.stashActions(stashableActionsMap, false);
+            } else if (state === ManagedActionState.ENDED) {
+                this.stateManager.unstashActions(stashableActionsMap);
+            }
         };
+
         ManagedActionManager.instance().onManagedActionStateChanged(managedActionsHandler);
 
         this.grid.onRemoved(() => {
@@ -97,20 +130,33 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         });
     }
 
+    private enableActions(state: ActionsState) {
+        this.stateManager.enableActions(state);
+    }
+
     getPreviewHandler(): PreviewContentHandler {
-        return (<PreviewContentAction>this.PREVIEW_CONTENT).getPreviewHandler();
-    }
-
-    private getDefaultVisibleActions(): api.ui.Action[] {
-        return this.actions.filter(action => action !== this.UNDO_PENDING_DELETE).concat(this.PUBLISH_CONTENT);
-    }
-
-    getAllActions(): api.ui.Action[] {
-        return [...this.actions, this.PUBLISH_CONTENT, this.UNPUBLISH_CONTENT];
+        return (<PreviewContentAction>this.actionsMap.PREVIEW).getPreviewHandler();
     }
 
     getAllActionsNoPublish(): api.ui.Action[] {
-        return this.actions;
+        return [
+            this.actionsMap.SHOW_NEW_DIALOG,
+            this.actionsMap.EDIT,
+            this.actionsMap.DELETE,
+            this.actionsMap.DUPLICATE,
+            this.actionsMap.MOVE,
+            this.actionsMap.SORT,
+            this.actionsMap.PREVIEW,
+            this.actionsMap.UNDO_PENDING_DELETE
+        ];
+    }
+
+    getAllActions(): api.ui.Action[] {
+        return [
+            ...this.getAllActionsNoPublish(),
+            this.actionsMap.PUBLISH,
+            this.actionsMap.UNPUBLISH
+        ];
     }
 
     // tslint:disable-next-line:max-line-length
@@ -120,7 +166,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
             return wemQ<void>(null);
         }
 
-        this.TOGGLE_SEARCH_PANEL.setVisible(false);
+        this.actionsMap.TOGGLE_SEARCH_PANEL.setVisible(false);
 
         let parallelPromises: wemQ.Promise<any>[] = [
             this.getPreviewHandler().updateState(browseItems, changes),
@@ -131,27 +177,37 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
     }
 
     private resetDefaultActionsNoItemsSelected() {
-        this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(true);
-        this.EDIT_CONTENT.setEnabled(false);
-        this.DELETE_CONTENT.setEnabled(false);
-        this.DUPLICATE_CONTENT.setEnabled(false);
-        this.MOVE_CONTENT.setEnabled(false);
-        this.SORT_CONTENT.setEnabled(false);
+        this.enableActions({
+            SHOW_NEW_DIALOG: true,
+            EDIT: false,
+            DELETE: false,
+            DUPLICATE: false,
+            MOVE: false,
+            SORT: false,
+            PUBLISH_TREE: false,
+            PUBLISH: false,
+            UNPUBLISH: false,
+            CREATE_ISSUE: false,
+        });
 
-        this.PUBLISH_TREE_CONTENT.setEnabled(false);
-        this.PUBLISH_CONTENT.setEnabled(false);
-        this.UNPUBLISH_CONTENT.setEnabled(false);
-
-        this.UNPUBLISH_CONTENT.setVisible(false);
-        this.UNDO_PENDING_DELETE.setVisible(false);
-
-        this.CREATE_ISSUE.setEnabled(false);
+        this.actionsMap.UNPUBLISH.setVisible(false);
+        this.actionsMap.UNDO_PENDING_DELETE.setVisible(false);
 
         this.showDefaultActions();
     }
 
     private showDefaultActions() {
-        this.getDefaultVisibleActions().forEach(action => action.setVisible(true));
+        const defaultActions = [
+            this.actionsMap.SHOW_NEW_DIALOG,
+            this.actionsMap.EDIT,
+            this.actionsMap.DELETE,
+            this.actionsMap.DUPLICATE,
+            this.actionsMap.MOVE,
+            this.actionsMap.SORT,
+            this.actionsMap.PREVIEW,
+            this.actionsMap.PUBLISH
+        ];
+        defaultActions.forEach(action => action.setVisible(true));
     }
 
     private resetDefaultActionsMultipleItemsSelected(contentBrowseItems: ContentBrowseItem[]) {
@@ -203,32 +259,32 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         treePublishEnabled = treePublishEnabled && noManagedActionExecuting;
         unpublishEnabled = unpublishEnabled && noManagedActionExecuting;
 
-        this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(contentSummaries.length < 2);
-        this.EDIT_CONTENT.setEnabled(!allAreReadonly && this.anyEditable(contentSummaries));
-        this.DELETE_CONTENT.setEnabled(deleteEnabled);
-        this.DUPLICATE_CONTENT.setEnabled(duplicateEnabled);
-        this.MOVE_CONTENT.setEnabled(moveEnabled);
-        this.SORT_CONTENT.setEnabled(contentSummaries.length === 1 && contentSummaries[0].hasChildren());
+        this.enableActions({
+            SHOW_NEW_DIALOG: contentSummaries.length < 2,
+            EDIT: !allAreReadonly && this.anyEditable(contentSummaries),
+            DELETE: deleteEnabled,
+            DUPLICATE: duplicateEnabled,
+            MOVE: moveEnabled,
+            SORT: contentSummaries.length === 1 && contentSummaries[0].hasChildren(),
+            PUBLISH: publishEnabled,
+            PUBLISH_TREE: treePublishEnabled,
+            UNPUBLISH: unpublishEnabled,
+            CREATE_ISSUE: true
+        });
 
-        this.PUBLISH_CONTENT.setEnabled(publishEnabled);
-        this.PUBLISH_TREE_CONTENT.setEnabled(treePublishEnabled);
-        this.UNPUBLISH_CONTENT.setEnabled(unpublishEnabled);
-
-        this.CREATE_ISSUE.setEnabled(true);
-
-        this.SHOW_NEW_CONTENT_DIALOG_ACTION.setVisible(!allArePendingDelete);
-        this.MOVE_CONTENT.setVisible(!allArePendingDelete);
-        this.SORT_CONTENT.setVisible(!allArePendingDelete);
-        this.DELETE_CONTENT.setVisible(!allArePendingDelete);
+        this.actionsMap.SHOW_NEW_DIALOG.setVisible(!allArePendingDelete);
+        this.actionsMap.MOVE.setVisible(!allArePendingDelete);
+        this.actionsMap.SORT.setVisible(!allArePendingDelete);
+        this.actionsMap.DELETE.setVisible(!allArePendingDelete);
 
         if (allArePendingDelete) {
             this.getAllActions().forEach(action => action.setVisible(false));
         } else {
             this.getAllActionsNoPublish().forEach(action => action.setVisible(true));
-            this.UNPUBLISH_CONTENT.setVisible(unpublishEnabled);
+            this.actionsMap.UNPUBLISH.setVisible(unpublishEnabled);
         }
-        this.PUBLISH_CONTENT.setVisible(publishEnabled);
-        this.UNDO_PENDING_DELETE.setVisible(allArePendingDelete);
+        this.actionsMap.PUBLISH.setVisible(publishEnabled);
+        this.actionsMap.UNDO_PENDING_DELETE.setVisible(allArePendingDelete);
     }
 
     private isEveryLeaf(contentSummaries: ContentSummary[]): boolean {
@@ -259,9 +315,9 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
             (allowedPermissions: Permission[]) => {
                 this.resetDefaultActionsNoItemsSelected();
 
-                let canCreate = allowedPermissions.indexOf(Permission.CREATE) > -1;
+                const canCreate = allowedPermissions.indexOf(Permission.CREATE) > -1;
 
-                this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(canCreate);
+                this.enableActions({SHOW_NEW_DIALOG: canCreate});
             });
     }
 
@@ -278,65 +334,66 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
     private handleDeletedContentType(contentSummary: ContentSummary): wemQ.Promise<any> {
         api.notify.NotifyManager.get().showWarning(i18n('notify.contentType.notFound', contentSummary.getType().getLocalName()));
 
-        return new api.content.resource.GetPermittedActionsRequest().
-            addContentIds(contentSummary.getContentId()).
-            addPermissionsToBeChecked(Permission.CREATE, Permission.DELETE, Permission.PUBLISH).
-            sendAndParse().
-            then((allowedPermissions: Permission[]) => {
-                this.resetDefaultActionsNoItemsSelected();
-                this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(false);
+        return new api.content.resource.GetPermittedActionsRequest().addContentIds(contentSummary.getContentId()).addPermissionsToBeChecked(
+            Permission.CREATE, Permission.DELETE, Permission.PUBLISH).sendAndParse().then((allowedPermissions: Permission[]) => {
+            this.resetDefaultActionsNoItemsSelected();
+            this.enableActions({SHOW_NEW_DIALOG: false});
 
-                let canCreate = allowedPermissions.indexOf(Permission.CREATE) > -1;
+            const canCreate = allowedPermissions.indexOf(Permission.CREATE) > -1;
 
-            let canDelete = allowedPermissions.indexOf(Permission.DELETE) > -1 && !ManagedActionManager.instance().isExecuting();
+            const canDelete = allowedPermissions.indexOf(Permission.DELETE) > -1 && !ManagedActionManager.instance().isExecuting();
 
-            let canPublish = allowedPermissions.indexOf(Permission.PUBLISH) > -1 && !ManagedActionManager.instance().isExecuting();
+            const canPublish = allowedPermissions.indexOf(Permission.PUBLISH) > -1 && !ManagedActionManager.instance().isExecuting();
 
-                if (canDelete) {
-                    this.DELETE_CONTENT.setEnabled(true);
-                }
+            if (canDelete) {
+                this.enableActions({DELETE: true});
+            }
 
-                if (canCreate && canDelete) {
-                    this.MOVE_CONTENT.setEnabled(true);
-                }
+            if (canCreate && canDelete) {
+                this.enableActions({MOVE: true});
+            }
 
-                if (canPublish) {
-                    this.UNPUBLISH_CONTENT.setEnabled(true);
-                }
-            });
+            if (canPublish) {
+                this.enableActions({UNPUBLISH: true});
+            }
+        });
     }
 
     private updateActionsByPermissionsMultipleItemsSelected(contentBrowseItems: ContentBrowseItem[],
                                                             contentTypesAllowChildren: boolean = true): wemQ.Promise<any> {
-        return new api.content.resource.GetPermittedActionsRequest().
-            addContentIds(...contentBrowseItems.map(contentBrowseItem => contentBrowseItem.getModel().getContentId())).
-            addPermissionsToBeChecked(Permission.CREATE, Permission.DELETE, Permission.PUBLISH).
-            sendAndParse().
-            then((allowedPermissions: Permission[]) => {
-                this.resetDefaultActionsMultipleItemsSelected(contentBrowseItems);
+        return new api.content.resource.GetPermittedActionsRequest().addContentIds(
+            ...contentBrowseItems.map(contentBrowseItem => contentBrowseItem.getModel().getContentId())).addPermissionsToBeChecked(
+            Permission.CREATE, Permission.DELETE, Permission.PUBLISH).sendAndParse().then((allowedPermissions: Permission[]) => {
+            this.resetDefaultActionsMultipleItemsSelected(contentBrowseItems);
 
-                let canCreate = allowedPermissions.indexOf(Permission.CREATE) > -1;
+            let canCreate = allowedPermissions.indexOf(Permission.CREATE) > -1;
 
             let canDelete = allowedPermissions.indexOf(Permission.DELETE) > -1 && !ManagedActionManager.instance().isExecuting();
 
             let canPublish = allowedPermissions.indexOf(Permission.PUBLISH) > -1 && !ManagedActionManager.instance().isExecuting();
 
-                if (!contentTypesAllowChildren || !canCreate) {
-                    this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(false);
-                    this.SORT_CONTENT.setEnabled(false);
-                }
+            if (!contentTypesAllowChildren || !canCreate) {
+                this.enableActions({
+                    SHOW_NEW_DIALOG: false,
+                    SORT: false
+                });
+            }
 
-                if (!canDelete) {
-                    this.DELETE_CONTENT.setEnabled(false);
-                    this.MOVE_CONTENT.setEnabled(false);
-                }
+            if (!canDelete) {
+                this.enableActions({
+                    DELETE: false,
+                    MOVE: false
+                });
+            }
 
-                if (!canPublish) {
-                    this.PUBLISH_CONTENT.setEnabled(false);
-                    this.PUBLISH_TREE_CONTENT.setEnabled(false);
-                    this.UNPUBLISH_CONTENT.setEnabled(false);
-                }
-            });
+            if (!canPublish) {
+                this.enableActions({
+                    PUBLISH: false,
+                    PUBLISH_TREE: false,
+                    UNPUBLISH: false
+                });
+            }
+        });
     }
 
     private checkIsChildrenAllowedByContentType(contentSummary: ContentSummary): wemQ.Promise<Boolean> {
@@ -370,12 +427,60 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
                 .sendAndParse().then((allowedPermissions: Permission[]) => {
                 const canDuplicate = allowedPermissions.indexOf(Permission.CREATE) > -1 &&
                                      !ManagedActionManager.instance().isExecuting();
-                this.DUPLICATE_CONTENT.setEnabled(canDuplicate);
+                this.enableActions({DUPLICATE: canDuplicate});
             });
         });
     }
 
     private isAllItemsSelected(items: number): boolean {
         return items === this.grid.getRoot().getDefaultRoot().treeToList(false, false).length;
+    }
+
+    getDeleteAction(): Action {
+        return this.actionsMap.DELETE;
+    }
+
+    getDuplicateAction(): Action {
+        return this.actionsMap.DUPLICATE;
+    }
+
+    getPublishAction(): Action {
+        return this.actionsMap.PUBLISH;
+    }
+
+    getPublishTreeAction(): Action {
+        return this.actionsMap.PUBLISH_TREE;
+    }
+
+    getCreateIssueAction(): Action {
+        return this.actionsMap.CREATE_ISSUE;
+    }
+
+    getUnpublishAction(): Action {
+        return this.actionsMap.UNPUBLISH;
+    }
+
+    getMoveAction(): Action {
+        return this.actionsMap.MOVE;
+    }
+
+    getSortAction(): Action {
+        return this.actionsMap.SORT;
+    }
+
+    getEditAction(): Action {
+        return this.actionsMap.EDIT;
+    }
+
+    getShowNewDialogAction(): Action {
+        return this.actionsMap.SHOW_NEW_DIALOG;
+    }
+
+    getToggleSearchPanelAction(): Action {
+        return this.actionsMap.TOGGLE_SEARCH_PANEL;
+    }
+
+    getUndoPendingDeleteAction(): Action {
+        return this.actionsMap.UNDO_PENDING_DELETE;
     }
 }

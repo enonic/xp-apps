@@ -56,7 +56,7 @@ export class GetPrincipalsByKeysRequest
                             }
                             allow
                             deny
-                        }                       
+                        }
                     }
                 }`;
     }

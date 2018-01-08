@@ -51,7 +51,7 @@ export class GetPrincipalByKeyRequest
                             }
                             allow
                             deny
-                        }                       
+                        }
                     }
                 }`;
     }
