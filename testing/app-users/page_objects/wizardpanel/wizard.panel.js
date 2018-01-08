@@ -92,7 +92,7 @@ var wizardPanel = Object.create(page, {
                 return this.getBrowser().getAttribute(selector, 'class').then(result=> {
                     return result.includes('invalid');
                 });
-            }, 2000).then(()=> {
+            }, 3000).then(()=> {
                 return true;
             }).catch((err)=> {
                 this.saveScreenshot(itemBuilders.generateRandomName("err_icon"));

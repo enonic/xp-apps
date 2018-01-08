@@ -1,6 +1,3 @@
-/**
- * Created  on 8.12.2017.
- */
 module.exports = Object.freeze({
     //waitForTimeout
     TIMEOUT_3: 3000,

@@ -138,7 +138,7 @@ var userWizard = Object.create(wizard, {
     },
     clearEmailInput: {
         value: function () {
-            return this.clearElement(this.emailInput);
+            return this.clearElement(this.emailInput).pause(500);
         }
     },
 
