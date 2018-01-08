@@ -14,7 +14,7 @@ const XPath = {
     selectAllCheckbox: `//div[@id='api.ui.treegrid.actions.SelectionController']`,
     checkboxes: `(//div[contains(@class,'slick-cell-checkboxsel')])`,
     contextMenuButton: function (name, state) {
-        return `${panel.contextMenu}/li[contains(@id,'MenuItem') and contains(@class,'${state}') and contains(.,'${name}')]`;
+        return `${XPath.contextMenu}/li[contains(@id,'MenuItem') and contains(@class,'${state}') and contains(.,'${name}')]`;
     },
     rowByName: name => `//div[contains(@id,'NamesView') and child::p[contains(@class,'sub-name') and contains(.,'${name}')]]`,
     rowByDisplayName:
@@ -22,7 +22,7 @@ const XPath = {
     checkboxByDisplayName: displayName => `${elements.itemByDisplayName(
         displayName)}/ancestor::div[contains(@class,'slick-row')]/div[contains(@class,'slick-cell-checkboxsel')]/label`,
     selectedApplicationByName: function (displayName) {
-        return `${elements.slickRowSelectedByDisplayName(panel.container, displayName)}`;
+        return `${elements.slickRowSelectedByDisplayName(XPath.container, displayName)}`;
     }
 };
 
@@ -169,7 +169,7 @@ module.exports = Object.create(page, {
     },
     clickOnRowByDisplayName: {
         value: function (name) {
-            var nameXpath = panel.rowByDisplayName(name);
+            var nameXpath = XPath.rowByDisplayName(name);
             return this.waitForVisible(nameXpath, 3000).then(() => {
                 return this.doClick(nameXpath);
             }).pause(400).catch((err) => {
@@ -244,7 +244,7 @@ module.exports = Object.create(page, {
 
     getSelectedRowByDisplayName: {
         value: function (displayName) {
-            var displayNameXpath = panel.selectedApplicationByName(displayName);
+            var displayNameXpath = XPath.selectedApplicationByName(displayName);
             return this.waitForVisible(displayNameXpath, 2000)
             .catch((err) => {
                 throw Error('Row with the displayName ' + displayName + ' was not found')
@@ -254,7 +254,7 @@ module.exports = Object.create(page, {
 
     waitForContextMenuNotDisplayed: {
         value: function () {
-            return this.waitForNotVisible(`${panel.contextMenu}`, 1000).catch((err) => {
+            return this.waitForNotVisible(`${XPath.contextMenu}`, 1000).catch((err) => {
                 console.log("Context menu is still displayed");
                 throw Error('Context menu is still visible');
             });
@@ -263,7 +263,7 @@ module.exports = Object.create(page, {
 
     waitForContextMenuDisplayed: {
         value: function (name) {
-            return this.waitForVisible(`${panel.contextMenu}`, 1000).catch((err) => {
+            return this.waitForVisible(`${XPath.contextMenu}`, 1000).catch((err) => {
                 console.log("Context menu is not displayed");
                 throw Error('Context menu is not visible');
             });
@@ -272,7 +272,7 @@ module.exports = Object.create(page, {
 
     getContextButton: {
         value: function (name, state) {
-            var nameXpath = panel.contextMenuButton(name, state || '');
+            var nameXpath = XPath.contextMenuButton(name, state || '');
             return this.waitForVisible(nameXpath, 1000).catch((err) => {
                 console.log("Failed to find context menu button");
                 throw Error('Failed to find context menu button ' + name);
