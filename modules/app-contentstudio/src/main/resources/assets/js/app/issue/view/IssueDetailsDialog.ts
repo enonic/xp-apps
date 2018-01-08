@@ -17,6 +17,7 @@ import {AssigneesLine} from './IssueList';
 import {DependantItemsWithProgressDialogConfig} from '../../dialog/DependantItemsWithProgressDialog';
 import {IssueCommentsList} from './IssueCommentsList';
 import {IssueCommentTextArea} from './IssueCommentTextArea';
+import {CommentIssueRequest} from '../resource/CommentIssueRequest';
 import AEl = api.dom.AEl;
 import DialogButton = api.ui.dialog.DialogButton;
 import ContentSummaryAndCompareStatusFetcher = api.content.resource.ContentSummaryAndCompareStatusFetcher;
@@ -36,6 +37,7 @@ import Panel = api.ui.panel.Panel;
 import PEl = api.dom.PEl;
 import AppHelper = api.util.AppHelper;
 import GetPrincipalsByKeysRequest = api.security.GetPrincipalsByKeysRequest;
+import TabBarItem = api.ui.tab.TabBarItem;
 
 export class IssueDetailsDialog
     extends SchedulableDialog {
@@ -52,8 +54,8 @@ export class IssueDetailsDialog
 
     private static INSTANCE: IssueDetailsDialog = new IssueDetailsDialog();
 
-    private itemsTab: api.ui.tab.TabBarItem;
-    private commentsTab: api.ui.tab.TabBarItem;
+    private itemsTab: TabBarItem;
+    private commentsTab: TabBarItem;
     private tabPanel: api.ui.panel.NavigatedDeckPanel;
     private closeAction: api.ui.Action;
     private reopenAction: api.ui.Action;
@@ -89,6 +91,10 @@ export class IssueDetailsDialog
         this.debouncedUpdateIssue = AppHelper.debounce(this.doUpdateIssue.bind(this), 1000);
 
         this.commentTextArea = new IssueCommentTextArea();
+        this.commentTextArea.onKeyUp(event => {
+            const value = this.commentTextArea.getValue();
+            this.commentAction.setEnabled(value.length > 0);
+        });
         this.loadCurrentUser().done(currentUser => {
             this.commentTextArea.setUser(currentUser);
         });
@@ -119,7 +125,7 @@ export class IssueDetailsDialog
             const issuePanel = this.createIssuePanel();
 
             this.commentsTab = new TabBarItemBuilder().setLabel(i18n('field.comments')).build();
-            const commentsPanel = this.createCommentsPanel();
+            const commentsPanel = this.createCommentsPanel(this.commentsTab);
 
             this.itemsTab = new TabBarItemBuilder().setLabel(i18n('field.items')).build();
             const itemsPanel = this.createItemsPanel();
@@ -175,9 +181,17 @@ export class IssueDetailsDialog
         return issuePanel;
     }
 
-    private createCommentsPanel() {
+    private createCommentsPanel(tab: TabBarItem) {
         const commentsPanel = new Panel();
         this.commentsList = new IssueCommentsList();
+
+        const updateCommentsCount = () => {
+            const commentCount = this.commentsList.getItemCount();
+            tab.setLabel(i18n('field.comments') + (commentCount > 0 ? ` (${commentCount})` : ''));
+        };
+
+        this.commentsList.onItemsAdded(updateCommentsCount);
+        this.commentsList.onItemsRemoved(updateCommentsCount);
         commentsPanel.appendChild(this.commentsList);
         return commentsPanel;
     }
@@ -330,6 +344,8 @@ export class IssueDetailsDialog
 
             this.detailsSubTitle.setIssue(issue, true);
             this.toggleControlsAccordingToStatus(issue.getIssueStatus());
+
+            this.commentsList.setItems(issue.getComments());
         }
 
         if (this.assigneesUpdateRequired(issue)) {
@@ -401,10 +417,13 @@ export class IssueDetailsDialog
         this.publishAction = new ContentPublishDialogAction(this.doPublishAndClose.bind(this, false), i18n('action.publishAndCloseIssue'));
 
         this.commentAction = new Action(i18n('action.commentIssue'));
-        this.commentAction.onExecuted(action => {
+        this.commentAction.setEnabled(false).onExecuted(action => {
             const comment = this.commentTextArea.getValue();
-            console.log('Added comment: ' + comment);
-            //TODO: send add comment request
+            const creator = this.currentUser.getKey();
+            new CommentIssueRequest(this.issue.getId()).setCreator(creator).setText(comment).sendAndParse().done(issue => {
+                this.commentsList.addItem(issue.getComments()[issue.getComments().length - 1]);
+                api.notify.showFeedback(i18n('notify.issue.commentAdded'));
+            });
         });
 
         this.publishButton = this.createPublishButton();
