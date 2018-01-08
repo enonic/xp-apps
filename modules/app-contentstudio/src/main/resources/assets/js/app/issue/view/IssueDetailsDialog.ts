@@ -15,6 +15,8 @@ import {DetailsDialogSubTitle} from './IssueDetailsDialogSubTitle';
 import {PublishProcessor} from '../../publish/PublishProcessor';
 import {AssigneesLine} from './IssueList';
 import {DependantItemsWithProgressDialogConfig} from '../../dialog/DependantItemsWithProgressDialog';
+import {IssueCommentsList} from './IssueCommentsList';
+import {IssueCommentTextArea} from './IssueCommentTextArea';
 import AEl = api.dom.AEl;
 import DialogButton = api.ui.dialog.DialogButton;
 import ContentSummaryAndCompareStatusFetcher = api.content.resource.ContentSummaryAndCompareStatusFetcher;
@@ -51,9 +53,11 @@ export class IssueDetailsDialog
     private static INSTANCE: IssueDetailsDialog = new IssueDetailsDialog();
 
     private itemsTab: api.ui.tab.TabBarItem;
+    private commentsTab: api.ui.tab.TabBarItem;
     private tabPanel: api.ui.panel.NavigatedDeckPanel;
     private closeAction: api.ui.Action;
     private reopenAction: api.ui.Action;
+    private commentAction: api.ui.Action;
     private detailsSubTitle: DetailsDialogSubTitle;
     private description: api.dom.PEl;
     private publishAction: ContentPublishDialogAction;
@@ -65,6 +69,8 @@ export class IssueDetailsDialog
     private ignoreNextExcludeChildrenEvent: boolean;
     private debouncedUpdateIssue: Function;
     private assigneesLine: AssigneesLine;
+    private commentsList: IssueCommentsList;
+    private commentTextArea: IssueCommentTextArea;
 
     private constructor() {
         super(<DependantItemsWithProgressDialogConfig> {
@@ -82,7 +88,10 @@ export class IssueDetailsDialog
 
         this.debouncedUpdateIssue = AppHelper.debounce(this.doUpdateIssue.bind(this), 1000);
 
-        this.loadCurrentUser();
+        this.commentTextArea = new IssueCommentTextArea();
+        this.loadCurrentUser().done(currentUser => {
+            this.commentTextArea.setUser(currentUser);
+        });
         this.initRouting();
         this.handleIssueGlobalEvents();
         this.initActions();
@@ -103,10 +112,14 @@ export class IssueDetailsDialog
             this.createEditButton();
             this.createCloseButton();
             this.createReopenButton();
+            this.createAddCommentButton();
             this.createNoActionMessage();
 
             const issueTab = new TabBarItemBuilder().setLabel(i18n('field.issue')).build();
             const issuePanel = this.createIssuePanel();
+
+            this.commentsTab = new TabBarItemBuilder().setLabel(i18n('field.comments')).build();
+            const commentsPanel = this.createCommentsPanel();
 
             this.itemsTab = new TabBarItemBuilder().setLabel(i18n('field.items')).build();
             const itemsPanel = this.createItemsPanel();
@@ -115,14 +128,18 @@ export class IssueDetailsDialog
             this.tabPanel = new NavigatedDeckPanel(tabBar);
             this.tabPanel.onPanelShown(event => {
                 const isIssue = event.getPanel() == issuePanel;
+                const isComments = event.getPanel() == commentsPanel;
                 this.toggleClass('tab-issue', isIssue);
-                this.toggleClass('tab-items', !isIssue);
+                this.toggleClass('tab-comments', isComments);
+                this.toggleClass('tab-items', !isIssue && !isComments);
             });
             this.tabPanel.addNavigablePanel(issueTab, issuePanel, true);
+            this.tabPanel.addNavigablePanel(this.commentsTab, commentsPanel);
             this.tabPanel.addNavigablePanel(this.itemsTab, itemsPanel);
 
             this.appendChildToHeader(tabBar);
             this.appendChildToContentPanel(this.tabPanel);
+            this.prependChildToFooter(this.commentTextArea);
 
             this.initElementListeners();
             this.updateCountsAndActions();
@@ -156,6 +173,13 @@ export class IssueDetailsDialog
         this.description = new PEl('description');
         issuePanel.appendChild(this.description);
         return issuePanel;
+    }
+
+    private createCommentsPanel() {
+        const commentsPanel = new Panel();
+        this.commentsList = new IssueCommentsList();
+        commentsPanel.appendChild(this.commentsList);
+        return commentsPanel;
     }
 
     private createItemsPanel() {
@@ -243,9 +267,10 @@ export class IssueDetailsDialog
         return this.publishProcessor.getDependantIds();
     }
 
-    private loadCurrentUser() {
+    private loadCurrentUser(): wemQ.Promise<User> {
         return new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult) => {
             this.currentUser = loginResult.getUser();
+            return this.currentUser;
         });
     }
 
@@ -375,6 +400,13 @@ export class IssueDetailsDialog
         });
         this.publishAction = new ContentPublishDialogAction(this.doPublishAndClose.bind(this, false), i18n('action.publishAndCloseIssue'));
 
+        this.commentAction = new Action(i18n('action.commentIssue'));
+        this.commentAction.onExecuted(action => {
+            const comment = this.commentTextArea.getValue();
+            console.log('Added comment: ' + comment);
+            //TODO: send add comment request
+        });
+
         this.publishButton = this.createPublishButton();
         this.actionButton = this.publishButton.getActionButton();
 
@@ -401,6 +433,11 @@ export class IssueDetailsDialog
     private createReopenButton() {
         const reopenButton: DialogButton = this.getButtonRow().addAction(this.reopenAction);
         reopenButton.addClass('reopen-issue green force-enabled');
+    }
+
+    private createAddCommentButton() {
+        const commentButton: DialogButton = this.getButtonRow().addAction(this.commentAction);
+        commentButton.addClass('comment-issue force-enabled');
     }
 
     private createPublishButton(): MenuButton {

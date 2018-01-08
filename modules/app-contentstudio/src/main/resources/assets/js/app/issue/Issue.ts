@@ -1,6 +1,7 @@
 import {IssueSummary, IssueSummaryBuilder} from './IssueSummary';
 import {PublishRequest} from './PublishRequest';
 import {IssueJson} from './json/IssueJson';
+import {Comment} from './Comment';
 import PrincipalKey = api.security.PrincipalKey;
 
 export class Issue extends IssueSummary {
@@ -9,11 +10,14 @@ export class Issue extends IssueSummary {
 
     private publishRequest: PublishRequest;
 
+    private comments: Comment[];
+
     constructor(builder: IssueBuilder) {
         super(builder);
 
         this.approvers = builder.approvers;
         this.publishRequest = builder.publishRequest;
+        this.comments = builder.comments;
     }
 
     public getApprovers(): PrincipalKey[] {
@@ -22,6 +26,10 @@ export class Issue extends IssueSummary {
 
     public getPublishRequest(): PublishRequest {
         return this.publishRequest;
+    }
+
+    public getComments(): Comment[] {
+        return this.comments;
     }
 
     static fromJson(json: IssueJson): Issue {
@@ -39,9 +47,12 @@ export class IssueBuilder extends IssueSummaryBuilder {
 
     publishRequest: PublishRequest;
 
+    comments: Comment[];
+
     fromJson(json: IssueJson): IssueBuilder {
         super.fromJson(json);
         this.approvers = json.approverIds ? json.approverIds.map(approver => PrincipalKey.fromString(approver)) : [];
+        this.comments = json.comments ? json.comments.map(comment => Comment.fromJson(comment)) : [];
         this.publishRequest = json.publishRequest ? PublishRequest.create().fromJson(json.publishRequest).build() : null;
 
         return this;
@@ -59,6 +70,11 @@ export class IssueBuilder extends IssueSummaryBuilder {
 
     setDescription(value: string): IssueBuilder {
         this.description = value;
+        return this;
+    }
+
+    setComments(value: Comment[]): IssueBuilder {
+        this.comments = value;
         return this;
     }
 

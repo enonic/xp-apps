@@ -3,6 +3,7 @@ import {IssueListDialog} from './view/IssueListDialog';
 import {Issue} from './Issue';
 import {CreateIssueDialog} from './view/CreateIssueDialog';
 import {UpdateIssueDialog} from './view/UpdateIssueDialog';
+import {GetIssueRequest} from './resource/GetIssueRequest';
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import ModalDialog = api.ui.dialog.ModalDialog;
 
@@ -70,7 +71,9 @@ export class IssueDialogsManager {
         });
         dialog.onIssueSelected(issue => {
             dialog.addClass('masked');
-            this.openDetailsDialog(issue);
+            new GetIssueRequest(issue.getId()).sendAndParse().done(issueWithComments => {
+                this.openDetailsDialog(issueWithComments);
+            });
         });
         dialog.onCreateButtonClicked(action => {
             dialog.addClass('masked');
