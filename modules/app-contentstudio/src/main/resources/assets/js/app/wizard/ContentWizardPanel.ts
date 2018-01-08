@@ -68,7 +68,6 @@ import CycleButton = api.ui.button.CycleButton;
 import Permission = api.security.acl.Permission;
 import AccessControlEntry = api.security.acl.AccessControlEntry;
 import i18n = api.util.i18n;
-import {PageModel} from '../../page-editor/PageModel';
 
 export class ContentWizardPanel
     extends api.app.wizard.WizardPanel<Content> {
