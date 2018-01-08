@@ -126,6 +126,8 @@ export class LiveFormPanel
     private showLoadMaskHandler: () => void;
     private hideLoadMaskHandler: () => void;
 
+    private pageViewReadyListeners: {(pageView: PageView): void}[];
+
     constructor(config: LiveFormPanelConfig) {
         super('live-form-panel');
         this.contentWizardPanel = config.contentWizardPanel;
@@ -172,6 +174,8 @@ export class LiveFormPanel
                 liveEditMask.hide();
             }
         };
+
+        this.pageViewReadyListeners = [];
 
         ShowLiveEditEvent.on(this.showLoadMaskHandler);
         ShowSplitEditEvent.on(this.showLoadMaskHandler);
@@ -320,6 +324,10 @@ export class LiveFormPanel
 
     public getPage(): Page {
         return this.pageModel ? this.pageModel.getPage() : null;
+    }
+
+    public getPageView(): PageView {
+        return this.pageView;
     }
 
     setModel(liveEditModel: LiveEditModel) {
@@ -542,6 +550,8 @@ export class LiveFormPanel
                 this.insertablesPanel.setPageView(this.pageView);
                 this.pageView.getContextMenuActions().push(this.saveAsTemplateAction);
                 restoreSelection();
+
+                this.notifyPageViewReady(this.pageView);
             }
         });
 
@@ -754,5 +764,21 @@ export class LiveFormPanel
 
     isShown(): boolean {
         return !api.ObjectHelper.stringEquals(this.getHTMLElement().style.display, 'none');
+    }
+
+    onPageViewReady(listener: (pageView: PageView) => void) {
+        this.pageViewReadyListeners.push(listener);
+    }
+
+    unPageViewReady(listener: (pageView: PageView) => void) {
+        this.pageViewReadyListeners = this.pageViewReadyListeners.filter((curr) => {
+            return curr !== listener;
+        });
+    }
+
+    private notifyPageViewReady(pageView: PageView) {
+        this.pageViewReadyListeners.forEach(listener => {
+            listener(pageView);
+        });
     }
 }

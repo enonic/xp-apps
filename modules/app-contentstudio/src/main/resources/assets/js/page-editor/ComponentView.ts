@@ -446,14 +446,11 @@ export class ComponentView<COMPONENT extends Component>
         // Unregister from previous region...
         let parentView = this.getParentItemView();
         if (parentView) {
-            parentView.removeComponentView(this);
+            parentView.removeComponentView(this, true);
         }
 
         // Register with new region...
         toRegionView.addComponentView(this, toIndex, false, true);
-        if (parentView && this.component) {
-            this.registerComponentListeners(this.component);
-        }
     }
 
     onItemViewAdded(listener: (event: ItemViewAddedEvent) => void) {

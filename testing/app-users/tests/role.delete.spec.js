@@ -29,7 +29,7 @@ describe('Role - confirm and delete in wizard and in browse panel', function () 
                 return roleWizard.waitAndClickOnSave();
             }).then(()=> {
                 return roleWizard.clickOnDelete();
-            }).then(result=> {
+            }).then(()=> {
                 testUtils.saveScreenshot(webDriverHelper.browser, "role_wizard_confirm_delete1");
                 return assert.eventually.isTrue(confirmationDialog.waitForDialogVisible(appConst.TIMEOUT_3),
                     "`Confirmation Dialog` should be displayed");
@@ -86,4 +86,7 @@ describe('Role - confirm and delete in wizard and in browse panel', function () 
 
     beforeEach(() => testUtils.navigateToUsersApp(webDriverHelper.browser));
     afterEach(() => testUtils.doCloseUsersApp(webDriverHelper.browser));
+    before(()=> {
+        return console.log('specification starting: ' + this.title);
+    });
 });

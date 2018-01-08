@@ -11,6 +11,7 @@ import {ShowLiveEditAction} from './ShowLiveEditAction';
 import {ShowFormAction} from './ShowFormAction';
 import {ShowSplitEditAction} from './ShowSplitEditAction';
 import {UndoPendingDeleteAction} from './UndoPendingDeleteAction';
+import {ContentSaveAction} from './ContentSaveAction';
 import Action = api.ui.Action;
 import SaveAction = api.app.wizard.SaveAction;
 import CloseAction = api.app.wizard.CloseAction;
@@ -78,15 +79,21 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
 
     private deleteOnlyMode: boolean = false;
 
+    private persistedContent: Content;
+
+    private hasModifyPermission: boolean;
+
     private wizardPanel: ContentWizardPanel;
 
     private actionsMap: ActionsMap;
 
     private stateManager: ActionsStateManager;
 
+    private hasUnsavedChanges: () => boolean;
+
     constructor(wizardPanel: ContentWizardPanel) {
         super(
-            new SaveAction(wizardPanel, i18n('action.saveDraft')),
+            new ContentSaveAction(wizardPanel),
             new DeleteContentAction(wizardPanel),
             new DuplicateContentAction(wizardPanel),
             new PreviewAction(wizardPanel),
@@ -146,6 +153,33 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
         });
     }
 
+    setUnsavedChangesCallback(callback: () => boolean) {
+        this.hasUnsavedChanges = callback;
+
+        const checkSaveActionState = api.util.AppHelper.debounce(() => {
+            let isEnable = this.hasUnsavedChanges();
+            if (this.persistedContent) {
+
+                const overwritePermissions = this.wizardPanel.getSecurityWizardStepForm() &&
+                                             this.wizardPanel.getSecurityWizardStepForm().isOverwritePermissions();
+
+                isEnable = (isEnable || overwritePermissions) && this.persistedContent.isEditable() && this.hasModifyPermission;
+            }
+            this.updateActionsState({
+                save: isEnable
+            });
+
+            this.save.setLabel(i18n(isEnable ? 'action.save' : 'action.saved'));
+
+        }, 100, false);
+
+        this.wizardPanel.onPermissionItemsAdded(checkSaveActionState);
+        this.wizardPanel.onPermissionItemsRemoved(checkSaveActionState);
+        this.wizardPanel.onPermissionItemChanged(checkSaveActionState);
+        this.wizardPanel.onDataChanged(checkSaveActionState);
+        this.wizardPanel.onLiveModelChanged(checkSaveActionState);
+    }
+
     private enableActions(state: ActionsState) {
         this.stateManager.enableActions(state);
     }
@@ -167,13 +201,23 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
     }
 
     enableActionsForNew() {
+        this.persistedContent = null;
         this.stateManager.enableActions({});
-        this.enableActions({SAVE: true, DELETE: true});
+        this.enableActions({SAVE: false, DELETE: true});
     }
 
     enableActionsForExisting(existing: api.content.Content) {
-        this.enableActions({SAVE: existing.isEditable(), DELETE: existing.isDeletable()});
-        this.enableActionsForExistingByPermissions(existing);
+        this.persistedContent = existing;
+
+        this.enableActions({
+            DELETE: existing.isDeletable()
+        });
+
+        this.enableActionsForExistingByPermissions(existing).then(() => {
+            this.enableActions({
+                SAVE: existing.isEditable() && this.hasUnsavedChanges()
+            });
+        });
     }
 
     setDeleteOnlyMode(content: api.content.Content, valueOn: boolean = true) {
@@ -184,7 +228,6 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
         const nonDeleteMode = !valueOn;
 
         this.enableActions({
-            SAVE: nonDeleteMode,
             DUPLICATE: nonDeleteMode,
             PUBLISH: nonDeleteMode,
             CREATE_ISSUE: nonDeleteMode,
@@ -210,17 +253,17 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
         });
     }
 
-    private enableActionsForExistingByPermissions(existing: api.content.Content) {
-        new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult: api.security.auth.LoginResult) => {
+    private enableActionsForExistingByPermissions(existing: api.content.Content): wemQ.Promise<any> {
+        return new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult: api.security.auth.LoginResult) => {
 
-            let hasModifyPermission = api.security.acl.PermissionHelper.hasPermission(api.security.acl.Permission.MODIFY,
+            this.hasModifyPermission = api.security.acl.PermissionHelper.hasPermission(api.security.acl.Permission.MODIFY,
                 loginResult, existing.getPermissions());
             let hasDeletePermission = api.security.acl.PermissionHelper.hasPermission(api.security.acl.Permission.DELETE,
                 loginResult, existing.getPermissions());
             let hasPublishPermission = api.security.acl.PermissionHelper.hasPermission(api.security.acl.Permission.PUBLISH,
                 loginResult, existing.getPermissions());
 
-            if (!hasModifyPermission) {
+            if (!this.hasModifyPermission) {
                 this.enableActions({SAVE: false, SAVE_AND_CLOSE: false});
             }
             if (!hasDeletePermission) {

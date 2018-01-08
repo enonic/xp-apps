@@ -126,4 +126,7 @@ describe('User Store spec - save and edit', function () {
 
     beforeEach(() => testUtils.navigateToUsersApp(webDriverHelper.browser));
     afterEach(() => testUtils.doCloseUsersApp(webDriverHelper.browser));
+    before(()=> {
+        return console.log('specification starting: ' + this.title);
+    });
 });

@@ -91,4 +91,7 @@ describe('`edit.user.spec`: Edit an user - change e-mail, name and roles', funct
 
     beforeEach(() => testUtils.navigateToUsersApp(webDriverHelper.browser));
     afterEach(() => testUtils.doCloseUsersApp(webDriverHelper.browser));
+    before(()=> {
+        return console.log('specification starting: ' + this.title);
+    });
 });

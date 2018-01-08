@@ -21,7 +21,7 @@ describe('Login page specification', function () {
         })
     });
 
-    it('chai-as-promised : WHEN XP has been opened THEN login page should be loaded AND correct title should be displayed', function () {
+    it('WHEN XP has been opened THEN login page should be loaded AND correct title should be displayed', function () {
         return loginPage.waitForPageLoaded(3000).then(()=> {
             return expect(loginPage.getTitle()).to.eventually.be.equal("Enonic XP - Login");
         });

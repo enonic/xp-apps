@@ -1,4 +1,3 @@
-
 const launcherPanel = require('../page_objects/launcher.panel');
 const homePage = require('../page_objects/home.page');
 const loginPage = require('../page_objects/login.page');
@@ -16,8 +15,8 @@ module.exports = {
     findAndSelectItem: function (name) {
         return browsePanel.waitForRowByNameVisible(name).then(()=> {
             return browsePanel.clickOnRowByName(name);
-        }).catch(err=>{
-            throw new Error('Application with the name:' +' not found')
+        }).catch(err=> {
+            throw new Error('Application with the name:' + ' not found')
         })
     },
 
@@ -72,10 +71,12 @@ module.exports = {
         });
     },
     doLoginAndSwitchToApplications: function (browser) {
-        return loginPage.doLogin().then(()=> {
-            return homePage.waitForXpTourVisible(appConst.TIMEOUT_3);
-        }).then(()=> {
-            return homePage.doCloseXpTourDialog();
+        return loginPage.doLogin().pause(1500).then(()=> {
+            return homePage.isXpTourVisible(appConst.TIMEOUT_3);
+        }).then((result)=> {
+            if (result) {
+                return homePage.doCloseXpTourDialog();
+            }
         }).then(()=> {
             return launcherPanel.clickOnApplicationsLink().pause(1000);
         }).then(()=> {

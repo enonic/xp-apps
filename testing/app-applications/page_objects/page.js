@@ -61,6 +61,14 @@ Page.prototype.doClick = function (selector) {
     })
 };
 
+Page.prototype.doRightClick = function (selector) {
+    return this.getBrowser().element(selector).then((result)=> {
+        return this.getBrowser().rightClick(selector, 0, 0);
+    }).catch(function (err) {
+        throw Error(err.message + ` ` + selector);
+    })
+};
+
 Page.prototype.typeTextInInput = function (selector, text) {
     return this.getBrowser().setValue(selector, text).catch((err)=> {
         throw new Error('text was not set in the input ' + err);
@@ -78,8 +86,8 @@ Page.prototype.waitForExist = function (selector, ms) {
     return this.getBrowser().waitForExist(selector, ms);
 };
 
-Page.prototype.waitForEnabled = function (selector, ms) {
-    return this.getBrowser().waitForEnabled(selector, ms);
+Page.prototype.waitForEnabled = function (selector, ms, reverse) {
+    return this.getBrowser().waitForEnabled(selector, ms, reverse);
 };
 
 Page.prototype.waitForDisabled = function (selector, ms) {
@@ -89,7 +97,12 @@ Page.prototype.waitForDisabled = function (selector, ms) {
 Page.prototype.getText = function (selector) {
     return this.getBrowser().getText(selector);
 };
-
+Page.prototype.element = function (selector) {
+    return this.getBrowser().element(selector);
+};
+Page.prototype.elements = function (selector) {
+    return this.getBrowser().elements(selector);
+};
 Page.prototype.getElementId = function (ele) {
     return ele.value.ELEMENT;
 };

@@ -66,6 +66,7 @@ import Toolbar = api.ui.toolbar.Toolbar;
 import CycleButton = api.ui.button.CycleButton;
 
 import Permission = api.security.acl.Permission;
+import AccessControlEntry = api.security.acl.AccessControlEntry;
 import i18n = api.util.i18n;
 
 export class ContentWizardPanel
@@ -121,7 +122,9 @@ export class ContentWizardPanel
 
     private persistedContent: ContentSummaryAndCompareStatus;
 
-    private dataChangedListener: () => void;
+    private dataChangedHandler: () => void;
+
+    private dataChangedListeners: { (): void } [];
 
     private applicationAddedListener: (event: api.content.site.ApplicationAddedEvent) => void;
 
@@ -162,6 +165,7 @@ export class ContentWizardPanel
         this.requireValid = false;
         this.skipValidation = false;
         this.contentNamedListeners = [];
+        this.dataChangedListeners = [];
         this.contentUpdateDisabled = false;
 
         this.displayNameScriptExecutor = new DisplayNameScriptExecutor();
@@ -240,9 +244,10 @@ export class ContentWizardPanel
             }
         });
 
-        this.dataChangedListener = () => {
-            setTimeout(
-                this.updatePublishStatusOnDataChange.bind(this), 100);
+        this.dataChangedHandler = () => {
+            setTimeout(this.updatePublishStatusOnDataChange.bind(this), 100);
+
+            this.notifyDataChanged();
         };
 
         this.applicationAddedListener = (event: api.content.site.ApplicationAddedEvent) => {
@@ -381,7 +386,7 @@ export class ContentWizardPanel
             header.initNames(existing.getDisplayName(), existing.getName().toString(), false);
         }
 
-        header.onPropertyChanged(this.dataChangedListener);
+        header.onPropertyChanged(this.dataChangedHandler);
 
         return header;
     }
@@ -1193,7 +1198,7 @@ export class ContentWizardPanel
 
                 let contentData = content.getContentData();
 
-                contentData.onChanged(this.dataChangedListener);
+                contentData.onChanged(this.dataChangedHandler);
 
                 let formViewLayoutPromises: wemQ.Promise<void>[] = [];
                 formViewLayoutPromises.push(this.contentWizardStepForm.layout(formContext, contentData, this.contentType.getForm()));
@@ -1201,9 +1206,9 @@ export class ContentWizardPanel
                 // since a new is created for each call to renderExisting
                 this.displayNameScriptExecutor.setFormView(this.contentWizardStepForm.getFormView());
                 this.settingsWizardStepForm.layout(content);
-                this.settingsWizardStepForm.onPropertyChanged(this.dataChangedListener);
+                this.settingsWizardStepForm.onPropertyChanged(this.dataChangedHandler);
                 this.scheduleWizardStepForm.layout(content);
-                this.scheduleWizardStepForm.onPropertyChanged(this.dataChangedListener);
+                this.scheduleWizardStepForm.onPropertyChanged(this.dataChangedHandler);
                 this.refreshScheduleWizardStep();
                 this.securityWizardStepForm.layout(content);
 
@@ -1216,7 +1221,7 @@ export class ContentWizardPanel
                     let metadataForm = new api.form.FormBuilder().addFormItems(schema.getFormItems()).build();
 
                     let data = extraData.getData();
-                    data.onChanged(this.dataChangedListener);
+                    data.onChanged(this.dataChangedHandler);
 
                     formViewLayoutPromises.push(metadataFormView.layout(formContext, data, metadataForm));
 
@@ -1238,6 +1243,9 @@ export class ContentWizardPanel
                         this.siteModel = new SiteModel(<Site>content);
                         this.initSiteModelListeners();
                     }
+
+                    this.wizardActions.setUnsavedChangesCallback(this.hasUnsavedChanges.bind(this));
+
                     return wemQ(null);
                 });
             });
@@ -1789,10 +1797,10 @@ export class ContentWizardPanel
                 }
 
                 let form = this.metadataStepFormByName[key];
-                form.getData().unChanged(this.dataChangedListener);
+                form.getData().unChanged(this.dataChangedHandler);
 
                 let data = extraData.getData();
-                data.onChanged(this.dataChangedListener);
+                data.onChanged(this.dataChangedHandler);
 
                 form.update(data, unchangedOnly);
 
@@ -1803,11 +1811,11 @@ export class ContentWizardPanel
 
     private updateWizardStepForms(content: Content, unchangedOnly: boolean = true) {
 
-        this.contentWizardStepForm.getData().unChanged(this.dataChangedListener);
+        this.contentWizardStepForm.getData().unChanged(this.dataChangedHandler);
 
         // remember to copy data to have persistedItem pristine
         let contentCopy = content.clone();
-        contentCopy.getContentData().onChanged(this.dataChangedListener);
+        contentCopy.getContentData().onChanged(this.dataChangedHandler);
 
         this.contentWizardStepForm.update(contentCopy.getContentData(), unchangedOnly).then(() => {
             setTimeout(this.contentWizardStepForm.validate.bind(this.contentWizardStepForm), 100);
@@ -1820,6 +1828,10 @@ export class ContentWizardPanel
         this.settingsWizardStepForm.update(contentCopy, unchangedOnly);
         this.scheduleWizardStepForm.update(contentCopy, unchangedOnly);
         this.securityWizardStepForm.update(contentCopy, unchangedOnly);
+    }
+
+    getSecurityWizardStepForm() {
+        return this.securityWizardStepForm;
     }
 
     private updateWizardHeader(content: Content) {
@@ -1923,5 +1935,88 @@ export class ContentWizardPanel
 
     onFormPanelAdded() {
         super.onFormPanelAdded(!this.isSplitEditModeActive());
+    }
+
+    onLiveModelChanged(listener: () => void) {
+
+        if (this.getLivePanel().getPageView()) {
+            this.onPageChanged(listener);
+        }
+
+        this.getLivePanel().onPageViewReady((pageView) => {
+            this.onPageChanged(listener);
+        });
+    }
+
+    private onPageChanged(listener: () => void) {
+        const pageView = this.getLivePanel().getPageView();
+
+        if (pageView) {
+            pageView.onItemViewAdded(listener);
+            pageView.onItemViewRemoved(listener);
+            pageView.onPageLocked(listener);
+        }
+        const pageModel = this.liveEditModel ? this.liveEditModel.getPageModel() : null;
+
+        if (pageModel) {
+            pageModel.onPropertyChanged(listener);
+            pageModel.onComponentPropertyChangedEvent(listener);
+            pageModel.onCustomizeChanged(listener);
+            pageModel.onPageModeChanged(listener);
+            pageModel.onReset(listener);
+        }
+    }
+
+    unLiveModelChanged(listener: () => void) {
+        const pageModel: PageModel = this.liveEditModel ? this.liveEditModel.getPageModel() : null;
+
+        if (pageModel) {
+            pageModel.unPropertyChanged(listener);
+            pageModel.unComponentPropertyChangedEvent(listener);
+            pageModel.unCustomizeChanged(listener);
+            pageModel.unPageModeChanged(listener);
+            pageModel.unReset(listener);
+        }
+    }
+
+    onPermissionItemChanged(listener: (item: AccessControlEntry) => void) {
+        this.securityWizardStepForm.onPermissionItemChanged(listener);
+    }
+
+    unPermissionItemChanged(listener: (item: AccessControlEntry) => void) {
+        this.securityWizardStepForm.unPermissionItemChanged(listener);
+    }
+
+    onPermissionItemsAdded(listener: (items: AccessControlEntry[]) => void) {
+        this.securityWizardStepForm.onPermissionItemsAdded(listener);
+    }
+
+    unPermissionItemsAdded(listener: (items: AccessControlEntry[]) => void) {
+        this.securityWizardStepForm.unPermissionItemsAdded(listener);
+    }
+
+    onPermissionItemsRemoved(listener: (items: AccessControlEntry[]) => void) {
+        this.securityWizardStepForm.onPermissionItemsRemoved(listener);
+    }
+
+    unPermissionItemsRemoved(listener: (items: AccessControlEntry[]) => void) {
+        this.securityWizardStepForm.unPermissionItemsRemoved(listener);
+    }
+
+    onDataChanged(listener: () => void) {
+        this.dataChangedListeners.push(listener);
+    }
+
+    unDataChanged(listener: () => void) {
+        this.dataChangedListeners = this.dataChangedListeners.filter((curr) => {
+            return curr !== listener;
+        });
+        return this;
+    }
+
+    private notifyDataChanged() {
+        this.dataChangedListeners.forEach((listener: () => void) => {
+            listener.call(this);
+        });
     }
 }

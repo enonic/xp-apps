@@ -73,7 +73,6 @@ module.exports = {
     },
     navigateToUsersApp: function (browser) {
         return launcherPanel.waitForPanelVisible(appConst.TIMEOUT_3).then(()=> {
-            console.log("'user browse panel' should be loaded");
             return launcherPanel.clickOnUsersLink();
         }).then(()=> {
             return this.doSwitchToUsersApp(browser);
