@@ -157,19 +157,17 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
         this.hasUnsavedChanges = callback;
 
         const checkSaveActionState = api.util.AppHelper.debounce(() => {
-            let isEnable = this.hasUnsavedChanges();
+            let isEnabled = this.hasUnsavedChanges();
             if (this.persistedContent) {
 
                 const overwritePermissions = this.wizardPanel.getSecurityWizardStepForm() &&
                                              this.wizardPanel.getSecurityWizardStepForm().isOverwritePermissions();
 
-                isEnable = (isEnable || overwritePermissions) && this.persistedContent.isEditable() && this.hasModifyPermission;
+                isEnabled = (isEnabled || overwritePermissions) && this.persistedContent.isEditable() && this.hasModifyPermission;
             }
-            this.updateActionsState({
-                save: isEnable
-            });
+            this.enableActions({ SAVE: isEnabled });
 
-            this.save.setLabel(i18n(isEnable ? 'action.save' : 'action.saved'));
+            this.getSaveAction().setLabel(i18n(isEnabled ? 'action.save' : 'action.saved'));
 
         }, 100, false);
 
