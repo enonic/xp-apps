@@ -769,14 +769,6 @@ export class PageComponentsView
     }
 
     private hideContextMenu() {
-       /* if (this.beforeActionHandler) {
-            this.contextMenu.getMenu().unBeforeAction(this.beforeActionHandler);
-        }
-
-        if (this.afterActionHandler) {
-            this.contextMenu.getMenu().unAfterAction(this.afterActionHandler);
-        }
-*/
         if (this.contextMenu && this.contextMenu.isVisible()) {
             this.contextMenu.hide();
         }
