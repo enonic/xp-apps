@@ -11,6 +11,12 @@ const dialog = {
     appByDisplayName:      function (displayName) {
         return `//div[contains(@id,'InstallAppDialog')]//div[contains(@id,'NamesView') and child::h6[contains(@class,'main-name')]]//a[contains(.,'${displayName}')]`
     },
+    firstUninstalledAppDisplayName:     function () {
+        return `(${dialog.container}//div[@class='slick-viewport']//div[contains(@class,'slick-row') and descendant::a[@class='install']]//h6[contains(@class,'main-name')])[1]`;
+    },
+    firstInstallLink:     function () {
+        return `(${elements.slickRow(dialog.container)}//a[@class='install'])[1]`
+    },
     installLinkByName:     function (displayName) {
         return `${elements.slickRowByDisplayName(dialog.container, displayName)}//a[@class='install']`
     },
@@ -83,6 +89,26 @@ const installAppDialog = Object.create(page, {
             const selector = dialog.installLinkByName(displayName);
             return this.waitForVisible(selector, 5000).then(() => {
                 return this.doClick(selector);
+            }).catch(e => {
+                throw `Couldn't find install link for app ${displayName}`;
+            });
+        }
+    },
+    clickOnFirstInstallAppLink:  {
+        value: function () {
+            const selector = dialog.firstInstallLink();
+            return this.waitForVisible(selector, 5000).then(() => {
+                return this.doClick(selector);
+            }).catch(e => {
+                throw `Couldn't find install link for app ${displayName}`;
+            });
+        }
+    },
+    getFirstInstallAppName:  {
+        value: function () {
+            const selector = dialog.firstUninstalledAppDisplayName();
+            return this.waitForVisible(selector, 5000).then(() => {
+                return this.getText(selector);
             }).catch(e => {
                 throw `Couldn't find install link for app ${displayName}`;
             });

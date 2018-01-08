@@ -3,7 +3,9 @@ const elements = require('../../libs/elements');
 const appConst = require('../../libs/app_const');
 
 const XPath = {
+    container: `//div[contains(@class, 'application-grid')]`,
     toolbar: `//div[contains(@id,'ApplicationBrowseToolbar')]`,
+    contextMenu: `//ul[contains(@id,'TreeGridContextMenu')]`,
     treeGridToolbar: `//div[contains(@id,'api.ui.treegrid.TreeGridToolbar')]`,
     installButton: `//div[contains(@id,'ApplicationBrowseToolbar')]/button[contains(@id, 'ActionButton') and child::span[contains(.,'Install')]]`,
     unInstallButton: `//div[contains(@id,'ApplicationBrowseToolbar')]/button[contains(@id, 'ActionButton') and child::span[contains(.,'Uninstall')]]`,
@@ -11,11 +13,17 @@ const XPath = {
     startButton: `//div[contains(@id,'ApplicationBrowseToolbar')]/button[contains(@id, 'ActionButton') and child::span[contains(.,'Start')]]`,
     selectAllCheckbox: `//div[@id='api.ui.treegrid.actions.SelectionController']`,
     checkboxes: `(//div[contains(@class,'slick-cell-checkboxsel')])`,
+    contextMenuButton: function (name, state) {
+        return `${XPath.contextMenu}/li[contains(@id,'MenuItem') and contains(@class,'${state}') and contains(.,'${name}')]`;
+    },
     rowByName: name => `//div[contains(@id,'NamesView') and child::p[contains(@class,'sub-name') and contains(.,'${name}')]]`,
     rowByDisplayName:
         displayName => `//div[contains(@id,'NamesView') and child::h6[contains(@class,'main-name') and contains(.,'${displayName}')]]`,
     checkboxByDisplayName: displayName => `${elements.itemByDisplayName(
-        displayName)}/ancestor::div[contains(@class,'slick-row')]/div[contains(@class,'slick-cell-checkboxsel')]/label`
+        displayName)}/ancestor::div[contains(@class,'slick-row')]/div[contains(@class,'slick-cell-checkboxsel')]/label`,
+    selectedApplicationByName: function (displayName) {
+        return `${elements.slickRowSelectedByDisplayName(XPath.container, displayName)}`;
+    }
 };
 
 module.exports = Object.create(page, {
@@ -159,6 +167,17 @@ module.exports = Object.create(page, {
             })
         }
     },
+    clickOnRowByDisplayName: {
+        value: function (name) {
+            var nameXpath = XPath.rowByDisplayName(name);
+            return this.waitForVisible(nameXpath, 3000).then(() => {
+                return this.doClick(nameXpath);
+            }).pause(400).catch((err) => {
+                this.saveScreenshot('err_find_' + name);
+                throw Error('Row with the name ' + name + ' was not found')
+            })
+        }
+    },
     rightClickOnRowByDisplayName: {
         value: function (name) {
             const nameXpath = XPath.rowByDisplayName(name);
@@ -221,5 +240,44 @@ module.exports = Object.create(page, {
             const displayNameXPath = XPath.rowByDisplayName(displayName);
             return this.element(displayNameXPath).then(el => (el.value != null));
         }
+    },
+
+    getSelectedRowByDisplayName: {
+        value: function (displayName) {
+            var displayNameXpath = XPath.selectedApplicationByName(displayName);
+            return this.waitForVisible(displayNameXpath, 2000)
+            .catch((err) => {
+                throw Error('Row with the displayName ' + displayName + ' was not found')
+            })
+        }
+    },
+
+    waitForContextMenuNotDisplayed: {
+        value: function () {
+            return this.waitForNotVisible(`${XPath.contextMenu}`, 1000).catch((err) => {
+                console.log("Context menu is still displayed");
+                throw Error('Context menu is still visible');
+            });
+        }
+    },
+
+    waitForContextMenuDisplayed: {
+        value: function (name) {
+            return this.waitForVisible(`${XPath.contextMenu}`, 1000).catch((err) => {
+                console.log("Context menu is not displayed");
+                throw Error('Context menu is not visible');
+            });
+        }
+    },
+
+    getContextButton: {
+        value: function (name, state) {
+            var nameXpath = XPath.contextMenuButton(name, state || '');
+            return this.waitForVisible(nameXpath, 1000).catch((err) => {
+                console.log("Failed to find context menu button");
+                throw Error('Failed to find context menu button ' + name);
+            });
+        }
     }
+
 });
