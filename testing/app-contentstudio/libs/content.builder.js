@@ -38,5 +38,16 @@ module.exports = {
             },
         };
     },
+    buildArticleContent: function (displayName, title, body, contentType) {
+        return {
+            contentType: contentType,
+            displayName: displayName,
+
+            data: {
+                title: title,
+                body: body,
+            },
+        };
+    },
 
 };

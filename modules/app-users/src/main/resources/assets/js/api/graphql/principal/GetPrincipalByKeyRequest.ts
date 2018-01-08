@@ -65,6 +65,7 @@ export class GetPrincipalByKeyRequest
                       memberships {
                           key
                           displayName
+                          description
                       }`;
             break;
         case PrincipalType.GROUP:
@@ -72,6 +73,7 @@ export class GetPrincipalByKeyRequest
                       memberships {
                           key
                           displayName
+                          description
                       }`;
             break;
         case PrincipalType.ROLE:

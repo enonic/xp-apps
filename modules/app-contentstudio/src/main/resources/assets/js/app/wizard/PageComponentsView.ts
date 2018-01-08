@@ -27,6 +27,7 @@ import i18n = api.util.i18n;
 import Action = api.ui.Action;
 import KeyBinding = api.ui.KeyBinding;
 import ObjectHelper = api.ObjectHelper;
+import Component = api.content.page.region.Component;
 
 export class PageComponentsView
     extends api.dom.DivEl {
@@ -113,6 +114,10 @@ export class PageComponentsView
     show() {
         api.ui.KeyBindings.get().bindKeys(this.keyBinding);
         super.show();
+
+        if(this.tree) {
+            this.tree.getGrid().resizeCanvas();
+        }
     }
 
     hide() {
@@ -241,25 +246,7 @@ export class PageComponentsView
         });
 
         this.liveEditPage.onComponentLoaded((event: ComponentLoadedEvent) => {
-            let oldDataId = this.tree.getDataId(event.getOldComponentView());
-
-            let oldNode = this.tree.getRoot().getCurrentRoot().findNode(oldDataId);
-            oldNode.removeChildren();
-
-            this.tree.updateNode(event.getNewComponentView(), oldDataId).then(() => {
-                let newDataId = this.tree.getDataId(event.getNewComponentView());
-
-                if (this.tree.hasChildren(event.getNewComponentView())) {
-                    // expand new node as it has children
-                    let newNode = this.tree.getRoot().getCurrentRoot().findNode(newDataId);
-                    this.tree.expandNode(newNode, true);
-                }
-
-                if (event.getNewComponentView().isSelected()) {
-                    this.tree.selectNode(newDataId);
-                    this.scrollToItem(newDataId);
-                }
-
+            this.refreshComponentViewNode(event.getNewComponentView(), event.getOldComponentView()).then(() => {
                 if (api.ObjectHelper.iFrameSafeInstanceOf(event.getNewComponentView(), TextComponentView)) {
                     this.bindTreeTextNodeUpdateOnTextComponentModify(<TextComponentView>event.getNewComponentView());
                 }
@@ -271,23 +258,36 @@ export class PageComponentsView
         });
 
         this.liveEditPage.onComponentReset((event: ComponentResetEvent) => {
-            let oldDataId = this.tree.getDataId(event.getOldComponentView());
+            const oldDataId = this.tree.getDataId(event.getOldComponentView());
 
-            if (this.tree.hasChildren(event.getOldComponentView())) {
-                let oldNode = this.tree.getRoot().getCurrentRoot().findNode(oldDataId);
-                oldNode.removeChildren();
-                this.tree.refreshNode(oldNode);
-            }
-
-            this.tree.updateNode(event.getNewComponentView(), oldDataId).then(() => {
-
-                if (event.getNewComponentView().isSelected()) {
-                    let newDataId = this.tree.getDataId(event.getNewComponentView());
-                    this.tree.selectNode(newDataId);
-                }
-            });
+            this.refreshComponentViewNode(event.getNewComponentView(), event.getOldComponentView());
 
             this.removeFromInvalidItems(oldDataId);
+        });
+    }
+
+    private refreshComponentViewNode(componentView: ComponentView<Component>,
+                                     oldComponentView: ComponentView<Component>): wemQ.Promise<void> {
+        const oldDataId = this.tree.getDataId(oldComponentView);
+        const oldNode = this.tree.getRoot().getCurrentRoot().findNode(oldDataId);
+        const prevSibling = this.tree.getRowByNode(oldNode).prev();
+
+        if (this.tree.hasChildren(oldComponentView)) {
+            oldNode.removeChildren();
+            this.tree.refreshNode(oldNode);
+        }
+
+        return this.tree.updateNode(componentView, oldDataId).then(() => {
+            const dataId = this.tree.getDataId(componentView);
+            const node = this.tree.getRoot().getCurrentRoot().findNode(dataId);
+            const row = this.tree.getRowByNode(node);
+
+            row.insertAfter(prevSibling);
+
+            if (componentView.isSelected()) {
+                this.tree.selectNode(dataId);
+                this.scrollToItem(dataId);
+            }
         });
     }
 

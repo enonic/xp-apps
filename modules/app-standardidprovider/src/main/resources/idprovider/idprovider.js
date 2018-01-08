@@ -24,6 +24,20 @@ exports.get = function (req) {
     };
 };
 
+exports.post = function (req) {
+    var userStoreKey = portalLib.getUserStoreKey();
+    var body = JSON.parse(req.body);
+    var loginResult = authLib.login({
+        user: body.user,
+        password: body.password,
+        userStore: userStoreKey
+    });
+    return {
+        body: loginResult,
+        contentType: 'application/json'
+    };
+};
+
 exports.login = function (req) {
     var redirectUrl = (req.validTicket && req.params.redirect) || generateRedirectUrl();
     var body = generateLoginPage(redirectUrl);
@@ -58,7 +72,7 @@ function generateLoginPage(redirectUrl) {
     var appLoginJsUrl = portalLib.assetUrl({path: "js/login.js"});
     var appLoginCssUrl = portalLib.assetUrl({path: "admin/common/styles/_all.css"});
     var appLoginBackgroundUrl = portalLib.assetUrl({path: "images/background.jpg"});
-    var appLoginServiceUrl = portalLib.serviceUrl({service: "login"});
+    var appLoginServiceUrl = portalLib.idProviderUrl();
     var imageUrl = portalLib.assetUrl({path: "icons/"});
     var i18nJsUrl = portalLib.assetUrl({path: "js/i18n.js"});
 

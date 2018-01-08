@@ -2,11 +2,10 @@
  * Created on 14.12.2017.
  */
 
-var page = require('../page');
-var elements = require('../../libs/elements');
-var appConst = require('../../libs/app_const');
+const page = require('../page');
+const elements = require('../../libs/elements');
 const loaderComboBox = require('../components/loader.combobox');
-var form = {
+const form = {
     wizardSteps: `//div[contains(@id,'WizardStepsPanel')]`,
     descriptionInput: `//textarea[contains(@name,'description')]`,
     applicationsSelectedOptions: "//div[contains(@id,'SiteConfiguratorSelectedOptionView')]",

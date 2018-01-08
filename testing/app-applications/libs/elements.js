@@ -14,9 +14,11 @@ module.exports = Object.freeze({
     TEXT_INPUT: "//input[contains(@id,'TextInput')]",
     DROP_DOWN_HANDLE: "//button[contains(@id,'DropdownHandle')]",
     GRID_CANVAS: `//div[@class='grid-canvas']`,
+    slickRowSelectedByDisplayName: function (container, displayName) {
+        return `${container}//div[@class='slick-viewport']//div[contains(@class,'slick-row') and contains(@class,'selected') and descendant::h6[contains(@class,'main-name') and contains(.,'${displayName}')]]`;
+    },
     slickRowByDisplayName: function (container, displayName) {
-        return container +
-               `//div[@class='slick-viewport']//div[contains(@class,'slick-row') and descendant::h6[contains(@class,'main-name') and contains(.,'${displayName}')]]`;
+        return `${container}//div[@class='slick-viewport']//div[contains(@class,'slick-row') and descendant::h6[contains(@class,'main-name') and contains(.,'${displayName}')]]`;
     },
     itemByDisplayName: function (displayName) {
         return `//div[contains(@id,'NamesView') and child::h6[contains(@class,'main-name') and contains(.,'${displayName}')]]`

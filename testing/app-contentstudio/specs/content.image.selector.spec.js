@@ -9,15 +9,17 @@ var webDriverHelper = require('../libs/WebDriverHelper');
 var appConstant = require('../libs/app_const');
 const contentBrowsePanel = require('../page_objects/browsepanel/content.browse.panel');
 const studioUtils = require('../libs/studio.utils.js');
-const imageSelectorForm = require('../page_objects/wizardpanel/imageselector.form.panel');
 const contentWizard = require('../page_objects/wizardpanel/content.wizard.panel');
 const contentBuilder = require("../libs/content.builder");
+const imageSelectorForm = require('../page_objects/wizardpanel/imageselector.form.panel');
 
 
 describe('content.image.selector: Image content specification', function () {
-    this.timeout(70000);
+    this.timeout(appConstant.SUITE_TIMEOUT);
     webDriverHelper.setupBrowser();
+
     let SITE;
+    let imageSelectorContent;
     it(`WHEN site with content types has been added THEN the site should be listed in the grid`,
         () => {
             let displayName = contentBuilder.generateRandomName('site');
@@ -32,23 +34,50 @@ describe('content.image.selector: Image content specification', function () {
             });
         });
 
-    it(`GIVEN wizard for content with image-selector is opened WHEN name of image has been typed AND the option has been selected THEN new content should be listed in the grid`,
+    it(`GIVEN wizard for image-selector is opened WHEN 'mode toggler' button has been pressed THEN mode should be switched to 'Tree' and expected folder with images should be present in the options`,
         () => {
-            let images=[appConstant.TEST_IMAGES.RENAULT];
-            let displayName = contentBuilder.generateRandomName('imgselector');
-            let imgSelectorContent =contentBuilder.buildContentWithImageSelector(displayName, appConstant.contentTypes.IMG_SELECTOR_2_4,images);
-            return studioUtils.selectSiteAndOpenNewWizard(SITE.displayName,imgSelectorContent.contentType).then(()=> {
-                return contentWizard.typeData(imgSelectorContent);
-            }).then(()=>{
-                return contentWizard.waitAndClickOnSave();
-            }).then(()=>{
-                return studioUtils.doCloseWizardAndSwitchToGrid();
-            }).then(()=>{
-                return studioUtils.typeNameInFilterPanel(imgSelectorContent.displayName);
+            return studioUtils.selectSiteAndOpenNewWizard(SITE.displayName, appConstant.contentTypes.IMG_SELECTOR_2_4).then(()=> {
+                return imageSelectorForm.clickOnModeTogglerButton();
             }).then(()=> {
-                return contentBrowsePanel.isItemDisplayed(imgSelectorContent.displayName);
+                return imageSelectorForm.getTreeModeOptionDisplayNames();
+            }).then(options=> {
+                studioUtils.saveScreenshot(webDriverHelper.browser, 'img_sel_tree_mode');
+                assert.strictEqual(options[0], appConstant.TEST_FOLDER_WIT_IMAGES);
+            });
+        });
+
+    it(`GIVEN wizard for image-selector is opened WHEN 'dropdown handle' button has been pressed THEN flat mode should be present in the options list`,
+        () => {
+            return studioUtils.selectSiteAndOpenNewWizard(SITE.displayName, appConstant.contentTypes.IMG_SELECTOR_2_4).then(()=> {
+                return imageSelectorForm.clickOnDropdownHandle();
+            }).then(()=> {
+                return imageSelectorForm.getFlatModeOptionImageNames();
+            }).then(imagesNames=> {
+                studioUtils.saveScreenshot(webDriverHelper.browser, 'img_sel_flat_mode');
+                assert.isTrue(imagesNames.length > 0, 'images should be present in the dropdown list');
+                assert.isTrue(imagesNames[0].includes('.png'), 'correct extension should be in the name');
+            });
+        });
+
+    it(`GIVEN wizard for content with image-selector is opened WHEN image has been selected AND data saved THEN new content should be listed in the grid`,
+        () => {
+            let images = [appConstant.TEST_IMAGES.RENAULT];
+            let displayName = contentBuilder.generateRandomName('imgselector');
+            imageSelectorContent =
+                contentBuilder.buildContentWithImageSelector(displayName, appConstant.contentTypes.IMG_SELECTOR_2_4, images);
+            return studioUtils.selectSiteAndOpenNewWizard(SITE.displayName, imageSelectorContent.contentType).then(()=> {
+                return contentWizard.typeData(imageSelectorContent);
+            }).then(()=> {
+                return contentWizard.waitAndClickOnSave();
+            }).then(()=> {
+                return studioUtils.doCloseWizardAndSwitchToGrid();
+            }).then(()=> {
+                return studioUtils.typeNameInFilterPanel(imageSelectorContent.displayName);
+            }).then(()=> {
+                return contentBrowsePanel.isItemDisplayed(imageSelectorContent.displayName);
             }).then(isDisplayed=> {
-                assert.isTrue(isDisplayed, 'site should be listed in the grid');
+                studioUtils.saveScreenshot(webDriverHelper.browser, 'img_sel_content_added');
+                assert.isTrue(isDisplayed, 'the content should be listed in the grid');
             });
         });
 

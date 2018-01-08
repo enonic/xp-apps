@@ -23,7 +23,7 @@ describe('Content Browse panel, toolbar spec', function () {
             assert.isFalse(result, 'Edit button should be disabled');
         });
     });
-    it(`GIVEN sss WHEN no any items are selected THEN all buttons should have correct states`, () => {
+    it(`GIVEN 'content browse panel' WHEN no any items are selected THEN all buttons should have correct states`, () => {
         return contentBrowsePanel.waitForNewButtonEnabled().then(result => {
             assert.isTrue(result, `New button should be enabled`);
         }).isEnabled(contentBrowsePanel.deleteButton).then(result=> {

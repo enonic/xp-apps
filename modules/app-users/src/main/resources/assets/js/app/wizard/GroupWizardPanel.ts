@@ -93,13 +93,13 @@ export class GroupWizardPanel extends GroupRoleWizardPanel {
 
         const oldMembers = this.getPersistedItem().asGroup().getMembers();
         const newMembers = group.getMembers();
-        const addMembers = ArrayHelper.difference(newMembers, oldMembers, (a, b) => (a.getId() === b.getId()));
-        const removeMembers = ArrayHelper.difference(oldMembers, newMembers, (a, b) => (a.getId() === b.getId()));
+        const addMembers = ArrayHelper.difference(newMembers, oldMembers, (a, b) => (a.toString() === b.toString()));
+        const removeMembers = ArrayHelper.difference(oldMembers, newMembers, (a, b) => (a.toString() === b.toString()));
 
         const oldMemberships = this.getPersistedItem().asGroup().getMemberships().map(value => value.getKey());
         const newMemberships = group.getMemberships().map(value => value.getKey());
-        const addMemberships = ArrayHelper.difference(newMemberships, oldMemberships, (a, b) => (a.getId() === b.getId()));
-        const removeMemberships = ArrayHelper.difference(oldMemberships, newMemberships, (a, b) => (a.getId() === b.getId()));
+        const addMemberships = ArrayHelper.difference(newMemberships, oldMemberships, (a, b) => (a.toString() === b.toString()));
+        const removeMemberships = ArrayHelper.difference(oldMemberships, newMemberships, (a, b) => (a.toString() === b.toString()));
 
         return new UpdateGroupRequest()
             .setKey(key)

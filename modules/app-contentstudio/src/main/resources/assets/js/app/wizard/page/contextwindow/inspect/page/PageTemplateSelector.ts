@@ -4,7 +4,6 @@ import {PageTemplateOptionViewer} from './PageTemplateOptionViewer';
 import {LiveEditModel} from '../../../../../../page-editor/LiveEditModel';
 import {PageModel} from '../../../../../../page-editor/PageModel';
 import PropertyChangedEvent = api.PropertyChangedEvent;
-import ContentId = api.content.ContentId;
 import PageTemplateKey = api.content.page.PageTemplateKey;
 import PageTemplate = api.content.page.PageTemplate;
 import PageTemplateBuilder = api.content.page.PageTemplateBuilder;
@@ -17,7 +16,7 @@ import PageTemplateLoader = api.content.page.PageTemplateLoader;
 import i18n = api.util.i18n;
 import ContentServerEventsHandler = api.content.event.ContentServerEventsHandler;
 import ContentServerChangeItem = api.content.event.ContentServerChangeItem;
-import ArrayHelper = api.util.ArrayHelper;
+import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 
 export class PageTemplateSelector
     extends Dropdown<PageTemplateOption> {
@@ -27,47 +26,58 @@ export class PageTemplateSelector
     private autoOption: Option<PageTemplateOption>;
 
     constructor(liveEditModel: LiveEditModel) {
+        const optionViewer = new PageTemplateOptionViewer(liveEditModel.getPageModel().getDefaultPageTemplate());
         super('pageTemplate', <DropdownConfig<PageTemplateOption>>{
-            optionDisplayValueViewer: new PageTemplateOptionViewer(liveEditModel.getPageModel().getDefaultPageTemplate())
+            optionDisplayValueViewer: optionViewer
         });
 
         this.autoOption = {value: '__auto__', displayValue: new PageTemplateOption()};
         this.customizedOption = this.createCustomizedOption();
 
-        this.loadPageTemplates(liveEditModel).then((options: Option<PageTemplateOption>[]) => {
-            this.initOptionsList(options);
-            this.selectInitialOption(liveEditModel.getPageModel());
+        this.reload(liveEditModel, true);
 
-        }).catch((reason: any) => {
-            api.DefaultErrorHandler.handle(reason);
-        }).done();
-
-        ContentServerEventsHandler.getInstance().onContentUpdated(summaries => {
-            const isTemplateUpdated = summaries.some(summary => summary.getType().isPageTemplate());
-
-            if (isTemplateUpdated) {
-                this.reload(liveEditModel);
-            }
-        });
-        ContentServerEventsHandler.getInstance().onContentDeleted((items: ContentServerChangeItem[]) => {
-
-            const deletedIds: ContentId[] = items.map(item => item.getContentId());
-
-            if (this.getOptions().some(option => ArrayHelper.contains(deletedIds, new ContentId(option.value)))) {
-                this.reload(liveEditModel);
-            }
-        });
+        this.initServerEventsListeners(liveEditModel, optionViewer);
 
         this.initPageModelListeners(liveEditModel.getPageModel());
     }
 
-    private reload(liveEditModel: LiveEditModel): wemQ.Promise<void> {
-        return this.loadPageTemplates(liveEditModel).then(options => {
-            const selectedValue = this.getValue();
-            this.removeAllOptions();
-            this.initOptionsList(options);
-            this.setValue(selectedValue);
+    private initServerEventsListeners(liveEditModel: LiveEditModel, optionViewer: PageTemplateOptionViewer) {
+        const eventsHandler = ContentServerEventsHandler.getInstance();
+        const updatedHandlerDebounced = api.util.AppHelper.debounce((summaries) => {
+            const reloadNeeded = summaries.some(summary => this.isDescendantTemplate(summary, liveEditModel));
+            if (reloadNeeded) {
+                this.reload(liveEditModel);
+            }
+        }, 300);
+        eventsHandler.onContentUpdated(updatedHandlerDebounced);
+        eventsHandler.onContentDeleted((items: ContentServerChangeItem[]) => {
+            // just delete item from list
+            // default or current template deletion is handled in ContentWizardPanel because default template should be reloaded
+            items.forEach(item => {
+                const option = this.getOptionByValue(item.getContentId().toString());
+                if (option) {
+                    this.removeOption(option);
+                }
+            });
         });
+    }
+
+    private isDescendantTemplate(summary: ContentSummaryAndCompareStatus, liveEditModel: LiveEditModel): boolean {
+        return summary.getType().isPageTemplate() && summary.getPath().isDescendantOf(liveEditModel.getSiteModel().getSite().getPath());
+    }
+
+    private reload(liveEditModel: LiveEditModel, initial?: boolean): wemQ.Promise<void> {
+        return this.loadPageTemplates(liveEditModel).then(options => {
+            if (initial) {
+                this.initOptionsList(options);
+                this.selectInitialOption(liveEditModel.getPageModel());
+            } else {
+                const selectedValue = this.getValue();
+                this.removeAllOptions();
+                this.initOptionsList(options);
+                this.setValue(selectedValue);
+            }
+        }).catch(api.DefaultErrorHandler.handle);
     }
 
     private loadPageTemplates(liveEditModel: LiveEditModel): wemQ.Promise<Option<PageTemplateOption>[]> {

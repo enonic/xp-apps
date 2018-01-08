@@ -7,7 +7,7 @@ const userBrowsePanel = require('../page_objects/browsepanel/userbrowse.panel');
 const testUtils = require('../libs/test.utils');
 const filterPanel = require('../page_objects/browsepanel/principal.filter.panel');
 
-describe('userbrowse.panel.spec User Browse Panel specification', function () {
+describe('User Browse Panel specification', function () {
     this.timeout(0);
     webDriverHelper.setupBrowser();
 
@@ -77,4 +77,7 @@ describe('userbrowse.panel.spec User Browse Panel specification', function () {
 
     beforeEach(() => testUtils.navigateToUsersApp(webDriverHelper.browser));
     afterEach(() => testUtils.doCloseUsersApp(webDriverHelper.browser));
+    before(()=> {
+        return console.log('specification starting: ' + this.title);
+    });
 });

@@ -13,6 +13,7 @@ import DivEl = api.dom.DivEl;
 import Tooltip = api.ui.Tooltip;
 import Element = api.dom.Element;
 import i18n = api.util.i18n;
+import LoadMask = api.ui.mask.LoadMask;
 
 export class IssueList
     extends ListBox<IssueWithAssignees> {
@@ -27,6 +28,8 @@ export class IssueList
 
     private loadMyIssues: boolean = false;
 
+    private loadMask: LoadMask;
+
     private issueSelectedListeners: { (issue: IssueWithAssignees): void }[] = [];
 
     constructor(issueStatus: IssueStatus) {
@@ -37,9 +40,11 @@ export class IssueList
     }
 
     public reload(): wemQ.Promise<void> {
-        this.removeChildren();
-        this.clearItems(true);
         return this.fetchItems();
+    }
+
+    public setLoadMask(loadMask: LoadMask) {
+        this.loadMask = loadMask;
     }
 
     setLoadMyIssues(value: boolean) {
@@ -50,17 +55,42 @@ export class IssueList
         this.loadAssignedToMe = value;
     }
 
-    private fetchItems(): wemQ.Promise<void> {
-        return this.doFetchItems().then((response: IssueResponse) => {
-            this.totalItems = response.getMetadata().getTotalHits();
-            if (response.getIssues().length > 0) {
-                this.addItems(response.getIssues());
-            } else {
-                this.appendChild(new PEl('no-issues-message').setHtml(i18n('dialog.issue.noIssuesFound')));
-            }
-        }).catch((reason: any) => {
-            api.DefaultErrorHandler.handle(reason);
-        });
+    private fetchItems(append?: boolean): wemQ.Promise<void> {
+        if (this.loadMask) {
+            this.loadMask.show();
+        }
+        return new ListIssuesRequest()
+            .setIssueStatus(this.issueStatus)
+            .setAssignedToMe(this.loadAssignedToMe)
+            .setCreatedByMe(this.loadMyIssues)
+            .setResolveAssignees(true)
+            .setFrom(append ? this.getItemCount() : 0)
+            .setSize(20)
+            .sendAndParse()
+            .then((response: IssueResponse) => {
+
+                this.totalItems = response.getMetadata().getTotalHits();
+                const issues = response.getIssues();
+
+                if (append) {
+                    if (issues.length > 0) {
+                        this.addItems(issues);
+                    }
+                } else {
+                    if (issues.length > 0) {
+                        this.setItems(issues);
+                    } else {
+                        this.clearItems();
+                        this.appendChild(new PEl('no-issues-message').setHtml(i18n('dialog.issue.noIssuesFound')));
+                    }
+                }
+            })
+            .catch(api.DefaultErrorHandler.handle)
+            .finally(() => {
+                if (this.loadMask) {
+                    this.loadMask.hide();
+                }
+            });
     }
 
     private loadCurrentUser() {
@@ -81,21 +111,9 @@ export class IssueList
         });
     }
 
-    private doFetchItems(): wemQ.Promise<IssueResponse> {
-        const listIssuesRequest: ListIssuesRequest = new ListIssuesRequest();
-
-        listIssuesRequest.setIssueStatus(this.issueStatus);
-        listIssuesRequest.setAssignedToMe(this.loadAssignedToMe);
-        listIssuesRequest.setCreatedByMe(this.loadMyIssues);
-        listIssuesRequest.setResolveAssignees(true);
-        listIssuesRequest.setFrom(this.getItemCount());
-
-        return listIssuesRequest.sendAndParse();
-    }
-
     private handleScroll() {
         if (this.isScrolledToBottom() && !this.isAllItemsLoaded()) {
-            this.fetchItems();
+            this.fetchItems(true);
         }
     }
 

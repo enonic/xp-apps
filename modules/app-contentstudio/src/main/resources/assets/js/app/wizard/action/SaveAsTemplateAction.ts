@@ -33,8 +33,7 @@ export class SaveAsTemplateAction
     }
 
     updateVisibility() {
-        const hasController = this.pageModel.getController();
-        if (hasController && this.contentSummary.isSite()) {
+        if (this.pageModel.getController()) {
             if (this.userHasCreateRights === undefined) {
                 new api.content.resource.GetPermittedActionsRequest()
                     .addContentIds(this.contentSummary.getContentId())

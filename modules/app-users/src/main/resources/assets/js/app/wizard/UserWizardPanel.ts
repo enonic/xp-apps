@@ -147,8 +147,8 @@ export class UserWizardPanel extends PrincipalWizardPanel {
 
         const oldMemberships = this.getPersistedItem().asUser().getMemberships().map(value => value.getKey());
         const newMemberships = user.getMemberships().map(value => value.getKey());
-        const addMemberships = ArrayHelper.difference(newMemberships, oldMemberships, (a, b) => (a.getId() === b.getId()));
-        const removeMemberships = ArrayHelper.difference(oldMemberships, newMemberships, (a, b) => (a.getId() === b.getId()));
+        const addMemberships = ArrayHelper.difference(newMemberships, oldMemberships, (a, b) => (a.toString() === b.toString()));
+        const removeMemberships = ArrayHelper.difference(oldMemberships, newMemberships, (a, b) => (a.toString() === b.toString()));
 
         return new UpdateUserRequest()
             .setKey(key)

@@ -28,7 +28,6 @@ var homePage = Object.create(page, {
     },
     doCloseXpTourDialog: {
         value: function () {
-            browser.debug();
             return this.doClick(this.closeXpTourButton);
         }
     },

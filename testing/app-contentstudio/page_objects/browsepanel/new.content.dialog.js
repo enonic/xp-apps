@@ -10,7 +10,7 @@ const dialog = {
     searchInput: `//div[contains(@id,'FileInput')]/input`,
     header: `//div[contains(@class,'dialog-header')`,
     contentTypeByName: function (name) {
-        return `//li[contains(@class,'content-types-list-item') and descendant::p[contains(@class,'sub-name') and contains(.,'${name}')]]`;
+        return `//div[@class='content-types-content']//li[contains(@class,'content-types-list-item') and descendant::p[contains(@class,'sub-name') and contains(.,'${name}')]]`;
     },
 
 };
@@ -65,19 +65,21 @@ var newContentDialog = Object.create(page, {
             return this.getText(this.header);
         }
     },
-    typeSearchText:{
-      value:function(text){
-          return this.typeTextInInput(this.searchInput, text);
-      }  
+    typeSearchText: {
+        value: function (text) {
+            return this.typeTextInInput(this.searchInput, text);
+        }
     },
     clickOnContentType: {
         value: function (contentTypeName) {
             let typeSelector = `${dialog.contentTypeByName(contentTypeName)}`;
             return this.waitForVisible(typeSelector, appConst.TIMEOUT_3).then(()=> {
-                return this.doClick(typeSelector).catch(err=> {
-                    this.saveScreenshot('err_find_content_type');
-                    throw new Error('The content type was not found! ' + contentTypeName);
-                });
+            }).then(()=> {
+                return this.getDisplayedElements(typeSelector);
+            }).then((result)=> {
+                return this.getBrowser().elementIdClick(result[0].ELEMENT);
+            }).catch(err=> {
+                throw new Error('clickOnContentType:' + err);
             })
 
         }

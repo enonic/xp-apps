@@ -2,6 +2,7 @@ import Panel = api.ui.panel.Panel;
 import Checkbox = api.ui.Checkbox;
 import DivEl = api.dom.DivEl;
 import i18n = api.util.i18n;
+import LoadMask = api.ui.mask.LoadMask;
 import {IssueList} from './IssueList';
 import {IssueStatus} from '../IssueStatus';
 import {IssueWithAssignees} from '../IssueWithAssignees';
@@ -41,8 +42,7 @@ export class IssuesPanel
     doRender(): Q.Promise<boolean> {
         return super.doRender().then((rendered: boolean) => {
             const checkboxesDiv: DivEl = new DivEl('filters').appendChildren(this.myIssuesCheckbox, this.assignedToMeCheckbox);
-            this.appendChild(checkboxesDiv);
-            this.appendChild(this.issuesList);
+            this.appendChildren(checkboxesDiv, this.issuesList);
             return rendered;
         });
     }
@@ -116,5 +116,9 @@ export class IssuesPanel
 
     private makeFilterLabel(label: string, count: number): string {
         return (count > 0 ? label + ' (' + count + ')' : label);
+    }
+
+    setLoadMask(loadMask: LoadMask) {
+        this.issuesList.setLoadMask(loadMask);
     }
 }

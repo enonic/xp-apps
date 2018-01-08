@@ -42,7 +42,7 @@ var deleteContentDialog = Object.create(page, {
     },
     waitForDialogClosed: {
         value: function (ms) {
-            return this.waitForVisible(`${dialog.container}`, ms);
+            return this.waitForNotVisible(`${dialog.container}`, ms);
         }
     },
     isItemHasInboundLink: {
