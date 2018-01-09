@@ -20,6 +20,7 @@ describe('`edit.user.spec`: Edit an user - change e-mail, name and roles', funct
 
     it('GIVEN `User` with a role has been saved WHEN the user has been clicked THEN correct role should be displayed on the statistic panel',
         () => {
+            this.bail(1);
             let userName = userItemsBuilder.generateRandomName('user');
             let roles = [appConst.roles.CM_ADMIN, appConst.roles.USERS_ADMINISTRATOR];
             testUser = userItemsBuilder.buildUser(userName, '1q2w3e', userItemsBuilder.generateEmail(userName), roles);

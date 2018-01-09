@@ -85,9 +85,9 @@ module.exports = Object.create(page, {
         value: function () {
             return this.waitForEnabled(XPath.installButton, 1000).then(() => {
                 return this.doClick(XPath.unInstallButton);
-        }).catch((err) => {
+            }).catch((err) => {
                 throw new Error(`Uninstall button is not enabled! ${err}`);
-        })
+            })
         }
     },
     clickOnStartButton: {
@@ -110,21 +110,55 @@ module.exports = Object.create(page, {
                 });
         }
     },
+    waitForInstallButtonEnabled: {
+        value: function () {
+            return this.waitForEnabled(XPath.installButton, 3000).catch(err=> {
+                return this.doCatch('err_install_button_state', 'Button Install-app should be enabled ' + err);
+            });
+        }
+    },
     waitForStartButtonEnabled: {
-        value: function (reverse) {
-            return this.waitForEnabled(XPath.startButton, 2000, reverse);
+        value: function () {
+            return this.waitForEnabled(XPath.startButton, 2000).catch(err=> {
+                return this.doCatch('err_start_button_state', 'Button Start-app should be enabled ' + err);
+            });
+        }
+    },
+    waitForStartButtonDisabled: {
+        value: function () {
+            return this.waitForEnabled(XPath.startButton, 3000, true).catch(err=> {
+                return this.doCatch('err_start_button', 'Button Start-app should be disabled ' + err);
+            });
         }
     },
     waitForStopButtonEnabled: {
-        value: function (reverse) {
-            return this.waitForEnabled(XPath.stopButton, 2000, reverse);
+        value: function () {
+            return this.waitForEnabled(XPath.stopButton, 2000).catch(err=> {
+                return this.doCatch('err_stop_button', 'Button Stop-app should be enabled ' + err);
+            });
+        }
+    },
+    waitForStopButtonDisabled: {
+        value: function () {
+            return this.waitForEnabled(XPath.stopButton, 2000, true).catch(err=> {
+                return this.doCatch('err_stop_button', 'Button Stop-app should be disabled');
+            });
         }
     },
     waitForUninstallButtonEnabled: {
-        value: function (reverse) {
-            return this.waitForEnabled(XPath.unInstallButton, 3000, reverse);
+        value: function () {
+            return this.waitForEnabled(XPath.unInstallButton, 3000).catch(err=> {
+                return this.doCatch('err_uninstall_button', err);
+            });
+        }
+    }, waitForUninstallButtonDisabled: {
+        value: function () {
+            return this.waitForEnabled(XPath.unInstallButton, 3000, true).catch(err=> {
+                return this.doCatch('err_uninstall_button', 'Uninstall button should be disabled ' + err);
+            });
         }
     },
+
     isInstallButtonEnabled: {
         value: function () {
             return this.isEnabled(XPath.installButton);
@@ -143,6 +177,11 @@ module.exports = Object.create(page, {
     isStopButtonEnabled: {
         value: function () {
             return this.isEnabled(XPath.stopButton);
+        }
+    },
+    isUninstallButtonEnabled: {
+        value: function () {
+            return this.isEnabled(XPath.unInstallButton);
         }
     },
     clickOnSelectAll: {
@@ -183,10 +222,10 @@ module.exports = Object.create(page, {
             const nameXpath = XPath.rowByDisplayName(name);
             return this.waitForVisible(nameXpath, 3000).then(() => {
                 return this.doRightClick(nameXpath);
-        }).pause(400).catch(() => {
-            this.saveScreenshot(`err_find_${name}`);
-            throw Error(`Row with the name ${name} was not found`);
-        })
+            }).pause(400).catch(() => {
+                this.saveScreenshot(`err_find_${name}`);
+                throw Error(`Row with the name ${name} was not found`);
+            })
         }
     },
     clickOnRowByDisplayName: {
@@ -246,9 +285,9 @@ module.exports = Object.create(page, {
         value: function (displayName) {
             var displayNameXpath = XPath.selectedApplicationByName(displayName);
             return this.waitForVisible(displayNameXpath, 2000)
-            .catch((err) => {
-                throw Error('Row with the displayName ' + displayName + ' was not found')
-            })
+                .catch((err) => {
+                    throw Error('Row with the displayName ' + displayName + ' was not found')
+                })
         }
     },
 

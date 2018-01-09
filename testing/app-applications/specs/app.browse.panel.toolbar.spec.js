@@ -1,6 +1,7 @@
 const chai = require('chai');
 const expect = chai.expect;
 const assert = chai.assert;
+chai.use(require('chai-as-promised'));
 var webDriverHelper = require('../libs/WebDriverHelper');
 const appBrowsePanel = require('../page_objects/applications/applications.browse.panel');
 const installAppDialog = require('../page_objects/applications/install.app.dialog');
@@ -21,7 +22,23 @@ describe('Application Browse Panel,  check buttons on the toolbar', function () 
             .then(() => uninstallIfPresent(appDescription2));
     });
 
+    it('WHEN app browse panel is loaded  AND no selections THEN only `Install` button should be enabled', () => {
+        return appBrowsePanel.waitForInstallButtonEnabled().then((result)=> {
+            assert.isTrue(result, 'Install button should be enabled');
+        }).then(()=> {
+            return assert.eventually.isFalse(appBrowsePanel.isStartButtonEnabled(),
+                "`Start` button should be disabled");
+        }).then(()=> {
+            return assert.eventually.isFalse(appBrowsePanel.isStopButtonEnabled(),
+                "`Stop` button should be disabled");
+        }).then(()=> {
+            return assert.eventually.isFalse(appBrowsePanel.isUninstallButtonEnabled(),
+                "`Uninstall` button should be disabled");
+        })
+    });
+
     it('WHEN Install button has been clicked for two applications THEN two rows should be present in the grid', () => {
+        this.bail(1);
         return appBrowsePanel.clickOnInstallButton()
             .then(() => installAppDialog.waitForInstallLink(appDisplayName1))
             .then(() => installAppDialog.clickOnInstallAppLink(appDisplayName1))
@@ -37,10 +54,10 @@ describe('Application Browse Panel,  check buttons on the toolbar', function () 
     it('WHEN An installed application is selected or unselected THEN the toolbar buttons must be updated', () => {
         return appBrowsePanel.clickOnRowByName(appDescription1)
             .then(() => Promise.all([appBrowsePanel.waitForUninstallButtonEnabled(), appBrowsePanel.waitForStopButtonEnabled(),
-                appBrowsePanel.waitForStartButtonEnabled(true)]))
+                appBrowsePanel.waitForStartButtonDisabled()]))
             .then(() => appBrowsePanel.clickOnRowByName(appDescription1))
-            .then(() => Promise.all([appBrowsePanel.waitForUninstallButtonEnabled(true), appBrowsePanel.waitForStopButtonEnabled(true),
-                appBrowsePanel.waitForStartButtonEnabled(true)]));
+            .then(() => Promise.all([appBrowsePanel.waitForUninstallButtonDisabled(), appBrowsePanel.waitForStopButtonDisabled(),
+                appBrowsePanel.waitForStartButtonDisabled()]));
     });
 
     it('WHEN The select all checkbox is selected/unselected THEN the rows should be selected/unselected', () => {

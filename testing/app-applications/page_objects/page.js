@@ -186,4 +186,11 @@ Page.prototype.waitForNotificationWarning = function () {
         return this.getBrowser().getText(selector);
     })
 };
+Page.prototype.doCatch = function (screenshotName, errString) {
+    return this.saveScreenshot(screenshotName).then(()=> {
+        throw new Error(errString);
+    })
+
+};
+
 module.exports = new Page();
