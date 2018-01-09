@@ -22,10 +22,7 @@ export class GetUserStoreByKeyRequest
     getQuery(): string {
         return `query($key: String!) {
             userStore(key: $key) {
-                id,
                 key,
-                name,
-                path,
                 displayName,
                 description,
                 authConfig {
@@ -33,7 +30,6 @@ export class GetUserStoreByKeyRequest
                     config
                 }
                 idProviderMode,
-                modifiedTime,
                 permissions {
                     principal {
                         displayName

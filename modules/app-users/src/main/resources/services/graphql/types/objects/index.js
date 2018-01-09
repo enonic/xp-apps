@@ -7,6 +7,7 @@ var graphQlTypes = require('./types');
 
 module.exports = {
     UserStoreType: graphQlUserStore.UserStoreType,
+    PlainUserStoreType: graphQlUserStore.PlainUserStoreType,
     UserStoreDeleteType: graphQlUserStore.UserStoreDeleteType,
     PrincipalType: graphQlPrincipal.PrincipalType,
     PrincipalDeleteType: graphQlPrincipal.PrincipalDeleteType,

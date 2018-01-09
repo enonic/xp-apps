@@ -1,4 +1,5 @@
 var common = require('./common');
+var authLib = require('/lib/xp/auth');
 
 var Permission = {
     READ: 'READ',
@@ -47,6 +48,16 @@ var Access = {
 };
 
 module.exports = {
+    getByKey: function (key) {
+        var args = {key: key};
+        var userstore = authLib.getUserStore(args);
+        if (userstore != null) {
+            var authDescriptor = authLib.getAuthDescriptor(args);
+            userstore.idProviderMode = authDescriptor ? authDescriptor.mode : null;
+            userstore.permissions = authLib.getUserstorePermissions(args);
+        }
+        return userstore;
+    },
     getByKeys: function(keys) {
         var result = common.queryAll({
             query:

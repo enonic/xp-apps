@@ -106,8 +106,7 @@ export class UserStoreWizardPanel
     }
 
     protected doLayoutPersistedItem(persistedItem: UserStore): Q.Promise<void> {
-
-        if (!!persistedItem) {
+        if (persistedItem) {
             this.getWizardHeader().setDisplayName(persistedItem.getDisplayName());
             this.userStoreWizardStepForm.layout(persistedItem);
             this.permissionsWizardStepForm.layout(persistedItem, this.defaultUserStore);

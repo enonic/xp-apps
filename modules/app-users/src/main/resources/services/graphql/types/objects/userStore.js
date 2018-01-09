@@ -6,6 +6,8 @@ var graphQlEnums = require('../enums');
 
 var graphQlUserItem = require('./userItem');
 
+var graphQlPrincipal = require('./principal');
+
 var UserStoreAccessControlEntryType = graphQl.createObjectType({
     name: 'UserStoreAccessControlEntry',
     description: 'Domain representation of user store access control entry',
@@ -22,6 +24,19 @@ var UserStoreAccessControlEntryType = graphQl.createObjectType({
     }
 });
 
+var Permissions = graphQl.createObjectType({
+    name: 'Permissions',
+    description: 'Permissions of the UserStore',
+    fields: {
+        principal: {
+            type: graphQlPrincipal.PrincipalType
+        },
+        access: {
+            type: graphQlEnums.UserStoreAccessEnum
+        }
+    }
+});
+
 exports.AuthConfig = graphQl.createObjectType({
     name: 'AuthConfig',
     description: 'Domain representation of auth config for user store',
@@ -31,9 +46,8 @@ exports.AuthConfig = graphQl.createObjectType({
         },
         config: {
             type: graphQl.GraphQLString,
-            resolve: function() {
-                // TODO: config is not read from db yet, and there's no suitable graphql type for unstructured data
-                return JSON.stringify([]);
+            resolve: function (env) {
+                return JSON.stringify(env.source.config);
             }
         }
     }
@@ -98,6 +112,35 @@ exports.UserStoreType = graphQl.createObjectType({
     }
 });
 graphQlUserItem.typeResolverMap.userStoreType = exports.UserStoreType;
+
+exports.PlainUserStoreType = graphQl.createObjectType({
+    name: 'PlainUserStoreType',
+    description: 'Domain representation of a user store',
+    interfaces: [graphQlUserItem.UserItemType],
+    fields: {
+        key: {
+            type: graphQl.GraphQLString,
+            resolve: function (env) {
+                return env.source.key;
+            }
+        },
+        description: {
+            type: graphQl.GraphQLString
+        },
+        displayName: {
+            type: graphQl.GraphQLString
+        },
+        authConfig: {
+            type: exports.AuthConfig
+        },
+        idProviderMode: {
+            type: graphQlEnums.IdProviderModeEnum
+        },
+        permissions: {
+            type: graphQl.list(Permissions)
+        }
+    }
+});
 
 exports.UserStoreDeleteType = graphQl.createObjectType({
     name: 'UserStoreDelete',
