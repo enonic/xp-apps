@@ -419,9 +419,13 @@ export class IssueDetailsDialog
         this.commentAction = new Action(i18n('action.commentIssue'));
         this.commentAction.setEnabled(false).onExecuted(action => {
             const comment = this.commentTextArea.getValue();
-            const creator = this.currentUser.getKey();
-            new CommentIssueRequest(this.issue.getId()).setCreator(creator).setText(comment).sendAndParse().done(issue => {
+            this.skipNextServerUpdatedEvent = true;
+            action.setEnabled(false);
+            new CommentIssueRequest(this.issue.getId()).setCreator(this.currentUser.getKey(), this.currentUser.getDisplayName()).setText(
+                comment).sendAndParse().done(issue => {
                 this.commentsList.addItem(issue.getComments()[issue.getComments().length - 1]);
+                this.commentTextArea.setValue('', true);
+                action.setEnabled(true);
                 api.notify.showFeedback(i18n('notify.issue.commentAdded'));
             });
         });

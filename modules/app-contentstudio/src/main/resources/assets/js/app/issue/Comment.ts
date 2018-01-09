@@ -3,20 +3,27 @@ import PrincipalKey = api.security.PrincipalKey;
 
 export class Comment {
 
-    private creator: PrincipalKey;
+    private creatorKey: PrincipalKey;
+
+    private creatorDisplayName: string;
 
     private text: string;
 
     private createdTime: Date;
 
-    constructor(creator: PrincipalKey, text: string = "", createdTime: Date = new Date()) {
-        this.creator = creator;
+    constructor(creatorKey: PrincipalKey, creatorDisplayName: string, text: string = "", createdTime: Date = new Date()) {
+        this.creatorKey = creatorKey;
+        this.creatorDisplayName = creatorDisplayName;
         this.text = text;
         this.createdTime = createdTime;
     }
 
-    getCreator(): PrincipalKey {
-        return this.creator;
+    getCreatorKey(): PrincipalKey {
+        return this.creatorKey;
+    }
+
+    getCreatorDisplayName(): string {
+        return this.creatorDisplayName;
     }
 
     getText(): string {
@@ -28,12 +35,12 @@ export class Comment {
     }
 
     getId(): string {
-        return '' + api.util.StringHelper.hashCode(this.creator.toString() + this.text + this.createdTime.getTime());
+        return '' + api.util.StringHelper.hashCode(this.creatorKey.toString() + this.createdTime.getTime());
     }
 
     static fromJson(json: CommentJson) {
         const createdTime = json.createdTime ? new Date(Date.parse(json.createdTime)) : null;
-        return new Comment(PrincipalKey.fromString(json.creator), json.text, createdTime)
+        return new Comment(PrincipalKey.fromString(json.creatorKey), json.creatorDisplayName, json.text, createdTime)
     }
 
 }

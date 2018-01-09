@@ -1,25 +1,25 @@
 import TextArea = api.ui.text.TextArea;
 import PrincipalViewerCompact = api.ui.security.PrincipalViewerCompact;
 import Principal = api.security.Principal;
+import CompositeFormInputEl = api.dom.CompositeFormInputEl;
 
 export class IssueCommentTextArea
-    extends api.dom.DivEl {
+    extends CompositeFormInputEl {
 
     private textArea: TextArea;
     private icon: PrincipalViewerCompact;
 
     constructor() {
-        super('issue-comment-textarea');
-        this.textArea = new TextArea('comment');
+        const textArea = new TextArea('comment');
+        super(textArea);
+        this.addClass('issue-comment-textarea');
+        this.textArea = textArea;
         this.icon = new PrincipalViewerCompact();
+        this.addAdditionalElement(this.icon);
     }
 
     setUser(principal: Principal) {
         this.icon.setObject(principal);
-    }
-
-    getValue(): string {
-        return this.textArea.getValue();
     }
 
     doRender(): Q.Promise<boolean> {

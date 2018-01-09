@@ -1,6 +1,8 @@
 export interface CommentJson {
 
-    creator: string;
+    creatorKey: string;
+
+    creatorDisplayName: string;
 
     text: string
 

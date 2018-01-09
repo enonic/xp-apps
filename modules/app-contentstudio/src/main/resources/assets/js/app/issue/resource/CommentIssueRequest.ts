@@ -8,7 +8,8 @@ import JsonResponse = api.rest.JsonResponse;
 export class CommentIssueRequest
     extends IssueResourceRequest<IssueJson, Issue> {
 
-    private creator: PrincipalKey;
+    private creatorKey: PrincipalKey;
+    private creatorDisplayName: string;
     private text: string;
     private issueId: string;
 
@@ -18,8 +19,9 @@ export class CommentIssueRequest
         this.issueId = issueId;
     }
 
-    setCreator(key: PrincipalKey) {
-        this.creator = key;
+    setCreator(key: PrincipalKey, displayName: string) {
+        this.creatorKey = key;
+        this.creatorDisplayName = displayName;
         return this;
     }
 
@@ -32,7 +34,8 @@ export class CommentIssueRequest
         return {
             issueId: this.issueId,
             text: this.text,
-            creator: this.creator.toString()
+            creatorKey: this.creatorKey.toString(),
+            creatorDisplayName: this.creatorDisplayName
         };
     }
 
