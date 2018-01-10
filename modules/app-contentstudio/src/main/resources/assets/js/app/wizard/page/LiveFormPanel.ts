@@ -68,6 +68,7 @@ import BeforeContentSavedEvent = api.content.event.BeforeContentSavedEvent;
 import ComponentPath = api.content.page.region.ComponentPath;
 import i18n = api.util.i18n;
 import ContentServerEventsHandler = api.content.event.ContentServerEventsHandler;
+import Site = api.content.site.Site;
 
 export interface LiveFormPanelConfig {
 
@@ -332,7 +333,16 @@ export class LiveFormPanel
         this.pageModel = liveEditModel.getPageModel();
         this.pageModel.setIgnorePropertyChanges(true);
 
-        this.saveAsTemplateAction.setContentSummary(this.content).setPageModel(this.pageModel);
+        const site: Site = this.content.isSite()
+            ? <Site>this.content
+            : liveEditModel.getSiteModel()
+                               ? this.liveEditModel.getSiteModel().getSite()
+                               : null;
+
+        this.saveAsTemplateAction
+            .setContentSummary(this.content)
+            .setPageModel(this.pageModel)
+            .setSite(site);
 
         this.liveEditPageProxy.setModel(liveEditModel);
         this.pageInspectionPanel.setModel(liveEditModel);
