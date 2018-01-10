@@ -25,13 +25,13 @@ module.exports = graphQl.createObjectType({
             }
         },
         userStore: {
-            type: graphQlObjectTypes.UserStoreType,
+            type: graphQlObjectTypes.PlainUserStoreType,
             args: {
                 key: graphQl.nonNull(graphQl.GraphQLString)
             },
             resolve: function(env) {
                 var key = env.args.key;
-                return userstores.getByKeys(key);
+                return userstores.getByKey(key);
             }
         },
         principalsConnection: {

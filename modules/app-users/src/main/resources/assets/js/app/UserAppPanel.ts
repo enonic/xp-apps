@@ -1,5 +1,5 @@
 import '../api.ts';
-import {UserTreeGridItem, UserTreeGridItemType, UserTreeGridItemBuilder} from './browse/UserTreeGridItem';
+import {UserTreeGridItem, UserTreeGridItemBuilder, UserTreeGridItemType} from './browse/UserTreeGridItem';
 import {UserItemWizardPanel} from './wizard/UserItemWizardPanel';
 import {UserStoreWizardPanel} from './wizard/UserStoreWizardPanel';
 import {PrincipalWizardPanel} from './wizard/PrincipalWizardPanel';
@@ -11,9 +11,8 @@ import {PrincipalWizardPanelParams} from './wizard/PrincipalWizardPanelParams';
 import {RoleWizardPanel} from './wizard/RoleWizardPanel';
 import {UserWizardPanel} from './wizard/UserWizardPanel';
 import {GroupWizardPanel} from './wizard/GroupWizardPanel';
-import GetUserStoreByKeyRequest  = api.security.GetUserStoreByKeyRequest;
+import {GetUserStoreByKeyRequest} from '../api/graphql/userStore/GetUserStoreByKeyRequest';
 import {GetPrincipalByKeyRequest} from '../api/graphql/principal/GetPrincipalByKeyRequest';
-
 import AppBarTabMenuItem = api.app.bar.AppBarTabMenuItem;
 import AppBarTabMenuItemBuilder = api.app.bar.AppBarTabMenuItemBuilder;
 import AppBarTabId = api.app.bar.AppBarTabId;
@@ -21,7 +20,6 @@ import Principal = api.security.Principal;
 import PrincipalType = api.security.PrincipalType;
 import PrincipalKey = api.security.PrincipalKey;
 import UserStore = api.security.UserStore;
-import ShowBrowsePanelEvent = api.app.ShowBrowsePanelEvent;
 import UserItem = api.security.UserItem;
 import i18n = api.util.i18n;
 
