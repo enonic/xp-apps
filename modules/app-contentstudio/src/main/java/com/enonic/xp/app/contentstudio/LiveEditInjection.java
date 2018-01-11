@@ -86,7 +86,7 @@ public final class LiveEditInjection
 
         final MessageBundle bundle =
             this.localeService.getBundle( ApplicationKey.from( "com.enonic.xp.app.contentstudio" ), resolveLocale( portalRequest ),
-                                          "admin/i18n/common", "admin/i18n/phrases" );
+                                          "i18n/common", "i18n/phrases" );
 
         map.put( "messages", convertBundleToString( bundle ) );
 
