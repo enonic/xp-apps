@@ -23,7 +23,7 @@ module.exports = graphQl.createObjectType({
             },
             resolve: function(env) {
                 var key = env.args.key;
-                return userstores.getByKeys(key);
+                return userstores.getByKey(key);
             }
         },
         principalsConnection: {

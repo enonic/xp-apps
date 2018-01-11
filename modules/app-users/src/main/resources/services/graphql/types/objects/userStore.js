@@ -6,6 +6,8 @@ var graphQlEnums = require('../enums');
 
 var graphQlUserItem = require('./userItem');
 
+var userstoresLib = require('/lib/userstores');
+
 var UserStoreAccessControlEntryType = graphQl.createObjectType({
     name: 'UserStoreAccessControlEntry',
     description: 'Domain representation of user store access control entry',
@@ -78,7 +80,11 @@ exports.UserStoreType = graphQl.createObjectType({
             type: exports.AuthConfig
         },
         idProviderMode: {
-            type: graphQlEnums.IdProviderModeEnum
+            type: graphQlEnums.IdProviderModeEnum,
+            resolve: function(env) {
+                var idProviderKey =  env.source.authConfig && env.source.authConfig.applicationKey;
+                return idProviderKey ? userstoresLib.getIdProviderMode(idProviderKey) : null;
+            }
         },
         permissions: {
             type: graphQl.list(UserStoreAccessControlEntryType),

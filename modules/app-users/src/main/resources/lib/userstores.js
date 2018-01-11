@@ -48,18 +48,8 @@ var Access = {
 };
 
 module.exports = {
-    getByKeys: function(keys) {
-        var result = common.queryAll({
-            query:
-                createUserstoreQuery() +
-                ' AND ' +
-                common.createQueryByField('_name', keys)
-        });
-        result.hits = result.hits.filter(rolesFilter);
-        result.hits.forEach(function(hit) {
-            calculateAccess(hit);
-        });
-        return common.singleOrArray(result.hits);
+    getByKey: function(key) {
+        return authLib.getUserStore({key : key});
     },
     list: authLib.getUserStores,
     create: function(params) {
@@ -158,6 +148,9 @@ module.exports = {
                 reason: ''
             };
         });
+    },
+    getIdProviderMode: function(applicationKey) {
+        return authLib.getIdProviderMode({key:applicationKey});
     }
 };
 

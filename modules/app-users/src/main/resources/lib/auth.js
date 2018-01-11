@@ -18,7 +18,6 @@ exports.getUserStore = function (params) {
  */
 exports.getUserStores = function () {
     var bean = __.newBean('com.enonic.xp.app.users.lib.auth.GetUserStoresHandler');
-    log.info(JSON.stringify(bean.getUserStores(), null, 2));
     return __.toNativeObject(bean.getUserStores());
 };
 
@@ -31,7 +30,7 @@ exports.getUserStores = function () {
  */
 exports.getIdProviderMode = function (params) {
     var bean = __.newBean('com.enonic.xp.app.users.lib.auth.GetIdProviderModeHandler');
-    bean.userStoreKey = required(params, 'key');
+    bean.applicationKey = required(params, 'key');
     return bean.getIdProviderMode();
 };
 
