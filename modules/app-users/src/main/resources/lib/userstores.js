@@ -1,4 +1,5 @@
 var common = require('./common');
+var authLib = require('./auth');
 
 var Permission = {
     READ: 'READ',
@@ -47,32 +48,10 @@ var Access = {
 };
 
 module.exports = {
-    getByKeys: function(keys) {
-        var result = common.queryAll({
-            query:
-                createUserstoreQuery() +
-                ' AND ' +
-                common.createQueryByField('_name', keys)
-        });
-        result.hits = result.hits.filter(rolesFilter);
-        result.hits.forEach(function(hit) {
-            calculateAccess(hit);
-        });
-        return common.singleOrArray(result.hits);
+    getByKey: function(key) {
+        return authLib.getUserStore({key : key});
     },
-    list: function(start, count, sort) {
-        var result = common.queryAll({
-            query: createUserstoreQuery(),
-            start: start,
-            count: count,
-            sort: sort
-        });
-        result.hits = result.hits.filter(rolesFilter);
-        result.hits.forEach(function(hit) {
-            calculateAccess(hit);
-        });
-        return result;
-    },
+    list: authLib.getUserStores,
     create: function(params) {
         var name = common.required(params, 'key');
         var displayName = common.required(params, 'displayName');
@@ -169,6 +148,12 @@ module.exports = {
                 reason: ''
             };
         });
+    },
+    getIdProviderMode: function(applicationKey) {
+        return authLib.getIdProviderMode({key:applicationKey});
+    },
+    getPermissions: function(key) {
+        return authLib.getPermissions({key:key});
     }
 };
 
