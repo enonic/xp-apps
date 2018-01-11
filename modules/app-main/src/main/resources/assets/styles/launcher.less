@@ -1,13 +1,7 @@
 // Variables
-@import "variables/color";
-@import "variables/font";
-@import "variables/mixins";
-@import "variables/z-index";
-@import "variables/common";
-
-@panel-outer-width: 320px;
-@panel-inner-width: 280px;
-@panel-indent: 30px;
+@import "include/colors";
+@import "include/mixins";
+@import "include/variables";
 
 .body-mask.launcher {
   .reset(true);
@@ -83,7 +77,7 @@ body.mobile-statistics-panel {
       color: @admin-white;
     }
   }
-   
+
   &.keyboard-navigation {
     .launcher-app-container .app-row.selected {
       .app-row-selected;
