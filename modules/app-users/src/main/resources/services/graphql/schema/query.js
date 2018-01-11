@@ -12,16 +12,8 @@ module.exports = graphQl.createObjectType({
     fields: {
         userStores: {
             type: graphQl.list(graphQlObjectTypes.UserStoreType),
-            args: {
-                start: graphQl.GraphQLInt,
-                count: graphQl.GraphQLInt,
-                sort: graphQlEnums.SortModeEnum
-            },
             resolve: function(env) {
-                var start = env.args.start;
-                var count = env.args.count;
-                var sort = env.args.sort;
-                return userstores.list(start, count, sort).hits;
+                return userstores.list();
             }
         },
         userStore: {

@@ -1,4 +1,5 @@
 var common = require('./common');
+var authLib = require('./auth');
 
 var Permission = {
     READ: 'READ',
@@ -60,19 +61,7 @@ module.exports = {
         });
         return common.singleOrArray(result.hits);
     },
-    list: function(start, count, sort) {
-        var result = common.queryAll({
-            query: createUserstoreQuery(),
-            start: start,
-            count: count,
-            sort: sort
-        });
-        result.hits = result.hits.filter(rolesFilter);
-        result.hits.forEach(function(hit) {
-            calculateAccess(hit);
-        });
-        return result;
-    },
+    list: authLib.getUserStores,
     create: function(params) {
         var name = common.required(params, 'key');
         var displayName = common.required(params, 'displayName');

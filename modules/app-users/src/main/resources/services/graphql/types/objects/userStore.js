@@ -31,9 +31,9 @@ exports.AuthConfig = graphQl.createObjectType({
         },
         config: {
             type: graphQl.GraphQLString,
-            resolve: function() {
-                // TODO: config is not read from db yet, and there's no suitable graphql type for unstructured data
-                return JSON.stringify([]);
+            resolve: function(env) {
+                return JSON.stringify(env.source.config);
+                //TODO Create object type for property array
             }
         }
     }
@@ -44,25 +44,25 @@ exports.UserStoreType = graphQl.createObjectType({
     description: 'Domain representation of a user store',
     interfaces: [graphQlUserItem.UserItemType],
     fields: {
-        id: {
+        id: { //TODO Remove
             type: graphQl.GraphQLID,
             resolve: function(env) {
-                return env.source._id;
+                return env.source._id; 
             }
         },
         key: {
             type: graphQl.GraphQLString,
             resolve: function(env) {
-                return env.source._name;
+                return env.source.key;
             }
         },
-        name: {
+        name: { //TODO Remove
             type: graphQl.GraphQLString,
             resolve: function(env) {
                 return env.source._name;
             }
         },
-        path: {
+        path: { //TODO Remove
             type: graphQl.GraphQLString,
             resolve: function(env) {
                 return env.source._path;
@@ -75,10 +75,7 @@ exports.UserStoreType = graphQl.createObjectType({
             type: graphQl.GraphQLString
         },
         authConfig: {
-            type: exports.AuthConfig,
-            resolve: function(env) {
-                return env.source.idProvider;
-            }
+            type: exports.AuthConfig
         },
         idProviderMode: {
             type: graphQlEnums.IdProviderModeEnum
