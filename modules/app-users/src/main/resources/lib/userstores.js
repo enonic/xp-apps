@@ -151,6 +151,9 @@ module.exports = {
     },
     getIdProviderMode: function(applicationKey) {
         return authLib.getIdProviderMode({key:applicationKey});
+    },
+    getPermissions: function(key) {
+        return authLib.getPermissions({key:key});
     }
 };
 

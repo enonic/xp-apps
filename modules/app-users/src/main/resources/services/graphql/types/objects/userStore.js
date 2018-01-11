@@ -13,10 +13,7 @@ var UserStoreAccessControlEntryType = graphQl.createObjectType({
     description: 'Domain representation of user store access control entry',
     fields: {
         principal: {
-            type: graphQl.reference('Principal'),
-            resolve: function(env) {
-                return principals.getByKeys(env.source.principal);
-            }
+            type: graphQl.reference('Principal')
         },
         access: {
             type: graphQlEnums.UserStoreAccessEnum
@@ -89,7 +86,7 @@ exports.UserStoreType = graphQl.createObjectType({
         permissions: {
             type: graphQl.list(UserStoreAccessControlEntryType),
             resolve: function(env) {
-                return env.source.access;
+                return userstoresLib.getPermissions(env.source.key);
             }
         },
         modifiedTime: {

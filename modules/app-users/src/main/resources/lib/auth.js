@@ -34,6 +34,21 @@ exports.getIdProviderMode = function (params) {
     return bean.getIdProviderMode();
 };
 
+/**
+ * Returns the .
+ *
+ * @example-ref examples/auth/getPermissions.js
+ *
+ * @param {string} params JSON parameters.
+ * @param {string} params.key Key of the user store to fetch permissions for.
+ * @returns {object[]} Returns the list of principals with access level.
+ */
+exports.getPermissions = function (params) {
+    var bean = __.newBean('com.enonic.xp.app.users.lib.auth.GetPermissionsHandler');
+    bean.userStoreKey = required(params, 'key');
+    return __.toNativeObject(bean.getPermissions());
+};
+
 function required(params, name) {
     var value = params[name];
     if (value === undefined) {
