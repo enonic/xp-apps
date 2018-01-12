@@ -1,38 +1,15 @@
 // Variables
 @import "include/colors";
+@import "include/mixins";
+@import "include/variables";
+@import "include/home/reset";
+@import "include/home/button";
+@import "include/home/mask";
+@import "include/home/modal-dialog";
+@import "include/home/variables";
 
 .home-main-container {
-  position: fixed;
-  left: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
-
-  .center-panel {
-    width: 100%;
-    position: absolute;
-    background-color: rgba(0, 0, 0, 0.4);
-    top: 0;
-    bottom: 0;
-  }
-
-  .lazy-image {
-    width: 100%;
-    min-height: 100%;
-
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
-    background-position: center;
-
-    transition: opacity 2s;
-    &.empty {
-      opacity: 0;
-    }
-  }
+  .home-main-container-mixin();
 
   background-color: @admin-dark-gray;
 
@@ -72,6 +49,7 @@
 .xp-about-dialog {
   max-width: 496px;
   background-color: rgba(0, 0, 0, 0.8);
+  padding: 0 !important;
 
   .modal-dialog-header {
     padding: 0;
@@ -93,6 +71,8 @@
 
   .xp-about-dialog-content {
     color: #bfbfbf;
+    padding-left: 30px;
+    padding-right: 30px;
   }
 
   .modal-dialog-body {
@@ -179,20 +159,6 @@
 
   .modal-dialog-header h2 {
     font-size: 26px;
-  }
-
-  &._0-240, &._240-360, &._360-540 {
-    height: calc(~'100% - 60px');
-    top: 0px;
-    z-index: 2502;
-    margin-top: 0px !important;
-  }
-
-  @media screen and (max-height: 472px) {
-    height: calc(~'100% - 60px');
-    top: 0px;
-    z-index: 2502;
-    margin-top: 0px !important;
   }
 
   .dialog-content {
