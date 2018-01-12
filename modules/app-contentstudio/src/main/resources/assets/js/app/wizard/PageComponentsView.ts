@@ -282,6 +282,7 @@ export class PageComponentsView
         }
 
         return this.tree.updateNode(componentView, oldDataId).then(() => {
+            this.tree.invalidate();
             const dataId = this.tree.getDataId(componentView);
             if (componentView.isSelected()) {
                 this.tree.selectNode(dataId);
