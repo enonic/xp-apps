@@ -7,6 +7,7 @@ import {RegionView} from '../../page-editor/RegionView';
 import {LayoutComponentView} from '../../page-editor/layout/LayoutComponentView';
 import {FragmentComponentView} from '../../page-editor/fragment/FragmentComponentView';
 import {PageView} from '../../page-editor/PageView';
+import {RegionItemType} from '../../page-editor/RegionItemType';
 import GridDragHandler = api.ui.grid.GridDragHandler;
 import TreeNode = api.ui.treegrid.TreeNode;
 import Component = api.content.page.region.Component;
@@ -67,11 +68,12 @@ export class PageComponentsGridDragHandler
 
         let insertPosition = (draggableRow > insertBefore) ? insertBefore : insertBefore + 1;
 
-        this.updateDragHelperStatus(draggableRow, insertPosition, dataList);
-
         if (DragHelper.get().isDropAllowed()) {
             super.handleBeforeMoveRows(event, data);
         }
+
+        this.updateDragHelperStatus(draggableRow, insertPosition, dataList);
+
         return true;
     }
 
@@ -107,6 +109,10 @@ export class PageComponentsGridDragHandler
         let insertIndex = insertData.insertIndex;
 
         let newParent = data[regionPosition];
+
+        if (!newParent.getData().getType().equals(RegionItemType.get())) {
+            return;
+        }
 
         if (newParent === item.getParent() && data.indexOf(item) < insertBefore) {
             insertIndex--;
