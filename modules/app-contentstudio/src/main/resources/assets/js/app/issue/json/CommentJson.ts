@@ -4,7 +4,7 @@ export interface CommentJson {
 
     creatorDisplayName: string;
 
-    text: string
+    text: string;
 
     createdTime: string;
 }

@@ -11,7 +11,7 @@ export class Comment {
 
     private createdTime: Date;
 
-    constructor(creatorKey: PrincipalKey, creatorDisplayName: string, text: string = "", createdTime: Date = new Date()) {
+    constructor(creatorKey: PrincipalKey, creatorDisplayName: string, text: string = '', createdTime: Date = new Date()) {
         this.creatorKey = creatorKey;
         this.creatorDisplayName = creatorDisplayName;
         this.text = text;
@@ -40,7 +40,7 @@ export class Comment {
 
     static fromJson(json: CommentJson) {
         const createdTime = json.createdTime ? new Date(Date.parse(json.createdTime)) : null;
-        return new Comment(PrincipalKey.fromString(json.creatorKey), json.creatorDisplayName, json.text, createdTime)
+        return new Comment(PrincipalKey.fromString(json.creatorKey), json.creatorDisplayName, json.text, createdTime);
     }
 
 }
