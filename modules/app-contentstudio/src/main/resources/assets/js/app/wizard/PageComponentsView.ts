@@ -10,6 +10,7 @@ import {ItemViewDeselectedEvent} from '../../page-editor/ItemViewDeselectedEvent
 import {ComponentAddedEvent} from '../../page-editor/ComponentAddedEvent';
 import {TextComponentView} from '../../page-editor/text/TextComponentView';
 import {FragmentComponentView} from '../../page-editor/fragment/FragmentComponentView';
+import {LayoutComponentView} from '../../page-editor/layout/LayoutComponentView';
 import {ComponentRemovedEvent} from '../../page-editor/ComponentRemovedEvent';
 import {ComponentLoadedEvent} from '../../page-editor/ComponentLoadedEvent';
 import {ComponentResetEvent} from '../../page-editor/ComponentResetEvent';
@@ -216,8 +217,9 @@ export class PageComponentsView
                         }
 
                         if (this.tree.hasChildren(event.getComponentView())) {
-                            let componentNode = this.tree.getRoot().getCurrentRoot().findNode(
-                                this.tree.getDataId(event.getComponentView()));
+                            const componentDataId = this.tree.getDataId(event.getComponentView());
+                            const componentNode = this.tree.getRoot().getCurrentRoot().findNode(componentDataId);
+
                             if (event.isDragged()) {
                                 this.tree.collapseNode(componentNode, true);
                             } else {
@@ -227,10 +229,6 @@ export class PageComponentsView
 
                         if (api.ObjectHelper.iFrameSafeInstanceOf(event.getComponentView(), TextComponentView)) {
                             this.bindTreeTextNodeUpdateOnTextComponentModify(<TextComponentView>event.getComponentView());
-                        }
-                        if (api.ObjectHelper.iFrameSafeInstanceOf(event.getComponentView(), FragmentComponentView)) {
-                            this.bindTreeFragmentNodeUpdateOnComponentLoaded(<FragmentComponentView>event.getComponentView());
-                            this.bindFragmentLoadErrorHandler(<FragmentComponentView>event.getComponentView());
                         }
 
                         this.constrainToParent();
@@ -251,12 +249,17 @@ export class PageComponentsView
 
         this.liveEditPage.onComponentLoaded((event: ComponentLoadedEvent) => {
             this.refreshComponentViewNode(event.getNewComponentView(), event.getOldComponentView()).then(() => {
-                if (api.ObjectHelper.iFrameSafeInstanceOf(event.getNewComponentView(), TextComponentView)) {
-                    this.bindTreeTextNodeUpdateOnTextComponentModify(<TextComponentView>event.getNewComponentView());
-                }
                 if (api.ObjectHelper.iFrameSafeInstanceOf(event.getNewComponentView(), FragmentComponentView)) {
                     this.bindTreeFragmentNodeUpdateOnComponentLoaded(<FragmentComponentView>event.getNewComponentView());
                     this.bindFragmentLoadErrorHandler(<FragmentComponentView>event.getNewComponentView());
+                    return;
+                }
+                if (api.ObjectHelper.iFrameSafeInstanceOf(event.getNewComponentView(), LayoutComponentView)) {
+                    const componentDataId = this.tree.getDataId(event.getNewComponentView());
+                    const componentNode = this.tree.getRoot().getCurrentRoot().findNode(componentDataId);
+
+                    this.tree.expandNode(componentNode);
+                    return;
                 }
             });
         });
@@ -274,7 +277,6 @@ export class PageComponentsView
                                      oldComponentView: ComponentView<Component>): wemQ.Promise<void> {
         const oldDataId = this.tree.getDataId(oldComponentView);
         const oldNode = this.tree.getRoot().getCurrentRoot().findNode(oldDataId);
-        const prevSibling = this.tree.getRowByNode(oldNode).prev();
 
         if (this.tree.hasChildren(oldComponentView)) {
             oldNode.removeChildren();
@@ -282,12 +284,8 @@ export class PageComponentsView
         }
 
         return this.tree.updateNode(componentView, oldDataId).then(() => {
+            this.tree.invalidate();
             const dataId = this.tree.getDataId(componentView);
-            const node = this.tree.getRoot().getCurrentRoot().findNode(dataId);
-            const row = this.tree.getRowByNode(node);
-
-            row.insertAfter(prevSibling);
-
             if (componentView.isSelected()) {
                 this.tree.selectNode(dataId);
                 this.scrollToItem(dataId);
