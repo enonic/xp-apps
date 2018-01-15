@@ -10,6 +10,7 @@ import {ItemViewDeselectedEvent} from '../../page-editor/ItemViewDeselectedEvent
 import {ComponentAddedEvent} from '../../page-editor/ComponentAddedEvent';
 import {TextComponentView} from '../../page-editor/text/TextComponentView';
 import {FragmentComponentView} from '../../page-editor/fragment/FragmentComponentView';
+import {LayoutComponentView} from '../../page-editor/layout/LayoutComponentView';
 import {ComponentRemovedEvent} from '../../page-editor/ComponentRemovedEvent';
 import {ComponentLoadedEvent} from '../../page-editor/ComponentLoadedEvent';
 import {ComponentResetEvent} from '../../page-editor/ComponentResetEvent';
@@ -229,10 +230,6 @@ export class PageComponentsView
                         if (api.ObjectHelper.iFrameSafeInstanceOf(event.getComponentView(), TextComponentView)) {
                             this.bindTreeTextNodeUpdateOnTextComponentModify(<TextComponentView>event.getComponentView());
                         }
-                        if (api.ObjectHelper.iFrameSafeInstanceOf(event.getComponentView(), FragmentComponentView)) {
-                            this.bindTreeFragmentNodeUpdateOnComponentLoaded(<FragmentComponentView>event.getComponentView());
-                            this.bindFragmentLoadErrorHandler(<FragmentComponentView>event.getComponentView());
-                        }
 
                         this.constrainToParent();
                         this.highlightInvalidItems();
@@ -252,12 +249,17 @@ export class PageComponentsView
 
         this.liveEditPage.onComponentLoaded((event: ComponentLoadedEvent) => {
             this.refreshComponentViewNode(event.getNewComponentView(), event.getOldComponentView()).then(() => {
-                if (api.ObjectHelper.iFrameSafeInstanceOf(event.getNewComponentView(), TextComponentView)) {
-                    this.bindTreeTextNodeUpdateOnTextComponentModify(<TextComponentView>event.getNewComponentView());
-                }
                 if (api.ObjectHelper.iFrameSafeInstanceOf(event.getNewComponentView(), FragmentComponentView)) {
                     this.bindTreeFragmentNodeUpdateOnComponentLoaded(<FragmentComponentView>event.getNewComponentView());
                     this.bindFragmentLoadErrorHandler(<FragmentComponentView>event.getNewComponentView());
+                    return;
+                }
+                if (api.ObjectHelper.iFrameSafeInstanceOf(event.getNewComponentView(), LayoutComponentView)) {
+                    const componentDataId = this.tree.getDataId(event.getNewComponentView());
+                    const componentNode = this.tree.getRoot().getCurrentRoot().findNode(componentDataId);
+
+                    this.tree.expandNode(componentNode);
+                    return;
                 }
             });
         });
