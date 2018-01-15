@@ -44,7 +44,7 @@ export class ContentPublishDialog
             title: i18n('dialog.publish'),
                 dialogSubName: i18n('dialog.publish.resolving'),
             dependantsDescription: i18n('dialog.publish.dependants'),
-            showDependantList: true,
+            showDependantList: false,
                 processingLabel: `${i18n('field.progress.publishing')}...`,
                 processHandler: () => {
                     new ContentPublishPromptEvent([]).fire();
@@ -79,6 +79,10 @@ export class ContentPublishDialog
                     }
                 });
             });
+
+            if (this.publishProcessor.isContainsInvalid()) {
+                this.setDependantListVisible(true);
+            }
 
             this.loadMask.hide();
             this.updateSubTitleShowScheduleAndButtonCount();

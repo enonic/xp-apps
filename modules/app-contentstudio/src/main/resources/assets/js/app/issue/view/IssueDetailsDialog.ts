@@ -71,6 +71,7 @@ export class IssueDetailsDialog
             title: i18n('dialog.issue'),
                 dialogSubName: i18n('dialog.issue.resolving'),
                 processingLabel: `${i18n('field.progress.publishing')}...`,
+            showDependantList: false,
                 buttonRow: new IssueDetailsDialogButtonRow(),
                 processHandler: () => {
                     new ContentPublishPromptEvent([]).fire();
@@ -235,6 +236,10 @@ export class IssueDetailsDialog
             if (this.saveOnLoaded) {
                 this.debouncedUpdateIssue(this.issue.getIssueStatus(), true);
                 this.saveOnLoaded = false;
+            }
+
+            if (this.publishProcessor.isContainsInvalid()) {
+                this.setDependantListVisible(true);
             }
         });
     }
