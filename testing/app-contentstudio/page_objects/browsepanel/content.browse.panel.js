@@ -9,6 +9,7 @@ const appConst = require('../../libs/app_const');
 var panel = {
     toolbar: `//div[contains(@id,'ContentBrowseToolbar')]`,
     searchButton: "//button[contains(@class, 'icon-search')]",
+    showIssuesListButton: "//button[contains(@id,'ShowIssuesDialogButton')]",
     rowByName: function (name) {
         return `//div[contains(@id,'NamesView') and child::p[contains(@class,'sub-name') and contains(.,'${name}')]]`
     },
@@ -30,6 +31,11 @@ var contentBrowsePanel = Object.create(page, {
     searchButton: {
         get: function () {
             return `${panel.toolbar}` + `${panel.searchButton}`;
+        }
+    },
+    showIssuesListButton: {
+        get: function () {
+            return `${panel.toolbar}` + `${panel.showIssuesListButton}`;
         }
     },
     newButton: {
@@ -55,6 +61,13 @@ var contentBrowsePanel = Object.create(page, {
             return this.waitForVisible(`${panel.toolbar}`, ms).catch(err=> {
                 throw new Error('Content browse panel was not loaded in ' + ms);
             });
+        }
+    },
+    clickOnShowIssuesListButton: {
+        value: function () {
+            return this.doClick(this.showIssuesListButton).catch(err=> {
+                throw new Error('error when click on the button ' + err);
+            })
         }
     },
     isItemDisplayed: {
