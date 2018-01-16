@@ -116,14 +116,6 @@ Page.prototype.isAttributePresent = function (selector, atrName) {
     })
 };
 
-Page.prototype.getDisplayedElements = function (selector) {
-    let displayedElements = [];
-    return this.getBrowser().elements(selector).then(results=> {
-        results.value.filter
-    })
-    return this.getBrowser().elementIdDisplayed(el.ELEMENT);
-};
-
 Page.prototype.getTextFromElements = function (selector) {
     let json = [];
     return this.getBrowser().elements(selector).then((result)=> {
@@ -185,5 +177,11 @@ Page.prototype.waitForNotificationWarning = function () {
     return this.getBrowser().waitForVisible(selector, appConst.TIMEOUT_3).then(()=> {
         return this.getBrowser().getText(selector);
     })
+};
+Page.prototype.doCatch = function (screenshotName, errString) {
+    return this.saveScreenshot(screenshotName).then(()=> {
+        throw new Error(errString);
+    })
+
 };
 module.exports = new Page();

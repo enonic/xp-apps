@@ -125,5 +125,14 @@ const installAppDialog = Object.create(page, {
             return this.waitForVisible(selector, 2000);
         }
     },
+
+    clickOnInstallLink: {
+        value: function (displayName) {
+            let selector = `${dialog.appByDisplayName(displayName)}`;
+            return this.waitForVisible(selector, 1000).then(()=> {
+                return this.doClick()
+            })
+        }
+    },
 });
 module.exports = installAppDialog;

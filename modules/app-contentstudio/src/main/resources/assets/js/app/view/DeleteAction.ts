@@ -22,7 +22,7 @@ export class DeleteAction extends api.ui.Action {
                     if (reason && reason.message) {
                         api.notify.showError(reason.message);
                     } else {
-                        api.notify.showError(i18n('notify.content.deleteError');
+                        api.notify.showError(i18n('notify.content.deleteError'));
                     }
                 }).done();
             });

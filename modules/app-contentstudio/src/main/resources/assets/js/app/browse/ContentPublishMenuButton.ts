@@ -6,7 +6,7 @@ import MenuButtonProgressBarManager = api.ui.button.MenuButtonProgressBarManager
 export class ContentPublishMenuButton extends MenuButton {
 
     constructor(actions: ContentTreeGridActions) {
-        super(actions.PUBLISH_CONTENT, [actions.PUBLISH_TREE_CONTENT, actions.UNPUBLISH_CONTENT,  actions.CREATE_ISSUE]);
+        super(actions.getPublishAction(), [actions.getPublishTreeAction(), actions.getUnpublishAction(), actions.getCreateIssueAction()]);
         this.addClass('content-publish-menu');
         this.appendChild(MenuButtonProgressBarManager.getProgressBar());
     }
