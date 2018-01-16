@@ -80,7 +80,7 @@ export class ContentPublishDialog
                 });
             });
 
-            if (this.publishProcessor.isContainsInvalid()) {
+            if (this.publishProcessor.containsInvalidDependants()) {
                 this.setDependantListVisible(true);
             }
 
@@ -207,10 +207,6 @@ export class ContentPublishDialog
 
     public isAllPublishable(): boolean {
         return this.publishProcessor.isAllPublishable();
-    }
-
-    public isContainsInvalid(): boolean {
-        return this.publishProcessor.isContainsInvalid();
     }
 
     private reloadPublishDependencies(resetDependantItems?: boolean): wemQ.Promise<void> {
@@ -361,7 +357,7 @@ export class ContentPublishDialog
     }
 
     private areItemsAndDependantsValid(): boolean {
-        return !this.isContainsInvalid();
+        return !this.publishProcessor.containsInvalidItems();
     }
 
     protected hasSubDialog(): boolean {
