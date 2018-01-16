@@ -2,6 +2,7 @@ import ListBox = api.ui.selector.list.ListBox;
 import PrincipalViewerCompact = api.ui.security.PrincipalViewerCompact;
 import NamesView = api.app.NamesView;
 import Principal = api.security.Principal;
+import i18n = api.util.i18n;
 import {Comment} from '../Comment';
 
 export class IssueCommentsList
@@ -9,6 +10,7 @@ export class IssueCommentsList
 
     constructor() {
         super('issue-comments-list');
+        this.setEmptyText(i18n('field.issue.noComments'));
     }
 
     protected getItemId(item: Comment): string {

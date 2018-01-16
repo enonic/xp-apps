@@ -62,6 +62,7 @@ export class IssueDetailsDialog
     private commentAction: api.ui.Action;
     private detailsSubTitle: DetailsDialogSubTitle;
     private description: api.dom.PEl;
+    private descriptionPlaceholder: api.dom.H5El;
     private publishAction: ContentPublishDialogAction;
     private publishButton: api.ui.button.MenuButton;
     private itemSelector: api.content.ContentComboBox<api.content.resource.ContentTreeSelectorItem>;
@@ -177,7 +178,8 @@ export class IssueDetailsDialog
     private createIssuePanel() {
         const issuePanel = new Panel();
         this.description = new PEl('description');
-        issuePanel.appendChild(this.description);
+        this.descriptionPlaceholder = new api.dom.H5El('description-placeholder').setHtml(i18n('dialog.issue.noDescription'));
+        issuePanel.appendChildren<api.dom.Element>(this.description, this.descriptionPlaceholder);
         return issuePanel;
     }
 
@@ -339,7 +341,14 @@ export class IssueDetailsDialog
                 this.itemSelector.getComboBox().clearSelection(true, false);
                 this.getItemList().clearItems();
             }
-            this.description.setHtml(issue.getDescription(), false);
+            let desc = issue.getDescription();
+            const noDesc = api.util.StringHelper.isBlank(desc);
+            if (!noDesc) {
+                this.description.setHtml(desc, false);
+            }
+            this.description.setVisible(!noDesc);
+            this.descriptionPlaceholder.setVisible(noDesc);
+
             this.setTitle(this.createTitleText(issue), false);
 
             this.detailsSubTitle.setIssue(issue, true);
@@ -424,7 +433,7 @@ export class IssueDetailsDialog
             new CommentIssueRequest(this.issue.getId()).setCreator(this.currentUser.getKey(), this.currentUser.getDisplayName()).setText(
                 comment).sendAndParse().done(issue => {
                 this.commentsList.addItem(issue.getComments()[issue.getComments().length - 1]);
-                this.commentTextArea.setValue('', true);
+                this.commentTextArea.setValue('', true).giveFocus();
                 action.setEnabled(true);
                 api.notify.showFeedback(i18n('notify.issue.commentAdded'));
             });
