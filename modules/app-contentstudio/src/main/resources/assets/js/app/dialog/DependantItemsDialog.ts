@@ -9,11 +9,9 @@ import BrowseItem = api.app.browse.BrowseItem;
 import ListBox = api.ui.selector.list.ListBox;
 import LoadMask = api.ui.mask.LoadMask;
 import DialogButton = api.ui.dialog.DialogButton;
-import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
 import ContentSummaryAndCompareStatusViewer = api.content.ContentSummaryAndCompareStatusViewer;
 import DivEl = api.dom.DivEl;
 import ModalDialogConfig = api.ui.dialog.ModalDialogConfig;
-import WindowDOM = api.dom.WindowDOM;
 import i18n = api.util.i18n;
 
 export interface DependantItemsDialogConfig
@@ -57,7 +55,7 @@ export class DependantItemsDialog
 
     protected dependantIds: ContentId[] = [];
 
-    private showDependantList: boolean;
+    private showDependantList: boolean = true;
 
     constructor(config: DependantItemsDialogConfig) {
         super(config);
@@ -97,7 +95,9 @@ export class DependantItemsDialog
 
         this.dependantList = this.createDependantList();
         this.dependantList.addClass('dependant-list');
-        this.showDependantList = config.showDependantList;
+        if (config.showDependantList != undefined) {
+            this.showDependantList = config.showDependantList;
+        }
         this.dependantContainerBody.appendChild(this.dependantList);
 
         this.dependantsContainer = new api.dom.DivEl('dependants');
@@ -129,7 +129,7 @@ export class DependantItemsDialog
 
     }
 
-    private setDependantListVisible(visible: boolean) {
+    public setDependantListVisible(visible: boolean) {
         this.dependantContainerBody.setVisible(visible);
         this.updateDependantsHeader(this.getDependantsHeader(visible));
     }
