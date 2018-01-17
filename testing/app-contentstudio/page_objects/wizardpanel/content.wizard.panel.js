@@ -8,7 +8,7 @@ const contentStepForm = require('./content.wizard.step.form');
 var wizard = {
     container: `//div[contains(@id,'ContentWizardPanel')]`,
     displayNameInput: `//input[contains(@name,'displayName')]`,
-    saveButton: `//button[contains(@id,'ActionButton') and child::span[text()='Save draft']]`,
+    saveButton: `//button[contains(@id,'ActionButton') and child::span[text()='Save']]`,
     deleteButton: `//button[contains(@id,'ActionButton') and child::span[text()='Delete']]`,
 };
 var contentWizardPanel = Object.create(page, {

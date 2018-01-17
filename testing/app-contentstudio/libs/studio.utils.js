@@ -12,7 +12,7 @@ const appConst = require("./app_const");
 const newContentDialog = require('../page_objects/browsepanel/new.content.dialog');
 const contentWizardPanel = require('../page_objects/wizardpanel/content.wizard.panel');
 const webDriverHelper = require("./WebDriverHelper");
-const shortcutFormViewPanel = require('../page_objects/wizardpanel/shortcut.form.panel.js');
+const issueListDialog = require('../page_objects/issue.list.dialog');
 
 
 module.exports = {
@@ -20,6 +20,12 @@ module.exports = {
     doCloseCurrentBrowserTab: function () {
         return webDriverHelper.browser.close();
     },
+    openIssuesListDialog: function () {
+        return browsePanel.clickOnShowIssuesListButton().then(()=> {
+            return issueListDialog.waitForDialogVisible();
+        })
+    },
+
     openContentWizard: function (contentType) {
         return browsePanel.waitForNewButtonEnabled(appConst.TIMEOUT_3).then(()=> {
             return browsePanel.clickOnNewButton();
@@ -33,6 +39,7 @@ module.exports = {
             return contentWizardPanel.waitForOpened();
         })
     },
+
     doAddShortcut: function (shortcut) {
         return this.openContentWizard(appConst.contentTypes.SHORTCUT).then(()=> {
             return contentWizardPanel.typeData(shortcut);
@@ -41,7 +48,8 @@ module.exports = {
         }).then(()=> {
             return this.doCloseWizardAndSwitchToGrid()
         }).pause(1000);
-    },
+    }
+    ,
     doCloseWizardAndSwitchToGrid: function () {
         return this.doCloseCurrentBrowserTab().then(()=> {
             return this.doSwitchToContentBrowsePanel(webDriverHelper.browser);
@@ -78,7 +86,6 @@ module.exports = {
             return browsePanel.clickOnRowByName(name);
         });
     },
-    
     selectSiteAndOpenNewWizard: function (siteName, contentType) {
         return this.findAndSelectItem(siteName).then(()=> {
             return browsePanel.waitForNewButtonEnabled();
@@ -138,7 +145,6 @@ module.exports = {
 
     navigateToContentStudioApp: function (browser) {
         return launcherPanel.waitForPanelVisible(appConst.TIMEOUT_3).then(()=> {
-            console.log("'user browse panel' should be loaded");
             return launcherPanel.clickOnContentStudioLink();
         }).then(()=> {
             return this.doSwitchToContentBrowsePanel(browser);
@@ -148,7 +154,6 @@ module.exports = {
             this.saveScreenshot(browser, "err_login_page");
             throw  new Error("Content Browse Panel for was not loaded");
         });
-
     },
     doSwitchToContentBrowsePanel: function (browser) {
         console.log('testUtils:switching to Content Studio app...');
@@ -176,7 +181,6 @@ module.exports = {
             return homePage.waitForLoaded(appConst.TIMEOUT_3);
         });
     },
-
     doSwitchToNewWizard: function (browser) {
         console.log('testUtils:switching to the new wizard tab...');
         return browser.getTabIds().then(tabs => {
@@ -190,15 +194,16 @@ module.exports = {
         return browser.switchTab(tabId).then(()=> {
             return browser.getTitle().then(title=> {
                 return title == reqTitle;
-
             })
         });
     },
     doLoginAndSwitchToContentStudio: function (browser) {
-        return loginPage.doLogin().then(()=> {
-            return homePage.waitForXpTourVisible(appConst.TIMEOUT_3);
-        }).then(()=> {
-            return homePage.doCloseXpTourDialog();
+        return loginPage.doLogin().pause(1000).then(()=> {
+            return homePage.isXpTourVisible(appConst.TIMEOUT_3);
+        }).then((result)=> {
+            if (result) {
+                return homePage.doCloseXpTourDialog();
+            }
         }).then(()=> {
             return launcherPanel.clickOnContentStudioLink().pause(1000);
         }).then(()=> {
@@ -252,9 +257,7 @@ module.exports = {
         }).then(()=> {
             return this.doSwitchToHome(browser);
         });
-
     },
-
     saveScreenshot: function (browser, name) {
         var path = require('path')
         var screenshotsDir = path.join(__dirname, '/../build/screenshots/');
