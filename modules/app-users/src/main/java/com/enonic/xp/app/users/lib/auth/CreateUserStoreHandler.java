@@ -1,17 +1,10 @@
 package com.enonic.xp.app.users.lib.auth;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.lib.common.JsonToPropertyTreeTranslator;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
@@ -34,9 +27,9 @@ public final class CreateUserStoreHandler
 
     private String description;
 
-    private ScriptValue authConfig;
+    private AuthConfig authConfig;
 
-    private ScriptValue permissions;
+    private UserStoreAccessControlList permissions;
 
     private Supplier<SecurityService> securityService;
 
@@ -57,12 +50,12 @@ public final class CreateUserStoreHandler
 
     public void setAuthConfig( final ScriptValue authConfig )
     {
-        this.authConfig = authConfig;
+        this.authConfig = authConfig == null ? null : ScriptValueToAuthConfigTranslator.translate( authConfig );
     }
 
     public void setPermissions( final ScriptValue permissions )
     {
-        this.permissions = permissions;
+        this.permissions = createPermissions( permissions );
     }
 
     public UserStoreMapper createUserStore()
@@ -72,16 +65,11 @@ public final class CreateUserStoreHandler
             key( UserStoreKey.from( name ) ).
             displayName( displayName ).
             description( description ).
-            authConfig( createAuthConfig( authConfig ) ).
-            permissions( createPermissions( permissions ) ).
+            authConfig( authConfig ).
+            permissions( permissions ).
             build();
         final UserStore userStore = securityService.get().createUserStore( params );
         return userStore == null ? null : new UserStoreMapper( userStore );
-    }
-
-    private AuthConfig createAuthConfig( final ScriptValue authConfig )
-    {
-        return authConfig == null ? null : ScriptValueToAuthConfigTranslator.translate( authConfig );
     }
 
     private UserStoreAccessControlList createPermissions( final ScriptValue permissions )
@@ -110,12 +98,6 @@ public final class CreateUserStoreHandler
         final boolean hasPrincipal = principalValue != null && securityService.get().getPrincipal( principalKey ).isPresent();
 
         return hasPrincipal ? UserStoreAccessControlEntry.create().principal( principalKey ).access( access ).build() : null;
-    }
-
-    private JsonNode createJson( final Map<?, ?> value )
-    {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.valueToTree( value );
     }
 
     @Override

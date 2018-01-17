@@ -63,8 +63,10 @@ exports.getPermissions = function (params) {
  * Creates a user store.
  *
  * @param {string} name User store name.
- * @param {string} params.displayName User store display name.
- * @param {string} params.description as user store description.
+ * @param {string} [params.displayName] User store display name.
+ * @param {string} [params.description] User store  description.
+ * @param {string} [params.authConfig] ID Provider configuration.
+ * @param {string} [params.permissions] User store permissions.
  */
 exports.createUserStore = function (params) {
     var bean = __.newBean('com.enonic.xp.app.users.lib.auth.CreateUserStoreHandler');

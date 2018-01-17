@@ -18,12 +18,17 @@ public final class ScriptValueToAuthConfigTranslator
 {
     public static AuthConfig translate( final ScriptValue value )
     {
-        final ApplicationKey key = value.hasMember( "applicationKey" ) ? ApplicationKey.from( value.getMember( "applicationKey" ).getValue().toString() ) : null;
+        final ApplicationKey key =
+            value.hasMember( "applicationKey" ) ? ApplicationKey.from( value.getMember( "applicationKey" ).getValue().toString() ) : null;
         final PropertyTree config = value.hasMember( "config" ) ? mapConfig( value.getMember( "config" ).getArray() ) : null;
-        return AuthConfig.create().applicationKey( key ).config( config ).build();
+        return AuthConfig.create().
+            applicationKey( key ).
+            config( config ).
+            build();
     }
 
-    private static PropertyTree mapConfig( final List<ScriptValue> config ) {
+    private static PropertyTree mapConfig( final List<ScriptValue> config )
+    {
         final PropertyTree tree = new PropertyTree();
         for ( ScriptValue propertyArray : config )
         {
@@ -37,25 +42,24 @@ public final class ScriptValueToAuthConfigTranslator
         final String name = array.getMember( "name" ).getValue( String.class );
         final ValueType type = ValueTypes.getByName( array.getMember( "type" ).getValue( String.class ) );
         final List<ScriptValue> values = array.getMember( "values" ).getArray();
-        final PropertyArray propertyArray = new PropertyArray( parent.getTree(), parent, name, type );
+
         for ( final ScriptValue value : values )
         {
-            addPropertyValue( value, type, propertyArray );
+            addPropertyValue( value, type, name, parent );
         }
-        parent.addPropertyArray( propertyArray );
     }
 
-    private static void addPropertyValue( final ScriptValue propertyValue, final ValueType type, PropertyArray array )
+    private static void addPropertyValue( final ScriptValue propertyValue, final ValueType type, final String name, PropertySet parent )
     {
         final Value value;
         if ( type.equals( ValueTypes.PROPERTY_SET ) )
         {
             if ( propertyValue.hasMember( "set" ) )
             {
-                final PropertySet newSet = array.newSet();
-
+                final PropertySet newSet = parent.newSet();
                 for ( ScriptValue propertyArray : propertyValue.getMember( "set" ).getArray() )
                 {
+                    
                     addPropertyArray( propertyArray, newSet );
                 }
                 value = ValueFactory.newPropertySet( newSet );
@@ -68,9 +72,7 @@ public final class ScriptValueToAuthConfigTranslator
         else
         {
             value = type.fromJsonValue( propertyValue.getMember( "v" ).getValue() );
-        }
-
-        final Property newProperty = new Property( array.getName(), array.size(), value, array.getParent() );
-        array.addProperty( newProperty );
+        }        
+        parent.addProperty( name, value );
     }
 }
