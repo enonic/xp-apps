@@ -22,15 +22,14 @@ export class GetUserStoreByKeyRequest
     getQuery(): string {
         return `query($key: String!) {
             userStore(key: $key) {
-                key,
-                displayName,
-                description,
+                key
+                displayName
+                description
+                idProviderMode
                 authConfig {
                     applicationKey
                     config
                 }
-                idProviderMode,
-                modifiedTime,
                 permissions {
                     principal {
                         displayName
