@@ -3,6 +3,7 @@ import UserStoreJson = api.security.UserStoreJson;
 import UserStore = api.security.UserStore;
 import UserStoreKey = api.security.UserStoreKey;
 import AuthConfig = api.security.AuthConfig;
+import UserStoreAccess = api.security.acl.UserStoreAccess;
 
 export class CreateUserStoreRequest
     extends GraphQlRequest<any, UserStore> {
@@ -16,20 +17,20 @@ export class CreateUserStoreRequest
     getVariables(): { [p: string]: any } {
         let vars = super.getVariables();
 
-        let authConfig;
-        if (this.authConfig) {
-            // stringify config because there's no graphql type for it
-            authConfig = {
-                applicationKey: this.authConfig.getApplicationKey().toString(),
-                config: this.authConfig.getConfig() ? JSON.stringify(this.authConfig.getConfig().toJson()) : undefined
-            };
-        }
+        // stringify config because there's no graphql type for it
+        const authConfig = this.authConfig ? {
+            applicationKey: this.authConfig.getApplicationKey().toString(),
+            config: this.authConfig.getConfig() ? JSON.stringify(this.authConfig.getConfig().toJson()) : null
+        } : null;
+
+        const createAccess = p => ({ principal: p.getPrincipal().getKey().toString(), access: UserStoreAccess[p.getAccess()] });
+        const permissions = this.permissions ? this.permissions.getEntries().map(createAccess) : [];
 
         vars['key'] = this.userStoreKey.toString();
         vars['displayName'] = this.displayName;
         vars['description'] = this.description;
         vars['authConfig'] = authConfig;
-        vars['permissions'] = this.permissions ? this.permissions.toJson() : [];
+        vars['permissions'] = permissions;
         return vars;
     }
 
@@ -40,12 +41,11 @@ export class CreateUserStoreRequest
                 key
                 displayName
                 description
+                idProviderMode
                 authConfig {
                     applicationKey
                     config
                 }
-                idProviderMode
-                modifiedTime
                 permissions {
                     principal {
                         displayName

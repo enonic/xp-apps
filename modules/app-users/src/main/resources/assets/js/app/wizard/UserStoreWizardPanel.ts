@@ -5,7 +5,6 @@ import {UserStoreWizardPanelParams} from './UserStoreWizardPanelParams';
 import {UserStoreWizardStepForm} from './UserStoreWizardStepForm';
 import {Router} from '../Router';
 import {UserStoreWizardDataLoader} from './UserStoreWizardDataLoader';
-import CreateUserStoreRequest = api.security.CreateUserStoreRequest;
 import UpdateUserStoreRequest = api.security.UpdateUserStoreRequest;
 import UserStore = api.security.UserStore;
 import UserStoreKey = api.security.UserStoreKey;
@@ -14,6 +13,7 @@ import UserStoreBuilder = api.security.UserStoreBuilder;
 import WizardStep = api.app.wizard.WizardStep;
 import FormIcon = api.app.wizard.FormIcon;
 import i18n = api.util.i18n;
+import {CreateUserStoreRequest} from '../../api/graphql/userStore/CreateUserStoreRequest';
 
 export class UserStoreWizardPanel
     extends UserItemWizardPanel<UserStore> {

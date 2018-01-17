@@ -23,9 +23,12 @@ dependencies {
     include "${group}:lib-io:${version}"
     include "${group}:lib-value:${version}"
     include "${group}:lib-i18n:${version}"
+    include "${group}:testing:${version}"
     include "com.graphql-java:graphql-java:2.3.0"
     include "com.enonic.lib:graphql:0.5.2"
     include "com.enonic.lib:lib-admin-ui:${libAdminUiVersion}"
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-core:1.10.19'
 }
 
 node {

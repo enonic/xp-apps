@@ -54,40 +54,14 @@ module.exports = {
     list: authLib.getUserStores,
     create: function(params) {
         var name = common.required(params, 'key');
-        var displayName = common.required(params, 'displayName');
 
-        var createdStore = common.create({
-            _parentPath: '/identity',
-            _name: common.prettifyName(name),
-            _permissions: calculateUserStorePermissions(params.permissions),
-            displayName: displayName,
+        return authLib.createUserStore({
+            name: common.prettifyName(name),
+            displayName: params.displayName,
             description: params.description,
-            idProvider: calculateIdProvider(params.authConfig)
+            authConfig: params.authConfig,
+            permissions: params.permissions,
         });
-
-        var createdUsers;
-        var createdGroups;
-        if (createdStore) {
-            createdUsers = common.create({
-                _parentPath: '/identity/' + createdStore._name,
-                _name: 'users',
-                _permissions: calculateUsersPermissions(params.permissions)
-            });
-
-            createdGroups = common.create({
-                _parentPath: '/identity/' + createdStore._name,
-                _name: 'groups',
-                _permissions: calculateGroupsPermissions(params.permissions)
-            });
-
-            createdStore.idProviderMode = calculateIdProviderMode(
-                params.authConfig
-            );
-
-            calculateAccess(createdStore, createdUsers, createdGroups);
-        }
-
-        return createdStore;
     },
     update: function(params) {
         var key = common.required(params, 'key');
