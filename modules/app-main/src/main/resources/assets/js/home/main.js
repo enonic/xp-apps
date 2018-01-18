@@ -4,6 +4,8 @@ var $ = require('jquery');
 
 window.wemjq = $.noConflict(true);
 window.wemQ = require('../../lib/q');
+window.Mousetrap = require('../../lib/mousetrap');
+require('../../lib/mousetrap-global-bind.min');
 
 $(function () {
     api.util.i18nInit(CONFIG.messages);
