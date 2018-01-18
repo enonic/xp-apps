@@ -5,7 +5,8 @@ module.exports = {
     context: `${__dirname}/src/main/resources/assets`,
     entry: {
         home: './js/home/main.js',
-        launcher: './js/launcher/main.js'
+        launcher: './js/launcher/main.js',
+        lib: './lib/_include.js'
     },
     output: {
         path: `${__dirname}/build/resources/main/assets/`,

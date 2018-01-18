@@ -1,5 +1,9 @@
 require('../../styles/home.less');
+
 var $ = require('jquery');
+
+window.wemjq = $.noConflict(true);
+window.wemQ = require('../../lib/q');
 
 $(function () {
     api.util.i18nInit(CONFIG.messages);
@@ -22,13 +26,13 @@ $(function () {
         if (!enonicXPTourCookie) {
             api.util.CookieHelper.setCookie("enonic_xp_tour", "tour", 365);
             setTimeout(function () {
-                tourDialog.open();
+                tourDialog.open(true);
             }, 100);
         }
     }
 
     document.querySelector(".xp-tour").addEventListener("click", function () {
-        tourDialog.open();
+        tourDialog.open(true);
         setupBodyClickListeners(tourDialog);
     });
 
@@ -60,7 +64,7 @@ function setupAboutDialog() {
     aboutDialog.addClass("xp-about-dialog");
     aboutDialog.appendChildToContentPanel(getAboutDialogContent());
     document.querySelector(".xp-about").addEventListener("click", function () {
-        aboutDialog.open();
+        aboutDialog.open(true);
         setupBodyClickListeners(aboutDialog);
     });
     api.dom.Body.get().appendChild(aboutDialog);
