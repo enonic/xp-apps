@@ -18,11 +18,12 @@ function appendLauncherButton() {
 
     launcherButton.addEventListener('click', togglePanelState);
 
+    var container = document.querySelector('.appbar') || document.body;
+    container.appendChild(launcherButton);
+
     setTimeout(function() {
-        var container = document.querySelector('.appbar') || document.body;
-        container.appendChild(launcherButton);
         launcherButton.focus();
-    }, 700);
+    }, 1200);
 }
 
 function getColorClass() {
