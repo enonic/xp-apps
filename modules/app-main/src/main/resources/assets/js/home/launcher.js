@@ -1,3 +1,5 @@
+require('webcomponentsjs/lite');
+
 var adminUrl = window.CONFIG && window.CONFIG.adminUrl || '/admin';
 var launcherUrl = adminUrl + (adminUrl.slice(-1) === '/' ? '' : '/' ) + 'tool/com.enonic.xp.app.main/launcher';
 var autoOpenLauncher = window.CONFIG && window.CONFIG.autoOpenLauncher;

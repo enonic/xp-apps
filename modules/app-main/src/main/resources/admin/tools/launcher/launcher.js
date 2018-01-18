@@ -27,7 +27,6 @@ exports.get = function () {
     }
 
     var userIconUrl = portal.assetUrl({path: "icons/user.svg"});
-    // var launcherCss = portal.assetUrl({path: "styles/_launcher.css"});
     var logoutUrl = portal.logoutUrl({
         redirect: portal.url({path: "/admin/tool", type: "absolute"})
     });
@@ -45,7 +44,6 @@ exports.get = function () {
         logoutUrl: logoutUrl,
         homeUrl: uriHelperBean.generateAdminToolUri(),
         installation: uriHelperBean.getInstallation() || "Tools",
-        // launcherCss: launcherCss,
         homeToolCaption: i18n.localize({
             key: 'launcher.tools.home.caption',
             bundles: ['admin/i18n/common'],
