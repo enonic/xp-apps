@@ -66,10 +66,10 @@ function setupAboutDialog() {
     aboutDialog.addClass("xp-about-dialog");
     aboutDialog.appendChildToContentPanel(getAboutDialogContent());
     document.querySelector(".xp-about").addEventListener("click", function () {
+        api.dom.Body.get().appendChild(aboutDialog);
         aboutDialog.open(true);
         setupBodyClickListeners(aboutDialog);
     });
-    api.dom.Body.get().appendChild(aboutDialog);
 }
 
 function getAboutDialogContent() {
