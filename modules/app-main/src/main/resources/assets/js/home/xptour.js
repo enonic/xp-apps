@@ -40,7 +40,7 @@ function checkAdminRights() {
 }
 
 function initDialog() {
-    tourDialog = new api.ui.dialog.ModalDialog(i18n('tour.title.stepXofY', 1, 4));
+    tourDialog = new api.ui.dialog.ModalDialog({title: i18n('tour.title.stepXofY', 1, 4), skipTabbable: true});
     tourDialog.addClass("xp-tour-dialog");
 
     initNavigation();

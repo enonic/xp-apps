@@ -34,7 +34,7 @@ $(function () {
     }
 
     document.querySelector(".xp-tour").addEventListener("click", function () {
-        tourDialog.open(true);
+        tourDialog.open();
         setupBodyClickListeners(tourDialog);
     });
 
@@ -62,12 +62,12 @@ function setupBodyClickListeners(dialog) {
 }
 
 function setupAboutDialog() {
-    var aboutDialog = new api.ui.dialog.ModalDialog("", true);
+    var aboutDialog = new api.ui.dialog.ModalDialog({skipTabbable: true});
     aboutDialog.addClass("xp-about-dialog");
     aboutDialog.appendChildToContentPanel(getAboutDialogContent());
     document.querySelector(".xp-about").addEventListener("click", function () {
         api.dom.Body.get().appendChild(aboutDialog);
-        aboutDialog.open(true);
+        aboutDialog.open();
         setupBodyClickListeners(aboutDialog);
     });
 }
