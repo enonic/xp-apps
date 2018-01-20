@@ -65,8 +65,8 @@ exports.getPermissions = function (params) {
  * @param {string} name User store name.
  * @param {string} [params.displayName] User store display name.
  * @param {string} [params.description] User store  description.
- * @param {string} [params.authConfig] ID Provider configuration.
- * @param {string} [params.permissions] User store permissions.
+ * @param {object} [params.authConfig] ID Provider configuration.
+ * @param {object} [params.permissions] User store permissions.
  */
 exports.createUserStore = function (params) {
     var bean = __.newBean('com.enonic.xp.app.users.lib.auth.CreateUserStoreHandler');
@@ -78,4 +78,23 @@ exports.createUserStore = function (params) {
     bean.permissions = __.toScriptValue(params.permissions);
 
     return __.toNativeObject(bean.createUserStore());
+};
+
+/**
+ * Update a user store.
+ *
+ * @param {object} params JSON parameters.
+ * @param {string} params.key Key of the user store to modify.
+ * @param {function} params.editor User store editor function to apply.
+ * @param {object} [params.permissions] User store permissions.
+ * @returns {object} The updated user store.
+ */
+exports.modifyUserStore = function (params) {
+    var bean = __.newBean('com.enonic.xp.app.users.lib.auth.ModifyUserStoreHandler');
+
+    bean.userStoreKey = required(params, 'key');
+    bean.editor = __.toScriptValue(required(params, 'editor'));
+    bean.permissions = __.toScriptValue(params.permissions);
+
+    return __.toNativeObject(bean.modifyUserStore());
 };
