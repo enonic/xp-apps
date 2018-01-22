@@ -191,7 +191,7 @@ module.exports = graphQl.createObjectType({
             type: graphQlObjectTypes.UserStoreType,
             args: {
                 key: graphQl.nonNull(graphQl.GraphQLString),
-                displayName: graphQl.nonNull(graphQl.GraphQLString),
+                displayName: graphQl.GraphQLString,
                 description: graphQl.GraphQLString,
                 authConfig: graphQlInputTypes.AuthConfigInput,
                 permissions: graphQl.list(

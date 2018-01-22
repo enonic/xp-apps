@@ -65,51 +65,18 @@ module.exports = {
     },
     update: function(params) {
         var key = common.required(params, 'key');
-        var displayName = common.required(params, 'displayName');
 
-        var updatedStore = common.update({
-            key: '/identity/' + key,
-            editor: function(store) {
-                var newStore = store;
-                newStore.displayName = displayName;
-                newStore.description = params.description;
-                newStore._permissions = calculateUserStorePermissions(
-                    params.permissions
-                );
-                newStore.idProvider = calculateIdProvider(params.authConfig);
-                return newStore;
-            }
+        return authLib.modifyUserStore({
+            key: key,
+            editor: function (userStore) {
+                var newUserStore = userStore;
+                newUserStore.displayName = params.displayName;
+                newUserStore.description = params.description;
+                newUserStore.authConfig = params.authConfig;
+                return newUserStore;
+            },
+            permissions: params.permissions
         });
-
-        var updatedUsers = common.update({
-            key: '/identity/' + key + '/users',
-            editor: function(users) {
-                var newUsers = users;
-                newUsers._permissions = calculateUsersPermissions(
-                    params.permissions
-                );
-                return newUsers;
-            }
-        });
-
-        var updatedGroups = common.update({
-            key: '/identity/' + key + '/groups',
-            editor: function(groups) {
-                var newGroups = groups;
-                newGroups._permissions = calculateGroupsPermissions(
-                    params.permissions
-                );
-                return newGroups;
-            }
-        });
-
-        updatedStore.idProviderMode = calculateIdProviderMode(
-            params.authConfig
-        );
-
-        calculateAccess(updatedStore, updatedUsers, updatedGroups);
-
-        return updatedStore;
     },
     delete: function(keys) {
         common.delete(common.keysToPaths(keys));

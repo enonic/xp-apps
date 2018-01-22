@@ -55,13 +55,21 @@ public class TestDataFixtures
             build();
     }
 
+    public static UserStore getTestBlankUserStore()
+    {
+        return UserStore.create().
+            key( UserStoreKey.from( "myUserStore" ) ).
+            displayName( "" ).
+            description( "" ).
+            build();
+    }
 
     public static UserStore getTestUserStore()
     {
         return UserStore.create().
             key( UserStoreKey.from( "myUserStore" ) ).
-            description( "User store used for testing" ).
             displayName( "User store test" ).
+            description( "User store used for testing" ).
             authConfig( getTestAuthConfig() ).
             build();
     }
