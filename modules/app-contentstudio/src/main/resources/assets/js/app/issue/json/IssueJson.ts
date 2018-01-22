@@ -1,12 +1,13 @@
 import {PublishRequestJson} from './PublishRequestJson';
 import {IssueSummaryJson} from './IssueSummaryJson';
-import {CommentJson} from './CommentJson';
+import {IssueCommentJson} from './IssueCommentJson';
 
-export interface IssueJson extends IssueSummaryJson {
+export interface IssueJson
+    extends IssueSummaryJson {
 
     approverIds: string[];
 
     publishRequest: PublishRequestJson;
 
-    comments: CommentJson[];
+    comments: IssueCommentJson[];
 }

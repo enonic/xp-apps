@@ -18,6 +18,7 @@ import {DependantItemsWithProgressDialogConfig} from '../../dialog/DependantItem
 import {IssueCommentsList} from './IssueCommentsList';
 import {IssueCommentTextArea} from './IssueCommentTextArea';
 import {CommentIssueRequest} from '../resource/CommentIssueRequest';
+import {ListIssueCommentsRequest} from '../resource/ListIssueCommentsRequest';
 import AEl = api.dom.AEl;
 import DialogButton = api.ui.dialog.DialogButton;
 import ContentSummaryAndCompareStatusFetcher = api.content.resource.ContentSummaryAndCompareStatusFetcher;
@@ -354,7 +355,9 @@ export class IssueDetailsDialog
             this.detailsSubTitle.setIssue(issue, true);
             this.toggleControlsAccordingToStatus(issue.getIssueStatus());
 
-            this.commentsList.setItems(issue.getComments());
+            new ListIssueCommentsRequest(issue.getName()).sendAndParse().then(response => {
+                this.commentsList.setItems(response.getIssueComments());
+            });
         }
 
         if (this.assigneesUpdateRequired(issue)) {
@@ -430,9 +433,9 @@ export class IssueDetailsDialog
             const comment = this.commentTextArea.getValue();
             this.skipNextServerUpdatedEvent = true;
             action.setEnabled(false);
-            new CommentIssueRequest(this.issue.getId()).setCreator(this.currentUser.getKey(), this.currentUser.getDisplayName()).setText(
-                comment).sendAndParse().done(issue => {
-                this.commentsList.addItem(issue.getComments()[issue.getComments().length - 1]);
+            new CommentIssueRequest(this.issue.getId()).setCreator(this.currentUser.getKey()).setText(
+                comment).sendAndParse().done(issueComment => {
+                this.commentsList.addItem(issueComment);
                 this.commentTextArea.setValue('', true).giveFocus();
                 action.setEnabled(true);
                 api.notify.showFeedback(i18n('notify.issue.commentAdded'));

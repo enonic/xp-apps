@@ -1,5 +1,6 @@
 import {IssueStatus, IssueStatusFormatter} from './IssueStatus';
 import {IssueSummaryJson} from './json/IssueSummaryJson';
+
 export class IssueSummary {
 
     private id: string;
@@ -7,6 +8,8 @@ export class IssueSummary {
     private index: number;
 
     private title: string;
+
+    private name: string;
 
     private creator: string;
 
@@ -22,6 +25,7 @@ export class IssueSummary {
         this.id = builder.id;
         this.index = builder.index;
         this.title = builder.title;
+        this.name = builder.name;
         this.creator = builder.creator;
         this.modifier = builder.modifier;
         this.modifiedTime = builder.modifiedTime;
@@ -47,6 +51,10 @@ export class IssueSummary {
 
     getTitle(): string {
         return this.title;
+    }
+
+    getName(): string {
+        return this.name;
     }
 
     getTitleWithId(): string {
@@ -83,6 +91,8 @@ export class IssueSummaryBuilder {
 
     title: string;
 
+    name: string;
+
     creator: string;
 
     modifier: string;
@@ -97,6 +107,7 @@ export class IssueSummaryBuilder {
         this.id = json.id;
         this.index = json.index;
         this.title = json.title;
+        this.name = json.name;
         this.creator = json.creator;
         this.modifier = json.modifier;
         this.modifiedTime = json.modifiedTime ? new Date(Date.parse(json.modifiedTime)) : null;
@@ -118,6 +129,11 @@ export class IssueSummaryBuilder {
 
     setTitle(title: string): IssueSummaryBuilder {
         this.title = title;
+        return this;
+    }
+
+    setName(name: string): IssueSummaryBuilder {
+        this.name = name;
         return this;
     }
 

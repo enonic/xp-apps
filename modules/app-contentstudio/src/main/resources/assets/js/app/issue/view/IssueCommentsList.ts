@@ -3,37 +3,37 @@ import PrincipalViewerCompact = api.ui.security.PrincipalViewerCompact;
 import NamesView = api.app.NamesView;
 import Principal = api.security.Principal;
 import i18n = api.util.i18n;
-import {Comment} from '../Comment';
+import {IssueComment} from '../IssueComment';
 
 export class IssueCommentsList
-    extends ListBox<Comment> {
+    extends ListBox<IssueComment> {
 
     constructor() {
         super('issue-comments-list');
         this.setEmptyText(i18n('field.issue.noComments'));
     }
 
-    protected getItemId(item: Comment): string {
+    protected getItemId(item: IssueComment): string {
         return item.getId();
     }
 
-    protected createItemView(item: Comment, readOnly: boolean): api.dom.Element {
+    protected createItemView(item: IssueComment, readOnly: boolean): api.dom.Element {
         return new IssueCommentsListItem(item);
     }
 }
 
 class IssueCommentsListItem
-    extends api.ui.Viewer<Comment> {
+    extends api.ui.Viewer<IssueComment> {
 
     private namesView: NamesView;
     private principalViewer: PrincipalViewerCompact;
 
-    constructor(comment: Comment) {
+    constructor(comment: IssueComment) {
         super('issue-comments-list-item');
         this.setObject(comment);
     }
 
-    protected doLayout(comment: Comment) {
+    protected doLayout(comment: IssueComment) {
         super.doLayout(comment);
 
         const p = Principal.create()
@@ -57,12 +57,12 @@ class IssueCommentsListItem
         this.setObject(comment);
     }
 
-    private resolveDisplayName(comment: Comment): string {
+    private resolveDisplayName(comment: IssueComment): string {
         const time = api.util.DateHelper.getModifiedString(comment.getCreatedTime());
         return `${comment.getCreatorDisplayName()}<span class="created-time">${time}</span>`;
     }
 
-    private resolveSubName(comment: Comment): string {
+    private resolveSubName(comment: IssueComment): string {
         return comment.getText();
     }
 }
