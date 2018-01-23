@@ -1,15 +1,14 @@
-import {Issue} from '../Issue';
-import {IssueJson} from '../json/IssueJson';
+import {IssueCommentJson} from '../json/IssueCommentJson';
 import {IssueResourceRequest} from './IssueResourceRequest';
+import {IssueComment} from '../IssueComment';
 import PrincipalKey = api.security.PrincipalKey;
 import Path = api.rest.Path;
 import JsonResponse = api.rest.JsonResponse;
 
 export class CommentIssueRequest
-    extends IssueResourceRequest<IssueJson, Issue> {
+    extends IssueResourceRequest<IssueCommentJson, IssueComment> {
 
-    private creatorKey: PrincipalKey;
-    private creatorDisplayName: string;
+    private creator: PrincipalKey;
     private text: string;
     private issueId: string;
 
@@ -19,9 +18,8 @@ export class CommentIssueRequest
         this.issueId = issueId;
     }
 
-    setCreator(key: PrincipalKey, displayName: string) {
-        this.creatorKey = key;
-        this.creatorDisplayName = displayName;
+    setCreator(key: PrincipalKey) {
+        this.creator = key;
         return this;
     }
 
@@ -34,8 +32,7 @@ export class CommentIssueRequest
         return {
             issueId: this.issueId,
             text: this.text,
-            creatorKey: this.creatorKey.toString(),
-            creatorDisplayName: this.creatorDisplayName
+            creator: this.creator.toString()
         };
     }
 
@@ -43,9 +40,9 @@ export class CommentIssueRequest
         return Path.fromParent(super.getResourcePath(), 'comment');
     }
 
-    sendAndParse(): wemQ.Promise<Issue> {
-        return this.send().then((response: JsonResponse<IssueJson>) => {
-            return Issue.fromJson(response.getResult());
+    sendAndParse(): wemQ.Promise<IssueComment> {
+        return this.send().then((response: JsonResponse<IssueCommentJson>) => {
+            return IssueComment.fromJson(response.getResult());
         });
     }
 }

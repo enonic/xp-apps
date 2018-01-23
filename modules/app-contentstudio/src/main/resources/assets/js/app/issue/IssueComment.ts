@@ -1,7 +1,7 @@
-import {CommentJson} from './json/CommentJson';
+import {IssueCommentJson} from './json/IssueCommentJson';
 import PrincipalKey = api.security.PrincipalKey;
 
-export class Comment {
+export class IssueComment {
 
     private creatorKey: PrincipalKey;
 
@@ -38,9 +38,9 @@ export class Comment {
         return '' + api.util.StringHelper.hashCode(this.creatorKey.toString() + this.createdTime.getTime());
     }
 
-    static fromJson(json: CommentJson) {
+    static fromJson(json: IssueCommentJson) {
         const createdTime = json.createdTime ? new Date(Date.parse(json.createdTime)) : null;
-        return new Comment(PrincipalKey.fromString(json.creatorKey), json.creatorDisplayName, json.text, createdTime);
+        return new IssueComment(PrincipalKey.fromString(json.creatorKey), json.creatorDisplayName || 'Unknown', json.text, createdTime);
     }
 
 }

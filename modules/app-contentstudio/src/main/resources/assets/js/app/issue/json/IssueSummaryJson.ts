@@ -6,6 +6,8 @@ export interface IssueSummaryJson {
 
     title: string;
 
+    name: string;
+
     creator: any;
 
     modifier: any;

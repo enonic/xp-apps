@@ -18,6 +18,7 @@ import {DependantItemsWithProgressDialogConfig} from '../../dialog/DependantItem
 import {IssueCommentsList} from './IssueCommentsList';
 import {IssueCommentTextArea} from './IssueCommentTextArea';
 import {CommentIssueRequest} from '../resource/CommentIssueRequest';
+import {ListIssueCommentsRequest} from '../resource/ListIssueCommentsRequest';
 import AEl = api.dom.AEl;
 import DialogButton = api.ui.dialog.DialogButton;
 import ContentSummaryAndCompareStatusFetcher = api.content.resource.ContentSummaryAndCompareStatusFetcher;
@@ -80,6 +81,7 @@ export class IssueDetailsDialog
             title: i18n('dialog.issue'),
                 dialogSubName: i18n('dialog.issue.resolving'),
                 processingLabel: `${i18n('field.progress.publishing')}...`,
+            showDependantList: false,
                 buttonRow: new IssueDetailsDialogButtonRow(),
                 processHandler: () => {
                     new ContentPublishPromptEvent([]).fire();
@@ -168,11 +170,8 @@ export class IssueDetailsDialog
 
     protected toggleAction(enable: boolean) {
         super.toggleAction(enable);
-        const hasInvalidItems = this.getItemList().getItems().some(item => !item.getContentSummary().isValid());
-        const hasInvalidDependants = this.publishProcessor.isContainsInvalid();
-        const hasInvalids = hasInvalidItems || hasInvalidDependants;
-        this.publishButton.setEnabled(!hasInvalids && this.publishProcessor.isAllPublishable());
-        this.errorTooltip.setActive(hasInvalids);
+        this.publishButton.setEnabled(this.publishProcessor.containsInvalidItems() && this.publishProcessor.isAllPublishable());
+        this.errorTooltip.setActive(this.publishProcessor.containsInvalidItems());
     }
 
     private createIssuePanel() {
@@ -276,6 +275,10 @@ export class IssueDetailsDialog
                 this.debouncedUpdateIssue(this.issue.getIssueStatus(), true);
                 this.saveOnLoaded = false;
             }
+
+            if (this.publishProcessor.containsInvalidDependants()) {
+                this.setDependantListVisible(true);
+            }
         });
     }
 
@@ -354,7 +357,9 @@ export class IssueDetailsDialog
             this.detailsSubTitle.setIssue(issue, true);
             this.toggleControlsAccordingToStatus(issue.getIssueStatus());
 
-            this.commentsList.setItems(issue.getComments());
+            new ListIssueCommentsRequest(issue.getName()).sendAndParse().then(response => {
+                this.commentsList.setItems(response.getIssueComments());
+            });
         }
 
         if (this.assigneesUpdateRequired(issue)) {
@@ -405,7 +410,7 @@ export class IssueDetailsDialog
         // ignore event if there're changes as we're just setting loaded values on list
         const changesMade = itemList.getItemViews().reduce((alreadyMade, itemView) => {
             const toggler = itemView.getIncludeChildrenToggler();
-            return alreadyMade || toggler && toggler.toggle(this.areChildrenIncludedInIssue(itemView.getContentId()));
+            return (!!toggler && toggler.toggle(this.areChildrenIncludedInIssue(itemView.getContentId()))) || alreadyMade;
         }, false);
         this.ignoreNextExcludeChildrenEvent = changesMade;
         return changesMade;
@@ -430,9 +435,9 @@ export class IssueDetailsDialog
             const comment = this.commentTextArea.getValue();
             this.skipNextServerUpdatedEvent = true;
             action.setEnabled(false);
-            new CommentIssueRequest(this.issue.getId()).setCreator(this.currentUser.getKey(), this.currentUser.getDisplayName()).setText(
-                comment).sendAndParse().done(issue => {
-                this.commentsList.addItem(issue.getComments()[issue.getComments().length - 1]);
+            new CommentIssueRequest(this.issue.getId()).setCreator(this.currentUser.getKey()).setText(
+                comment).sendAndParse().done(issueComment => {
+                this.commentsList.addItem(issueComment);
                 this.commentTextArea.setValue('', true).giveFocus();
                 action.setEnabled(true);
                 api.notify.showFeedback(i18n('notify.issue.commentAdded'));
@@ -574,7 +579,8 @@ export class IssueDetailsDialog
     }
 
     private areChildrenIncludedInIssue(id: ContentId): boolean {
-        return !this.issue.getPublishRequest().getExcludeChildrenIds().some(contentId => contentId.equals(id));
+        return this.issue.getPublishRequest().hasItemId(id) &&
+            !this.issue.getPublishRequest().getExcludeChildrenIds().some(contentId => contentId.equals(id));
     }
 
     private areChildrenIncludedInPublishProcessor(id: ContentId): boolean {
