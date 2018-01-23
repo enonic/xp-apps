@@ -69,6 +69,27 @@ ext {
     xpServer = new ServerInstance()
 }
 
+task zipScreenshots( type: Zip ) {
+    from screenshotsDir
+    include '*'
+    include '*/*'
+    classifier 'screenshots'
+}
+
+task zipAllure( type: Zip ) {
+    from allureResultsDir
+    include '*'
+    include '*/*'
+    classifier 'allureResults'
+}
+
+artifacts {
+    archives zipScreenshots
+    archives zipAllure
+}
+
+jar.enabled = true
+
 task startServer( dependsOn: unpackDistro ) {
     doLast {
         xpServer.installDir = file( distroDir )
