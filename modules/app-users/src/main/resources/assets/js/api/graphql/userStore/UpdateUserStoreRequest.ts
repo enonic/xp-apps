@@ -62,12 +62,12 @@ export class UpdateUserStoreRequest
     }
 
     setDisplayName(displayName: string): UpdateUserStoreRequest {
-        this.displayName = displayName;
+        this.displayName = displayName || '';
         return this;
     }
 
     setDescription(description: string): UpdateUserStoreRequest {
-        this.description = description;
+        this.description = description || '';
         return this;
     }
 

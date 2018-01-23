@@ -62,4 +62,25 @@ public class ModifyUserStoreHandlerTest
         editor.edit( editable );
         return editable.build();
     }
+
+    @Test
+    public void testModifyUserStoreWithNullValues()
+    {
+        Mockito.when( securityService.getUserStore( Mockito.any() ) ).thenReturn( TestDataFixtures.getTestUserStore() );
+        Mockito.when( securityService.updateUserStore( Mockito.isA( UpdateUserStoreParams.class ) ) ).thenAnswer(
+            invocationOnMock -> invokeUpdateWithNullValues( (UpdateUserStoreParams) invocationOnMock.getArguments()[0] ) );
+
+        runFunction( "/site/test/modifyUserStore-test.js", "modifyUserStoreWithNullValues" );
+    }
+
+    private UserStore invokeUpdateWithNullValues( final UpdateUserStoreParams params )
+    {
+        final UserStoreEditor editor = params.getEditor();
+        Assert.assertNotNull( editor );
+
+        final EditableUserStore editable = new EditableUserStore( TestDataFixtures.getTestUserStore() );
+
+        editor.edit( editable );
+        return editable.build();
+    }
 }
