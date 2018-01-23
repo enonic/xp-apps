@@ -13,7 +13,7 @@ export class ListIssueCommentsRequest
 
     private creator: PrincipalKey;
 
-    private issueName: string;
+    private issueId: string;
 
     private from: number = 0;
 
@@ -21,10 +21,10 @@ export class ListIssueCommentsRequest
 
     private count: boolean;
 
-    constructor(issueName: string) {
+    constructor(issueId: string) {
         super();
         super.setMethod('POST');
-        this.issueName = issueName;
+        this.issueId = issueId;
     }
 
     setCreator(key: PrincipalKey): ListIssueCommentsRequest {
@@ -49,7 +49,7 @@ export class ListIssueCommentsRequest
 
     getParams(): Object {
         return {
-            issueName: this.issueName,
+            issue: this.issueId,
             from: this.from,
             size: this.size,
             count: this.count,
@@ -65,7 +65,7 @@ export class ListIssueCommentsRequest
         return this.send().then((response: api.rest.JsonResponse<ListIssueCommentsResult>) => {
 
             const issueComments: IssueComment[] = response.getResult().issueComments.map(IssueComment.fromJson).sort((a, b) => {
-                return b.getCreatedTime().getTime() - a.getCreatedTime().getTime();
+                return a.getCreatedTime().getTime() - b.getCreatedTime().getTime();
             });
 
             const metadata: IssueMetadata = new IssueMetadata(response.getResult().metadata['hits'],

@@ -30,7 +30,7 @@ export class CommentIssueRequest
 
     getParams(): Object {
         return {
-            issueId: this.issueId,
+            issue: this.issueId,
             text: this.text,
             creator: this.creator.toString()
         };

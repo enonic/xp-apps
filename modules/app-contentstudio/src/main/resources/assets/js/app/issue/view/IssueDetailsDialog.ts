@@ -357,7 +357,7 @@ export class IssueDetailsDialog
             this.detailsSubTitle.setIssue(issue, true);
             this.toggleControlsAccordingToStatus(issue.getIssueStatus());
 
-            new ListIssueCommentsRequest(issue.getName()).sendAndParse().then(response => {
+            new ListIssueCommentsRequest(issue.getId()).sendAndParse().then(response => {
                 this.commentsList.setItems(response.getIssueComments());
             });
         }
