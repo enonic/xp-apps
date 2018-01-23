@@ -38,7 +38,9 @@ ext {
     reportsDir = "$buildDir${File.separator}repots"
     distroDir = "$unpackDir${File.separator}enonic-xp-$xpVersion"
     deployDir = "$distroDir${File.separator}home${File.separator}deploy"
+    allureResultsDir = "allure-results"
     xpHome = "$distroDir${File.separator}home"
+    xpServer = new ServerInstance()
 }
 
 task copyApps( type: Copy ) {
@@ -63,10 +65,6 @@ task unpackDistro( type: Copy ) {
         configurations.distro.collect { zipTree( it ) }
     }
     into file( unpackDir )
-}
-
-ext {
-    xpServer = new ServerInstance()
 }
 
 task zipScreenshots( type: Zip ) {
