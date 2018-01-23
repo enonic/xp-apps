@@ -43,10 +43,6 @@ ext {
 
 task copyApps( type: Copy ) {
     from '/test-applications/'
-    from '/test-applications/'
-    from '/test-applications/'
-    from '/test-applications/'
-
     //from '../test-applications/simple-page/build/libs/'
     //from '../test-applications/myfirstapp/build/libs/'
     //from '../test-applications/first-application/build/libs/'

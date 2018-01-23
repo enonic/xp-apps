@@ -8,22 +8,20 @@ const appConst = require('../../libs/app_const');
 
 var panel = {
     toolbar: `//div[contains(@id,'ContentBrowseToolbar')]`,
+    treeGrid: `//div[contains(@id,'ContentTreeGrid')]`,
     searchButton: "//button[contains(@class, 'icon-search')]",
     showIssuesListButton: "//button[contains(@id,'ShowIssuesDialogButton')]",
-    rowByName: function (name) {
-        return `//div[contains(@id,'NamesView') and child::p[contains(@class,'sub-name') and contains(.,'${name}')]]`
-    },
     checkboxByName: function (name) {
         return `${elements.itemByName(name)}` +
                `/ancestor::div[contains(@class,'slick-row')]/div[contains(@class,'slick-cell-checkboxsel')]/label`
     },
+    checkboxByDisplayName: displayName => `${elements.itemByDisplayName(
+        displayName)}/ancestor::div[contains(@class,'slick-row')]/div[contains(@class,'slick-cell-checkboxsel')]/label`,
+
     expanderIconByName: function (name) {
-        return this.rowByName(name) +
+        return elements.itemByName(name) +
                `/ancestor::div[contains(@class,'slick-cell')]/span[contains(@class,'collapse') or contains(@class,'expand')]`;
 
-    },
-    closeItemTabButton: function (name) {
-        return `//div[contains(@id,'AppBar')]//li[contains(@id,'AppBarTabMenuItem') and child::a[@class='label' and text() ='${name}']]/button`;
     },
 }
 var contentBrowsePanel = Object.create(page, {
@@ -71,18 +69,18 @@ var contentBrowsePanel = Object.create(page, {
         }
     },
     isItemDisplayed: {
-        value: function (itemName) {
-            return this.waitForVisible(`${panel.rowByName(itemName)}`, 1000).catch((err)=> {
-                console.log("item is not displayed:" + itemName);
-                this.saveScreenshot('err_find_' + itemName)
-                throw new Error('Item was not found! ' + itemName);
+        value: function (contentName) {
+            return this.waitForVisible(`${panel.treeGrid}` + `${elements.itemByName(contentName)}`, 1000).catch((err)=> {
+                console.log("item is not displayed:" + contentName);
+                this.saveScreenshot('err_find_' + contentName)
+                throw new Error('content not found! ' + contentName);
             });
         }
     },
     waitForItemNotDisplayed: {
-        value: function (itemName) {
-            return this.waitForNotVisible(`${panel.rowByName(itemName)}`, 1000).catch((err)=> {
-                console.log("item is still displayed:" + itemName);
+        value: function (contentName) {
+            return this.waitForNotVisible(`${panel.treeGrid}` + `${elements.itemByName(contentName)}`, 1000).catch((err)=> {
+                console.log("content is still displayed:" + contentName);
                 return false;
             });
         }
@@ -178,7 +176,7 @@ var contentBrowsePanel = Object.create(page, {
     },
     clickOnRowByName: {
         value: function (name) {
-            var nameXpath = panel.rowByName(name);
+            var nameXpath = panel.treeGrid + elements.itemByName(name);
             return this.waitForVisible(nameXpath, 3000).then(()=> {
                 return this.doClick(nameXpath);
             }).pause(400).catch((err)=> {
@@ -189,7 +187,7 @@ var contentBrowsePanel = Object.create(page, {
     },
     waitForRowByNameVisible: {
         value: function (name) {
-            var nameXpath = panel.rowByName(name);
+            var nameXpath = panel.treeGrid + elements.itemByName(name);
             return this.waitForVisible(nameXpath, 3000)
                 .catch((err)=> {
                     this.saveScreenshot('err_find_' + name);
@@ -199,20 +197,23 @@ var contentBrowsePanel = Object.create(page, {
     },
     clickCheckboxAndSelectRowByDisplayName: {
         value: function (displayName) {
-            var displayNameXpath = panel.rowByName(displayName);
-            return this.waitForVisible(displayNameXpath, 2000).then(()=> {
+            const displayNameXpath = panel.checkboxByDisplayName(displayName);
+            return this.waitForVisible(displayNameXpath, 2000).then(() => {
                 return this.doClick(displayNameXpath);
-            }).catch((err)=> {
+            }).catch((err) => {
                 this.saveScreenshot('err_find_item');
-                throw Error('Row with the displayName ' + displayName + ' was not found')
+                throw Error(`Row with the displayName ${displayName} was not found.`)
             })
         }
     },
-    doClickOnCloseTabButton: {
-        value: function (displayName) {
-            return this.doClick(`${panel.closeItemTabButton(displayName)}`).catch((err)=> {
-                this.saveScreenshot('err_item_tab');
-                throw new Error('itemTabButton was not found!' + displayName);
+    clickCheckboxAndSelectRowByName: {
+        value: function (name) {
+            var nameXpath = panel.checkboxByName(name);
+            return this.waitForVisible(nameXpath, 2000).then(()=> {
+                return this.doClick(nameXpath);
+            }).catch((err)=> {
+                this.saveScreenshot('err_find_item');
+                throw Error('Row with the name ' + name + ' was not found')
             })
         }
     },
@@ -234,7 +235,7 @@ var contentBrowsePanel = Object.create(page, {
     },
     clickOnExpanderIcon: {
         value: function (name) {
-            var expanderIcon = panel.expanderIconByName(name);
+            var expanderIcon = panel.treeGrid + panel.expanderIconByName(name);
             return this.doClick(expanderIcon);
         }
     }
