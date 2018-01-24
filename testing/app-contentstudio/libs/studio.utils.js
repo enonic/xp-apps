@@ -73,7 +73,7 @@ module.exports = {
         }).then(()=> {
             return this.doCloseCurrentBrowserTab();
         }).then(()=> {
-            this.doSwitchToContentBrowsePanel(webDriverHelper.browser);
+            return this.doSwitchToContentBrowsePanel(webDriverHelper.browser);
         }).pause(2000);
     },
     doAddArticleContent: function (siteName, article) {

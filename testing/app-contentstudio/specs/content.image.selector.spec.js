@@ -26,6 +26,7 @@ describe('content.image.selector: Image content specification', function () {
             SITE = contentBuilder.buildSite(displayName, 'description', ['All Content Types App']);
             return studioUtils.doAddSite(SITE).then(()=> {
             }).then(()=> {
+                studioUtils.saveScreenshot(webDriverHelper.browser, 'site_should_be_created');
                 return studioUtils.findAndSelectItem(SITE.displayName);
             }).then(()=> {
                 return contentBrowsePanel.isItemDisplayed(SITE.displayName);

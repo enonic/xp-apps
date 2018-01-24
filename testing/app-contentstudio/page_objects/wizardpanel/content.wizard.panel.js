@@ -9,6 +9,7 @@ var wizard = {
     container: `//div[contains(@id,'ContentWizardPanel')]`,
     displayNameInput: `//input[contains(@name,'displayName')]`,
     saveButton: `//button[contains(@id,'ActionButton') and child::span[text()='Save']]`,
+    savedButton: `//button[contains(@id,'ActionButton') and child::span[text()='Saved']]`,
     deleteButton: `//button[contains(@id,'ActionButton') and child::span[text()='Delete']]`,
 };
 var contentWizardPanel = Object.create(page, {
@@ -21,6 +22,11 @@ var contentWizardPanel = Object.create(page, {
     saveButton: {
         get: function () {
             return `${wizard.container}` + `${wizard.saveButton}`;
+        }
+    },
+    savedButton: {
+        get: function () {
+            return `${wizard.container}` + `${wizard.savedButton}`;
         }
     },
     deleteButton: {
@@ -56,6 +62,13 @@ var contentWizardPanel = Object.create(page, {
             return this.waitForDisabled(this.saveButton, appConst.TIMEOUT_3);
         }
     },
+    waitForSaveButtonVisible: {
+        value: function () {
+            return this.waitForVisible(this.saveButton, appConst.TIMEOUT_3).catch(err=> {
+                return this.doCatch('err_save_button_vivsible', err);
+            });
+        }
+    },
     typeDisplayName: {
         value: function (displayName) {
             return this.typeTextInInput(this.displayNameInput, displayName);
@@ -73,14 +86,11 @@ var contentWizardPanel = Object.create(page, {
     },
     waitAndClickOnSave: {
         value: function () {
-            return this.waitForSaveButtonEnabled().then((result)=> {
-                if (result) {
-                    return this.doClick(this.saveButton);
-                } else {
-                    throw new Error(`Save button is not enabled!`);
-                }
+            return this.waitForSaveButtonVisible().then((result)=> {
+                return this.doClick(this.saveButton);
             }).catch(err=> {
-                throw new Error(`Save button is not enabled!` + err);
+                this.saveScreenshot('err_click_on_save');
+                throw new Error(`Error when click on Save button!` + err);
             })
         }
     },
