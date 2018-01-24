@@ -47,7 +47,7 @@ var contentWizardPanel = Object.create(page, {
     },
     waitForOpened: {
         value: function () {
-            return this.waitForVisible(this.displayNameInput, 5000).catch((e)=> {
+            return this.waitForVisible(this.displayNameInput, appConst.TIMEOUT_10).catch((e)=> {
                 this.saveScreenshot(contentBuilder.generateRandomName('err_open_wizard'))
                 throw new Error("Content wizard was not loaded! " + e);
             });
@@ -87,7 +87,7 @@ var contentWizardPanel = Object.create(page, {
     },
     waitAndClickOnSave: {
         value: function () {
-            return this.waitForSaveButtonVisible().then((result)=> {
+            return this.waitForSaveButtonEnabled().then((result)=> {
                 return this.doClick(this.saveButton);
             }).catch(err=> {
                 this.saveScreenshot('err_click_on_save');

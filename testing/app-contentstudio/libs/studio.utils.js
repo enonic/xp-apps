@@ -219,7 +219,7 @@ module.exports = {
             this.xpTabs = tabs;
             return browser.switchTab(this.xpTabs[this.xpTabs.length - 1]);
         }).then(()=> {
-            return contentWizardPanel.waitForOpened(appConst.TIMEOUT_3);
+            return contentWizardPanel.waitForOpened();
         });
     },
     switchAndCheckTitle: function (browser, tabId, reqTitle) {

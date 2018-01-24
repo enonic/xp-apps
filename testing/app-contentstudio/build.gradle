@@ -55,10 +55,6 @@ task copyApps( type: Copy ) {
     //from '../test-applications/first-application/build/libs/'
     include '*.jar'
     into file( deployDir )
-
-    println '*********************************************************'
-    println '* task FINISHED :copyApps  *'
-    println '*********************************************************'
 }
 dependencies {
     compile "com.enonic.xp:core-api:$xpVersion"
