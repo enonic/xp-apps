@@ -4,6 +4,7 @@
 const page = require('../page');
 const elements = require('../../libs/elements');
 const appConst = require('../../libs/app_const');
+const contentBuilder = require('../../libs/content.builder');
 const contentStepForm = require('./content.wizard.step.form');
 var wizard = {
     container: `//div[contains(@id,'ContentWizardPanel')]`,
@@ -46,8 +47,8 @@ var contentWizardPanel = Object.create(page, {
     },
     waitForOpened: {
         value: function () {
-            return this.waitForVisible(this.displayNameInput, appConst.TIMEOUT_3).catch((e)=> {
-                this.saveScreenshot('err_content__open_wizard')
+            return this.waitForVisible(this.displayNameInput, appConst.TIMEOUT_10).catch((e)=> {
+                this.saveScreenshot(contentBuilder.generateRandomName('err_open_wizard'))
                 throw new Error("Content wizard was not loaded! " + e);
             });
         }
@@ -86,7 +87,7 @@ var contentWizardPanel = Object.create(page, {
     },
     waitAndClickOnSave: {
         value: function () {
-            return this.waitForSaveButtonVisible().then((result)=> {
+            return this.waitForSaveButtonEnabled().then((result)=> {
                 return this.doClick(this.saveButton);
             }).catch(err=> {
                 this.saveScreenshot('err_click_on_save');

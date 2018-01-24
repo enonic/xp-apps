@@ -68,9 +68,9 @@ var contentBrowsePanel = Object.create(page, {
             })
         }
     },
-    isItemDisplayed: {
+    waitForContentDisplayed: {
         value: function (contentName) {
-            return this.waitForVisible(`${panel.treeGrid}` + `${elements.itemByName(contentName)}`, 1000).catch((err)=> {
+            return this.waitForVisible(`${panel.treeGrid}` + `${elements.itemByName(contentName)}`, appConst.TIMEOUT_3).catch((err)=> {
                 console.log("item is not displayed:" + contentName);
                 this.saveScreenshot('err_find_' + contentName)
                 throw new Error('content not found! ' + contentName);
@@ -79,7 +79,7 @@ var contentBrowsePanel = Object.create(page, {
     },
     waitForItemNotDisplayed: {
         value: function (contentName) {
-            return this.waitForNotVisible(`${panel.treeGrid}` + `${elements.itemByName(contentName)}`, 1000).catch((err)=> {
+            return this.waitForNotVisible(`${panel.treeGrid}` + `${elements.itemByName(contentName)}`, appConst.TIMEOUT_3).catch((err)=> {
                 console.log("content is still displayed:" + contentName);
                 return false;
             });
@@ -139,29 +139,44 @@ var contentBrowsePanel = Object.create(page, {
     },
     waitForNewButtonEnabled: {
         value: function () {
-            return this.waitForEnabled(this.newButton, 3000);
+            return this.waitForEnabled(this.newButton, 3000).catch(err=> {
+                this.saveScreenshot('err_new_button');
+                throw Error('New button is not enabled after ' + 3000 + 'ms')
+            })
         }
     },
 
     waitForEditButtonEnabled: {
         value: function () {
-            return this.waitForEnabled(this.editButton, 3000);
+            return this.waitForEnabled(this.editButton, 3000).catch(err=> {
+                this.saveScreenshot('err_edit_button');
+                throw Error('Edit button is not enabled after ' + 3000 + 'ms')
+            })
         }
     },
     waitForDeleteButtonEnabled: {
         value: function () {
-            return this.waitForEnabled(this.deleteButton, 3000);
+            return this.waitForEnabled(this.deleteButton, 3000).catch(err=> {
+                this.saveScreenshot('err_delete_button');
+                throw Error('Delete button is not enabled after ' + 3000 + 'ms')
+            })
         }
     },
     waitForDeleteButtonDisabled: {
         value: function () {
-            return this.waitForDisabled(this.deleteButton, 3000);
+            return this.waitForDisabled(this.deleteButton, 3000).catch(err=> {
+                this.saveScreenshot('err_delete_disabled_button');
+                throw Error('Delete button should be disabled, timeout: ' + 3000 + 'ms')
+            })
         }
     },
 
     isDeleteButtonEnabled: {
         value: function () {
-            return this.isEnabled(this.deleteButton);
+            return this.isEnabled(this.deleteButton).catch(err=> {
+                this.saveScreenshot('err_delete_button');
+                throw Error('Delete button should be enabled, timeout ' + 3000 + 'ms')
+            })
         }
     },
     isNewButtonEnabled: {

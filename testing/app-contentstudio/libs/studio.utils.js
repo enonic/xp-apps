@@ -219,7 +219,7 @@ module.exports = {
             this.xpTabs = tabs;
             return browser.switchTab(this.xpTabs[this.xpTabs.length - 1]);
         }).then(()=> {
-            return contentWizardPanel.waitForOpened(appConst.TIMEOUT_3);
+            return contentWizardPanel.waitForOpened();
         });
     },
     switchAndCheckTitle: function (browser, tabId, reqTitle) {
@@ -231,7 +231,7 @@ module.exports = {
     },
     doLoginAndSwitchToContentStudio: function (browser) {
         return loginPage.doLogin().pause(1000).then(()=> {
-            return homePage.isXpTourVisible(appConst.TIMEOUT_3);
+            return homePage.waitForXpTourVisible(appConst.TIMEOUT_3);
         }).then((result)=> {
             if (result) {
                 return homePage.doCloseXpTourDialog();

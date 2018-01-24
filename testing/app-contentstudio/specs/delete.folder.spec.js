@@ -12,7 +12,7 @@ const contentBrowsePanel = require('../page_objects/browsepanel/content.browse.p
 const studioUtils = require('../libs/studio.utils.js');
 const contentBuilder = require("../libs/content.builder");
 
-describe('folder.content.spec:  verifies `xp-apps#398`', function () {
+describe('delete.folder.content.spec:  verifies `xp-apps#398`', function () {
     this.timeout(appConstant.SUITE_TIMEOUT);
     webDriverHelper.setupBrowser();
 
@@ -30,7 +30,7 @@ describe('folder.content.spec:  verifies `xp-apps#398`', function () {
             }).then(()=> {
                 return studioUtils.typeNameInFilterPanel(folder1.displayName);
             }).then(()=> {
-                return contentBrowsePanel.isItemDisplayed(folder1.displayName);
+                return contentBrowsePanel.waitForContentDisplayed(folder1.displayName);
             }).then(isDisplayed=> {
                 assert.isTrue(isDisplayed, 'folder should be listed in the grid');
             });
