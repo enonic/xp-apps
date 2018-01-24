@@ -1,5 +1,7 @@
 package com.enonic.xp.app.main;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
@@ -8,6 +10,8 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.i18n.MessageBundle;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
+
+import static java.util.stream.Collectors.toList;
 
 public final class StringTranslator
 {
@@ -20,7 +24,7 @@ public final class StringTranslator
 
     public String localize( final ApplicationKey applicationKey, final String key, final String defaultValue )
     {
-        final MessageBundle bundle = this.localeService.getBundle( applicationKey, new Locale( getLocale() ) );
+        final MessageBundle bundle = this.localeService.getBundle( applicationKey, getLocale( applicationKey ) );
 
         if ( bundle == null )
         {
@@ -30,29 +34,29 @@ public final class StringTranslator
         return localizedValue != null ? localizedValue : defaultValue;
     }
 
-    private String getLocale()
+    private Locale getLocale( final ApplicationKey applicationKey )
     {
         final HttpServletRequest req = ServletRequestHolder.getRequest();
-        final Locale locale = req != null ? req.getLocale() : Locale.getDefault();
-        if ( locale == null )
+        if ( req == null )
         {
-            return "";
+            return null;
         }
-        return resolveLanguage( locale.getLanguage().toLowerCase() );
+
+        final List<Locale> preferredLocales = Collections.list( req.getLocales() ).
+            stream().
+            map( this::resolveLanguage ).
+            collect( toList() );
+
+        return localeService.getSupportedLocale( preferredLocales, applicationKey );
     }
 
-    private String resolveLanguage( final String lang )
+    private Locale resolveLanguage( final Locale locale )
     {
-        if ( lang.equals( "nn" ) )
+        final String lang = locale.getLanguage();
+        if ( lang.equals( "nn" ) || lang.equals( "nb" ) )
         {
-            return "no";
+            return new Locale( "no" );
         }
-
-        if ( lang.equals( "nb" ) )
-        {
-            return "no";
-        }
-
-        return lang;
+        return locale;
     }
 }
