@@ -27,7 +27,7 @@ public class GetUserStoreHandlerTest
         Mockito.when( securityService.getUserStore( UserStoreKey.from( "myUserStore" ) ) ).thenReturn(
             TestDataFixtures.getTestUserStore() );
 
-        runFunction( "/site/test/getUserStore-test.js", "getUserStore" );
+        runFunction( "/com/enonic/xp/app/users/lib/auth/getUserStore-test.js", "getUserStore" );
     }
 
     @Test
@@ -35,6 +35,6 @@ public class GetUserStoreHandlerTest
     {
         Mockito.when( securityService.getUserStore( UserStoreKey.from( "myUserStore" ) ) ).thenReturn( null );
 
-        runFunction( "/site/test/getUserStore-test.js", "getNonExistingUserStore" );
+        runFunction( "/com/enonic/xp/app/users/lib/auth/getUserStore-test.js", "getNonExistingUserStore" );
     }
 }

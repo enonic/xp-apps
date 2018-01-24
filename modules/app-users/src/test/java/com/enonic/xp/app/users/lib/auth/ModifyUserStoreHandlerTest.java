@@ -42,7 +42,7 @@ public class ModifyUserStoreHandlerTest
         Mockito.when( securityService.updateUserStore( Mockito.isA( UpdateUserStoreParams.class ) ) ).thenAnswer(
             invocationOnMock -> invokeUpdate( (UpdateUserStoreParams) invocationOnMock.getArguments()[0] ) );
 
-        runFunction( "/site/test/modifyUserStore-test.js", "modifyUserStore" );
+        runFunction( "/com/enonic/xp/app/users/lib/auth/modifyUserStore-test.js", "modifyUserStore" );
     }
 
     private UserStore invokeUpdate( final UpdateUserStoreParams params )
@@ -70,7 +70,7 @@ public class ModifyUserStoreHandlerTest
         Mockito.when( securityService.updateUserStore( Mockito.isA( UpdateUserStoreParams.class ) ) ).thenAnswer(
             invocationOnMock -> invokeUpdateWithNullValues( (UpdateUserStoreParams) invocationOnMock.getArguments()[0] ) );
 
-        runFunction( "/site/test/modifyUserStore-test.js", "modifyUserStoreWithNullValues" );
+        runFunction( "/com/enonic/xp/app/users/lib/auth/modifyUserStore-test.js", "modifyUserStoreWithNullValues" );
     }
 
     private UserStore invokeUpdateWithNullValues( final UpdateUserStoreParams params )

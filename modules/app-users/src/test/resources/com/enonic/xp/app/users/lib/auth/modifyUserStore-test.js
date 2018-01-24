@@ -136,69 +136,15 @@ exports.modifyUserStore = function () {
 exports.modifyUserStoreWithNullValues = function () {
     var expectedJson = {
         key: 'myUserStore',
-        displayName: '',
-        description: '',
-        authConfig: {
-            applicationKey: 'com.enonic.app.test',
-            config: [
-                {
-                    name: 'title',
-                    type: 'String',
-                    values: [
-                        {
-                            v: 'App Title'
-                        }
-                    ]
-                },
-                {
-                    name: 'avatar',
-                    type: 'Boolean',
-                    values: [
-                        {
-                            v: true
-                        }
-                    ]
-                },
-                {
-                    name: 'forgotPassword',
-                    type: 'PropertySet',
-                    values: [
-                        {
-                            set: [
-                                {
-                                    name: 'email',
-                                    type: 'String',
-                                    values: [
-                                        {
-                                            v: 'noreply@example.com'
-                                        }
-                                    ]
-                                },
-                                {
-                                    name: 'site',
-                                    type: 'String',
-                                    values: [
-                                        {
-                                            v: 'MyWebsite'
-                                        }
-                                    ]
-                                }
-                            ]
-                        }
-                    ]
-                }
-            ]
-        }
+        displayName: 'User store test'
     };
 
     var result = auth.modifyUserStore({
         key: 'myUserStore',
         editor: function (userStore) {
-            var newUserStore = userStore;
-            // newUserStore.displayName; -- `displayName` is undefined
-            newUserStore.description = null;
-            newUserStore.authConfig = null;
-            return newUserStore;
+            userStore.description = null;
+            userStore.authConfig = null;
+            return userStore;
         }
     });
 

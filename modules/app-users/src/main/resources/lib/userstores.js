@@ -75,7 +75,7 @@ module.exports = {
                 newUserStore.authConfig = params.authConfig;
                 return newUserStore;
             },
-            permissions: params.permissions
+            permissions: params.permissions || []
         });
     },
     delete: function(keys) {
