@@ -26,7 +26,7 @@ describe('create.issue.dialog.spec: Create Issue Dialog specification', function
                     "`Show Closed Issues ` link should be displayed");
             }).then(()=> {
                 return assert.eventually.isTrue(issueListDialog.isNewIssueButtonVisible(),
-                    "`New Issue.. ` button should be displayed");
+                    "`New Issue...` button should be displayed");
             }).then(()=> {
                 return assert.eventually.isTrue(issueListDialog.isMyOpenedIssuesCheckboxVisible(), '`My Issues` checkbox should be present')
             })

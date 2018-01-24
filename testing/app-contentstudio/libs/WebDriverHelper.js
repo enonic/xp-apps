@@ -56,6 +56,10 @@ WebDriverHelper.prototype.setupBrowser = function setupBrowser() {
     after(function () {
         return _this.browser.end();
     });
+    afterEach(function () {
+        return console.log('Test:', this.currentTest.title, ' is  ' + this.currentTest.state.toString().toUpperCase());
+
+    });
 };
 
 module.exports = new WebDriverHelper();

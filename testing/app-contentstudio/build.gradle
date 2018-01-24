@@ -38,15 +38,13 @@ ext {
     reportsDir = "$buildDir${File.separator}repots"
     distroDir = "$unpackDir${File.separator}enonic-xp-$xpVersion"
     deployDir = "$distroDir${File.separator}home${File.separator}deploy"
+    allureResultsDir = "allure-results"
     xpHome = "$distroDir${File.separator}home"
+    xpServer = new ServerInstance()
 }
 
 task copyApps( type: Copy ) {
     from '/test-applications/'
-    from '/test-applications/'
-    from '/test-applications/'
-    from '/test-applications/'
-
     //from '../test-applications/simple-page/build/libs/'
     //from '../test-applications/myfirstapp/build/libs/'
     //from '../test-applications/first-application/build/libs/'
@@ -69,9 +67,26 @@ task unpackDistro( type: Copy ) {
     into file( unpackDir )
 }
 
-ext {
-    xpServer = new ServerInstance()
+task zipScreenshots( type: Zip ) {
+    from screenshotsDir
+    include '*'
+    include '*/*'
+    classifier 'screenshots'
 }
+
+task zipAllure( type: Zip ) {
+    from allureResultsDir
+    include '*'
+    include '*/*'
+    classifier 'allureResults'
+}
+
+artifacts {
+    archives zipScreenshots
+    archives zipAllure
+}
+
+jar.enabled = true
 
 task startServer( dependsOn: unpackDistro ) {
     doLast {
