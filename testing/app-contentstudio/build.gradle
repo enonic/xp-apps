@@ -19,12 +19,12 @@ plugins {
     id 'maven'
     id 'com.moowork.node' version '0.13'
     id 'com.moowork.gulp' version '0.13'
-
 }
 
 configurations {
     distro
 }
+
 apply plugin: 'com.enonic.defaults'
 
 enonic {
@@ -35,7 +35,7 @@ ext {
     xpVersion = '6.14.0-SNAPSHOT'
     unpackDir = "$buildDir${File.separator}install"
     screenshotsDir = "$buildDir${File.separator}screenshots"
-    reportsDir = "$buildDir${File.separator}repots"
+    reportsDir = "$buildDir${File.separator}reports"
     distroDir = "$unpackDir${File.separator}enonic-xp-$xpVersion"
     deployDir = "$distroDir${File.separator}home${File.separator}deploy"
     allureResultsDir = "allure-results"

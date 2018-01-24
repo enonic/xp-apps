@@ -21,14 +21,14 @@ plugins {
     id 'com.moowork.gulp' version '0.13'
 }
 
+configurations {
+    distro
+}
+
 apply plugin: 'com.enonic.defaults'
 
 enonic {
     publishRepo = 'inhouse'
-}
-
-configurations {
-    distro
 }
 
 ext {
