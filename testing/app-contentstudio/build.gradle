@@ -38,6 +38,7 @@ ext {
     reportsDir = "$buildDir${File.separator}reports"
     distroDir = "$unpackDir${File.separator}enonic-xp-$xpVersion"
     deployDir = "$distroDir${File.separator}home${File.separator}deploy"
+    appDir = "$projectDir${File.separator}test-applications"
     allureResultsDir = "allure-results"
     xpHome = "$distroDir${File.separator}home"
     xpServer = new ServerInstance()
@@ -47,8 +48,8 @@ task copyApps( type: Copy ) {
     println '*********************************************************'
     println '* task started:copyApps  *'
     println '*********************************************************'
-
-    from '/test-applications/'
+    println appDir
+    from file( appDir )
     //from '../test-applications/simple-page/build/libs/'
     //from '../test-applications/myfirstapp/build/libs/'
     //from '../test-applications/first-application/build/libs/'
