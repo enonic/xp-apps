@@ -44,12 +44,20 @@ ext {
 }
 
 task copyApps( type: Copy ) {
+    println '*********************************************************'
+    println '* task started:copyApps  *'
+    println '*********************************************************'
+
     from '/test-applications/'
     //from '../test-applications/simple-page/build/libs/'
     //from '../test-applications/myfirstapp/build/libs/'
     //from '../test-applications/first-application/build/libs/'
     include '*.jar'
     into file( deployDir )
+
+    println '*********************************************************'
+    println '* task FINISHED :copyApps  *'
+    println '*********************************************************'
 }
 dependencies {
     compile "com.enonic.xp:core-api:$xpVersion"

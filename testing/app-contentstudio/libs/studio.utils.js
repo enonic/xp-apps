@@ -231,7 +231,7 @@ module.exports = {
     },
     doLoginAndSwitchToContentStudio: function (browser) {
         return loginPage.doLogin().pause(1000).then(()=> {
-            return homePage.isXpTourVisible(appConst.TIMEOUT_3);
+            return homePage.waitForXpTourVisible(appConst.TIMEOUT_3);
         }).then((result)=> {
             if (result) {
                 return homePage.doCloseXpTourDialog();

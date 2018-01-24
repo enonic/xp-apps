@@ -22,6 +22,7 @@ describe('content.image.selector: Image content specification', function () {
     let imageSelectorContent;
     it(`WHEN site with content types has been added THEN the site should be listed in the grid`,
         () => {
+            this.bail(1);
             let displayName = contentBuilder.generateRandomName('site');
             SITE = contentBuilder.buildSite(displayName, 'description', ['All Content Types App']);
             return studioUtils.doAddSite(SITE).then(()=> {
