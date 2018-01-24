@@ -10,16 +10,10 @@ declare const wemjq: JQueryStatic;
  */
 api.StyleHelper.setCurrentPrefix(api.StyleHelper.PAGE_EDITOR_PREFIX);
 
-let liveEditPage: LiveEditPage;
+const liveEditPage = new LiveEditPage();
 
 wemjq(document).ready(() => {
     api.util.i18nInit(CONFIG.messages);
-
-    if (liveEditPage) {
-        liveEditPage.destroy();
-    }
-
-    liveEditPage = new LiveEditPage();
 
     // Notify parent frame if any modifier except shift is pressed
     // For the parent shortcuts to work if the inner iframe has focus
