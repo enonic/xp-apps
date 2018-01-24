@@ -27,7 +27,7 @@ describe('content.selector.spec: content-selector specification', function () {
             }).then(()=> {
                 return studioUtils.findAndSelectItem(SITE.displayName);
             }).then(()=> {
-                return contentBrowsePanel.isItemDisplayed(SITE.displayName);
+                return contentBrowsePanel.waitForContentDisplayed(SITE.displayName);
             }).then(isDisplayed=> {
                 assert.isTrue(isDisplayed, 'site should be listed in the grid');
             });
@@ -41,7 +41,7 @@ describe('content.selector.spec: content-selector specification', function () {
             return studioUtils.doAddArticleContent(SITE.displayName, articleContent).then(()=> {
                 return studioUtils.typeNameInFilterPanel(articleContent.displayName);
             }).then(()=> {
-                return contentBrowsePanel.isItemDisplayed(articleContent.displayName);
+                return contentBrowsePanel.waitForContentDisplayed(articleContent.displayName);
             }).then(isDisplayed=> {
                 studioUtils.saveScreenshot(webDriverHelper.browser, 'article_content_added');
                 assert.isTrue(isDisplayed, 'the article should be listed in the grid');

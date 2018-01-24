@@ -68,9 +68,9 @@ var contentBrowsePanel = Object.create(page, {
             })
         }
     },
-    isItemDisplayed: {
+    waitForContentDisplayed: {
         value: function (contentName) {
-            return this.waitForVisible(`${panel.treeGrid}` + `${elements.itemByName(contentName)}`, 1000).catch((err)=> {
+            return this.waitForVisible(`${panel.treeGrid}` + `${elements.itemByName(contentName)}`, appConst.TIMEOUT_3).catch((err)=> {
                 console.log("item is not displayed:" + contentName);
                 this.saveScreenshot('err_find_' + contentName)
                 throw new Error('content not found! ' + contentName);
@@ -79,7 +79,7 @@ var contentBrowsePanel = Object.create(page, {
     },
     waitForItemNotDisplayed: {
         value: function (contentName) {
-            return this.waitForNotVisible(`${panel.treeGrid}` + `${elements.itemByName(contentName)}`, 1000).catch((err)=> {
+            return this.waitForNotVisible(`${panel.treeGrid}` + `${elements.itemByName(contentName)}`, appConst.TIMEOUT_3).catch((err)=> {
                 console.log("content is still displayed:" + contentName);
                 return false;
             });

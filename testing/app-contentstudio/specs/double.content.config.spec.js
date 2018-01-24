@@ -25,7 +25,7 @@ describe('double.content.config.spec:  verifies `Min/max value config for Double
             }).then(()=> {
                 return studioUtils.findAndSelectItem(SITE.displayName);
             }).then(()=> {
-                return contentBrowsePanel.isItemDisplayed(SITE.displayName);
+                return contentBrowsePanel.waitForContentDisplayed(SITE.displayName);
             }).then(isDisplayed=> {
                 assert.isTrue(isDisplayed, 'site should be listed in the grid');
             });
