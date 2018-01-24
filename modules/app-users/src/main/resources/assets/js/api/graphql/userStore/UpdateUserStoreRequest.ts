@@ -4,6 +4,7 @@ import UserStoreKey = api.security.UserStoreKey;
 import AuthConfig = api.security.AuthConfig;
 import UserStoreJson = api.security.UserStoreJson;
 import UserStoreAccess = api.security.acl.UserStoreAccess;
+import UserStoreAccessControlList = api.security.acl.UserStoreAccessControlList;
 
 export class UpdateUserStoreRequest
     extends GraphQlRequest<any, UserStore> {
@@ -34,7 +35,7 @@ export class UpdateUserStoreRequest
 
     // tslint:disable max-line-length
     getMutation(): string {
-        return `mutation ($key: String!, $displayName: String, $description: String, $authConfig: AuthConfigInput, $permissions: [UserStoreAccessControlInput]) {
+        return `mutation ($key: String!, $displayName: String!, $description: String, $authConfig: AuthConfigInput, $permissions: [UserStoreAccessControlInput]) {
             updateUserStore(key: $key, displayName: $displayName, description: $description, authConfig: $authConfig, permissions: $permissions) {
                 key
                 displayName

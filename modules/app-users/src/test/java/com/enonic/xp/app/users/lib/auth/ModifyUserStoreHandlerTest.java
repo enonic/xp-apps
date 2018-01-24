@@ -42,7 +42,7 @@ public class ModifyUserStoreHandlerTest
         Mockito.when( securityService.updateUserStore( Mockito.isA( UpdateUserStoreParams.class ) ) ).thenAnswer(
             invocationOnMock -> invokeUpdate( (UpdateUserStoreParams) invocationOnMock.getArguments()[0] ) );
 
-        runFunction( "/site/test/modifyUserStore-test.js", "modifyUserStore" );
+        runFunction( "/com/enonic/xp/app/users/lib/auth/modifyUserStore-test.js", "modifyUserStore" );
     }
 
     private UserStore invokeUpdate( final UpdateUserStoreParams params )
@@ -58,6 +58,27 @@ public class ModifyUserStoreHandlerTest
         assertEquals( params.getUserStorePermissions().getAllPrincipals().getSize(), 1 );
 
         final EditableUserStore editable = new EditableUserStore( TestDataFixtures.getTestBlankUserStore() );
+
+        editor.edit( editable );
+        return editable.build();
+    }
+
+    @Test
+    public void testModifyUserStoreWithNullValues()
+    {
+        Mockito.when( securityService.getUserStore( Mockito.any() ) ).thenReturn( TestDataFixtures.getTestUserStore() );
+        Mockito.when( securityService.updateUserStore( Mockito.isA( UpdateUserStoreParams.class ) ) ).thenAnswer(
+            invocationOnMock -> invokeUpdateWithNullValues( (UpdateUserStoreParams) invocationOnMock.getArguments()[0] ) );
+
+        runFunction( "/com/enonic/xp/app/users/lib/auth/modifyUserStore-test.js", "modifyUserStoreWithNullValues" );
+    }
+
+    private UserStore invokeUpdateWithNullValues( final UpdateUserStoreParams params )
+    {
+        final UserStoreEditor editor = params.getEditor();
+        Assert.assertNotNull( editor );
+
+        final EditableUserStore editable = new EditableUserStore( TestDataFixtures.getTestUserStore() );
 
         editor.edit( editable );
         return editable.build();

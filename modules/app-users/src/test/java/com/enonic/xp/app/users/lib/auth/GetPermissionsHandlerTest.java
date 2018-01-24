@@ -53,7 +53,7 @@ public class GetPermissionsHandlerTest
         Mockito.when( securityService.getPrincipals( Mockito.any( PrincipalKeys.class ) ) ).thenReturn( principals );
         Mockito.when( securityService.getUserStorePermissions( userStoreKey ) ).thenReturn( userStoreAccessControlEntries );
 
-        runFunction( "/site/test/getPermissions-test.js", "getPermissions" );
+        runFunction( "/com/enonic/xp/app/users/lib/auth/getPermissions-test.js", "getPermissions" );
     }
 
     @Test
@@ -63,6 +63,6 @@ public class GetPermissionsHandlerTest
         Mockito.when( securityService.getPrincipals( Mockito.any( PrincipalKeys.class ) ) ).thenReturn( Principals.empty() );
         Mockito.when( securityService.getUserStorePermissions( userStoreKey ) ).thenReturn( UserStoreAccessControlList.empty() );
 
-        runFunction( "/site/test/getPermissions-test.js", "getNonExistingPermissions" );
+        runFunction( "/com/enonic/xp/app/users/lib/auth/getPermissions-test.js", "getNonExistingPermissions" );
     }
 }

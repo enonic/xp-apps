@@ -70,19 +70,8 @@ public final class ModifyUserStoreHandler
 
     private void updateUserStore( final EditableUserStore target, final ScriptValue value )
     {
-        if ( value.hasMember( "displayName" ) )
-        {
-            target.displayName = value.getMember( "displayName" ).getValue().toString();
-        }
-
-        if ( value.hasMember( "description" ) )
-        {
-            target.description = value.getMember( "description" ).getValue().toString();
-        }
-
-        if ( value.hasMember( "authConfig" ) )
-        {
-            target.authConfig = ScriptValueToAuthConfigTranslator.translate( value.getMember( "authConfig" ) );
-        }
+        target.displayName = value.getMember( "displayName" ).getValue().toString();
+        target.description = value.getMember( "description" ) == null ? null : value.getMember( "description" ).getValue().toString();
+        target.authConfig = value.getMember( "authConfig" ) == null ? null : ScriptValueToAuthConfigTranslator.translate( value.getMember( "authConfig" ) );
     }
 }

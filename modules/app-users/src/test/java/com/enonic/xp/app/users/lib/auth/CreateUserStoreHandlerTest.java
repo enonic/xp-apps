@@ -36,7 +36,7 @@ public class CreateUserStoreHandlerTest
         Mockito.when( securityService.getPrincipal( Mockito.any() ) ).thenReturn( Optional.empty() ).thenReturn(
             (Optional) Optional.of( TestDataFixtures.getTestGroup() ) );
 
-        runFunction( "/site/test/createUserStore-test.js", "createUserStore" );
+        runFunction( "/com/enonic/xp/app/users/lib/auth/createUserStore-test.js", "createUserStore" );
 
         ArgumentCaptor<CreateUserStoreParams> issueParamsArgumentCaptor = ArgumentCaptor.forClass( CreateUserStoreParams.class );
         Mockito.verify( securityService ).createUserStore( issueParamsArgumentCaptor.capture() );
@@ -61,7 +61,7 @@ public class CreateUserStoreHandlerTest
     {
         Mockito.when( securityService.createUserStore( Mockito.any() ) ).thenReturn( TestDataFixtures.getTestUserStore() );
 
-        runFunction( "/site/test/createUserStore-test.js", "createUserStoreByName" );
+        runFunction( "/com/enonic/xp/app/users/lib/auth/createUserStore-test.js", "createUserStoreByName" );
 
         ArgumentCaptor<CreateUserStoreParams> issueParamsArgumentCaptor = ArgumentCaptor.forClass( CreateUserStoreParams.class );
         Mockito.verify( securityService ).createUserStore( issueParamsArgumentCaptor.capture() );
