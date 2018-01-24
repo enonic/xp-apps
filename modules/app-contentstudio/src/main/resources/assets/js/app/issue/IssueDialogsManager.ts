@@ -86,10 +86,6 @@ export class IssueDialogsManager {
         dialog.onRendered(event => {
             dialog.addClickIgnoredElement(this.updateDialog);
         });
-        dialog.onEditButtonClicked((issue, summaries, excludeChildIds) => {
-            dialog.addClass('masked');
-            this.openEditDialog(issue, summaries, excludeChildIds);
-        });
         dialog.onCloseButtonClicked((e: MouseEvent) => this.closeDialog(this.listDialog));
         dialog.onClosed(() => this.revealDialog(this.listDialog));
     }

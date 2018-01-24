@@ -35,7 +35,6 @@ import NavigatedDeckPanel = api.ui.panel.NavigatedDeckPanel;
 import TabBar = api.ui.tab.TabBar;
 import TabBarItemBuilder = api.ui.tab.TabBarItemBuilder;
 import Panel = api.ui.panel.Panel;
-import PEl = api.dom.PEl;
 import AppHelper = api.util.AppHelper;
 import GetPrincipalsByKeysRequest = api.security.GetPrincipalsByKeysRequest;
 import TabBarItem = api.ui.tab.TabBarItem;
@@ -62,8 +61,6 @@ export class IssueDetailsDialog
     private reopenAction: api.ui.Action;
     private commentAction: api.ui.Action;
     private detailsSubTitle: DetailsDialogSubTitle;
-    private description: api.dom.PEl;
-    private descriptionPlaceholder: api.dom.H5El;
     private publishAction: ContentPublishDialogAction;
     private publishButton: api.ui.button.MenuButton;
     private itemSelector: api.content.ContentComboBox<api.content.resource.ContentTreeSelectorItem>;
@@ -118,14 +115,10 @@ export class IssueDetailsDialog
 
             this.createSubTitle();
             this.createBackButton();
-            this.createEditButton();
-            this.createCloseButton();
-            this.createReopenButton();
             this.createAddCommentButton();
+            this.createReopenButton();
+            this.createCloseButton();
             this.createNoActionMessage();
-
-            const issueTab = new TabBarItemBuilder().setLabel(i18n('field.issue')).build();
-            const issuePanel = this.createIssuePanel();
 
             this.commentsTab = new TabBarItemBuilder().setLabel(i18n('field.comments')).build();
             const commentsPanel = this.createCommentsPanel(this.commentsTab);
@@ -136,14 +129,11 @@ export class IssueDetailsDialog
             const tabBar = new TabBar();
             this.tabPanel = new NavigatedDeckPanel(tabBar);
             this.tabPanel.onPanelShown(event => {
-                const isIssue = event.getPanel() == issuePanel;
                 const isComments = event.getPanel() == commentsPanel;
-                this.toggleClass('tab-issue', isIssue);
                 this.toggleClass('tab-comments', isComments);
-                this.toggleClass('tab-items', !isIssue && !isComments);
+                this.toggleClass('tab-items', !isComments);
             });
-            this.tabPanel.addNavigablePanel(issueTab, issuePanel, true);
-            this.tabPanel.addNavigablePanel(this.commentsTab, commentsPanel);
+            this.tabPanel.addNavigablePanel(this.commentsTab, commentsPanel, true);
             this.tabPanel.addNavigablePanel(this.itemsTab, itemsPanel);
 
             this.appendChildToHeader(tabBar);
@@ -172,14 +162,6 @@ export class IssueDetailsDialog
         super.toggleAction(enable);
         this.publishButton.setEnabled(this.publishProcessor.containsInvalidItems() && this.publishProcessor.isAllPublishable());
         this.errorTooltip.setActive(this.publishProcessor.containsInvalidItems());
-    }
-
-    private createIssuePanel() {
-        const issuePanel = new Panel();
-        this.description = new PEl('description');
-        this.descriptionPlaceholder = new api.dom.H5El('description-placeholder').setHtml(i18n('dialog.issue.noDescription'));
-        issuePanel.appendChildren<api.dom.Element>(this.description, this.descriptionPlaceholder);
-        return issuePanel;
     }
 
     private createCommentsPanel(tab: TabBarItem) {
@@ -344,13 +326,6 @@ export class IssueDetailsDialog
                 this.itemSelector.getComboBox().clearSelection(true, false);
                 this.getItemList().clearItems();
             }
-            let desc = issue.getDescription();
-            const noDesc = api.util.StringHelper.isBlank(desc);
-            if (!noDesc) {
-                this.description.setHtml(desc, false);
-            }
-            this.description.setVisible(!noDesc);
-            this.descriptionPlaceholder.setVisible(noDesc);
 
             this.setTitle(this.createTitleText(issue), false);
 
@@ -419,7 +394,6 @@ export class IssueDetailsDialog
     protected initActions() {
         super.initActions();
 
-        this.editAction = new Action(i18n('action.editIssue'));
         this.closeAction = new Action(i18n('action.closeIssue'));
         this.closeAction.onExecuted(action => {
             this.detailsSubTitle.setStatus(IssueStatus.CLOSED);
@@ -481,13 +455,6 @@ export class IssueDetailsDialog
         const menuButton = this.getButtonRow().makeActionMenu(this.publishAction, [this.showScheduleAction]);
         menuButton.addClass('publish-issue');
         return menuButton;
-    }
-
-    onEditButtonClicked(listener: (issue: Issue, summaries: ContentSummaryAndCompareStatus[], excludeChildIds: ContentId[]) => void) {
-        return this.editAction.onExecuted(action => {
-            const itemList = this.getItemList();
-            listener(this.issue, itemList.getItems(), itemList.getExcludeChildrenIds());
-        });
     }
 
     private createNoActionMessage() {
