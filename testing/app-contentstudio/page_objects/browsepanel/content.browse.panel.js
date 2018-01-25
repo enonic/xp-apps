@@ -141,7 +141,7 @@ var contentBrowsePanel = Object.create(page, {
         value: function () {
             return this.waitForEnabled(this.newButton, 3000).catch(err=> {
                 this.saveScreenshot('err_new_button');
-                throw Error('New button is not enabled after ' + 3000 + 'ms')
+                return false;
             })
         }
     },
