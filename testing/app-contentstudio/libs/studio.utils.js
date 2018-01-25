@@ -13,6 +13,8 @@ const newContentDialog = require('../page_objects/browsepanel/new.content.dialog
 const contentWizardPanel = require('../page_objects/wizardpanel/content.wizard.panel');
 const webDriverHelper = require("./WebDriverHelper");
 const issueListDialog = require('../page_objects/issue.list.dialog');
+const deleteContentDialog = require('../page_objects/delete.content.dialog');
+const confirmContentDeleteDialog = require('../page_objects/confirm.content.delete.dialog');
 
 
 module.exports = {
@@ -48,8 +50,16 @@ module.exports = {
         }).then(()=> {
             return this.doCloseWizardAndSwitchToGrid()
         }).pause(1000);
-    }
-    ,
+    },
+    doAddFolder: function (folder) {
+        return this.openContentWizard(appConst.contentTypes.FOLDER).then(()=> {
+            return contentWizardPanel.typeData(folder);
+        }).then(()=> {
+            return contentWizardPanel.waitAndClickOnSave();
+        }).then(()=> {
+            return this.doCloseWizardAndSwitchToGrid()
+        }).pause(1000);
+    },
     doCloseWizardAndSwitchToGrid: function () {
         return this.doCloseCurrentBrowserTab().then(()=> {
             return this.doSwitchToContentBrowsePanel(webDriverHelper.browser);
@@ -63,7 +73,7 @@ module.exports = {
         }).then(()=> {
             return this.doCloseCurrentBrowserTab();
         }).then(()=> {
-            this.doSwitchToContentBrowsePanel(webDriverHelper.browser);
+            return this.doSwitchToContentBrowsePanel(webDriverHelper.browser);
         }).pause(2000);
     },
     doAddArticleContent: function (siteName, article) {
@@ -86,6 +96,13 @@ module.exports = {
             return browsePanel.clickOnRowByName(name);
         });
     },
+    findContentAndClickCheckBox: function (displayName) {
+        return this.typeNameInFilterPanel(name).then(()=> {
+            return browsePanel.waitForRowByNameVisible(name);
+        }).pause(400).then(()=> {
+            return browsePanel.clickCheckboxAndSelectRowByDisplayName(displayName);
+        });
+    },
     selectSiteAndOpenNewWizard: function (siteName, contentType) {
         return this.findAndSelectItem(siteName).then(()=> {
             return browsePanel.waitForNewButtonEnabled();
@@ -102,6 +119,21 @@ module.exports = {
         }).then(()=> {
             return contentWizardPanel.waitForOpened();
         });
+    },
+    clickOnDeleteAndConfirm: function (numberOfContents) {
+        return browsePanel.clickOnDeleteButton().then(()=> {
+            return deleteContentDialog.waitForDialogVisible(1000);
+        }).then(()=> {
+            return deleteContentDialog.clickOnDeleteButton();
+        }).then(()=> {
+            return confirmContentDeleteDialog.waitForDialogVisible();
+        }).then(()=> {
+            return confirmContentDeleteDialog.typeNumberOfContent(numberOfContents);
+        }).pause(700).then(()=> {
+            return confirmContentDeleteDialog.clickOnConfirmButton();
+        }).then(()=> {
+            return deleteContentDialog.waitForDialogClosed();
+        })
     },
     typeNameInFilterPanel: function (name) {
         return filterPanel.isPanelVisible().then((result)=> {
@@ -187,7 +219,7 @@ module.exports = {
             this.xpTabs = tabs;
             return browser.switchTab(this.xpTabs[this.xpTabs.length - 1]);
         }).then(()=> {
-            return contentWizardPanel.waitForOpened(appConst.TIMEOUT_3);
+            return contentWizardPanel.waitForOpened();
         });
     },
     switchAndCheckTitle: function (browser, tabId, reqTitle) {
@@ -199,7 +231,7 @@ module.exports = {
     },
     doLoginAndSwitchToContentStudio: function (browser) {
         return loginPage.doLogin().pause(1000).then(()=> {
-            return homePage.isXpTourVisible(appConst.TIMEOUT_3);
+            return homePage.waitForXpTourVisible(appConst.TIMEOUT_3);
         }).then((result)=> {
             if (result) {
                 return homePage.doCloseXpTourDialog();
