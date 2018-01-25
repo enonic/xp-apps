@@ -13,7 +13,6 @@ import {PublishRequestItem} from '../PublishRequestItem';
 import {IssueDetailsDialogButtonRow} from './IssueDetailsDialogDropdownButtonRow';
 import {DetailsDialogSubTitle} from './IssueDetailsDialogSubTitle';
 import {PublishProcessor} from '../../publish/PublishProcessor';
-import {AssigneesLine} from './IssueList';
 import {DependantItemsWithProgressDialogConfig} from '../../dialog/DependantItemsWithProgressDialog';
 import {IssueCommentsList} from './IssueCommentsList';
 import {IssueCommentTextArea} from './IssueCommentTextArea';
@@ -36,26 +35,26 @@ import TabBar = api.ui.tab.TabBar;
 import TabBarItemBuilder = api.ui.tab.TabBarItemBuilder;
 import Panel = api.ui.panel.Panel;
 import AppHelper = api.util.AppHelper;
-import GetPrincipalsByKeysRequest = api.security.GetPrincipalsByKeysRequest;
 import TabBarItem = api.ui.tab.TabBarItem;
+import PrincipalComboBoxBuilder = api.ui.security.PrincipalComboBoxBuilder;
+import PrincipalType = api.security.PrincipalType;
+import PrincipalLoader = api.security.PrincipalLoader;
+import ComboBox = api.ui.selector.combobox.ComboBox;
 
 export class IssueDetailsDialog
     extends SchedulableDialog {
 
     private issue: Issue;
 
-    private assignees: User[];
-
     private currentUser: User;
 
     private errorTooltip: Tooltip;
-
-    private editAction: api.ui.Action;
 
     private static INSTANCE: IssueDetailsDialog = new IssueDetailsDialog();
 
     private itemsTab: TabBarItem;
     private commentsTab: TabBarItem;
+    private assigneesTab: TabBarItem;
     private tabPanel: api.ui.panel.NavigatedDeckPanel;
     private closeAction: api.ui.Action;
     private reopenAction: api.ui.Action;
@@ -69,9 +68,9 @@ export class IssueDetailsDialog
     private skipNextServerUpdatedEvent: boolean;
     private ignoreNextExcludeChildrenEvent: boolean;
     private debouncedUpdateIssue: Function;
-    private assigneesLine: AssigneesLine;
     private commentsList: IssueCommentsList;
     private commentTextArea: IssueCommentTextArea;
+    private assigneesCombobox: api.ui.security.PrincipalComboBox;
 
     private constructor() {
         super(<DependantItemsWithProgressDialogConfig> {
@@ -110,15 +109,15 @@ export class IssueDetailsDialog
     doRender(): Q.Promise<boolean> {
         return super.doRender().then((rendered: boolean) => {
 
-            this.assigneesLine = new AssigneesLine([], this.currentUser);
-            this.prependChildToHeader(this.assigneesLine);
-
             this.createSubTitle();
             this.createBackButton();
             this.createAddCommentButton();
             this.createReopenButton();
             this.createCloseButton();
             this.createNoActionMessage();
+
+            this.assigneesTab = new TabBarItemBuilder().setLabel(i18n('field.assignees')).build();
+            const assigneesPanel = this.createAssigneesPanel();
 
             this.commentsTab = new TabBarItemBuilder().setLabel(i18n('field.comments')).build();
             const commentsPanel = this.createCommentsPanel(this.commentsTab);
@@ -129,12 +128,15 @@ export class IssueDetailsDialog
             const tabBar = new TabBar();
             this.tabPanel = new NavigatedDeckPanel(tabBar);
             this.tabPanel.onPanelShown(event => {
+                const isAssignees = event.getPanel() == assigneesPanel;
                 const isComments = event.getPanel() == commentsPanel;
+                this.toggleClass('tab-assignees', isAssignees);
                 this.toggleClass('tab-comments', isComments);
-                this.toggleClass('tab-items', !isComments);
+                this.toggleClass('tab-items', !isAssignees && !isComments);
             });
             this.tabPanel.addNavigablePanel(this.commentsTab, commentsPanel, true);
             this.tabPanel.addNavigablePanel(this.itemsTab, itemsPanel);
+            this.tabPanel.addNavigablePanel(this.assigneesTab, assigneesPanel, true);
 
             this.appendChildToHeader(tabBar);
             this.appendChildToContentPanel(this.tabPanel);
@@ -162,6 +164,24 @@ export class IssueDetailsDialog
         super.toggleAction(enable);
         this.publishButton.setEnabled(this.publishProcessor.containsInvalidItems() && this.publishProcessor.isAllPublishable());
         this.errorTooltip.setActive(this.publishProcessor.containsInvalidItems());
+    }
+
+    private createAssigneesPanel() {
+        const assigneesPanel = new Panel();
+        let userLoader = new PrincipalLoader().setAllowedTypes([PrincipalType.USER]);
+        this.assigneesCombobox = new PrincipalComboBoxBuilder().setLoader(userLoader).build();
+        const updateTabCount = (save) => {
+            const num = this.assigneesCombobox.getValue().split(ComboBox.VALUE_SEPARATOR).length;
+            this.assigneesTab.setHtml(i18n('field.assignees') + (num > 0 ? ` (${num})` : ''));
+            if (save) {
+                this.debouncedUpdateIssue(this.issue.getIssueStatus(), true);
+            }
+        };
+        this.assigneesCombobox.onValueChanged(event => updateTabCount(false));
+        this.assigneesCombobox.onOptionSelected(option => updateTabCount(true));
+        this.assigneesCombobox.onOptionDeselected(option => updateTabCount(true));
+        assigneesPanel.appendChild(this.assigneesCombobox);
+        return assigneesPanel;
     }
 
     private createCommentsPanel(tab: TabBarItem) {
@@ -335,46 +355,14 @@ export class IssueDetailsDialog
             new ListIssueCommentsRequest(issue.getId()).sendAndParse().then(response => {
                 this.commentsList.setItems(response.getIssueComments());
             });
-        }
 
-        if (this.assigneesUpdateRequired(issue)) {
-            const assigneeIds = issue && issue.getApprovers();
-            let assigneesPromise;
-            if (assigneeIds && assigneeIds.length > 0) {
-                assigneesPromise = new GetPrincipalsByKeysRequest(assigneeIds).sendAndParse().catch(api.DefaultErrorHandler.handle);
-            } else {
-                assigneesPromise = wemQ([]);
-            }
-
-            assigneesPromise.then(assignees => {
-                this.assignees = assignees;
-                if (this.isRendered()) {
-                    this.assigneesLine.setAssignees(this.assignees);
-                }
-            });
+            this.assigneesCombobox.setValue(issue.getApprovers().join(ComboBox.VALUE_SEPARATOR));
         }
 
         this.setReadOnly(issue && issue.getIssueStatus() == IssueStatus.CLOSED);
         this.issue = issue;
 
         return this;
-    }
-
-    private hasAssigneeListChanged(issue: Issue) {
-        const currentAssigneeCount = this.assignees ? this.assignees.length : 0;
-
-        if (currentAssigneeCount !== issue.getApprovers().length) {
-            return true;
-        }
-
-        const assigneeIds = this.assignees.map(assignee => assignee.getKey().toString());
-
-        return issue.getApprovers().some(approver => assigneeIds.indexOf(approver.toString()) === -1);
-    }
-
-    assigneesUpdateRequired(issue: Issue): boolean {
-        const issueId = issue ? issue.getId() : null;
-        return this.issue ? this.issue.getId() !== issueId || this.hasAssigneeListChanged(issue) : !!issueId;
     }
 
     getButtonRow(): IssueDetailsDialogButtonRow {
@@ -429,11 +417,6 @@ export class IssueDetailsDialog
         const backButton: AEl = new AEl('back-button').setTitle(i18n('dialog.issue.back'));
         this.prependChildToHeader(backButton);
         backButton.onClicked(() => this.close());
-    }
-
-    private createEditButton() {
-        const editButton: DialogButton = this.getButtonRow().addAction(this.editAction);
-        editButton.addClass('edit-issue force-enabled');
     }
 
     private createCloseButton() {
@@ -516,6 +499,7 @@ export class IssueDetailsDialog
         return new UpdateIssueRequest(this.issue.getId())
             .setStatus(newStatus)
             .setAutoSave(autoSave)
+            .setApprovers(this.assigneesCombobox.getSelectedDisplayValues().map(o => o.getKey()))
             .setPublishRequest(publishRequest)
             .sendAndParse().then(() => {
                 if (statusChanged) {
@@ -547,7 +531,7 @@ export class IssueDetailsDialog
 
     private areChildrenIncludedInIssue(id: ContentId): boolean {
         return this.issue.getPublishRequest().hasItemId(id) &&
-            !this.issue.getPublishRequest().getExcludeChildrenIds().some(contentId => contentId.equals(id));
+               !this.issue.getPublishRequest().getExcludeChildrenIds().some(contentId => contentId.equals(id));
     }
 
     private areChildrenIncludedInPublishProcessor(id: ContentId): boolean {
