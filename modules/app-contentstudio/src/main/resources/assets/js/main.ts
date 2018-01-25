@@ -74,7 +74,7 @@ function startLostConnectionDetector(): LostConnectionDetector {
             api.notify.NotifyManager.get().hide(readonlyMessageId);
             readonlyMessageId = null;
         }
-    })
+    });
 
     lostConnectionDetector.startPolling(true);
     return lostConnectionDetector;
