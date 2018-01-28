@@ -66,7 +66,9 @@ var loginPage = Object.create(page, {
             return this.typeTextInInput(this.usernameInput, 'su')
                 .then(() => this.typeTextInInput(loginPage.passwordInput, 'password'))
                 .then(() => this.waitForLoginButtonVisible(1000))
-                .then(() => this.doClick(loginPage.loginButton));
+                .then(() => this.doClick(loginPage.loginButton)).catch(err=> {
+                    throw new Error('Error when try to login  ' + err);
+                })
         }
     },
 });

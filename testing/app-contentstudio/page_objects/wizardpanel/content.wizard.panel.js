@@ -55,18 +55,30 @@ var contentWizardPanel = Object.create(page, {
     },
     waitForSaveButtonEnabled: {
         value: function () {
-            return this.waitForEnabled(this.saveButton, appConst.TIMEOUT_3);
+            return this.waitForEnabled(this.saveButton, appConst.TIMEOUT_3).catch(()=> {
+                return false;
+            })
         }
     },
     waitForSaveButtonDisabled: {
         value: function () {
-            return this.waitForDisabled(this.saveButton, appConst.TIMEOUT_3);
+            return this.waitForDisabled(this.saveButton, appConst.TIMEOUT_3).catch(()=> {
+                return false;
+            })
         }
     },
     waitForSaveButtonVisible: {
         value: function () {
             return this.waitForVisible(this.saveButton, appConst.TIMEOUT_3).catch(err=> {
-                return this.doCatch('err_save_button_vivsible', err);
+                return this.doCatch('err_save_button_vivsible', 'Save button is not visible ' + err);
+            });
+        }
+    },
+
+    waitForSavedButtonVisible: {
+        value: function () {
+            return this.waitForVisible(this.savedButton, appConst.TIMEOUT_3).catch(err=> {
+                return this.doCatch('err_saved_button_vivsible', err);
             });
         }
     },
@@ -77,7 +89,7 @@ var contentWizardPanel = Object.create(page, {
     },
     clearDisplayNameInput: {
         value: function () {
-            return this.clearElement(this.displayNameInput);
+            return this.clearElement(this.displayNameInput).pause(500);
         }
     },
     isDisplayNameInputVisible: {
