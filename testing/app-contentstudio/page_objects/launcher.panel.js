@@ -38,7 +38,10 @@ var launcherPanel = Object.create(page, {
     },
     clickOnContentStudioLink: {
         value: function () {
-            return this.doClick(this.contentStudioLink);
+            return this.doClick(this.contentStudioLink).catch(err=> {
+                this.saveScreenshot("err_cs_link");
+                throw new Error('error when `Content Studio` link was clicked');
+            })
         }
     },
     waitForPanelVisible: {

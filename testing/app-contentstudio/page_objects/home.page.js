@@ -18,7 +18,14 @@ var homePage = Object.create(page, {
     },
     waitForXpTourVisible: {
         value: function (ms) {
-            return this.waitForVisible(`${xpTourDialog.container}`, ms);
+            return this.waitForVisible(`${xpTourDialog.container}`, ms).catch(err=> {
+                return false;
+            })
+        }
+    },
+    isXpTourVisible: {
+        value: function (ms) {
+            return this.isVisible(`${xpTourDialog.container}`, ms);
         }
     },
     waitForLoaded: {
