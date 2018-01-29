@@ -151,7 +151,8 @@ module.exports = Object.create(page, {
                 return this.doCatch('err_uninstall_button', err);
             });
         }
-    }, waitForUninstallButtonDisabled: {
+    },
+    waitForUninstallButtonDisabled: {
         value: function () {
             return this.waitForEnabled(XPath.unInstallButton, 3000, true).catch(err=> {
                 return this.doCatch('err_uninstall_button', 'Uninstall button should be disabled ' + err);
@@ -295,7 +296,9 @@ module.exports = Object.create(page, {
         value: function () {
             return this.waitForNotVisible(`${XPath.contextMenu}`, 1000).catch((err) => {
                 console.log("Context menu is still displayed");
-                throw Error('Context menu is still visible');
+                return this.isVisible(`${XPath.contextMenu}`).then(result=> {
+                    return false;
+                })
             });
         }
     },
@@ -304,7 +307,7 @@ module.exports = Object.create(page, {
         value: function (name) {
             return this.waitForVisible(`${XPath.contextMenu}`, 1000).catch((err) => {
                 console.log("Context menu is not displayed");
-                throw Error('Context menu is not visible');
+                throw Error('Context menu is not visible' + err);
             });
         }
     },

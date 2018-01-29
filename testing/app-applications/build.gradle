@@ -39,14 +39,16 @@ ext {
     reportsDir = "$buildDir${File.separator}repots"
     distroDir = "$unpackDir${File.separator}enonic-xp-$xpVersion"
     deployDir = "$distroDir${File.separator}home${File.separator}deploy"
+    appDir = "$projectDir${File.separator}test-applications"
     xpHome = "$distroDir${File.separator}home"
 }
 
 task copyApps( type: Copy ) {
-    from '/test-applications/'
-    //from '../test-applications/simple-page/build/libs/'
-    //from '../test-applications/myfirstapp/build/libs/'
-    //from '../test-applications/first-application/build/libs/'
+    println '*********************************************************'
+    println '* task started:copyApps  *'
+    println '*********************************************************'
+    println appDir
+    from file( appDir )
     include '*.jar'
     into file( deployDir )
 }

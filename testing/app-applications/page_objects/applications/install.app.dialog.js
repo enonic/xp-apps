@@ -5,19 +5,19 @@
 const page = require('../page');
 const elements = require('../../libs/elements');
 const dialog = {
-    container:             `//div[contains(@id,'InstallAppDialog')]`,
-    grid:                  `//div[contains(@id,'MarketAppsTreeGrid')]`,
-    filterInput:           `//div[contains(@id,'ApplicationInput')]/input`,
-    appByDisplayName:      function (displayName) {
+    container: `//div[contains(@id,'InstallAppDialog')]`,
+    grid: `//div[contains(@id,'MarketAppsTreeGrid')]`,
+    filterInput: `//div[contains(@id,'ApplicationInput')]/input`,
+    appByDisplayName: function (displayName) {
         return `//div[contains(@id,'InstallAppDialog')]//div[contains(@id,'NamesView') and child::h6[contains(@class,'main-name')]]//a[contains(.,'${displayName}')]`
     },
-    firstUninstalledAppDisplayName:     function () {
+    firstUninstalledAppDisplayName: function () {
         return `(${dialog.container}//div[@class='slick-viewport']//div[contains(@class,'slick-row') and descendant::a[@class='install']]//h6[contains(@class,'main-name')])[1]`;
     },
-    firstInstallLink:     function () {
+    firstInstallLink: function () {
         return `(${elements.slickRow(dialog.container)}//a[@class='install'])[1]`
     },
-    installLinkByName:     function (displayName) {
+    installLinkByName: function (displayName) {
         return `${elements.slickRowByDisplayName(dialog.container, displayName)}//a[@class='install']`
     },
     installedStatusByName: function (displayName) {
@@ -26,22 +26,22 @@ const dialog = {
 };
 const installAppDialog = Object.create(page, {
 
-    searchInput:            {
+    searchInput: {
         get: function () {
             return `${dialog.container}${dialog.filterInput}`;
         }
     },
-    grid:                   {
+    grid: {
         get: function () {
             return `${dialog.container}${dialog.grid}`;
         }
     },
-    cancelButton:           {
+    cancelButton: {
         get: function () {
             return `${dialog.container}${elements.CANCEL_BUTTON_TOP}`;
         }
     },
-    waitForAppInstalled:    {
+    waitForAppInstalled: {
         value: function (displayName) {
             return this.waitForVisible(dialog.installedStatusByName(displayName), 20000);
         }
@@ -54,7 +54,7 @@ const installAppDialog = Object.create(page, {
             })
         }
     },
-    waitForOpened:          {
+    waitForOpened: {
         value: function () {
             return this.waitForVisible(this.searchInput, 3000).catch(err => {
                 this.saveScreenshot('err_install_dialog_load');
@@ -62,7 +62,15 @@ const installAppDialog = Object.create(page, {
             });
         }
     },
-    waitForClosed:          {
+    waitForGridLoaded: {
+        value: function () {
+            return this.waitForVisible(this.grid + elements.H6_DISPLAY_NAME, 3000).catch(err => {
+                this.saveScreenshot('err_install_dialog_grid');
+                throw new Error('New Content dialog, grid was not loaded! ' + err);
+            });
+        }
+    },
+    waitForClosed: {
         value: function () {
             return this.waitForNotVisible(`${dialog.container}`, 3000).catch(error => {
                 this.saveScreenshot('err_install_dialog_close');
@@ -70,7 +78,7 @@ const installAppDialog = Object.create(page, {
             });
         }
     },
-    waitForInstallLink:          {
+    waitForInstallLink: {
         value: function (displayName) {
             const selector = dialog.installLinkByName(displayName);
             return this.waitForVisible(selector, 3000).catch(err => {
@@ -79,12 +87,12 @@ const installAppDialog = Object.create(page, {
             });
         }
     },
-    getPlaceholderMessage:  {
+    getPlaceholderMessage: {
         value: function () {
             return this.getAttribute(this.searchInput, 'placeholder');
         }
     },
-    clickOnInstallAppLink:  {
+    clickOnInstallAppLink: {
         value: function (displayName) {
             const selector = dialog.installLinkByName(displayName);
             return this.waitForVisible(selector, 5000).then(() => {
@@ -94,7 +102,7 @@ const installAppDialog = Object.create(page, {
             });
         }
     },
-    clickOnFirstInstallAppLink:  {
+    clickOnFirstInstallAppLink: {
         value: function () {
             const selector = dialog.firstInstallLink();
             return this.waitForVisible(selector, 5000).then(() => {
@@ -104,7 +112,7 @@ const installAppDialog = Object.create(page, {
             });
         }
     },
-    getFirstInstallAppName:  {
+    getFirstInstallAppName: {
         value: function () {
             const selector = dialog.firstUninstalledAppDisplayName();
             return this.waitForVisible(selector, 5000).then(() => {
@@ -114,12 +122,18 @@ const installAppDialog = Object.create(page, {
             });
         }
     },
-    typeSearchText:         {
+    getApplicationNames: {
+        value: function () {
+            let items = `${dialog.grid}` + `${elements.H6_DISPLAY_NAME}`;
+            return this.getTextFromDisplayedElements(items);
+        }
+    },
+    typeSearchText: {
         value: function (text) {
             return this.typeTextInInput(this.searchInput, text);
         }
     },
-    isApplicationPresent:   {
+    isApplicationPresent: {
         value: function (displayName) {
             let selector = `${dialog.appByDisplayName(displayName)}`;
             return this.waitForVisible(selector, 2000);
@@ -131,6 +145,13 @@ const installAppDialog = Object.create(page, {
             let selector = `${dialog.appByDisplayName(displayName)}`;
             return this.waitForVisible(selector, 1000).then(()=> {
                 return this.doClick()
+            })
+        }
+    },
+    isCancelButtonTopVisible: {
+        value: function () {
+            return this.isVisible(this.cancelButton).catch((err)=> {
+                throw new Error('error check the Cancel button on the Insatll dialog');
             })
         }
     },

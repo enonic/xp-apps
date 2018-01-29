@@ -10,7 +10,7 @@ const appBrowsePanel = require('../page_objects/applications/applications.browse
 // Define the test suite: a test script block or suite
 describe('Open Apllications app and verify that grid is loaded and correct title should be displayed', function () {
     //Suite-level timeouts may be applied to entire test “suites”, or disabled via this.timeout(0)
-    this.timeout(70000);
+    this.timeout(appConst.SUITE_TIMEOUT);
     //start the browse
     webDriverHelper.setupBrowser();
 
