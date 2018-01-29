@@ -26,6 +26,14 @@
                    this.items.map(item => item.getId()) : [];
         }
 
+        public hasItemId(itemId: ContentId) {
+            if (!this.items || this.items.length === 0) {
+                return false;
+            }
+
+            return this.items.map(item => item.getId().toString()).indexOf(itemId.toString()) > -1;
+        }
+
         public getExcludeChildrenIds(): ContentId[] {
             return this.items ?
                    this.items.filter(item => !item.isIncludeChildren()).map(item => item.getId()) : [];

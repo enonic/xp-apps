@@ -31,6 +31,13 @@ exports.getUserStore = function () {
                     ]
                 },
                 {
+                    "name": "sessionTimeout",
+                    "type": "Long",
+                    "values": [
+                        {}
+                    ]
+                },
+                {
                     name: 'forgotPassword',
                     type: 'PropertySet',
                     values: [
@@ -57,6 +64,11 @@ exports.getUserStore = function () {
                             ]
                         }
                     ]
+                },
+                {
+                    "name": "emptySet",
+                    "type": "PropertySet",
+                    "values": []
                 }
             ]
         }

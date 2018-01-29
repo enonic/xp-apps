@@ -56,6 +56,11 @@ WebDriverHelper.prototype.setupBrowser = function setupBrowser() {
     after(function () {
         return _this.browser.end();
     });
+    afterEach(function () {
+        let state = this.currentTest.state ? this.currentTest.state.toString().toUpperCase() : 'FAILED';
+        return console.log('Test:', this.currentTest.title, ' is  ' + state);
+
+    });
 };
 
 module.exports = new WebDriverHelper();

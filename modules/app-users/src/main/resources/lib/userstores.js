@@ -55,12 +55,14 @@ module.exports = {
     create: function(params) {
         var name = common.required(params, 'key');
 
+        log.info(JSON.stringify(params.authConfig));
+
         return authLib.createUserStore({
             name: common.prettifyName(name),
             displayName: params.displayName,
             description: params.description,
             authConfig: params.authConfig,
-            permissions: params.permissions,
+            permissions: params.permissions
         });
     },
     update: function(params) {
