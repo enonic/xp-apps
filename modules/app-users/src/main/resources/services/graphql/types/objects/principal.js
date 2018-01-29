@@ -31,28 +31,10 @@ exports.PrincipalType = graphQl.createObjectType({
     description: 'Domain representation of a principal',
     interfaces: [graphQlUserItem.UserItemType],
     fields: {
-        id: {
-            type: graphQl.GraphQLID,
-            resolve: function(env) {
-                return env.source._id;
-            }
-        },
         key: {
             type: graphQl.GraphQLString,
             resolve: function(env) {
                 return env.source.key || env.source._id;
-            }
-        },
-        name: {
-            type: graphQl.GraphQLString,
-            resolve: function(env) {
-                return env.source._name;
-            }
-        },
-        path: {
-            type: graphQl.GraphQLString,
-            resolve: function(env) {
-                return env.source._path;
             }
         },
         displayName: {
