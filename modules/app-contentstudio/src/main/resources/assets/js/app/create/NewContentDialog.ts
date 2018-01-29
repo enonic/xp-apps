@@ -5,7 +5,6 @@ import {NewContentDialogItemSelectedEvent} from './NewContentDialogItemSelectedE
 import {NewMediaUploadEvent} from './NewMediaUploadEvent';
 import {NewContentEvent} from './NewContentEvent';
 import {FilterableItemsList} from './FilterableItemsList';
-
 import GetAllContentTypesRequest = api.schema.content.GetAllContentTypesRequest;
 import GetNearestSiteRequest = api.content.resource.GetNearestSiteRequest;
 import Content = api.content.Content;
@@ -300,7 +299,8 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
     }
 }
 
-export class NewContentDialogHeader extends api.ui.dialog.ModalDialogHeader {
+export class NewContentDialogHeader
+    extends api.ui.dialog.DefaultModalDialogHeader {
 
     private pathEl: api.dom.PEl;
 

@@ -40,6 +40,80 @@ import PrincipalComboBoxBuilder = api.ui.security.PrincipalComboBoxBuilder;
 import PrincipalType = api.security.PrincipalType;
 import PrincipalLoader = api.security.PrincipalLoader;
 import ComboBox = api.ui.selector.combobox.ComboBox;
+import InPlaceTextInput = api.ui.text.InPlaceTextInput;
+import ModalDialogHeader = api.ui.dialog.ModalDialogHeader;
+
+class IssueDetailsInPlaceTextInput
+    extends InPlaceTextInput {
+
+    private titleId: number;
+
+    constructor(title?: string) {
+        super(title);
+    }
+
+    public formatTextToDisplay(inputValue: string): string {
+        return `${inputValue}<span class="title-id">#${this.titleId}</span>`;
+    }
+
+    setTitleId(id: number): IssueDetailsInPlaceTextInput {
+        this.titleId = id;
+        return this;
+    }
+}
+
+
+class IssueDetailsDialogHeader
+    extends api.dom.DivEl
+    implements ModalDialogHeader {
+
+    private input: IssueDetailsInPlaceTextInput;
+    private titleChangedListeners: { (newTitle: string, oldTitle: string): void }[] = [];
+
+    constructor(title: string) {
+        super('modal-dialog-header');
+        this.input = new IssueDetailsInPlaceTextInput(title);
+        this.input.onEditModeChanged((editMode, newValue, oldValue) => {
+            if (!editMode && newValue != oldValue) {
+                this.notifyTitleChanged(newValue, oldValue);
+            }
+        });
+        this.appendChild(this.input);
+    }
+
+    setTitle(value: string, escapeHtml: boolean = true): IssueDetailsDialogHeader {
+        this.input.setValue(value);
+        return this;
+    }
+
+    getTitle(): string {
+        return this.input.getValue();
+    }
+
+    setTitleId(value: number): IssueDetailsDialogHeader {
+        this.input.setTitleId(value);
+        return this;
+    }
+
+    cancelEdit() {
+        if (this.input.isEditMode()) {
+            this.input.setEditMode(false, true);
+        }
+    }
+
+    onTitleChanged(listener: (newTitle: string, oldTitle: string) => void) {
+        this.titleChangedListeners.push(listener);
+    }
+
+    unTitleChanged(listener: (newTitle: string, oldTitle: string) => void) {
+        this.titleChangedListeners = this.titleChangedListeners.filter(curr => curr !== listener);
+    }
+
+    private notifyTitleChanged(newTitle: string, oldTitle: string) {
+        this.titleChangedListeners.forEach(listener => listener(newTitle, oldTitle));
+    }
+}
+
 
 export class IssueDetailsDialog
     extends SchedulableDialog {
@@ -347,7 +421,7 @@ export class IssueDetailsDialog
                 this.getItemList().clearItems();
             }
 
-            this.setTitle(this.createTitleText(issue), false);
+            (<IssueDetailsDialogHeader>this.header).setTitleId(issue.getIndex()).setTitle(issue.getTitle());
 
             this.detailsSubTitle.setIssue(issue, true);
             this.toggleControlsAccordingToStatus(issue.getIssueStatus());
@@ -411,6 +485,14 @@ export class IssueDetailsDialog
 
         this.errorTooltip = new Tooltip(this.publishButton, i18n('dialog.publish.invalidError'), 500);
         this.errorTooltip.setActive(false);
+    }
+
+    protected createHeader(title: string): api.ui.dialog.ModalDialogHeader {
+        const header = new IssueDetailsDialogHeader(title);
+        header.onTitleChanged((newTitle, oldTitle) => {
+            this.debouncedUpdateIssue(this.issue.getIssueStatus(), true);
+        });
+        return header;
     }
 
     private createBackButton() {
@@ -497,6 +579,7 @@ export class IssueDetailsDialog
         const statusChanged = newStatus != this.issue.getIssueStatus();
 
         return new UpdateIssueRequest(this.issue.getId())
+            .setTitle(this.header.getTitle())
             .setStatus(newStatus)
             .setAutoSave(autoSave)
             .setApprovers(this.assigneesCombobox.getSelectedDisplayValues().map(o => o.getKey()))
@@ -580,6 +663,7 @@ export class IssueDetailsDialog
 
     close() {
         this.getItemList().clearExcludeChildrenIds();
+        (<IssueDetailsDialogHeader> this.header).cancelEdit();
         super.close(false);
     }
 
@@ -610,9 +694,5 @@ export class IssueDetailsDialog
 
     protected hasSubDialog(): boolean {
         return true;
-    }
-
-    private createTitleText(issue: Issue) {
-        return `${issue.getTitle()}<span class="title-id">#${issue.getIndex()}</span>`;
     }
 }
