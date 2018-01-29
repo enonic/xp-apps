@@ -54,7 +54,12 @@ WebDriverHelper.prototype.setupBrowser = function setupBrowser() {
         return _this.browser;
     });
     after(function () {
+        console.log('webdriverio #####################  ' + 'browser is closed!');
         return _this.browser.end();
+    });
+    afterEach(function () {
+        return console.log('Test:', this.currentTest.title, ' is  ' + this.currentTest.state.toString().toUpperCase());
+
     });
 };
 

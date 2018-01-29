@@ -26,6 +26,12 @@ module.exports = graphQl.createObjectType({
                 return userstores.getByKey(key);
             }
         },
+        defaultUserStore: {
+            type: graphQlObjectTypes.UserStoreType,
+            resolve: function (env) {
+                return userstores.getDefault();
+            }
+        },
         principalsConnection: {
             type: graphQlObjectTypes.PrincipalConnectionType,
             args: {

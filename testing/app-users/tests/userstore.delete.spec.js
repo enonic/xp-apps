@@ -58,7 +58,7 @@ describe('User Store confirm and delete in wizard and in browse panel', function
             return testUtils.openWizardAndSaveUserStore(userStore).then(()=> {
                 return userBrowsePanel.doClickOnCloseTabAndWaitGrid(userStore.displayName);
             }).pause(1000).then(()=> {
-                testUtils.findAndSelectItem(userStore.displayName);
+                return testUtils.findAndSelectItem(userStore.displayName);
             }).then(()=> {
                 return userBrowsePanel.waitForDeleteButtonEnabled();
             }).then(()=> {

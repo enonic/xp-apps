@@ -33,6 +33,20 @@ describe('Role Wizard and Statistics Panel spec', function () {
                 expect(result).to.equal('Role was created');
             })
         });
+    //verifies: Incorrect message appears when try to create a role with name that already in use #93
+    it(`GIVEN 'role' wizard is opened WHEN the name that already in use has been typed THEN correct notification message should be present`,
+        ()=> {
+            return testUtils.clickOnRolesFolderAndOpenWizard().then(()=> {
+                return roleWizard.typeDisplayName(testRole.displayName);
+            }).pause(400).then(()=> {
+                return roleWizard.waitAndClickOnSave();
+            }).then(()=> {
+                return roleWizard.waitForErrorNotificationMessage();
+            }).then(result=> {
+                let msg = `Principal [` + testRole.displayName + `] could not be created. A principal with that name already exists`
+                assert.strictEqual(result, msg, 'expected notification message should be displayed');
+            })
+        });
 
     it(`GIVEN existing 'Role' WHEN 'Super User' has been added in members THEN the member should appear on the wizard page`, () => {
         return testUtils.findAndSelectItem(testRole.displayName).then(()=> {
@@ -71,12 +85,12 @@ describe('Role Wizard and Statistics Panel spec', function () {
         () => {
             return testUtils.selectRoleAndOpenWizard(testRole.displayName).then(()=> {
                 return roleWizard.removeMember(appConst.SUPER_USER)
-            }).then(()=>{
+            }).then(()=> {
                 // role has been saved and the wizard closed
                 return testUtils.saveAndCloseWizard(testRole.displayName);
             }).then(()=> {
                 return roleStatisticsPanel.getDisplayNameOfMembers();
-            }).then((members)=>{
+            }).then((members)=> {
                 expect(members.length).to.equal(0);
             })
         });

@@ -19,13 +19,14 @@ describe('double.content.config.spec:  verifies `Min/max value config for Double
 
     it(`WHEN site with content types has been added THEN the site should be listed in the grid`,
         () => {
+            this.bail(1);
             let displayName = contentBuilder.generateRandomName('site');
             SITE = contentBuilder.buildSite(displayName, 'description', ['All Content Types App']);
             return studioUtils.doAddSite(SITE).then(()=> {
             }).then(()=> {
                 return studioUtils.findAndSelectItem(SITE.displayName);
             }).then(()=> {
-                return contentBrowsePanel.isItemDisplayed(SITE.displayName);
+                return contentBrowsePanel.waitForContentDisplayed(SITE.displayName);
             }).then(isDisplayed=> {
                 assert.isTrue(isDisplayed, 'site should be listed in the grid');
             });

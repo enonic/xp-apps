@@ -21,7 +21,7 @@ function getApplication(): api.app.Application {
 
 function startLostConnectionDetector() {
     let messageId;
-    let lostConnectionDetector = new api.system.LostConnectionDetector();
+    let lostConnectionDetector = new api.system.ConnectionDetector();
     lostConnectionDetector.setAuthenticated(true);
     lostConnectionDetector.onConnectionLost(() => {
         api.notify.NotifyManager.get().hide(messageId);

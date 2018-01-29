@@ -58,7 +58,3 @@ var confirmationDialog = Object.create(page, {
     },
 });
 module.exports = confirmationDialog;
-
-
-
-
