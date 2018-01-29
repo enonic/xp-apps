@@ -30,7 +30,7 @@ apply plugin: 'com.enonic.defaults'
 enonic {
     publishRepo = 'inhouse'
 }
-task buildApplications( dependsOn: ['test-applications:simple-page:install'] )
+
 ext {
     xpVersion = '6.14.0-SNAPSHOT'
     unpackDir = "$buildDir${File.separator}install"
@@ -59,10 +59,6 @@ task copyApps( type: Copy ) {
 dependencies {
     compile "com.enonic.xp:core-api:$xpVersion"
     distro "com.enonic.xp:distro:$xpVersion@zip"
-}
-
-task deleteFolders( type: Delete ) {
-    delete unpackDir, screenshotsDir, reportsDir
 }
 
 task unpackDistro( type: Copy ) {
@@ -115,6 +111,13 @@ tasks.withType( Test ) {
         displayGranularity = 0
     }
 }
+
+task deleteFolders( type: Delete ) {
+    delete unpackDir, screenshotsDir, reportsDir
+}
+
+task buildApplications( dependsOn: ['test-applications:simple-page:install'] )
+
 //run the tusk in the gulpfile.js. Name of the task is 'test'
 task testContentStudioApp( type: GulpTask, dependsOn: [npmInstall, startServer, copyApps,] ) {
     inputs.files fileTree( dir: '.' )
