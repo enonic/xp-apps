@@ -60,6 +60,16 @@ exports.getPermissions = function (params) {
 };
 
 /**
+ * Returns default user store permissions.
+ *
+ * @returns {object[]} Returns the list of principals with access level.
+ */
+exports.defaultPermissions = function () {
+    var bean = __.newBean('com.enonic.xp.app.users.lib.auth.DefaultPermissionsHandler');
+    return __.toNativeObject(bean.defaultPermissions());
+};
+
+/**
  * Creates a user store.
  *
  * @param {string} name User store name.
