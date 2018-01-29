@@ -54,6 +54,11 @@ exports.modifyUserStore = function () {
                             ]
                         }
                     ]
+                },
+                {
+                    name: 'emptySet',
+                    type: 'PropertySet',
+                    values: []
                 }
             ]
         }
@@ -113,6 +118,11 @@ exports.modifyUserStore = function () {
                                 ]
                             }
                         ]
+                    },
+                    {
+                        name: 'emptySet',
+                        type: 'PropertySet',
+                        values: []
                     }
                 ]
             };
