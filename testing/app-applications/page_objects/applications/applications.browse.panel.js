@@ -13,6 +13,11 @@ const XPath = {
     startButton: `//div[contains(@id,'ApplicationBrowseToolbar')]/button[contains(@id, 'ActionButton') and child::span[contains(.,'Start')]]`,
     selectAllCheckbox: `//div[@id='api.ui.treegrid.actions.SelectionController']`,
     checkboxes: `(//div[contains(@class,'slick-cell-checkboxsel')])`,
+    appState: "//div[contains(@class,'state')]",
+    appStateByName: displayName => `${elements.slickRowByDisplayName(XPath.container, displayName)}${XPath.appState}`,
+    enabledContextMenuButton: function (name) {
+        return `${XPath.contextMenu}/li[contains(@id,'MenuItem') and not(contains(@class,'disabled')) and contains(.,'${name}')]`;
+    },
     contextMenuButton: function (name, state) {
         return `${XPath.contextMenu}/li[contains(@id,'MenuItem') and contains(@class,'${state}') and contains(.,'${name}')]`;
     },
@@ -312,7 +317,7 @@ module.exports = Object.create(page, {
         }
     },
 
-    getContextButton: {
+    waitForContextButtonVisible: {
         value: function (name, state) {
             var nameXpath = XPath.contextMenuButton(name, state || '');
             return this.waitForVisible(nameXpath, 1000).catch((err) => {
@@ -320,6 +325,27 @@ module.exports = Object.create(page, {
                 throw Error('Failed to find context menu button ' + name);
             });
         }
+    },
+
+    waitForContextButtonEnabled: {
+        value: function (name) {
+            var nameXpath = XPath.enabledContextMenuButton(name);
+            return this.waitForVisible(nameXpath, 1000).catch((err) => {
+                console.log("Failed to find context menu button" + err);
+                return false;
+            });
+        }
+    },
+
+    getApplicationState: {
+        value: function (appDisplayName) {
+            var stateXpath = XPath.appStateByName(appDisplayName);
+            return this.getText(stateXpath).catch((err) => {
+                console.log("Failed to get app-state " + appDisplayName + '  ' + err);
+                throw new Error('App-state was not found')
+            });
+        }
     }
+
 
 });
