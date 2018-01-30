@@ -31,12 +31,6 @@ exports.PrincipalType = graphQl.createObjectType({
     description: 'Domain representation of a principal',
     interfaces: [graphQlUserItem.UserItemType],
     fields: {
-        id: {
-            type: graphQl.GraphQLID,
-            resolve: function(env) {
-                return env.source._id;
-            }
-        },
         key: {
             type: graphQl.GraphQLString,
             resolve: function(env) {
@@ -45,13 +39,13 @@ exports.PrincipalType = graphQl.createObjectType({
         },
         name: {
             type: graphQl.GraphQLString,
-            resolve: function(env) {
+            resolve: function (env) {
                 return env.source._name;
             }
         },
         path: {
             type: graphQl.GraphQLString,
-            resolve: function(env) {
+            resolve: function (env) {
                 return env.source._path;
             }
         },

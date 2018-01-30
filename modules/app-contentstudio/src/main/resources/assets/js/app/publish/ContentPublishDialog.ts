@@ -44,7 +44,7 @@ export class ContentPublishDialog
             title: i18n('dialog.publish'),
                 dialogSubName: i18n('dialog.publish.resolving'),
             dependantsDescription: i18n('dialog.publish.dependants'),
-            showDependantList: true,
+            showDependantList: false,
                 processingLabel: `${i18n('field.progress.publishing')}...`,
                 processHandler: () => {
                     new ContentPublishPromptEvent([]).fire();
@@ -79,6 +79,10 @@ export class ContentPublishDialog
                     }
                 });
             });
+
+            if (this.publishProcessor.containsInvalidDependants()) {
+                this.setDependantListVisible(true);
+            }
 
             this.loadMask.hide();
             this.updateSubTitleShowScheduleAndButtonCount();
@@ -203,10 +207,6 @@ export class ContentPublishDialog
 
     public isAllPublishable(): boolean {
         return this.publishProcessor.isAllPublishable();
-    }
-
-    public isContainsInvalid(): boolean {
-        return this.publishProcessor.isContainsInvalid();
     }
 
     private reloadPublishDependencies(resetDependantItems?: boolean): wemQ.Promise<void> {
@@ -357,7 +357,7 @@ export class ContentPublishDialog
     }
 
     private areItemsAndDependantsValid(): boolean {
-        return !this.isContainsInvalid();
+        return !this.publishProcessor.containsInvalidItems();
     }
 
     protected hasSubDialog(): boolean {

@@ -19,12 +19,12 @@ plugins {
     id 'maven'
     id 'com.moowork.node' version '0.13'
     id 'com.moowork.gulp' version '0.13'
-
 }
 
 configurations {
     distro
 }
+
 apply plugin: 'com.enonic.defaults'
 
 enonic {
@@ -35,18 +35,21 @@ ext {
     xpVersion = '6.14.0-SNAPSHOT'
     unpackDir = "$buildDir${File.separator}install"
     screenshotsDir = "$buildDir${File.separator}screenshots"
-    reportsDir = "$buildDir${File.separator}repots"
+    reportsDir = "$buildDir${File.separator}reports"
     distroDir = "$unpackDir${File.separator}enonic-xp-$xpVersion"
     deployDir = "$distroDir${File.separator}home${File.separator}deploy"
+    appDir = "$projectDir${File.separator}test-applications"
+    allureResultsDir = "allure-results"
     xpHome = "$distroDir${File.separator}home"
+    xpServer = new ServerInstance()
 }
 
 task copyApps( type: Copy ) {
-    from '/test-applications/'
-    from '/test-applications/'
-    from '/test-applications/'
-    from '/test-applications/'
-
+    println '*********************************************************'
+    println '* task started:copyApps  *'
+    println '*********************************************************'
+    println appDir
+    from file( appDir )
     //from '../test-applications/simple-page/build/libs/'
     //from '../test-applications/myfirstapp/build/libs/'
     //from '../test-applications/first-application/build/libs/'
@@ -69,9 +72,26 @@ task unpackDistro( type: Copy ) {
     into file( unpackDir )
 }
 
-ext {
-    xpServer = new ServerInstance()
+task zipScreenshots( type: Zip ) {
+    from screenshotsDir
+    include '*'
+    include '*/*'
+    classifier 'screenshots'
 }
+
+task zipAllure( type: Zip ) {
+    from allureResultsDir
+    include '*'
+    include '*/*'
+    classifier 'allureResults'
+}
+
+artifacts {
+    archives zipScreenshots
+    archives zipAllure
+}
+
+jar.enabled = true
 
 task startServer( dependsOn: unpackDistro ) {
     doLast {
@@ -81,8 +101,10 @@ task startServer( dependsOn: unpackDistro ) {
     }
 }
 
-task stopServer << {
-    xpServer.stop()
+task stopServer {
+    doLast {
+        xpServer.stop()
+    }
 }
 
 tasks.withType( Test ) {

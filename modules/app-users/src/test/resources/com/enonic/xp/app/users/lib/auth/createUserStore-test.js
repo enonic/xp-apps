@@ -31,6 +31,11 @@ function createAndAssert(params) {
                     ]
                 },
                 {
+                    name: "sessionTimeout",
+                    type: "Long",
+                    values: [{}]
+                },
+                {
                     name: 'forgotPassword',
                     type: 'PropertySet',
                     values: [
@@ -57,9 +62,14 @@ function createAndAssert(params) {
                             ]
                         }
                     ]
+                },
+                {
+                    name: 'emptySet',
+                    type: 'PropertySet',
+                    values: []
                 }
             ]
-        },
+        }
     };
 
     t.assertJsonEquals(expectedJson, result);
@@ -92,6 +102,15 @@ exports.createUserStore = function () {
                     ]
                 },
                 {
+                    name: "sessionTimeout",
+                    type: "Long",
+                    values: [
+                        {
+                            v: null
+                        }
+                    ]
+                },
+                {
                     name: 'forgotPassword',
                     type: 'PropertySet',
                     values: [
@@ -118,6 +137,11 @@ exports.createUserStore = function () {
                             ]
                         }
                     ]
+                },
+                {
+                    name: 'emptySet',
+                    type: 'PropertySet',
+                    values: []
                 }
             ]
         },

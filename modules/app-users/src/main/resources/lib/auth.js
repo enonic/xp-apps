@@ -60,6 +60,16 @@ exports.getPermissions = function (params) {
 };
 
 /**
+ * Returns default user store permissions.
+ *
+ * @returns {object[]} Returns the list of principals with access level.
+ */
+exports.defaultPermissions = function () {
+    var bean = __.newBean('com.enonic.xp.app.users.lib.auth.DefaultPermissionsHandler');
+    return __.toNativeObject(bean.defaultPermissions());
+};
+
+/**
  * Creates a user store.
  *
  * @param {string} name User store name.
@@ -97,4 +107,17 @@ exports.modifyUserStore = function (params) {
     bean.permissions = __.toScriptValue(params.permissions);
 
     return __.toNativeObject(bean.modifyUserStore());
+};
+
+/**
+ * Delete the user store by the key.
+ *
+ * @param {object} params JSON parameters.
+ * @param {string} params.keys Array of user store keys to delete.
+ * @returns {object} the user stores specified, or null if it doesn't exist.
+ */
+exports.deleteUserStores = function (params) {
+    var bean = __.newBean('com.enonic.xp.app.users.lib.auth.DeleteUserStoresHandler');
+    bean.userStoreKeys = __.toScriptValue(required(params, 'keys'));
+    return __.toNativeObject(bean.deleteUserStores());
 };

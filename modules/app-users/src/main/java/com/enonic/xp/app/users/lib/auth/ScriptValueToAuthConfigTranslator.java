@@ -3,8 +3,6 @@ package com.enonic.xp.app.users.lib.auth;
 import java.util.List;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.data.Property;
-import com.enonic.xp.data.PropertyArray;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.Value;
@@ -43,10 +41,18 @@ public final class ScriptValueToAuthConfigTranslator
         final ValueType type = ValueTypes.getByName( array.getMember( "type" ).getValue( String.class ) );
         final List<ScriptValue> values = array.getMember( "values" ).getArray();
 
-        for ( final ScriptValue value : values )
+        if ( values.isEmpty() )
         {
-            addPropertyValue( value, type, name, parent );
+            addPropertyValue( null, type, name, parent );
         }
+        else
+        {
+            for ( final ScriptValue value : values )
+            {
+                addPropertyValue( value, type, name, parent );
+            }
+        }
+
     }
 
     private static void addPropertyValue( final ScriptValue propertyValue, final ValueType type, final String name, PropertySet parent )
@@ -54,12 +60,11 @@ public final class ScriptValueToAuthConfigTranslator
         final Value value;
         if ( type.equals( ValueTypes.PROPERTY_SET ) )
         {
-            if ( propertyValue.hasMember( "set" ) )
+            if ( propertyValue != null && propertyValue.hasMember( "set" ) )
             {
                 final PropertySet newSet = parent.newSet();
                 for ( ScriptValue propertyArray : propertyValue.getMember( "set" ).getArray() )
                 {
-                    
                     addPropertyArray( propertyArray, newSet );
                 }
                 value = ValueFactory.newPropertySet( newSet );
@@ -71,7 +76,8 @@ public final class ScriptValueToAuthConfigTranslator
         }
         else
         {
-            value = type.fromJsonValue( propertyValue.getMember( "v" ).getValue() );
+            final ScriptValue member = propertyValue.getMember( "v" );
+            value = type.fromJsonValue( member == null ? null : member.getValue() );
         }        
         parent.addProperty( name, value );
     }

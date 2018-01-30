@@ -1,6 +1,11 @@
 import {GraphQlRequest} from '../GraphQlRequest';
 import DeleteUserStoreResult = api.security.DeleteUserStoreResult;
 import UserStoreKey = api.security.UserStoreKey;
+import DeleteUserStoreResultJson = api.security.DeleteUserStoreResultJson;
+
+type DeleteUserStoresResult = {
+    deleteUserStores: DeleteUserStoreResultJson[]
+}
 
 export class DeleteUserStoreRequest
     extends GraphQlRequest<any, DeleteUserStoreResult[]> {
@@ -29,8 +34,8 @@ export class DeleteUserStoreRequest
     }
 
     sendAndParse(): wemQ.Promise<DeleteUserStoreResult[]> {
-        return this.mutate().then(json => {
-            return json.deleteUserStores.map(DeleteUserStoreResult.fromJson);
+        return this.mutate().then((response: DeleteUserStoresResult) => {
+            return response.deleteUserStores.map(DeleteUserStoreResult.fromJson);
         });
     }
 

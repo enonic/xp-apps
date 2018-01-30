@@ -45,7 +45,7 @@ export class GetUserStoreByKeyRequest
         return this.query().then(result => this.userStorefromJson(result.userStore));
     }
 
-    userStorefromJson(us: UserStoreJson) {
+    userStorefromJson(us: UserStoreJson): UserStore {
         if (!us || Object.keys(us).length === 0) {
             return null;
         }
