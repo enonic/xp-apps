@@ -193,7 +193,7 @@ export class ComponentView<COMPONENT extends Component>
         component.unReset(this.resetListener);
     }
 
-    private addComponentContextMenuActions(inspectActionRequired: boolean) {
+    protected addComponentContextMenuActions(inspectActionRequired: boolean) {
         let isFragmentContent = this.liveEditModel.getContent().getType().isFragment();
         let parentIsPage = this.getParentItemView().getType().equals(PageItemType.get());
         let isTopFragmentComponent = parentIsPage && isFragmentContent;
@@ -237,7 +237,7 @@ export class ComponentView<COMPONENT extends Component>
         let isFragmentComponent = this.getType().equals(FragmentItemType.get());
 
         if (!isFragmentComponent && this.liveEditModel.isFragmentAllowed()) {
-            actions.push(new api.ui.Action(i18n('live.view.create.fragment')).onExecuted(() => {
+            actions.push(new api.ui.Action(i18n('live.view.saveAs.fragment')).onExecuted(() => {
                 this.deselect();
                 this.createFragment().then((content: Content): void => {
                     // replace created fragment in place of source component

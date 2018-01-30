@@ -115,7 +115,6 @@ export class TextComponentView
         this.destroyEditor();
         this.editorContainer.remove();
         this.editorContainer = null;
-        this.htmlAreaEditor = null;
     }
 
     private getContent(): api.content.ContentSummary {
@@ -455,6 +454,7 @@ export class TextComponentView
                 //error thrown in FF on tab close - XP-2624
             }
         }
+        this.htmlAreaEditor = null;
     }
 
     private selectText() {
