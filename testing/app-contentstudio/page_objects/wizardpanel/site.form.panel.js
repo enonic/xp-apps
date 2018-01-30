@@ -4,6 +4,7 @@
 
 const page = require('../page');
 const elements = require('../../libs/elements');
+const contentBuilder = require('../../libs/content.builder');
 const loaderComboBox = require('../components/loader.combobox');
 const form = {
     wizardSteps: `//div[contains(@id,'WizardStepsPanel')]`,
@@ -41,7 +42,9 @@ var siteForm = Object.create(page, {
         value: function (appDisplayNames) {
             let result = Promise.resolve();
             appDisplayNames.forEach((displayName)=> {
-                result = result.then(() => this.filterOptionsAndSelectApplication(displayName));
+                result = result.then(() => {
+                    return this.filterOptionsAndSelectApplication(displayName)
+                });
             });
             return result;
         }
@@ -50,6 +53,9 @@ var siteForm = Object.create(page, {
         value: function (displayName) {
             return this.typeTextInInput(this.applicationsOptionsFilterInput, displayName).then(()=> {
                 return loaderComboBox.selectOption(displayName);
+            }).catch(err=> {
+                this.saveScreenshot(contentBuilder.generateRandomName('err_option'));
+                throw new Error('application selector :' + err);
             });
         }
     },

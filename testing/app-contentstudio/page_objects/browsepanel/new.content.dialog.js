@@ -80,7 +80,7 @@ var newContentDialog = Object.create(page, {
                 return this.getBrowser().elementIdClick(result[0].ELEMENT);
             }).catch(err=> {
                 throw new Error('clickOnContentType:' + err);
-            })
+            }).pause(500);
 
         }
     }

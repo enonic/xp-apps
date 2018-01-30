@@ -73,7 +73,7 @@ module.exports = {
         }).then(()=> {
             return this.doCloseCurrentBrowserTab();
         }).then(()=> {
-            this.doSwitchToContentBrowsePanel(webDriverHelper.browser);
+            return this.doSwitchToContentBrowsePanel(webDriverHelper.browser);
         }).pause(2000);
     },
     doAddArticleContent: function (siteName, article) {
@@ -175,18 +175,35 @@ module.exports = {
         });
     },
 
+
     navigateToContentStudioApp: function (browser) {
-        return launcherPanel.waitForPanelVisible(appConst.TIMEOUT_3).then(()=> {
-            return launcherPanel.clickOnContentStudioLink();
+        return launcherPanel.waitForPanelVisible(appConst.TIMEOUT_3).then((result)=> {
+            if (result) {
+                console.log("Launcher Panel is opened, click on the `Content Studio` link...");
+                return launcherPanel.clickOnContentStudioLink();
+            } else {
+                console.log("Login Page is opened, type a password and name...");
+                return this.doLoginAndClickOnContentStudio(browser);
+            }
         }).then(()=> {
             return this.doSwitchToContentBrowsePanel(browser);
         }).catch((err)=> {
-            return this.doLoginAndSwitchToContentStudio(browser);
-        }).catch((err)=> {
-            this.saveScreenshot(browser, "err_login_page");
-            throw  new Error("Content Browse Panel for was not loaded");
-        });
+            console.log('tried to navigate to Content Studio app, but: ' + err);
+            this.saveScreenshot(browser, "err_navigate_to_studio");
+        })
     },
+    doLoginAndClickOnContentStudio: function (browser) {
+        return loginPage.doLogin().pause(1500).then(()=> {
+            return homePage.waitForXpTourVisible(appConst.TIMEOUT_3);
+        }).then((result)=> {
+            if (result) {
+                return homePage.doCloseXpTourDialog();
+            }
+        }).then(()=> {
+            return launcherPanel.clickOnContentStudioLink().pause(1000);
+        })
+    },
+
     doSwitchToContentBrowsePanel: function (browser) {
         console.log('testUtils:switching to Content Studio app...');
         return browser.getTitle().then(title=> {
@@ -219,7 +236,7 @@ module.exports = {
             this.xpTabs = tabs;
             return browser.switchTab(this.xpTabs[this.xpTabs.length - 1]);
         }).then(()=> {
-            return contentWizardPanel.waitForOpened(appConst.TIMEOUT_3);
+            return contentWizardPanel.waitForOpened();
         });
     },
     switchAndCheckTitle: function (browser, tabId, reqTitle) {
@@ -231,7 +248,7 @@ module.exports = {
     },
     doLoginAndSwitchToContentStudio: function (browser) {
         return loginPage.doLogin().pause(1000).then(()=> {
-            return homePage.isXpTourVisible(appConst.TIMEOUT_3);
+            return homePage.waitForXpTourVisible(appConst.TIMEOUT_3);
         }).then((result)=> {
             if (result) {
                 return homePage.doCloseXpTourDialog();

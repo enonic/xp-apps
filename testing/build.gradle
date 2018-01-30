@@ -1,16 +1,3 @@
-buildscript {
-    repositories {
-        mavenLocal()
-        jcenter()
-        maven {
-            url 'http://repo.enonic.net/public'
-        }
-    }
-    dependencies {
-        classpath "gradle.plugin.com.enonic.gradle:xp-gradle-plugin:1.0.17"
-    }
-}
-
 plugins {
     id 'maven'
     id 'com.enonic.defaults' version '1.0.3'
@@ -18,7 +5,7 @@ plugins {
 }
 
 app {
-    systemVersion = "6.14.0-SNAPSHOT"
+    systemVersion = "${version}"
 }
 
 allprojects {

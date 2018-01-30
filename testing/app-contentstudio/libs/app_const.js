@@ -5,6 +5,7 @@ module.exports = Object.freeze({
     TEST_FOLDER_WIT_IMAGES: `All Content types images`,
     APP_CONTENT_TYPES: 'All Content Types App',
     //waitForTimeout
+    TIMEOUT_10: 10000,
     TIMEOUT_3: 3000,
     TIMEOUT_1: 1000,
     SUITE_TIMEOUT: 180000,

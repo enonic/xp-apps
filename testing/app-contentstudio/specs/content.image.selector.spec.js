@@ -5,8 +5,8 @@ const chai = require('chai');
 chai.use(require('chai-as-promised'));
 const expect = chai.expect;
 const assert = chai.assert;
-var webDriverHelper = require('../libs/WebDriverHelper');
-var appConstant = require('../libs/app_const');
+const webDriverHelper = require('../libs/WebDriverHelper');
+const appConstant = require('../libs/app_const');
 const contentBrowsePanel = require('../page_objects/browsepanel/content.browse.panel');
 const studioUtils = require('../libs/studio.utils.js');
 const contentWizard = require('../page_objects/wizardpanel/content.wizard.panel');
@@ -22,13 +22,15 @@ describe('content.image.selector: Image content specification', function () {
     let imageSelectorContent;
     it(`WHEN site with content types has been added THEN the site should be listed in the grid`,
         () => {
+            this.bail(1);
             let displayName = contentBuilder.generateRandomName('site');
             SITE = contentBuilder.buildSite(displayName, 'description', ['All Content Types App']);
             return studioUtils.doAddSite(SITE).then(()=> {
             }).then(()=> {
+                studioUtils.saveScreenshot(webDriverHelper.browser, 'site_should_be_created');
                 return studioUtils.findAndSelectItem(SITE.displayName);
             }).then(()=> {
-                return contentBrowsePanel.isItemDisplayed(SITE.displayName);
+                return contentBrowsePanel.waitForContentDisplayed(SITE.displayName);
             }).then(isDisplayed=> {
                 assert.isTrue(isDisplayed, 'site should be listed in the grid');
             });
@@ -74,7 +76,7 @@ describe('content.image.selector: Image content specification', function () {
             }).then(()=> {
                 return studioUtils.typeNameInFilterPanel(imageSelectorContent.displayName);
             }).then(()=> {
-                return contentBrowsePanel.isItemDisplayed(imageSelectorContent.displayName);
+                return contentBrowsePanel.waitForContentDisplayed(imageSelectorContent.displayName);
             }).then(isDisplayed=> {
                 studioUtils.saveScreenshot(webDriverHelper.browser, 'img_sel_content_added');
                 assert.isTrue(isDisplayed, 'the content should be listed in the grid');
@@ -83,4 +85,7 @@ describe('content.image.selector: Image content specification', function () {
 
     beforeEach(() => studioUtils.navigateToContentStudioApp(webDriverHelper.browser));
     afterEach(() => studioUtils.doCloseAllWindowTabsAndSwitchToHome(webDriverHelper.browser));
+    before(()=> {
+        return console.log('specification starting: ' + this.title);
+    });
 });
