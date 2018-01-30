@@ -17,6 +17,12 @@ exports.UserItemType = graphQl.createInterfaceType({
         key: {
             type: graphQl.GraphQLString
         },
+        name: {
+            type: graphQl.GraphQLString
+        },
+        path: {
+            type: graphQl.GraphQLString
+        },
         displayName: {
             type: graphQl.GraphQLString
         },
