@@ -62,7 +62,6 @@ class IssueDetailsInPlaceTextInput
     }
 }
 
-
 class IssueDetailsDialogHeader
     extends api.dom.DivEl
     implements ModalDialogHeader {
@@ -113,7 +112,6 @@ class IssueDetailsDialogHeader
         this.titleChangedListeners.forEach(listener => listener(newTitle, oldTitle));
     }
 }
-
 
 export class IssueDetailsDialog
     extends SchedulableDialog {

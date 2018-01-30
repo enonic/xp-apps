@@ -2,7 +2,6 @@ import {IssueDetailsDialog} from './view/IssueDetailsDialog';
 import {IssueListDialog} from './view/IssueListDialog';
 import {Issue} from './Issue';
 import {CreateIssueDialog} from './view/CreateIssueDialog';
-import {UpdateIssueDialog} from './view/UpdateIssueDialog';
 import {GetIssueRequest} from './resource/GetIssueRequest';
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import ModalDialog = api.ui.dialog.ModalDialog;
@@ -14,16 +13,13 @@ export class IssueDialogsManager {
     private detailsDialog: IssueDetailsDialog;
     private listDialog: IssueListDialog;
     private createDialog: CreateIssueDialog;
-    private updateDialog: UpdateIssueDialog;
 
     private constructor() {
         this.detailsDialog = IssueDetailsDialog.get();
         this.listDialog = IssueListDialog.get();
         this.createDialog = CreateIssueDialog.get();
-        this.updateDialog = UpdateIssueDialog.get();
 
         this.listenCreateDialog(this.createDialog);
-        this.listenUpdateDialog(this.updateDialog);
         this.listenListDialog(this.listDialog);
         this.listenDetailsDialog(this.detailsDialog);
     }
@@ -53,20 +49,10 @@ export class IssueDialogsManager {
         dialog.onCloseButtonClicked((e: MouseEvent) => this.closeDialog(this.listDialog));
     }
 
-    private listenUpdateDialog(dialog: UpdateIssueDialog) {
-        // Update dialog
-        dialog.onClosed(() => this.revealDialog(this.detailsDialog));
-        dialog.onCloseButtonClicked((e: MouseEvent) => {
-            this.closeDialog(this.detailsDialog);
-            this.closeDialog(this.listDialog);
-        });
-    }
-
     private listenListDialog(dialog: IssueListDialog) {
         // List dialog
         dialog.onRendered(event => {
             dialog.addClickIgnoredElement(this.detailsDialog);
-            dialog.addClickIgnoredElement(this.updateDialog);
             dialog.addClickIgnoredElement(this.createDialog);
         });
         dialog.onIssueSelected(issue => {
@@ -83,9 +69,6 @@ export class IssueDialogsManager {
 
     private listenDetailsDialog(dialog: IssueDetailsDialog) {
         // Details dialog
-        dialog.onRendered(event => {
-            dialog.addClickIgnoredElement(this.updateDialog);
-        });
         dialog.onCloseButtonClicked((e: MouseEvent) => this.closeDialog(this.listDialog));
         dialog.onClosed(() => this.revealDialog(this.listDialog));
     }
@@ -125,13 +108,6 @@ export class IssueDialogsManager {
         this.createDialog
             .forceResetOnClose(true)
             .open();
-    }
-
-    openEditDialog(issue: Issue, summaries: ContentSummaryAndCompareStatus[], excludeChildIds: ContentId[]) {
-        this.updateDialog.open();
-        this.updateDialog.unlockPublishItems();
-        this.updateDialog.setIssue(issue, summaries);
-        this.updateDialog.setExcludeChildrenIds(excludeChildIds);
     }
 
 }
