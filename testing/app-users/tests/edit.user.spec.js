@@ -11,7 +11,7 @@ const userBrowsePanel = require('../page_objects/browsepanel/userbrowse.panel');
 const testUtils = require('../libs/test.utils');
 const userItemsBuilder = require('../libs/userItems.builder.js');
 const appConst = require('../libs/app_const');
-const userStatisticsPanel = require('../page_objects/browsepanel/user.statistics.panel.js');
+const userStatisticsPanel = require('../page_objects/browsepanel/user.statistics.panel');
 
 describe('`edit.user.spec`: Edit an user - change e-mail, name and roles', function () {
     this.timeout(70000);

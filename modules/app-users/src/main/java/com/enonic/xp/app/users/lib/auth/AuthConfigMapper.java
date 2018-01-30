@@ -51,25 +51,29 @@ public final class AuthConfigMapper
 
     private void serializeProperty( final MapGenerator gen, final Property value )
     {
-        gen.map();
+
         if ( value.getType().equals( ValueTypes.PROPERTY_SET ) )
         {
             final PropertySet set = value.getSet();
             if ( set != null )
             {
+                gen.map();
                 gen.array( "set" );
                 for ( final PropertyArray propertyArray : value.getSet().getPropertyArrays() )
                 {
                     serializePropertyArray( gen, propertyArray );
                 }
                 gen.end();
+                gen.end();
             }
         }
         else
         {
+            gen.map();
             gen.value( "v", value.getValue().getObject() );
+            gen.end();
         }
-        gen.end();
+
     }
 
     @Override

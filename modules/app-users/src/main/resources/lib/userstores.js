@@ -1,6 +1,8 @@
 var common = require('./common');
 var authLib = require('./auth');
 
+var DEFAULT_KEY = 'default';
+
 var Permission = {
     READ: 'READ',
     CREATE: 'CREATE',
@@ -52,15 +54,20 @@ module.exports = {
         return authLib.getUserStore({key : key});
     },
     list: authLib.getUserStores,
+    getDefault: function () {
+        return {key: 'default'};
+    },
     create: function(params) {
         var name = common.required(params, 'key');
+
+        log.info(JSON.stringify(params.authConfig));
 
         return authLib.createUserStore({
             name: common.prettifyName(name),
             displayName: params.displayName,
             description: params.description,
             authConfig: params.authConfig,
-            permissions: params.permissions,
+            permissions: params.permissions
         });
     },
     update: function(params) {
@@ -94,6 +101,9 @@ module.exports = {
         return authLib.getIdProviderMode({key:applicationKey});
     },
     getPermissions: function(key) {
+        if (key === DEFAULT_KEY) {
+            return authLib.defaultPermissions();
+        }
         return authLib.getPermissions({key:key});
     }
 };

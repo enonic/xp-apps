@@ -71,6 +71,7 @@ export class IssueDetailsDialog
             title: i18n('dialog.issue'),
                 dialogSubName: i18n('dialog.issue.resolving'),
                 processingLabel: `${i18n('field.progress.publishing')}...`,
+            showDependantList: false,
                 buttonRow: new IssueDetailsDialogButtonRow(),
                 processHandler: () => {
                     new ContentPublishPromptEvent([]).fire();
@@ -144,11 +145,8 @@ export class IssueDetailsDialog
 
     protected toggleAction(enable: boolean) {
         super.toggleAction(enable);
-        const hasInvalidItems = this.getItemList().getItems().some(item => !item.getContentSummary().isValid());
-        const hasInvalidDependants = this.publishProcessor.isContainsInvalid();
-        const hasInvalids = hasInvalidItems || hasInvalidDependants;
-        this.publishButton.setEnabled(!hasInvalids && this.publishProcessor.isAllPublishable());
-        this.errorTooltip.setActive(hasInvalids);
+        this.publishButton.setEnabled(this.publishProcessor.containsInvalidItems() && this.publishProcessor.isAllPublishable());
+        this.errorTooltip.setActive(this.publishProcessor.containsInvalidItems());
     }
 
     private createIssuePanel() {
@@ -235,6 +233,10 @@ export class IssueDetailsDialog
             if (this.saveOnLoaded) {
                 this.debouncedUpdateIssue(this.issue.getIssueStatus(), true);
                 this.saveOnLoaded = false;
+            }
+
+            if (this.publishProcessor.containsInvalidDependants()) {
+                this.setDependantListVisible(true);
             }
         });
     }
@@ -355,7 +357,7 @@ export class IssueDetailsDialog
         // ignore event if there're changes as we're just setting loaded values on list
         const changesMade = itemList.getItemViews().reduce((alreadyMade, itemView) => {
             const toggler = itemView.getIncludeChildrenToggler();
-            return alreadyMade || toggler && toggler.toggle(this.areChildrenIncludedInIssue(itemView.getContentId()));
+            return (!!toggler && toggler.toggle(this.areChildrenIncludedInIssue(itemView.getContentId()))) || alreadyMade;
         }, false);
         this.ignoreNextExcludeChildrenEvent = changesMade;
         return changesMade;
@@ -505,7 +507,8 @@ export class IssueDetailsDialog
     }
 
     private areChildrenIncludedInIssue(id: ContentId): boolean {
-        return !this.issue.getPublishRequest().getExcludeChildrenIds().some(contentId => contentId.equals(id));
+        return this.issue.getPublishRequest().hasItemId(id) &&
+            !this.issue.getPublishRequest().getExcludeChildrenIds().some(contentId => contentId.equals(id));
     }
 
     private areChildrenIncludedInPublishProcessor(id: ContentId): boolean {

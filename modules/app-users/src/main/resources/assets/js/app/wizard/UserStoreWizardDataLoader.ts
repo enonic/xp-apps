@@ -1,7 +1,7 @@
 import '../../api.ts';
 import {UserStoreWizardPanelParams} from './UserStoreWizardPanelParams';
 import {GetUserStoreByKeyRequest} from '../../api/graphql/userStore/GetUserStoreByKeyRequest';
-
+import {GetDefaultUserStoreRequest} from '../../api/graphql/userStore/GetDefaultUserStoreRequest';
 import UserStore = api.security.UserStore;
 
 export class UserStoreWizardDataLoader {
@@ -50,7 +50,7 @@ export class UserStoreWizardDataLoader {
     }
 
     private loadDefaultUserStore(): wemQ.Promise<UserStore> {
-        return new api.security.GetDefaultUserStoreRequest().sendAndParse();
+        return new GetDefaultUserStoreRequest().sendAndParse();
     }
 
 }

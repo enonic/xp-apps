@@ -55,10 +55,11 @@ describe('filter.panel.spec Principal Filter Panel specification', function () {
             }).then(()=> {
                 return filterPanel.getAggregationItems();
             }).then(result=> {
-                assert.equal(result.length, 3, 'three aggregation-checkboxes should be present on the page');
-                assert.isTrue(result[0].includes('User'), 'User aggregation-item should be present');
-                assert.isTrue(result[1].includes('Role'), 'Role aggregation-item should be present');
-                assert.isTrue(result[2].includes('User Store'), 'User Store aggregation-item should be present');
+                assert.equal(result.length, 4, 'three aggregation-checkboxes should be present on the page');
+                assert.isTrue(result[0].includes('Group'), 'User aggregation-item should be present');
+                assert.isTrue(result[1].includes('User'), 'User aggregation-item should be present');
+                assert.isTrue(result[2].includes('Role'), 'Role aggregation-item should be present');
+                assert.isTrue(result[3].includes('User Store'), 'User Store aggregation-item should be present');
             })
         });
 

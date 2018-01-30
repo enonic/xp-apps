@@ -28,6 +28,17 @@ module.exports = {
             },
         };
     },
+    buildFolder: function (displayName, owner, language) {
+        return {
+            contentType: appConst.contentTypes.FOLDER,
+            displayName: displayName,
+
+            data: {
+                owner: owner,
+                language: language
+            },
+        };
+    },
     buildContentWithImageSelector: function (displayName, contentType, images) {
         return {
             contentType: contentType,
