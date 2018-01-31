@@ -43,28 +43,22 @@ exports.UserStoreType = graphQl.createObjectType({
     description: 'Domain representation of a user store',
     interfaces: [graphQlUserItem.UserItemType],
     fields: {
-        id: { //TODO Remove
-            type: graphQl.GraphQLID,
-            resolve: function(env) {
-                return env.source._id; 
-            }
-        },
         key: {
             type: graphQl.GraphQLString,
             resolve: function(env) {
-                return env.source.key;
+                return env.source.key || env.source._name;
             }
         },
-        name: { //TODO Remove
+        name: {
             type: graphQl.GraphQLString,
             resolve: function(env) {
-                return env.source._name;
+                return env.source.key || env.source._name;
             }
         },
-        path: { //TODO Remove
+        path: { 
             type: graphQl.GraphQLString,
             resolve: function(env) {
-                return env.source._path;
+                return '/identity/' + (env.source.key || env.source._name);
             }
         },
         displayName: {
