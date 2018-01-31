@@ -20,7 +20,11 @@ const confirmContentDeleteDialog = require('../page_objects/confirm.content.dele
 module.exports = {
     xpTabs: {},
     doCloseCurrentBrowserTab: function () {
-        return webDriverHelper.browser.close();
+        return webDriverHelper.browser.getTitle().then(title=> {
+            if (title != 'Enonic XP Home') {
+                return webDriverHelper.browser.close();
+            }
+        })
     },
     openIssuesListDialog: function () {
         return browsePanel.clickOnShowIssuesListButton().then(()=> {

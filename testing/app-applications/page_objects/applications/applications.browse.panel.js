@@ -107,12 +107,12 @@ module.exports = Object.create(page, {
     },
     clickOnStopButton: {
         value: function () {
-            return this.waitForEnabled(XPath.stopButton, 1000)
-                .then(enabled => enabled ? this.doClick(XPath.stopButton) : Promise.reject(''))
-                .catch(() => {
-                    this.saveScreenshot('err_browsepanel_stop');
-                    throw new Error(`Stop button is disabled!`);
-                });
+            return this.waitForEnabled(XPath.stopButton, 1000).then(()=> {
+                return this.doClick(XPath.stopButton);
+            }).pause(1000).catch(() => {
+                this.saveScreenshot('err_browsepanel_stop');
+                throw new Error(`Stop button is disabled!`);
+            });
         }
     },
     waitForInstallButtonEnabled: {
@@ -346,6 +346,4 @@ module.exports = Object.create(page, {
             });
         }
     }
-
-
 });

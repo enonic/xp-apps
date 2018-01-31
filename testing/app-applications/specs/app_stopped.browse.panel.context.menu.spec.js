@@ -10,7 +10,7 @@ describe(`Applications Grid context menu, application is stopped`, function () {
     this.timeout(appConst.SUITE_TIMEOUT);
     webDriverHelper.setupBrowser();
 
-    it(`GIVEN existing an application is selected WHEN 'Stop' button has been clicked THEN thea application should be stopped`, () => {
+    it(`GIVEN existing an application is selected WHEN 'Stop' button has been clicked THEN the application should be stopped`, () => {
         this.bail(1);
         return appBrowsePanel.clickOnRowByDisplayName(appConst.TEST_APPLICATIONS.SECOND_APP).then(()=> {
             return appBrowsePanel.getApplicationState(appConst.TEST_APPLICATIONS.SECOND_APP);
