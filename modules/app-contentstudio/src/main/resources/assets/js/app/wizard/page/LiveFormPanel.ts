@@ -69,6 +69,7 @@ import ComponentPath = api.content.page.region.ComponentPath;
 import i18n = api.util.i18n;
 import ContentServerEventsHandler = api.content.event.ContentServerEventsHandler;
 import Site = api.content.site.Site;
+import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 
 export interface LiveFormPanelConfig {
 
@@ -142,7 +143,7 @@ export class LiveFormPanel
 
         const contentUpdatedHandler = summaryAndStatuses => {
             // Update action with new content on save if it gets updated
-            summaryAndStatuses.some(summaryAndStatus => {
+            summaryAndStatuses.some((summaryAndStatus: ContentSummaryAndCompareStatus) => {
                 if (this.content.getContentId().equals(summaryAndStatus.getContentId())) {
                     this.saveAsTemplateAction.setContentSummary(summaryAndStatuses[0].getContentSummary());
                     return true;
