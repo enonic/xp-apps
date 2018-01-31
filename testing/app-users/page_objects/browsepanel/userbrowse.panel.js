@@ -19,6 +19,8 @@ var panel = {
     rowByName: function (name) {
         return `//div[contains(@id,'NamesView') and child::p[contains(@class,'sub-name') and contains(.,'${name}')]]`
     },
+    rowByDisplayName:
+        displayName => `//div[contains(@id,'NamesView') and child::h6[contains(@class,'main-name') and contains(.,'${displayName}')]]`,
     checkboxByName: function (name) {
         return `${elements.itemByName(name)}` +
                `/ancestor::div[contains(@class,'slick-row')]/div[contains(@class,'slick-cell-checkboxsel')]/label`
@@ -174,7 +176,6 @@ var userBrowsePanel = Object.create(page, {
             })
         }
     },
-
     isSearchButtonDisplayed: {
         value: function () {
             return this.isVisible(this.searchButton);
@@ -335,7 +336,18 @@ var userBrowsePanel = Object.create(page, {
             this.saveScreenshot(screenshotName);
             throw new Error(errString);
         }
-    }
+    },
+    rightClickOnRowByDisplayName: {
+        value: function (displayName) {
+            const selector = panel.rowByDisplayName(displayName);
+            return this.waitForVisible(selector, 3000).then(() => {
+                return this.doRightClick(selector);
+            }).pause(400).catch(() => {
+                this.saveScreenshot(`err_find_${displayName}`);
+                throw Error(`Row with the name ${displayName} was not found`);
+            })
+        }
+    },
 });
 module.exports = userBrowsePanel;
 

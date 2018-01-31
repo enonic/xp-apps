@@ -16,6 +16,8 @@ module.exports = Object.freeze({
     TEXT_AREA: "//textarea[contains(@id,'TextArea')]",
     DROP_DOWN_HANDLE: "//button[contains(@id,'DropdownHandle')]",
     GRID_CANVAS: `//div[@class='grid-canvas']`,
+    TEXT_INPUT: `//input[@type='text']`,
+    VALIDATION_RECORDING_VIEWER: "//div[contains(@id,'ValidationRecordingViewer')]//li",
     slickRowByDisplayName: function (container, displayName) {
         return container +
                `//div[@class='slick-viewport']//div[contains(@class,'slick-row') and descendant::h6[contains(@class,'main-name') and contains(.,'${displayName}')]]`;

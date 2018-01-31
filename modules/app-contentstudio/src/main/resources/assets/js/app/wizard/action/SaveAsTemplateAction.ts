@@ -7,13 +7,20 @@ import EditContentEvent = api.content.event.EditContentEvent;
 import Action = api.ui.Action;
 import Permission = api.security.acl.Permission;
 import ContentSummary = api.content.ContentSummary;
+import Site = api.content.site.Site;
 
 export class SaveAsTemplateAction
     extends Action {
 
     private userHasCreateRights: Boolean;
 
-    constructor(private contentSummary?: ContentSummary, private pageModel?: PageModel) {
+    private contentSummary: ContentSummary;
+
+    private pageModel: PageModel;
+
+    private site: Site;
+
+    constructor() {
         super(i18n('action.saveAsTemplate'));
 
         this.onExecuted(action => {
@@ -22,7 +29,7 @@ export class SaveAsTemplateAction
                 .setRegions(this.pageModel.getRegions())
                 .setConfig(this.pageModel.getConfig())
                 .setDisplayName(this.contentSummary.getDisplayName())
-                .setSite(this.contentSummary.getPath())
+                .setSite(this.site ? this.site.getPath() : null)
                 .setSupports(this.contentSummary.getType())
                 .setName(this.contentSummary.getName())
                 .sendAndParse().then(createdTemplate => {
@@ -53,6 +60,11 @@ export class SaveAsTemplateAction
 
     setContentSummary(contentSummary: ContentSummary): SaveAsTemplateAction {
         this.contentSummary = contentSummary;
+        return this;
+    }
+
+    setSite(site: Site): SaveAsTemplateAction {
+        this.site = site;
         return this;
     }
 

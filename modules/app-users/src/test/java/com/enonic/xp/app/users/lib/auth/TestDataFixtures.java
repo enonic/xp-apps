@@ -88,10 +88,14 @@ public class TestDataFixtures
         passwordPropertySet.setString( "email", "noreply@example.com" );
         passwordPropertySet.setString( "site", "MyWebsite" );
 
+        final PropertySet emptyPropertySet = new PropertySet();
+
         final PropertyTree config = new PropertyTree();
         config.setString( "title", "App Title" );
         config.setBoolean( "avatar", true );
+        config.setLong( "sessionTimeout", null );
         config.setSet( "forgotPassword", passwordPropertySet );
+        config.setSet( "emptySet", null );
 
         return config;
     }

@@ -154,7 +154,6 @@ Page.prototype.waitForNotificationMessage = function () {
         return this.getBrowser().getText(`//div[@class='notification-content']/span`);
     })
 };
-
 Page.prototype.waitForExpectedNotificationMessage = function (expectedMessage) {
     let selector = `//div[contains(@id,'NotificationMessage')]//div[contains(@class,'notification-content')]//span[contains(.,'${expectedMessage}')]`
     return this.getBrowser().waitForVisible(selector, appConst.TIMEOUT_3).catch((err)=> {
@@ -169,5 +168,11 @@ Page.prototype.waitForErrorNotificationMessage = function () {
         return this.getBrowser().getText(selector);
     })
 };
-
+Page.prototype.doRightClick = function (selector) {
+    return this.getBrowser().element(selector).then((result)=> {
+        return this.getBrowser().rightClick(selector, 0, 0);
+    }).catch(function (err) {
+        throw Error(err.message + ` ` + selector);
+    })
+};
 module.exports = new Page();

@@ -3,10 +3,10 @@ import {UserTypeTreeGridItem, UserTypeTreeGridItemBuilder} from './UserTypeTreeG
 import {UserItemTypesRowFormatter} from './UserItemTypesRowFormatter';
 import {NewPrincipalEvent} from '../browse/NewPrincipalEvent';
 import {UserTreeGridItemBuilder, UserTreeGridItemType} from '../browse/UserTreeGridItem';
+import {ListUserStoresRequest} from '../../api/graphql/userStore/ListUserStoresRequest';
 import TreeGrid = api.ui.treegrid.TreeGrid;
 import TreeNode = api.ui.treegrid.TreeNode;
 import TreeGridBuilder = api.ui.treegrid.TreeGridBuilder;
-import ListUserStoresRequest = api.security.ListUserStoresRequest;
 import PrincipalKey = api.security.PrincipalKey;
 import UserStore = api.security.UserStore;
 import PrincipalType = api.security.PrincipalType;
