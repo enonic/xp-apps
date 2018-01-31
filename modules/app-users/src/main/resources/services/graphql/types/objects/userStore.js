@@ -98,10 +98,7 @@ exports.UserStoreDeleteType = graphQl.createObjectType({
     description: 'Result of a userStore delete operation',
     fields: {
         userStoreKey: {
-            type: graphQl.GraphQLString,
-            resolve: function(env) {
-                return env.source.key;
-            }
+            type: graphQl.GraphQLString
         },
         deleted: {
             type: graphQl.GraphQLBoolean

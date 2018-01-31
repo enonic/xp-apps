@@ -108,3 +108,16 @@ exports.modifyUserStore = function (params) {
 
     return __.toNativeObject(bean.modifyUserStore());
 };
+
+/**
+ * Delete the user store by the key.
+ *
+ * @param {object} params JSON parameters.
+ * @param {string} params.keys Array of user store keys to delete.
+ * @returns {object} the user stores specified, or null if it doesn't exist.
+ */
+exports.deleteUserStores = function (params) {
+    var bean = __.newBean('com.enonic.xp.app.users.lib.auth.DeleteUserStoresHandler');
+    bean.userStoreKeys = __.toScriptValue(required(params, 'keys'));
+    return __.toNativeObject(bean.deleteUserStores());
+};
