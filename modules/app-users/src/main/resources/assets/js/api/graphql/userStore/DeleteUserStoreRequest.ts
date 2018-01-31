@@ -5,7 +5,7 @@ import DeleteUserStoreResultJson = api.security.DeleteUserStoreResultJson;
 
 type DeleteUserStoresResult = {
     deleteUserStores: DeleteUserStoreResultJson[]
-}
+};
 
 export class DeleteUserStoreRequest
     extends GraphQlRequest<any, DeleteUserStoreResult[]> {
