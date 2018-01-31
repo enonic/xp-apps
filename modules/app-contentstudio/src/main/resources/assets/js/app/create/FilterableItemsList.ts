@@ -3,6 +3,7 @@ import {NewContentDialogListItem} from './NewContentDialogListItem';
 import ContentTypeSummary = api.schema.content.ContentTypeSummary;
 import Site = api.content.site.Site;
 import ApplicationKey = api.application.ApplicationKey;
+import ContentTypeSummaries = api.schema.content.ContentTypeSummaries;
 
 export class FilterableItemsList extends NewContentDialogList {
 
@@ -29,14 +30,14 @@ export class FilterableItemsList extends NewContentDialogList {
         this.parentContent = parent;
     }
 
-    createItems(allContentTypes: ContentTypeSummary[], parentSite: Site) {
+    createItems(allContentTypes: ContentTypeSummaries, parentSite: Site) {
         let allListItems: NewContentDialogListItem[] = this.createListItems(allContentTypes);
         let siteApplications: ApplicationKey[] = parentSite ? parentSite.getApplicationKeys() : [];
         this.listItems = this.filterByParentContent(allListItems, siteApplications);
         this.setItems(this.listItems.slice());
     }
 
-    private createListItems(contentTypes: ContentTypeSummary[]): NewContentDialogListItem[] {
+    private createListItems(contentTypes: ContentTypeSummaries): NewContentDialogListItem[] {
         let contentTypesByName: {[name: string]: ContentTypeSummary} = {};
         let items: NewContentDialogListItem[] = [];
 
