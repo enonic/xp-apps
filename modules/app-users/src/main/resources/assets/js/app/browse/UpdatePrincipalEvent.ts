@@ -1,5 +1,4 @@
 import '../../api.ts';
-
 import Principal = api.security.Principal;
 import Event = api.event.Event;
 
@@ -7,8 +6,8 @@ export class UpdatePrincipalEvent extends Event {
     private principals: Principal[];
 
     constructor(principals: Principal[]) {
-        this.principals = principals;
         super();
+        this.principals = principals;
     }
 
     getPrincipals(): Principal[] {
