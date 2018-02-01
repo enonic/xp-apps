@@ -13,7 +13,6 @@ import {ShowSplitEditAction} from './ShowSplitEditAction';
 import {UndoPendingDeleteAction} from './UndoPendingDeleteAction';
 import {ContentSaveAction} from './ContentSaveAction';
 import Action = api.ui.Action;
-import SaveAction = api.app.wizard.SaveAction;
 import CloseAction = api.app.wizard.CloseAction;
 import SaveAndCloseAction = api.app.wizard.SaveAndCloseAction;
 import i18n = api.util.i18n;

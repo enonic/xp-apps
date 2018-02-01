@@ -6,9 +6,9 @@
     "build": "webpack --hide-modules",
     "lint": "run-p -c --aggregate-output lint:*",
     "fix": "run-p -c --aggregate-output fix:*",
-    "lint:ts": "tslint -c ../../tslint.json -e **/*.d.ts src/**/*.ts --noUnusedLocals",
+    "lint:ts": "tslint -c ../../tslint.json -e **/*.d.ts src/**/*.ts",
     "lint:js": "eslint -c ../../.eslintrc.js --ignore-path ../../.eslintignore .",
-    "fix:ts": "tslint -c ../../tslint.json -e **/*.d.ts src/**/*.ts --fix --noUnusedLocals",
+    "fix:ts": "tslint -c ../../tslint.json -e **/*.d.ts src/**/*.ts --fix",
     "fix:js": "eslint -c ../../.eslintrc.js --ignore-path ../../.eslintignore . --fix"
   },
   "devDependencies": {
