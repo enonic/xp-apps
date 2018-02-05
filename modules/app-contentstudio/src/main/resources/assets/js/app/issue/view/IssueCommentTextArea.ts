@@ -6,16 +6,18 @@ import CompositeFormInputEl = api.dom.CompositeFormInputEl;
 export class IssueCommentTextArea
     extends CompositeFormInputEl {
 
-    private textArea: TextArea;
     private icon: PrincipalViewerCompact;
+    private container: api.dom.DivEl;
+    private textArea: api.ui.text.TextArea;
 
     constructor() {
         const textArea = new TextArea('comment');
         super(textArea);
-        this.addClass('issue-comment-textarea');
         this.textArea = textArea;
         this.icon = new PrincipalViewerCompact();
-        this.addAdditionalElement(this.icon);
+        this.addClass('issue-comment-textarea');
+        this.container = new api.dom.DivEl('textarea-container');
+        this.container.appendChild(this.textArea);
     }
 
     setUser(principal: Principal) {
@@ -24,7 +26,7 @@ export class IssueCommentTextArea
 
     doRender(): Q.Promise<boolean> {
         return super.doRender().then(rendered => {
-            this.removeChildren().appendChildren<api.dom.Element>(this.textArea, this.icon);
+            this.removeChildren().appendChildren<api.dom.Element>(this.icon, this.container);
             return rendered;
         });
     }

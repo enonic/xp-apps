@@ -16,8 +16,8 @@ import {PublishProcessor} from '../../publish/PublishProcessor';
 import {DependantItemsWithProgressDialogConfig} from '../../dialog/DependantItemsWithProgressDialog';
 import {IssueCommentsList} from './IssueCommentsList';
 import {IssueCommentTextArea} from './IssueCommentTextArea';
-import {CommentIssueRequest} from '../resource/CommentIssueRequest';
-import {ListIssueCommentsRequest} from '../resource/ListIssueCommentsRequest';
+import {CreateIssueCommentRequest} from '../resource/CreateIssueCommentRequest';
+import {IssueDetailsDialogHeader} from './IssueDetailsDialogHeader';
 import AEl = api.dom.AEl;
 import DialogButton = api.ui.dialog.DialogButton;
 import ContentSummaryAndCompareStatusFetcher = api.content.resource.ContentSummaryAndCompareStatusFetcher;
@@ -40,78 +40,6 @@ import PrincipalComboBoxBuilder = api.ui.security.PrincipalComboBoxBuilder;
 import PrincipalType = api.security.PrincipalType;
 import PrincipalLoader = api.security.PrincipalLoader;
 import ComboBox = api.ui.selector.combobox.ComboBox;
-import InPlaceTextInput = api.ui.text.InPlaceTextInput;
-import ModalDialogHeader = api.ui.dialog.ModalDialogHeader;
-
-class IssueDetailsInPlaceTextInput
-    extends InPlaceTextInput {
-
-    private titleId: number;
-
-    constructor(title?: string) {
-        super(title);
-    }
-
-    public formatTextToDisplay(inputValue: string): string {
-        return `${inputValue}<span class="title-id">#${this.titleId}</span>`;
-    }
-
-    setTitleId(id: number): IssueDetailsInPlaceTextInput {
-        this.titleId = id;
-        return this;
-    }
-}
-
-class IssueDetailsDialogHeader
-    extends api.dom.DivEl
-    implements ModalDialogHeader {
-
-    private input: IssueDetailsInPlaceTextInput;
-    private titleChangedListeners: { (newTitle: string, oldTitle: string): void }[] = [];
-
-    constructor(title: string) {
-        super('modal-dialog-header');
-        this.input = new IssueDetailsInPlaceTextInput(title);
-        this.input.onEditModeChanged((editMode, newValue, oldValue) => {
-            if (!editMode && newValue != oldValue) {
-                this.notifyTitleChanged(newValue, oldValue);
-            }
-        });
-        this.appendChild(this.input);
-    }
-
-    setTitle(value: string, escapeHtml: boolean = true): IssueDetailsDialogHeader {
-        this.input.setValue(value);
-        return this;
-    }
-
-    getTitle(): string {
-        return this.input.getValue();
-    }
-
-    setTitleId(value: number): IssueDetailsDialogHeader {
-        this.input.setTitleId(value);
-        return this;
-    }
-
-    cancelEdit() {
-        if (this.input.isEditMode()) {
-            this.input.setEditMode(false, true);
-        }
-    }
-
-    onTitleChanged(listener: (newTitle: string, oldTitle: string) => void) {
-        this.titleChangedListeners.push(listener);
-    }
-
-    unTitleChanged(listener: (newTitle: string, oldTitle: string) => void) {
-        this.titleChangedListeners = this.titleChangedListeners.filter(curr => curr !== listener);
-    }
-
-    private notifyTitleChanged(newTitle: string, oldTitle: string) {
-        this.titleChangedListeners.forEach(listener => listener(newTitle, oldTitle));
-    }
-}
 
 export class IssueDetailsDialog
     extends SchedulableDialog {
@@ -208,7 +136,7 @@ export class IssueDetailsDialog
             });
             this.tabPanel.addNavigablePanel(this.commentsTab, commentsPanel, true);
             this.tabPanel.addNavigablePanel(this.itemsTab, itemsPanel);
-            this.tabPanel.addNavigablePanel(this.assigneesTab, assigneesPanel, true);
+            this.tabPanel.addNavigablePanel(this.assigneesTab, assigneesPanel);
 
             this.appendChildToHeader(tabBar);
             this.appendChildToContentPanel(this.tabPanel);
@@ -259,6 +187,8 @@ export class IssueDetailsDialog
     private createCommentsPanel(tab: TabBarItem) {
         const commentsPanel = new Panel();
         this.commentsList = new IssueCommentsList();
+        this.addClickIgnoredElement(this.commentsList.getContextMenu());
+        this.addClickIgnoredElement(this.commentsList.getConfirmDialog());
 
         const updateCommentsCount = () => {
             const commentCount = this.commentsList.getItemCount();
@@ -424,9 +354,7 @@ export class IssueDetailsDialog
             this.detailsSubTitle.setIssue(issue, true);
             this.toggleControlsAccordingToStatus(issue.getIssueStatus());
 
-            new ListIssueCommentsRequest(issue.getId()).sendAndParse().then(response => {
-                this.commentsList.setItems(response.getIssueComments());
-            });
+            this.commentsList.setParentIssue(issue);
 
             this.assigneesCombobox.setValue(issue.getApprovers().join(ComboBox.VALUE_SEPARATOR));
         }
@@ -469,7 +397,7 @@ export class IssueDetailsDialog
             const comment = this.commentTextArea.getValue();
             this.skipNextServerUpdatedEvent = true;
             action.setEnabled(false);
-            new CommentIssueRequest(this.issue.getId()).setCreator(this.currentUser.getKey()).setText(
+            new CreateIssueCommentRequest(this.issue.getId()).setCreator(this.currentUser.getKey()).setText(
                 comment).sendAndParse().done(issueComment => {
                 this.commentsList.addItem(issueComment);
                 this.commentTextArea.setValue('', true).giveFocus();

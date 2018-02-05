@@ -5,7 +5,7 @@ import PrincipalKey = api.security.PrincipalKey;
 import Path = api.rest.Path;
 import JsonResponse = api.rest.JsonResponse;
 
-export class CommentIssueRequest
+export class CreateIssueCommentRequest
     extends IssueResourceRequest<IssueCommentJson, IssueComment> {
 
     private creator: PrincipalKey;
