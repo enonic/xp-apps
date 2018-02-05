@@ -11,7 +11,7 @@ export class ComponentDetachedFromFragmentEvent
 
     private componentView: ComponentView<Component>;
 
-    constructor(componentView: ComponentView<Component>, componentType: ComponentType,) {
+    constructor(componentView: ComponentView<Component>, componentType: ComponentType) {
         super();
         this.componentView = componentView;
         this.componentType = componentType;
