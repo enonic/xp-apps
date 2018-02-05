@@ -44,7 +44,7 @@ describe('content.selector.spec: content-selector specification', function () {
             }).then(()=> {
                 return contentBrowsePanel.waitForContentDisplayed(articleContent.displayName);
             }).then(isDisplayed=> {
-                studioUtils.saveScreenshot(webDriverHelper.browser, 'article_content_added');
+                studioUtils.saveScreenshot('article_content_added');
                 assert.isTrue(isDisplayed, 'the article should be listed in the grid');
             });
         });
@@ -56,7 +56,7 @@ describe('content.selector.spec: content-selector specification', function () {
             }).then(()=> {
                 return contentSelector.getMode();
             }).then(mode=> {
-                studioUtils.saveScreenshot(webDriverHelper.browser, 'content_selector_default_mode');
+                studioUtils.saveScreenshot('content_selector_default_mode');
                 assert.isTrue(mode == 'flat', 'Flat mode should be by default');
             });
         });
@@ -69,7 +69,7 @@ describe('content.selector.spec: content-selector specification', function () {
             }).then(()=> {
                 return contentSelector.getMode();
             }).then(mode=> {
-                studioUtils.saveScreenshot(webDriverHelper.browser, 'content_selector_tree_mode');
+                studioUtils.saveScreenshot('content_selector_tree_mode');
                 assert.isTrue(mode == 'tree', '`Tree` mode should be in selector when toggler has been clicked');
             });
         });
@@ -81,7 +81,7 @@ describe('content.selector.spec: content-selector specification', function () {
             }).then(()=> {
                 return contentSelector.getTreeModeOptionDisplayNames();
             }).then(options=> {
-                studioUtils.saveScreenshot(webDriverHelper.browser, 'content_sel_tree_mode_option');
+                studioUtils.saveScreenshot('content_sel_tree_mode_option');
                 assert.strictEqual(options[0], SITE.displayName);
             });
         });

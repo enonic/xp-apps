@@ -39,7 +39,7 @@ describe('double.content.config.spec:  verifies `Min/max value config for Double
             }).pause(1000).then(()=> {
                 return doubleForm.isValidationRecordingVisible();
             }).then((result)=> {
-                studioUtils.saveScreenshot(webDriverHelper.browser, 'double_min_max_1');
+                studioUtils.saveScreenshot('double_min_max_1');
                 assert.isFalse(result, 'Validation recording should not be displayed');
             });
         });
@@ -51,7 +51,7 @@ describe('double.content.config.spec:  verifies `Min/max value config for Double
             }).then(()=> {
                 return doubleForm.waitForValidationRecording();
             }).then((result)=> {
-                studioUtils.saveScreenshot(webDriverHelper.browser, 'double_min_max_2');
+                studioUtils.saveScreenshot('double_min_max_2');
                 assert.isTrue(result, 'Validation recording should appear');
             });
         });
@@ -63,7 +63,7 @@ describe('double.content.config.spec:  verifies `Min/max value config for Double
             }).pause(1000).then(()=> {
                 return doubleForm.getValidationRecord();
             }).then((text)=> {
-                studioUtils.saveScreenshot(webDriverHelper.browser, 'double_min_max_2');
+                studioUtils.saveScreenshot('double_min_max_2');
                 assert.isTrue(text == 'The value cannot be less than 0', 'correct validation recording should appear');
             });
         });
@@ -75,7 +75,7 @@ describe('double.content.config.spec:  verifies `Min/max value config for Double
             }).then(()=> {
                 return doubleForm.waitForValidationRecording();
             }).then((result)=> {
-                studioUtils.saveScreenshot(webDriverHelper.browser, 'double_min_max_3');
+                studioUtils.saveScreenshot('double_min_max_3');
                 assert.isTrue(result, 'Validation recording should appear');
             });
         });
@@ -87,11 +87,11 @@ describe('double.content.config.spec:  verifies `Min/max value config for Double
             }).pause(1000).then(()=> {
                 return doubleForm.isValidationRecordingVisible();
             }).then((result)=> {
-                studioUtils.saveScreenshot(webDriverHelper.browser, 'double_min_max_4');
+                studioUtils.saveScreenshot('double_min_max_4');
                 assert.isFalse(result, 'Validation recording should not be displayed');
             });
         });
-    
+
     it(`GIVEN wizard for 'Double(min 0,max 3.14159)' is opened WHEN min value has been typed THEN validation record should not be visible`,
         () => {
             return studioUtils.selectSiteAndOpenNewWizard(SITE.displayName, appConstant.contentTypes.DOUBLE_MIN_MAX).then(()=> {
@@ -99,7 +99,7 @@ describe('double.content.config.spec:  verifies `Min/max value config for Double
             }).pause(1000).then(()=> {
                 return doubleForm.isValidationRecordingVisible();
             }).then((result)=> {
-                studioUtils.saveScreenshot(webDriverHelper.browser, 'double_min_max_5');
+                studioUtils.saveScreenshot('double_min_max_5');
                 assert.isFalse(result, 'Validation recording should not be displayed');
             });
         });

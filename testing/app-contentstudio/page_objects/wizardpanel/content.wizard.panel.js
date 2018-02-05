@@ -12,6 +12,7 @@ var wizard = {
     saveButton: `//button[contains(@id,'ActionButton') and child::span[text()='Save']]`,
     savedButton: `//button[contains(@id,'ActionButton') and child::span[text()='Saved']]`,
     deleteButton: `//button[contains(@id,'ActionButton') and child::span[text()='Delete']]`,
+    thumbnailUploader: "//div[contains(@id,'ThumbnailUploaderEl')]",
 };
 var contentWizardPanel = Object.create(page, {
 
@@ -25,9 +26,9 @@ var contentWizardPanel = Object.create(page, {
             return `${wizard.container}` + `${wizard.saveButton}`;
         }
     },
-    savedButton: {
+    thumbnailUploader: {
         get: function () {
-            return `${wizard.container}` + `${wizard.savedButton}`;
+            return `${wizard.container}` + `${wizard.thumbnailUploader}`;
         }
     },
     deleteButton: {
@@ -42,7 +43,6 @@ var contentWizardPanel = Object.create(page, {
                     return contentStepForm.type(content.data, content.contentType);
                 }
             })
-
         }
     },
     waitForOpened: {
@@ -74,7 +74,6 @@ var contentWizardPanel = Object.create(page, {
             });
         }
     },
-
     waitForSavedButtonVisible: {
         value: function () {
             return this.waitForVisible(this.savedButton, appConst.TIMEOUT_3).catch(err=> {
@@ -107,7 +106,6 @@ var contentWizardPanel = Object.create(page, {
             })
         }
     },
-
     clickOnDelete: {
         value: function () {
             return this.doClick(this.deleteButton).catch(err=> {
@@ -117,19 +115,19 @@ var contentWizardPanel = Object.create(page, {
             });
         }
     },
-    isItemInvalid: {
-        value: function (displayName) {
-            let selector = elements.tabItemByDisplayName(displayName);
+    isContentInvalid: {
+        value: function () {
+            let selector = this.thumbnailUploader;
             return this.getBrowser().getAttribute(selector, 'class').then(result=> {
                 return result.includes("invalid");
             }).catch(err=> {
-                throw new Error('tabItem: ' + err);
+                throw new Error('error when try to find the content validation state: ' + err);
             });
         }
     },
     waitUntilInvalidIconAppears: {
         value: function (displayName) {
-            let selector = elements.tabItemByDisplayName(displayName);
+            let selector = this.thumbnailUploader;
             return this.getBrowser().waitUntil(()=> {
                 return this.getBrowser().getAttribute(selector, 'class').then(result=> {
                     return result.includes('invalid');
@@ -137,13 +135,13 @@ var contentWizardPanel = Object.create(page, {
             }, 2000).then(()=> {
                 return true;
             }).catch((err)=> {
-                throw new Error('group-wizard:invalid-icon was not found' + err);
+                throw new Error('content-wizard:invalid-icon was not found' + err);
             });
         }
     },
     waitUntilInvalidIconDisappears: {
         value: function (displayName) {
-            let selector = elements.tabItemByDisplayName(displayName);
+            let selector = this.thumbnailUploader;
             return this.getBrowser().waitUntil(()=> {
                 return this.getBrowser().getAttribute(selector, 'class').then(result=> {
                     return !result.includes('invalid');

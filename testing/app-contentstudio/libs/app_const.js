@@ -4,6 +4,8 @@
 module.exports = Object.freeze({
     TEST_FOLDER_WIT_IMAGES: `All Content types images`,
     APP_CONTENT_TYPES: 'All Content Types App',
+    APP_WITH_CONFIGURATOR: 'Second Selenium App',
+    APP_WITH_METADATA_MIXIN: 'Third Selenium App',
     //waitForTimeout
     TIMEOUT_10: 10000,
     TIMEOUT_3: 3000,

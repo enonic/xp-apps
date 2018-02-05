@@ -27,7 +27,7 @@ describe('content.image.selector: Image content specification', function () {
             SITE = contentBuilder.buildSite(displayName, 'description', ['All Content Types App']);
             return studioUtils.doAddSite(SITE).then(()=> {
             }).then(()=> {
-                studioUtils.saveScreenshot(webDriverHelper.browser, 'site_should_be_created');
+                studioUtils.saveScreenshot('site_should_be_created');
                 return studioUtils.findAndSelectItem(SITE.displayName);
             }).then(()=> {
                 return contentBrowsePanel.waitForContentDisplayed(SITE.displayName);
@@ -43,7 +43,7 @@ describe('content.image.selector: Image content specification', function () {
             }).then(()=> {
                 return imageSelectorForm.getTreeModeOptionDisplayNames();
             }).then(options=> {
-                studioUtils.saveScreenshot(webDriverHelper.browser, 'img_sel_tree_mode');
+                studioUtils.saveScreenshot('img_sel_tree_mode');
                 assert.strictEqual(options[0], appConstant.TEST_FOLDER_WIT_IMAGES);
             });
         });
@@ -55,9 +55,10 @@ describe('content.image.selector: Image content specification', function () {
             }).then(()=> {
                 return imageSelectorForm.getFlatModeOptionImageNames();
             }).then(imagesNames=> {
-                studioUtils.saveScreenshot(webDriverHelper.browser, 'img_sel_flat_mode');
+                studioUtils.saveScreenshot('img_sel_flat_mode');
                 assert.isTrue(imagesNames.length > 0, 'images should be present in the dropdown list');
-                assert.isTrue(imagesNames[0].includes('.png'), 'correct extension should be in the name');
+                assert.isTrue(imagesNames[0].includes('.png') || imagesNames[0].includes('.jpg'),
+                    'correct extension should be in the name');
             });
         });
 
@@ -78,7 +79,7 @@ describe('content.image.selector: Image content specification', function () {
             }).then(()=> {
                 return contentBrowsePanel.waitForContentDisplayed(imageSelectorContent.displayName);
             }).then(isDisplayed=> {
-                studioUtils.saveScreenshot(webDriverHelper.browser, 'img_sel_content_added');
+                studioUtils.saveScreenshot('img_sel_content_added');
                 assert.isTrue(isDisplayed, 'the content should be listed in the grid');
             });
         });
