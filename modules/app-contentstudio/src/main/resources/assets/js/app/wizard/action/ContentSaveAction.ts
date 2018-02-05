@@ -5,7 +5,7 @@ import {ContentWizardPanel} from '../ContentWizardPanel';
 export class ContentSaveAction
     extends SaveAction {
 
-    private static SAVED_STATE: string = 'saved';
+    private static CLASS_NAME_SAVED: string = 'saved';
 
     constructor(wizardPanel: ContentWizardPanel, label: string = i18n('action.save')) {
         super(wizardPanel, label);
@@ -14,7 +14,7 @@ export class ContentSaveAction
     }
 
     isSavedStateEnabled(): boolean {
-        return ContentSaveAction.SAVED_STATE == this.getIconClass();
+        return ContentSaveAction.CLASS_NAME_SAVED == this.getIconClass();
     }
 
     protected saveChanges(wizardPanel: ContentWizardPanel): wemQ.Promise<any> {
@@ -23,13 +23,13 @@ export class ContentSaveAction
         return wizardPanel.saveChanges().then(() => {
             this.setLabel(i18n('action.saved'));
 
-            this.toggleIconClass(ContentSaveAction.SAVED_STATE, true);
+            this.toggleIconClass(ContentSaveAction.CLASS_NAME_SAVED, true);
 
         }, (reason: any) => {
             this.setLabel(i18n('action.save'));
             this.setEnabled(true);
 
-            this.toggleIconClass(ContentSaveAction.SAVED_STATE, false);
+            this.toggleIconClass(ContentSaveAction.CLASS_NAME_SAVED, false);
 
             api.DefaultErrorHandler.handle(reason);
         });
