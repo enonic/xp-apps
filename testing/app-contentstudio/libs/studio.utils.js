@@ -40,7 +40,7 @@ module.exports = {
         }).then(()=> {
             return newContentDialog.clickOnContentType(contentType);
         }).then(()=> {
-            return this.doSwitchToNewWizard(webDriverHelper.browser);
+            return this.doSwitchToNewWizard();
         }).then(()=> {
             return contentWizardPanel.waitForOpened();
         })
@@ -100,6 +100,17 @@ module.exports = {
             return browsePanel.clickOnRowByName(name);
         });
     },
+    selectContentAndOpenWizard: function (name) {
+        return this.findAndSelectItem(name).then(()=> {
+            return browsePanel.waitForEditButtonEnabled();
+        }).then(()=> {
+            return browsePanel.clickOnEditButton();
+        }).then(()=> {
+            return this.doSwitchToNewWizard();
+        }).then(()=> {
+            return contentWizardPanel.waitForOpened();
+        })
+    },
     findContentAndClickCheckBox: function (displayName) {
         return this.typeNameInFilterPanel(name).then(()=> {
             return browsePanel.waitForRowByNameVisible(name);
@@ -119,7 +130,7 @@ module.exports = {
         }).then(()=> {
             return newContentDialog.clickOnContentType(contentType);
         }).then(()=> {
-            return this.doSwitchToNewWizard(webDriverHelper.browser);
+            return this.doSwitchToNewWizard();
         }).then(()=> {
             return contentWizardPanel.waitForOpened();
         });
@@ -179,7 +190,6 @@ module.exports = {
         });
     },
 
-
     navigateToContentStudioApp: function (browser) {
         return launcherPanel.waitForPanelVisible(appConst.TIMEOUT_3).then((result)=> {
             if (result) {
@@ -234,11 +244,11 @@ module.exports = {
             return homePage.waitForLoaded(appConst.TIMEOUT_3);
         });
     },
-    doSwitchToNewWizard: function (browser) {
+    doSwitchToNewWizard: function () {
         console.log('testUtils:switching to the new wizard tab...');
-        return browser.getTabIds().then(tabs => {
+        return webDriverHelper.browser.getTabIds().then(tabs => {
             this.xpTabs = tabs;
-            return browser.switchTab(this.xpTabs[this.xpTabs.length - 1]);
+            return webDriverHelper.browser.switchTab(this.xpTabs[this.xpTabs.length - 1]);
         }).then(()=> {
             return contentWizardPanel.waitForOpened();
         });
@@ -311,10 +321,10 @@ module.exports = {
             return this.doSwitchToHome(browser);
         });
     },
-    saveScreenshot: function (browser, name) {
+    saveScreenshot: function (name) {
         var path = require('path')
         var screenshotsDir = path.join(__dirname, '/../build/screenshots/');
-        return browser.saveScreenshot(screenshotsDir + name + '.png').then(()=> {
+        return webDriverHelper.browser.saveScreenshot(screenshotsDir + name + '.png').then(()=> {
             return console.log('screenshot saved ' + name);
         }).catch(err=> {
             return console.log('screenshot was not saved ' + screenshotsDir + 'utils  ' + err);

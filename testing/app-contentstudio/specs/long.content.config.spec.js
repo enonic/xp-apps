@@ -39,7 +39,7 @@ describe('long.content.config.spec:  verifies `Min/max value config for Long`', 
             }).pause(1000).then(()=> {
                 return longForm.isValidationRecordingVisible();
             }).then((result)=> {
-                studioUtils.saveScreenshot(webDriverHelper.browser, 'long_min_max_1');
+                studioUtils.saveScreenshot('long_min_max_1');
                 assert.isFalse(result, 'Validation recording should not be displayed');
             });
         });
@@ -51,7 +51,7 @@ describe('long.content.config.spec:  verifies `Min/max value config for Long`', 
             }).then(()=> {
                 return longForm.waitForValidationRecording();
             }).then((result)=> {
-                studioUtils.saveScreenshot(webDriverHelper.browser, 'long_min_max_2');
+                studioUtils.saveScreenshot('long_min_max_2');
                 assert.isTrue(result, 'Validation recording should appear');
             });
         });
@@ -64,7 +64,7 @@ describe('long.content.config.spec:  verifies `Min/max value config for Long`', 
             }).pause(1000).then(()=> {
                 return longForm.getValidationRecord();
             }).then((text)=> {
-                studioUtils.saveScreenshot(webDriverHelper.browser, 'long_min_max_2_2');
+                studioUtils.saveScreenshot('long_min_max_2_2');
                 assert.isTrue(text == 'The value cannot be less than 1', 'correct alidation recording should appear');
             });
         });
@@ -76,7 +76,7 @@ describe('long.content.config.spec:  verifies `Min/max value config for Long`', 
             }).then(()=> {
                 return longForm.waitForValidationRecording();
             }).then((result)=> {
-                studioUtils.saveScreenshot(webDriverHelper.browser, 'long_min_max_3');
+                studioUtils.saveScreenshot('long_min_max_3');
                 assert.isTrue(result, 'Validation recording should appear');
             });
         });
@@ -88,7 +88,7 @@ describe('long.content.config.spec:  verifies `Min/max value config for Long`', 
             }).pause(1000).then(()=> {
                 return longForm.isValidationRecordingVisible();
             }).then((result)=> {
-                studioUtils.saveScreenshot(webDriverHelper.browser, 'long_min_max_4');
+                studioUtils.saveScreenshot('long_min_max_4');
                 assert.isFalse(result, 'Validation recording should not be displayed');
             });
         });
@@ -100,7 +100,7 @@ describe('long.content.config.spec:  verifies `Min/max value config for Long`', 
             }).pause(1000).then(()=> {
                 return longForm.isValidationRecordingVisible();
             }).then((result)=> {
-                studioUtils.saveScreenshot(webDriverHelper.browser, 'long_min_max_5');
+                studioUtils.saveScreenshot('long_min_max_5');
                 assert.isFalse(result, 'Validation recording should not be displayed');
             });
         });

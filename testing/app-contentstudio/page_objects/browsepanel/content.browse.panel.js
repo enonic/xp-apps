@@ -11,6 +11,9 @@ var panel = {
     treeGrid: `//div[contains(@id,'ContentTreeGrid')]`,
     searchButton: "//button[contains(@class, 'icon-search')]",
     showIssuesListButton: "//button[contains(@id,'ShowIssuesDialogButton')]",
+    contentSummaryByName: function (name) {
+        return `//div[contains(@id,'ContentSummaryAndCompareStatusViewer') and descendant::p[contains(@class,'sub-name') and contains(.,'${name}')]]`
+    },
     checkboxByName: function (name) {
         return `${elements.itemByName(name)}` +
                `/ancestor::div[contains(@class,'slick-row')]/div[contains(@class,'slick-cell-checkboxsel')]/label`
@@ -101,7 +104,6 @@ var contentBrowsePanel = Object.create(page, {
             return this.doClick(this.searchButton);
         }
     },
-
     clickOnNewButton: {
         value: function () {
             return this.waitForEnabled(this.newButton, 1000).then(()=> {
@@ -115,7 +117,7 @@ var contentBrowsePanel = Object.create(page, {
         value: function () {
             return this.waitForEnabled(this.editButton, 1000).then(()=> {
                 return this.doClick(this.editButton);
-            }).catch((err)=> {
+            }).pause(500).catch((err)=> {
                 this.saveScreenshot('err_browsepanel_edit');
                 throw new Error('Edit button is not enabled! ' + err);
             })
@@ -131,7 +133,6 @@ var contentBrowsePanel = Object.create(page, {
             })
         }
     },
-
     isSearchButtonDisplayed: {
         value: function () {
             return this.isVisible(this.searchButton);
@@ -145,7 +146,6 @@ var contentBrowsePanel = Object.create(page, {
             })
         }
     },
-
     waitForEditButtonEnabled: {
         value: function () {
             return this.waitForEnabled(this.editButton, 3000).catch(err=> {
@@ -170,7 +170,6 @@ var contentBrowsePanel = Object.create(page, {
             })
         }
     },
-
     isDeleteButtonEnabled: {
         value: function () {
             return this.isEnabled(this.deleteButton).catch(err=> {
@@ -253,7 +252,31 @@ var contentBrowsePanel = Object.create(page, {
             var expanderIcon = panel.treeGrid + panel.expanderIconByName(name);
             return this.doClick(expanderIcon);
         }
-    }
+    },
+    // this method does not wait, it just checks the attribute
+    isRedIconDisplayed: {
+        value: function (contentName) {
+            var xpath = panel.contentSummaryByName(contentName);
+            return this.getBrowser().getAttribute(xpath, 'class').then(result=> {
+                return result.includes('invalid');
+            });
+        }
+    },
+    // this method waits until 'invalid' appears in the @class
+    waitUntilInvalidIconAppears: {
+        value: function (contentName) {
+            var xpath = panel.contentSummaryByName(contentName);
+            return this.getBrowser().waitUntil(()=> {
+                return this.getBrowser().getAttribute(xpath, 'class').then(result=> {
+                    return result.includes('invalid');
+                });
+            }, 2000).then(()=> {
+                return true;
+            }).catch((err)=> {
+                throw new Error('browse panel:invalid-icon for the content was not found' + err);
+            });
+        }
+    },
 });
 module.exports = contentBrowsePanel;
 

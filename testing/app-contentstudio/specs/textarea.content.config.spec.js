@@ -40,7 +40,7 @@ describe('textarea.content.config.spec:  verifies `max-length value config for T
             }).pause(1000).then(()=> {
                 return textAreaForm.isValidationRecordingVisible();
             }).then((result)=> {
-                studioUtils.saveScreenshot(webDriverHelper.browser, 'textarea_max_length_1');
+                studioUtils.saveScreenshot('textarea_max_length_1');
                 assert.isFalse(result, 'Validation recording should not be displayed');
             });
         });
@@ -52,7 +52,7 @@ describe('textarea.content.config.spec:  verifies `max-length value config for T
             }).then(()=> {
                 return textAreaForm.waitForValidationRecording();
             }).then((result)=> {
-                studioUtils.saveScreenshot(webDriverHelper.browser, 'textarea_max_length_2');
+                studioUtils.saveScreenshot('textarea_max_length_2');
                 assert.isTrue(result, 'Validation recording should appear');
             });
         });
@@ -64,7 +64,7 @@ describe('textarea.content.config.spec:  verifies `max-length value config for T
             }).pause(1000).then(()=> {
                 return textAreaForm.getValidationRecord();
             }).then((text)=> {
-                studioUtils.saveScreenshot(webDriverHelper.browser, 'textarea_max_length_3');
+                studioUtils.saveScreenshot('textarea_max_length_3');
                 assert.isTrue(text == 'Text cannot be more than 41 characters long', 'correct validation recording should appear');
             });
         });
@@ -76,7 +76,7 @@ describe('textarea.content.config.spec:  verifies `max-length value config for T
             }).pause(1000).then(()=> {
                 return textAreaForm.isValidationRecordingVisible();
             }).then((result)=> {
-                studioUtils.saveScreenshot(webDriverHelper.browser, 'textarea_max_length_4');
+                studioUtils.saveScreenshot('textarea_max_length_4');
                 assert.isFalse(result, 'Validation recording should not be displayed');
             });
         });
