@@ -166,7 +166,7 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
             }
             this.enableActions({ SAVE: isEnabled });
 
-            this.getSaveAction().setLabel(i18n(isEnabled ? 'action.save' : 'action.saved'));
+            this.getSaveAction().setLabel(i18n(isEnabled || !this.getSaveAction().isSavedStateEnabled() ? 'action.save' : 'action.saved'));
 
         }, 100, false);
 
@@ -313,8 +313,8 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
         return this.actionsMap.DELETE;
     }
 
-    getSaveAction(): Action {
-        return this.actionsMap.SAVE;
+    getSaveAction(): ContentSaveAction {
+        return <ContentSaveAction>this.actionsMap.SAVE;
     }
 
     getDuplicateAction(): Action {
