@@ -40,7 +40,7 @@ export class SaveAsTemplateAction
     }
 
     updateVisibility() {
-        if (this.pageModel.getController()) {
+        if (this.pageModel.getController() && !this.contentSummary.isPageTemplate()) {
             if (this.userHasCreateRights === undefined) {
                 new api.content.resource.GetPermittedActionsRequest()
                     .addContentIds(this.contentSummary.getContentId())

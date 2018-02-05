@@ -125,12 +125,12 @@ Page.prototype.isAttributePresent = function (selector, atrName) {
 };
 
 Page.prototype.getTextFromElements = function (selector) {
-    let json = [];
+    let elements = [];
     return this.getBrowser().elements(selector).then((result)=> {
         result.value.forEach((val)=> {
-            json.push(this.getBrowser().elementIdText(val.ELEMENT));
+            elements.push(this.getBrowser().elementIdText(val.ELEMENT));
         })
-        return Promise.all(json).then((p)=> {
+        return Promise.all(elements).then((p)=> {
             return p;
         });
     }).then(responses=> {
@@ -143,12 +143,12 @@ Page.prototype.getTextFromElements = function (selector) {
 }
 
 Page.prototype.getTextFromDisplayedElements = function (selector) {
-    let json = [];
+    let elements = [];
     return this.getDisplayedElements(selector).then((result)=> {
         result.forEach((val)=> {
-            json.push(this.getBrowser().elementIdText(val.ELEMENT));
+            elements.push(this.getBrowser().elementIdText(val.ELEMENT));
         })
-        return Promise.all(json).then((p)=> {
+        return Promise.all(elements).then((p)=> {
             return p;
         });
     }).then(responses=> {

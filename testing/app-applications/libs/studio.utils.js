@@ -10,7 +10,11 @@ module.exports = {
     xpTabs: {},
 
     doCloseCurrentBrowserTab: function () {
-        return webDriverHelper.browser.close();
+        return webDriverHelper.browser.getTitle().then(title=> {
+            if (title != 'Enonic XP Home') {
+                return webDriverHelper.browser.close();
+            }
+        })
     },
     findAndSelectItem: function (name) {
         return browsePanel.waitForRowByNameVisible(name).then(()=> {

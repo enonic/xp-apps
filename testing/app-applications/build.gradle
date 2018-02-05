@@ -20,18 +20,15 @@ plugins {
     id 'com.moowork.node' version '0.13'
     id 'com.moowork.gulp' version '0.13'
 }
-
+configurations {
+    distro
+}
 apply plugin: 'com.enonic.defaults'
 
 enonic {
     publishRepo = 'inhouse'
 }
 
-configurations {
-    distro
-}
-
-task buildApplications( dependsOn: [':contenttypes:install'] )
 ext {
     xpVersion = '6.14.0-SNAPSHOT'
     unpackDir = "$buildDir${File.separator}install"
@@ -42,6 +39,7 @@ ext {
     appDir = "$projectDir${File.separator}test-applications"
     xpHome = "$distroDir${File.separator}home"
     allureResultsDir = "allure-results"
+    xpServer = new ServerInstance()
 }
 
 task copyApps( type: Copy ) {
@@ -90,11 +88,6 @@ artifacts {
 
 jar.enabled = true
 
-
-ext {
-    xpServer = new ServerInstance()
-}
-
 task startServer( dependsOn: unpackDistro ) {
     doLast {
         xpServer.installDir = file( distroDir )
@@ -132,5 +125,4 @@ task testApplicationsAppLocally( type: GulpTask, dependsOn: [npmInstall] ) {
     outputs.files fileTree( dir: '/test-results' )
     args = ['test']
 }
-testApplicationsApp.finalizedBy = ['stopServer']
 
