@@ -67,7 +67,7 @@ module.exports = {
         }).then(()=> {
             return browsePanel.waitForSpinnerNotVisible();
         }).catch(err=> {
-            this.saveScreenshot(webDriverHelper.browser, 'err_confirm_dialog');
+            this.saveScreenshot('err_confirm_dialog');
             throw new Error('Error in Confirm Delete: ' + err);
         })
     },
@@ -276,10 +276,10 @@ module.exports = {
         //    //do something
         //}
     },
-    saveScreenshot: function (browser, name) {
+    saveScreenshot: function (name) {
         var path = require('path')
         var screenshotsDir = path.join(__dirname, '/../build/screenshots/');
-        return browser.saveScreenshot(screenshotsDir + name + '.png').then(()=> {
+        return webDriverHelper.browser.saveScreenshot(screenshotsDir + name + '.png').then(()=> {
             return console.log('screenshot saved ' + name);
         }).catch(err=> {
             return console.log('screenshot was not saved ' + screenshotsDir + 'utils  ' + err);

@@ -30,7 +30,7 @@ describe('`user.delete.spec`:User - confirm and delete it in the wizard and in t
             }).then(()=> {
                 return userWizard.clickOnDelete();
             }).then(()=> {
-                testUtils.saveScreenshot(webDriverHelper.browser, "user_wizard_confirm_delete1");
+                testUtils.saveScreenshot("user_wizard_confirm_delete1");
                 return assert.eventually.isTrue(confirmationDialog.waitForDialogVisible(appConst.TIMEOUT_3),
                     "`Confirmation Dialog` should be displayed");
             });
@@ -49,7 +49,7 @@ describe('`user.delete.spec`:User - confirm and delete it in the wizard and in t
             }).then(()=> {
                 return testUtils.confirmDelete();
             }).then(result=> {
-                testUtils.saveScreenshot(webDriverHelper.browser, "user_deleted_confirmation_mess1");
+                testUtils.saveScreenshot("user_deleted_confirmation_mess1");
                 var expectedMessage = appConst.userDeletedMessage(testUser.displayName);
                 return assert.eventually.isTrue(userBrowsePanel.waitForExpectedNotificationMessage(expectedMessage),
                     `Principal "user:system:userName" is deleted - notification message should appear`);
@@ -67,7 +67,7 @@ describe('`user.delete.spec`:User - confirm and delete it in the wizard and in t
             }).then(()=> {
                 return userBrowsePanel.clickOnDeleteButton();
             }).then(()=> {
-                testUtils.saveScreenshot(webDriverHelper.browser, "user_confirm_delete2");
+                testUtils.saveScreenshot("user_confirm_delete2");
                 return assert.eventually.isTrue(confirmationDialog.waitForDialogVisible(appConst.TIMEOUT_3),
                     "`Confirmation Dialog` should be displayed");
             });
@@ -78,7 +78,7 @@ describe('`user.delete.spec`:User - confirm and delete it in the wizard and in t
             return testUtils.selectAndDeleteItem(testUser.displayName).then(()=> {
                 return userBrowsePanel.waitForNotificationMessage();
             }).then(result=> {
-                testUtils.saveScreenshot(webDriverHelper.browser, "user_deleted_notification_mes2");
+                testUtils.saveScreenshot("user_deleted_notification_mes2");
                 var msg = appConst.userDeletedMessage(testUser.displayName);
                 assert.strictEqual(result, msg, `'Principal "user:system:userName" is deleted' the  message should be displayed`);
             });
