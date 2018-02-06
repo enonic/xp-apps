@@ -14,9 +14,6 @@ exports.UserItemType = graphQl.createInterfaceType({
             : exports.typeResolverMap.userStoreType;
     },
     fields: {
-        id: {
-            type: graphQl.GraphQLID
-        },
         key: {
             type: graphQl.GraphQLString
         },

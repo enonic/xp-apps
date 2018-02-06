@@ -22,18 +22,14 @@ export class GetUserStoreByKeyRequest
     getQuery(): string {
         return `query($key: String!) {
             userStore(key: $key) {
-                id,
-                key,
-                name,
-                path,
-                displayName,
-                description,
+                key
+                displayName
+                description
+                idProviderMode
                 authConfig {
                     applicationKey
                     config
                 }
-                idProviderMode,
-                modifiedTime,
                 permissions {
                     principal {
                         displayName
@@ -49,7 +45,7 @@ export class GetUserStoreByKeyRequest
         return this.query().then(result => this.userStorefromJson(result.userStore));
     }
 
-    userStorefromJson(us: UserStoreJson) {
+    userStorefromJson(us: UserStoreJson): UserStore {
         if (!us || Object.keys(us).length === 0) {
             return null;
         }
