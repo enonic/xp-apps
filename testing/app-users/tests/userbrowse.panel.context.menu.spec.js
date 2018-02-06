@@ -40,7 +40,7 @@ describe('userbrowse.panel.context.menu.spec User Browse Panel Context Menu spec
             }).then(()=> {
                 return gridContextMenu.waitForDeleteMenuItemDisabled();
             }).then(()=> {
-                testUtils.saveScreenshot(webDriverHelper.browser, 'system_context_menu');
+                testUtils.saveScreenshot('system_context_menu');
                 return assert.eventually.isFalse(gridContextMenu.isEditMenuItemDisabled(), "`Edit` menu item should be enabled");
             }).then(()=> {
                 return assert.eventually.isFalse(gridContextMenu.isNewMenuItemDisabled(), "`New..` menu item should be enabled");
@@ -69,7 +69,7 @@ describe('userbrowse.panel.context.menu.spec User Browse Panel Context Menu spec
             }).then(()=> {
                 return gridContextMenu.getGridContextMenuItems();
             }).then(result=> {
-                testUtils.saveScreenshot(webDriverHelper.browser, "groups_context_menu");
+                testUtils.saveScreenshot("groups_context_menu");
                 assert.isTrue(result[0] == 'New User Group');
             })
         });
@@ -86,7 +86,7 @@ describe('userbrowse.panel.context.menu.spec User Browse Panel Context Menu spec
             }).then(()=> {
                 return gridContextMenu.isDeleteMenuItemDisabled();
             }).then((result)=> {
-                testUtils.saveScreenshot(webDriverHelper.browser, "store_context_menu");
+                testUtils.saveScreenshot("store_context_menu");
                 return assert.isFalse(result, "`Delete` menu item should be enabled, because the store is empty");
             });
         });

@@ -116,9 +116,9 @@ var userWizard = Object.create(wizard, {
         value: function (user) {
             return this.typeDisplayName(user.displayName).then(()=> {
                 return this.typeEmail(user.email);
-            }).then(()=> {
+            }).pause(500).then(()=> {
                 return this.typePassword(user.password);
-            }).then(()=> {
+            }).pause(500).then(()=> {
                 if (user.roles != null) {
                     return this.clickOnRolesAndGroupsLink();
                 }

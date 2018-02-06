@@ -18,7 +18,9 @@ var homePage = Object.create(page, {
     },
     waitForXpTourVisible: {
         value: function (ms) {
-            return this.waitForVisible(`${xpTourDialog.container}`, ms);
+            return this.waitForVisible(`${xpTourDialog.container}`, ms).catch(err=> {
+                return false;
+            })
         }
     },
     waitForLoaded: {

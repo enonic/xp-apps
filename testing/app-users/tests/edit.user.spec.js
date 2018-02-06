@@ -25,20 +25,20 @@ describe('`edit.user.spec`: Edit an user - change e-mail, name and roles', funct
             let roles = [appConst.roles.CM_ADMIN, appConst.roles.USERS_ADMINISTRATOR];
             testUser = userItemsBuilder.buildUser(userName, '1q2w3e', userItemsBuilder.generateEmail(userName), roles);
             return testUtils.clickOnSystemOpenUserWizard().then(()=> {
-                this.saveScreenshot('edit_user_wizard1');
+                testUtils.saveScreenshot('edit_user_wizard1');
                 return userWizard.typeData(testUser);
             }).then(()=> {
-                this.saveScreenshot('edit_user_wizard2');
+                testUtils.saveScreenshot('edit_user_wizard2');
                 return userWizard.waitAndClickOnSave();
             }).then(()=> {
                 return userBrowsePanel.clickOnAppHomeButton();
             }).then(()=> {
                 return testUtils.typeNameInFilterPanel(userName);
             }).pause(500).then(()=> {
-                this.saveScreenshot('edit_user_wizard3');
+                testUtils.saveScreenshot('edit_user_wizard3');
                 return userBrowsePanel.clickOnRowByName(userName);
             }).then(()=> {
-                this.saveScreenshot('edit_user_wizard4');
+                testUtils.saveScreenshot('edit_user_wizard4');
                 return userStatisticsPanel.getDisplayNameOfRoles();
             }).then((roles)=> {
                 assert.equal(roles[0], appConst.roles.CM_ADMIN, '`Content Manager Administrator` role should be present on the panel');

@@ -72,23 +72,34 @@ module.exports = {
         })
     },
     navigateToUsersApp: function (browser) {
-        return launcherPanel.waitForPanelVisible(appConst.TIMEOUT_3).then(()=> {
-            return launcherPanel.clickOnUsersLink();
+        return launcherPanel.waitForPanelVisible(appConst.TIMEOUT_2).then((result)=> {
+            if (result) {
+                console.log("Launcher Panel is opened, click on the `Users` link...");
+                return launcherPanel.clickOnUsersLink();
+            } else {
+                console.log("Login Page is opened, type a password and name...");
+                return this.doLoginAndSClickOnUsersLink(browser);
+            }
         }).then(()=> {
             return this.doSwitchToUsersApp(browser);
         }).catch((err)=> {
-            return this.doLoginAndSwitchToUsers(browser);
+            console.log('tried to navigate to Users app, but: ' + err);
+            this.saveScreenshot(browser, "err_navigate_to_users");
         });
     },
-    doSwitchToUsersApp_old: function (browser) {
-        console.log('testUtils:switching to users app...');
-        return browser.getTabIds().then(tabs => {
-            this.xpTabs = tabs;
-            return browser.switchTab(this.xpTabs[1]);
+
+    doLoginAndSClickOnUsersLink: function (browser) {
+        return loginPage.doLogin().pause(500).then(()=> {
+            return homePage.waitForXpTourVisible(appConst.TIMEOUT_3);
+        }).then((result)=> {
+            if (result) {
+                return homePage.doCloseXpTourDialog();
+            }
         }).then(()=> {
-            return browsePanel.waitForUsersGridLoaded(appConst.TIMEOUT_3);
-        });
+            return launcherPanel.clickOnUsersLink().pause(700);
+        })
     },
+
     doSwitchToUsersApp: function (browser) {
         console.log('testUtils:switching to users app...');
         return browser.getTabIds().then(tabs => {
@@ -132,19 +143,6 @@ module.exports = {
         });
     },
 
-    doLoginAndSwitchToUsers: function (browser) {
-        return loginPage.doLogin().then(()=> {
-            return homePage.waitForXpTourVisible(appConst.TIMEOUT_3);
-        }).then(()=> {
-            return homePage.doCloseXpTourDialog();
-        }).then(()=> {
-            return launcherPanel.clickOnUsersLink().pause(1000);
-        }).then(()=> {
-            return this.doSwitchToUsersApp(browser);
-        }).catch((err)=> {
-            throw new Error(err);
-        })
-    },
 
     doCloseUsersApp: function (browser) {
         return browser.close().pause(300).then(()=> {
@@ -154,14 +152,11 @@ module.exports = {
     selectUserAndOpenWizard: function (displayName) {
         return this.findAndSelectItem(displayName).then(()=> {
             return browsePanel.waitForEditButtonEnabled();
-        }).then((result)=> {
-            if (!result) {
-                throw new Error('Edit button is disabled!');
-            }
+        }).then(()=> {
             return browsePanel.clickOnEditButton();
         }).then(()=> {
             return userWizard.waitForOpened();
-        })
+        }).pause(500);
     },
     clickOnRolesFolderAndOpenWizard: function () {
         return browsePanel.clickOnRowByName('roles').then(()=> {
@@ -216,7 +211,7 @@ module.exports = {
     openWizardAndSaveGroup: function (group) {
         return this.clickOnSystemAndOpenGroupWizard().then(()=> {
             return groupWizard.typeData(group)
-        }).then(()=> {
+        }).pause(500).then(()=> {
             return this.saveAndCloseWizard(group.displayName)
         }).pause(1000);
     },
