@@ -3,7 +3,7 @@
  */
 
 const page = require('./page');
-var xpTourDialog = {
+const xpTourDialog = {
     container: `//div[contains(@id,'ModalDialog') and descendant::h2[contains(.,'Welcome Tour - Step 1 of 5')]]`
 };
 const home = {
