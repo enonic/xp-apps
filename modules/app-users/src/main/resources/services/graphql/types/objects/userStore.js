@@ -6,15 +6,14 @@ var graphQlEnums = require('../enums');
 
 var graphQlUserItem = require('./userItem');
 
+var userstoresLib = require('/lib/userstores');
+
 var UserStoreAccessControlEntryType = graphQl.createObjectType({
     name: 'UserStoreAccessControlEntry',
     description: 'Domain representation of user store access control entry',
     fields: {
         principal: {
-            type: graphQl.reference('Principal'),
-            resolve: function(env) {
-                return principals.getByKeys(env.source.principal);
-            }
+            type: graphQl.reference('Principal')
         },
         access: {
             type: graphQlEnums.UserStoreAccessEnum
@@ -31,9 +30,9 @@ exports.AuthConfig = graphQl.createObjectType({
         },
         config: {
             type: graphQl.GraphQLString,
-            resolve: function() {
-                // TODO: config is not read from db yet, and there's no suitable graphql type for unstructured data
-                return JSON.stringify([]);
+            resolve: function(env) {
+                return JSON.stringify(env.source.config);
+                //TODO Create object type for property array
             }
         }
     }
@@ -44,28 +43,22 @@ exports.UserStoreType = graphQl.createObjectType({
     description: 'Domain representation of a user store',
     interfaces: [graphQlUserItem.UserItemType],
     fields: {
-        id: {
-            type: graphQl.GraphQLID,
-            resolve: function(env) {
-                return env.source._id;
-            }
-        },
         key: {
             type: graphQl.GraphQLString,
             resolve: function(env) {
-                return env.source._name;
+                return env.source.key || env.source._name;
             }
         },
         name: {
             type: graphQl.GraphQLString,
             resolve: function(env) {
-                return env.source._name;
+                return env.source.key || env.source._name;
             }
         },
-        path: {
+        path: { 
             type: graphQl.GraphQLString,
             resolve: function(env) {
-                return env.source._path;
+                return '/identity/' + (env.source.key || env.source._name);
             }
         },
         displayName: {
@@ -75,18 +68,19 @@ exports.UserStoreType = graphQl.createObjectType({
             type: graphQl.GraphQLString
         },
         authConfig: {
-            type: exports.AuthConfig,
-            resolve: function(env) {
-                return env.source.idProvider;
-            }
+            type: exports.AuthConfig
         },
         idProviderMode: {
-            type: graphQlEnums.IdProviderModeEnum
+            type: graphQlEnums.IdProviderModeEnum,
+            resolve: function(env) {
+                var idProviderKey =  env.source.authConfig && env.source.authConfig.applicationKey;
+                return idProviderKey ? userstoresLib.getIdProviderMode(idProviderKey) : null;
+            }
         },
         permissions: {
             type: graphQl.list(UserStoreAccessControlEntryType),
             resolve: function(env) {
-                return env.source.access;
+                return userstoresLib.getPermissions(env.source.key);
             }
         },
         modifiedTime: {
@@ -104,10 +98,7 @@ exports.UserStoreDeleteType = graphQl.createObjectType({
     description: 'Result of a userStore delete operation',
     fields: {
         userStoreKey: {
-            type: graphQl.GraphQLString,
-            resolve: function(env) {
-                return env.source.key;
-            }
+            type: graphQl.GraphQLString
         },
         deleted: {
             type: graphQl.GraphQLBoolean

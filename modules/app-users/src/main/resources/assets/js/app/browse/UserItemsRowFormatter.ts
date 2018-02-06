@@ -5,12 +5,12 @@ import TreeNode = api.ui.treegrid.TreeNode;
 
 export class UserItemsRowFormatter {
 
-    public static nameFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<UserTreeGridItem>) {
-        let viewer = <UserTreeGridItemViewer>node.getViewer('displayName');
+    public static nameFormatter({}: any, {}: any, {}: any, {}: any, dataContext: TreeNode<UserTreeGridItem>) {
+        let viewer = <UserTreeGridItemViewer>dataContext.getViewer('displayName');
         if (!viewer) {
             viewer = new UserTreeGridItemViewer();
-            viewer.setObject(node.getData(), node.calcLevel() > 1);
-            node.setViewer('displayName', viewer);
+            viewer.setObject(dataContext.getData(), dataContext.calcLevel() > 1);
+            dataContext.setViewer('displayName', viewer);
         }
         return viewer.toString();
     }

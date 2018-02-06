@@ -9,15 +9,16 @@ import GetAllContentTypesRequest = api.schema.content.GetAllContentTypesRequest;
 import GetNearestSiteRequest = api.content.resource.GetNearestSiteRequest;
 import Content = api.content.Content;
 import ContentPath = api.content.ContentPath;
-import ContentTypeSummary = api.schema.content.ContentTypeSummary;
 import Site = api.content.site.Site;
 import FileUploadStartedEvent = api.ui.uploader.FileUploadStartedEvent;
-import ListContentByPathRequest = api.content.resource.ListContentByPathRequest;
+import AggregateContentTypesByPathRequest = api.content.resource.AggregateContentTypesByPathRequest;
+import AggregateContentTypesResult = api.content.resource.result.AggregateContentTypesResult;
 import LoadMask = api.ui.mask.LoadMask;
-import ContentResponse = api.content.resource.result.ContentResponse;
 import IsAuthenticatedRequest = api.security.auth.IsAuthenticatedRequest;
 import LoginResult = api.security.auth.LoginResult;
 import i18n = api.util.i18n;
+import ContentTypeSummaries = api.schema.content.ContentTypeSummaries;
+import ContentTypeSummary = api.schema.content.ContentTypeSummary;
 
 export class NewContentDialog extends api.ui.dialog.ModalDialog {
 
@@ -173,7 +174,7 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
         this.parentContent = parent;
         this.allContentTypes.setParentContent(parent);
 
-        let params: {[key: string]: any} = {
+        let params: { [key: string]: any } = {
             parent: parent ? parent.getPath().toString() : api.content.ContentPath.ROOT.toString()
         };
 
@@ -218,7 +219,7 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
     close() {
         this.fileInput.reset();
 
-        if(this.isVisible()) {
+        if (this.isVisible()) {
             super.close();
         }
     }
@@ -228,11 +229,12 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
         this.loadMask.show();
 
         wemQ.all(this.sendRequestsToFetchContentData())
-            .spread((contentTypes: ContentTypeSummary[], directChilds: ContentResponse<api.content.ContentSummary>,
+            .spread((contentTypes: ContentTypeSummaries, aggregations: AggregateContentTypesResult,
                      parentSite: Site) => {
 
                 this.allContentTypes.createItems(contentTypes, parentSite);
-                this.mostPopularContentTypes.getItemsList().createItems(this.allContentTypes.getItems(), directChilds.getContents());
+
+                this.mostPopularContentTypes.getItemsList().createItems(contentTypes, aggregations);
                 this.recentContentTypes.getItemsList().createItems(this.allContentTypes.getItems());
 
             }).catch((reason: any) => {
@@ -252,25 +254,23 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
         let requests: wemQ.Promise<any>[] = [];
         requests.push(new GetAllContentTypesRequest().sendAndParse().then((contentTypes: ContentTypeSummary[]) => {
             return new IsAuthenticatedRequest().sendAndParse().then((loginResult: LoginResult) => {
-                return this.filterContentTypes(contentTypes, loginResult);
+                return this.filterContentTypes(ContentTypeSummaries.from(contentTypes), loginResult);
             });
         }));
 
         if (this.parentContent) {
-            requests.push(new ListContentByPathRequest(this.parentContent.getPath()).sendAndParse());
+            requests.push(new AggregateContentTypesByPathRequest(this.parentContent.getPath()).sendAndParse());
             requests.push(new GetNearestSiteRequest(this.parentContent.getContentId()).sendAndParse());
         } else {
-            requests.push(new ListContentByPathRequest(ContentPath.ROOT).sendAndParse());
+            requests.push(new AggregateContentTypesByPathRequest(ContentPath.ROOT).sendAndParse());
         }
 
         return requests;
     }
 
-    private filterContentTypes(contentTypes: ContentTypeSummary[], loginResult: LoginResult): ContentTypeSummary[] {
+    private filterContentTypes(contentTypes: ContentTypeSummaries, loginResult: LoginResult): ContentTypeSummaries {
         const isContentAdmin: boolean = loginResult.isContentAdmin();
-        contentTypes = contentTypes.filter(contentType => !contentType.isUnstructured() && (isContentAdmin || !contentType.isSite()));
-
-        return contentTypes;
+        return contentTypes.filter(contentType => !contentType.isUnstructured() && (isContentAdmin || !contentType.isSite()));
     }
 
     private updateDialogTitlePath() {

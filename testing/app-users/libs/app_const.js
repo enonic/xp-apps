@@ -5,6 +5,7 @@ module.exports = Object.freeze({
     //waitforTimeout
     TIMEOUT_3: 3000,
     TIMEOUT_1: 1000,
+    TIMEOUT_SUITE: 180000,
     USER_STORE: 'User Store',
     ROLE: 'Role',
     ROLES: 'Roles',

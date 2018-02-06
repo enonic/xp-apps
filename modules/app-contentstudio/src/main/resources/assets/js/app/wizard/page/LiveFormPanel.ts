@@ -47,6 +47,7 @@ import {ShowWarningLiveEditEvent} from '../../../page-editor/ShowWarningLiveEdit
 import {PageUnloadedEvent} from '../../../page-editor/PageUnloadedEvent';
 import {ImageComponentView} from '../../../page-editor/image/ImageComponentView';
 import {PageModel} from '../../../page-editor/PageModel';
+import {ComponentDetachedFromFragmentEvent} from '../../../page-editor/ComponentDetachedFromFragmentEvent';
 import Content = api.content.Content;
 import ContentTypeName = api.schema.content.ContentTypeName;
 import Page = api.content.page.Page;
@@ -662,6 +663,12 @@ export class LiveFormPanel
 
             let summaryAndStatus = api.content.ContentSummaryAndCompareStatus.fromContentSummary(event.getFragmentContent());
             new api.content.event.EditContentEvent([summaryAndStatus]).fire();
+        });
+
+        this.liveEditPageProxy.onComponentDetached((event: ComponentDetachedFromFragmentEvent) => {
+            api.notify.showSuccess(i18n('notify.component.detached', event.getComponentView().getName()));
+
+            this.saveAndReloadOnlyComponent(event.getComponentView());
         });
 
         this.liveEditPageProxy.onFragmentReloadRequired((event: FragmentComponentReloadRequiredEvent) => {

@@ -175,4 +175,10 @@ Page.prototype.doRightClick = function (selector) {
         throw Error(err.message + ` ` + selector);
     })
 };
+Page.prototype.scroll = function (xoffset, yoffset) {
+    return this.getBrowser().scroll("//div[contains(@id,'UserItemsTreeGrid') and not(contains(@style,'hidden'))]", xoffset, yoffset).catch(
+        function (err) {
+            throw Error(err.message + ` when scroll`);
+        })
+};
 module.exports = new Page();

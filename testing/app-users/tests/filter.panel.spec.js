@@ -57,6 +57,7 @@ describe('filter.panel.spec Principal Filter Panel specification', function () {
             }).then(()=> {
                 return filterPanel.waitForOpened();
             }).then(()=> {
+                testUtils.saveScreenshot('aggregation_group_added');
                 return filterPanel.getAggregationItems();
             }).then(result=> {
                 assert.equal(result.length, 4, 'three aggregation-checkboxes should be present on the page');
