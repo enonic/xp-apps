@@ -85,6 +85,7 @@ module.exports = {
         }).catch((err)=> {
             console.log('tried to navigate to Users app, but: ' + err);
             this.saveScreenshot(browser, "err_navigate_to_users");
+            throw new Error(err);
         });
     },
 
