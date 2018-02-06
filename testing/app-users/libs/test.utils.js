@@ -15,6 +15,8 @@ const filterPanel = require("../page_objects/browsepanel/principal.filter.panel"
 const confirmationDialog = require("../page_objects/confirmation.dialog");
 const appConst = require("./app_const");
 const webDriverHelper = require("./WebDriverHelper");
+const itemBuilder = require('../../libs/userItems.builder');
+
 
 
 module.exports = {
@@ -84,7 +86,7 @@ module.exports = {
             return this.doSwitchToUsersApp(browser);
         }).catch((err)=> {
             console.log('tried to navigate to Users app, but: ' + err);
-            this.saveScreenshot(browser, "err_navigate_to_users");
+            this.saveScreenshot("err_navigate_to_users" + itemBuilder.generateRandomNumber());
             throw new Error(err);
         });
     },
