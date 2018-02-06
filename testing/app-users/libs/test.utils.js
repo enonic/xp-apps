@@ -15,7 +15,7 @@ const filterPanel = require("../page_objects/browsepanel/principal.filter.panel"
 const confirmationDialog = require("../page_objects/confirmation.dialog");
 const appConst = require("./app_const");
 const webDriverHelper = require("./WebDriverHelper");
-const itemBuilder = require('../../libs/userItems.builder');
+const itemBuilder = require('./userItems.builder');
 
 
 
