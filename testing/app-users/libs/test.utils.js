@@ -94,7 +94,10 @@ module.exports = {
             return homePage.waitForXpTourVisible(appConst.TIMEOUT_3);
         }).then((result)=> {
             if (result) {
+                console.log('xp-tour dialog is present, closing it... ');
                 return homePage.doCloseXpTourDialog();
+            } else {
+                console.log('xp-tour dialog is not visible: ');
             }
         }).then(()=> {
             return launcherPanel.clickOnUsersLink().pause(700);

@@ -13,7 +13,7 @@ var homePage = Object.create(page, {
 
     closeXpTourButton: {
         get: function () {
-            return `${xpTourDialog.container} div[class='cancel-button-top']`
+            return `${xpTourDialog.container}//div[@class='cancel-button-top']`
         }
     },
     waitForXpTourVisible: {

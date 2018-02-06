@@ -34,8 +34,11 @@ var launcherPanel = Object.create(page, {
     clickOnUsersLink: {
         value: function () {
             return this.waitForVisible(this.usersLink, 2000).then(()=> {
-                return this.doClick(this.usersLink);
-            }).pause(400);
+                return this.doClick(this.usersLink).catch(err=> {
+                    console.log('err when click on Users link' + err);
+                    throw new Error(err);
+                })
+            })
         }
     },
     waitForPanelVisible: {
