@@ -218,7 +218,7 @@ module.exports = {
             return groupWizard.typeData(group)
         }).then(()=> {
             return this.saveAndCloseWizard(group.displayName)
-        }).pause(500);
+        }).pause(1000);
     },
     clickOnNewOpenUserStoreWizard: function () {
         return browsePanel.clickOnNewButton().then(()=> {
