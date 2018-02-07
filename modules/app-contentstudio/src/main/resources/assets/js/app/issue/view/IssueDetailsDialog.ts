@@ -38,6 +38,8 @@ import AppHelper = api.util.AppHelper;
 import TabBarItem = api.ui.tab.TabBarItem;
 import PrincipalComboBoxBuilder = api.ui.security.PrincipalComboBoxBuilder;
 import PrincipalType = api.security.PrincipalType;
+import PrincipalKey = api.security.PrincipalKey;
+import UserStoreKey = api.security.UserStoreKey;
 import PrincipalLoader = api.security.PrincipalLoader;
 import ComboBox = api.ui.selector.combobox.ComboBox;
 
@@ -162,13 +164,14 @@ export class IssueDetailsDialog
 
     protected toggleAction(enable: boolean) {
         super.toggleAction(enable);
-        this.publishButton.setEnabled(this.publishProcessor.containsInvalidItems() && this.publishProcessor.isAllPublishable());
+        this.publishButton.setEnabled(!this.publishProcessor.containsInvalidItems() && this.publishProcessor.isAllPublishable());
         this.errorTooltip.setActive(this.publishProcessor.containsInvalidItems());
     }
 
     private createAssigneesPanel() {
         const assigneesPanel = new Panel();
-        let userLoader = new PrincipalLoader().setAllowedTypes([PrincipalType.USER]);
+        let userLoader = new PrincipalLoader().setAllowedTypes([PrincipalType.USER]).skipPrincipals(
+            [PrincipalKey.ofAnonymous(), PrincipalKey.ofUser(UserStoreKey.SYSTEM, 'su')]);
         this.assigneesCombobox = new PrincipalComboBoxBuilder().setLoader(userLoader).build();
         const updateTabCount = (save) => {
             const num = this.assigneesCombobox.getValue().split(ComboBox.VALUE_SEPARATOR).length;
