@@ -150,18 +150,37 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         ];
     }
 
+    getPublishActions(): api.ui.Action[] {
+        return [
+            this.actionsMap.PUBLISH,
+            this.actionsMap.UNPUBLISH
+        ];
+    }
+
+    getPendingDeleteActions(): api.ui.Action[] {
+        return [
+            this.actionsMap.UNDO_PENDING_DELETE
+        ];
+    }
+
     getAllActionsNoPublish(): api.ui.Action[] {
         return [
             ...this.getAllCommonActions(),
-            this.actionsMap.UNDO_PENDING_DELETE
+            ...this.getPendingDeleteActions()
+        ];
+    }
+
+    getAllActionsNoPendingDelete(): api.ui.Action[] {
+        return [
+            ...this.getAllCommonActions(),
+            ...this.getPublishActions()
         ];
     }
 
     getAllActions(): api.ui.Action[] {
         return [
             ...this.getAllActionsNoPublish(),
-            this.actionsMap.PUBLISH,
-            this.actionsMap.UNPUBLISH
+            ...this.getPublishActions()
         ];
     }
 
@@ -232,6 +251,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
 
         let allAreOnline = contentBrowseItems.length > 0;
         let allArePendingDelete = contentBrowseItems.length > 0;
+        let anyIsPendingDelete = false;
         let someArePublished = false;
         let allAreReadonly = contentBrowseItems.length > 0;
 
@@ -243,6 +263,9 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
             }
             if (allArePendingDelete && !content.isPendingDelete()) {
                 allArePendingDelete = false;
+            }
+            if (content.isPendingDelete()) {
+                anyIsPendingDelete = true;
             }
             if (!someArePublished && content.isPublished()) {
                 someArePublished = true;
@@ -278,19 +301,17 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
             CREATE_ISSUE: true
         });
 
-        this.actionsMap.SHOW_NEW_DIALOG.setVisible(!allArePendingDelete);
-        this.actionsMap.MOVE.setVisible(!allArePendingDelete);
-        this.actionsMap.SORT.setVisible(!allArePendingDelete);
-        this.actionsMap.DELETE.setVisible(!allArePendingDelete);
-
-        if (allArePendingDelete) {
-            this.getAllActions().forEach(action => action.setVisible(false));
+        if (anyIsPendingDelete) {
+            const invisibleActions = allArePendingDelete ? this.getAllActionsNoPendingDelete() : this.getAllActions();
+            invisibleActions.forEach(action => action.setVisible(false));
         } else {
             this.getAllCommonActions().forEach(action => action.setVisible(true));
+
             this.actionsMap.UNPUBLISH.setVisible(unpublishEnabled);
+            this.actionsMap.PUBLISH.setVisible(publishEnabled);
         }
-        this.actionsMap.PUBLISH.setVisible(publishEnabled);
-        this.actionsMap.UNDO_PENDING_DELETE.setVisible(allArePendingDelete);
+
+        this.getPendingDeleteActions().forEach((action) => action.setVisible(allArePendingDelete));
     }
 
     private isEveryLeaf(contentSummaries: ContentSummary[]): boolean {
