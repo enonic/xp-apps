@@ -303,6 +303,9 @@ module.exports = {
             return browsePanel.waitForGridLoaded(appConst.TIMEOUT_3);
         });
     },
+    doPressBackspace: function () {
+        return webDriverHelper.browser.keys('\uE003');
+    },
     doCloseAllWindowTabsAndSwitchToHome: function (browser) {
         return browser.getTabIds().then(tabIds=> {
             let result = Promise.resolve();
