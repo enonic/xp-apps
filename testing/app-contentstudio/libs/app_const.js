@@ -2,6 +2,9 @@
  * Created  on 1.12.2017.
  */
 module.exports = Object.freeze({
+    generateRandomName: function (part) {
+        return part + Math.round(Math.random() * 1000000);
+    },
     TEST_FOLDER_WIT_IMAGES: `All Content types images`,
     APP_CONTENT_TYPES: 'All Content Types App',
     APP_WITH_CONFIGURATOR: 'Second Selenium App',
