@@ -108,7 +108,7 @@ describe('`group.save.statistics.panel`: Save a Group and check the info in the 
                 return userBrowsePanel.clickOnEditButton();
             }).then(()=> {
                 return groupWizard.waitForOpened();
-            }).then(()=> groupWizard.removeRole(appConst.roles.USERS_APP)).then(()=>groupWizard.waitAndClickOnSave()).then(()=> {
+            }).pause(400).then(()=> groupWizard.removeRole(appConst.roles.USERS_APP)).then(()=>groupWizard.waitAndClickOnSave()).then(()=> {
                 return groupWizard.getRoles();
             }).then((roles)=> {
                 expect(roles.length).to.equal(0);

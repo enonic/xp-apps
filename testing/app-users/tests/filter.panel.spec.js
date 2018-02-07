@@ -51,7 +51,7 @@ describe('filter.panel.spec Principal Filter Panel specification', function () {
 
     it('GIVEN `Principal Filter Panel` is opened THEN three aggregation items should be present on the panel',
         () => {
-            let testGroup = itemBuilder.buildGroup('group434', 'simple group');
+            let testGroup = itemBuilder.buildGroup('group1434', 'simple group');
             return testUtils.openWizardAndSaveGroup(testGroup).then(()=> {
                 return userBrowsePanel.clickOnSearchButton();
             }).then(()=> {
