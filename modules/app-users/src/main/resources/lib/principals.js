@@ -109,7 +109,7 @@ module.exports = {
                 return {
                     key: key,
                     deleted: deleted,
-                    reason: 'Principal [' + key + '] could not be deleted'
+                    reason: deleted ? '' : 'Principal [' + key + '] could not be deleted'
                 };
             } catch (e) {
                 return {
