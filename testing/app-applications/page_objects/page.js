@@ -9,7 +9,7 @@ Page.prototype.getBrowser = function () {
     return webDriverHelper.browser;
 };
 
-Page.prototype.numberOfElements = function (selector) {
+Page.prototype.numberOfDisplayedElements = function (selector) {
     return this.getBrowser().elements(selector).then((res)=> {
         return res.value.filter(el=> {
             return this.getBrowser().elementIdDisplayed(el.ELEMENT);
@@ -17,6 +17,14 @@ Page.prototype.numberOfElements = function (selector) {
     }).then((result)=> {
         return Object.keys(result).length;
     });
+};
+
+Page.prototype.getDisplayedElements = function (selector) {
+    return this.getBrowser().elements(selector).then((res)=> {
+        return res.value.filter(el=> {
+            return this.getBrowser().elementIdDisplayed(el.ELEMENT);
+        })
+    })
 };
 
 Page.prototype.getTitle = function () {
@@ -116,21 +124,31 @@ Page.prototype.isAttributePresent = function (selector, atrName) {
     })
 };
 
-Page.prototype.getDisplayedElements = function (selector) {
-    let displayedElements = [];
-    return this.getBrowser().elements(selector).then(results=> {
-        results.value.filter
-    })
-    return this.getBrowser().elementIdDisplayed(el.ELEMENT);
-};
-
 Page.prototype.getTextFromElements = function (selector) {
-    let json = [];
+    let elements = [];
     return this.getBrowser().elements(selector).then((result)=> {
         result.value.forEach((val)=> {
-            json.push(this.getBrowser().elementIdText(val.ELEMENT));
+            elements.push(this.getBrowser().elementIdText(val.ELEMENT));
         })
-        return Promise.all(json).then((p)=> {
+        return Promise.all(elements).then((p)=> {
+            return p;
+        });
+    }).then(responses=> {
+        let res = [];
+        responses.forEach((str)=> {
+            return res.push(str.value);
+        })
+        return res;
+    });
+}
+
+Page.prototype.getTextFromDisplayedElements = function (selector) {
+    let elements = [];
+    return this.getDisplayedElements(selector).then((result)=> {
+        result.forEach((val)=> {
+            elements.push(this.getBrowser().elementIdText(val.ELEMENT));
+        })
+        return Promise.all(elements).then((p)=> {
             return p;
         });
     }).then(responses=> {
@@ -192,5 +210,4 @@ Page.prototype.doCatch = function (screenshotName, errString) {
     })
 
 };
-
 module.exports = new Page();

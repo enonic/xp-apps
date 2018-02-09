@@ -4,7 +4,9 @@
 
 const page = require('../page');
 const elements = require('../../libs/elements');
+const contentBuilder = require('../../libs/content.builder');
 const loaderComboBox = require('../components/loader.combobox');
+const siteConfigDialog = require('./site.configurator.dialog');
 const form = {
     wizardSteps: `//div[contains(@id,'WizardStepsPanel')]`,
     descriptionInput: `//textarea[contains(@name,'description')]`,
@@ -41,7 +43,9 @@ var siteForm = Object.create(page, {
         value: function (appDisplayNames) {
             let result = Promise.resolve();
             appDisplayNames.forEach((displayName)=> {
-                result = result.then(() => this.filterOptionsAndSelectApplication(displayName));
+                result = result.then(() => {
+                    return this.filterOptionsAndSelectApplication(displayName)
+                });
             });
             return result;
         }
@@ -50,6 +54,9 @@ var siteForm = Object.create(page, {
         value: function (displayName) {
             return this.typeTextInInput(this.applicationsOptionsFilterInput, displayName).then(()=> {
                 return loaderComboBox.selectOption(displayName);
+            }).catch(err=> {
+                this.saveScreenshot(contentBuilder.generateRandomName('err_option'));
+                throw new Error('application selector :' + err);
             });
         }
     },
@@ -64,7 +71,39 @@ var siteForm = Object.create(page, {
             let selector = `${form.selectedAppByDisplayName()}` + `${elements.REMOVE_ICON}`
             return this.doClick(selector);
         }
-    }
+    },
+    openSiteConfiguratorDialog: {
+        value: function (displayName) {
+            let selector = `${form.selectedAppByDisplayName(displayName)}` + `//a[@class='edit']`;
+            return this.doClick(selector).then(()=> {
+                return siteConfigDialog.waitForDialogVisible();
+            })
+        }
+    },
+    isSiteConfiguratorViewInvalid: {
+        value: function (displayName) {
+            let selector = `${form.selectedAppByDisplayName(displayName)}`;
+            return this.getBrowser().getAttribute(selector, 'class').then(result=> {
+                return result.includes("invalid");
+            }).catch(err=> {
+                throw new Error('error when try to find selected application view: ' + err);
+            });
+        }
+    },
+    waitUntilSiteConfiguratorViewValid: {
+        value: function (displayName) {
+            let selector = `${form.selectedAppByDisplayName(displayName)}`;
+            return this.getBrowser().waitUntil(()=> {
+                return this.getBrowser().getAttribute(selector, 'class').then(result=> {
+                    return !result.includes('invalid');
+                })
+            }, 2000).then(()=> {
+                return true;
+            }).catch((err)=> {
+                throw new Error(err);
+            });
+        }
+    },
 });
 module.exports = siteForm;
 

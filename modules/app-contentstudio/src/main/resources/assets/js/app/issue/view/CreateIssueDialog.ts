@@ -23,7 +23,7 @@ export class CreateIssueDialog
     private issueCreatedListeners: { (issue: Issue): void }[] = [];
 
     protected constructor() {
-        super(i18n('dialog.newIssue'), true);
+        super(i18n('dialog.newIssue'));
 
         this.getEl().addClass('create-issue-dialog');
 

@@ -25,7 +25,7 @@ describe('textline.content.config.spec:  verifies `max-length value config for t
             }).then(()=> {
                 return studioUtils.findAndSelectItem(SITE.displayName);
             }).then(()=> {
-                return contentBrowsePanel.isItemDisplayed(SITE.displayName);
+                return contentBrowsePanel.waitForContentDisplayed(SITE.displayName);
             }).then(isDisplayed=> {
                 assert.isTrue(isDisplayed, 'site should be listed in the grid');
             });
@@ -38,7 +38,7 @@ describe('textline.content.config.spec:  verifies `max-length value config for t
             }).pause(1000).then(()=> {
                 return textLine.isValidationRecordingVisible();
             }).then((result)=> {
-                studioUtils.saveScreenshot(webDriverHelper.browser, 'textline_max_length_1');
+                studioUtils.saveScreenshot('textline_max_length_1');
                 assert.isFalse(result, 'Validation recording should not be displayed');
             });
         });
@@ -50,7 +50,7 @@ describe('textline.content.config.spec:  verifies `max-length value config for t
             }).then(()=> {
                 return textLine.waitForValidationRecording();
             }).then((result)=> {
-                studioUtils.saveScreenshot(webDriverHelper.browser, 'textline_max_length_2');
+                studioUtils.saveScreenshot('textline_max_length_2');
                 assert.isTrue(result, 'Validation recording should appear');
             });
         });
@@ -62,7 +62,7 @@ describe('textline.content.config.spec:  verifies `max-length value config for t
             }).pause(1000).then(()=> {
                 return textLine.getValidationRecord();
             }).then((text)=> {
-                studioUtils.saveScreenshot(webDriverHelper.browser, 'textline_max_length_3');
+                studioUtils.saveScreenshot('textline_max_length_3');
                 assert.isTrue(text == 'Text cannot be more than 11 characters long', 'correct validation recording should appear');
             });
         });
@@ -75,7 +75,7 @@ describe('textline.content.config.spec:  verifies `max-length value config for t
             }).pause(1000).then(()=> {
                 return textLine.isValidationRecordingVisible();
             }).then((result)=> {
-                studioUtils.saveScreenshot(webDriverHelper.browser, 'textline_max_length_4');
+                studioUtils.saveScreenshot('textline_max_length_4');
                 assert.isFalse(result, 'Validation recording should not be displayed');
             });
         });

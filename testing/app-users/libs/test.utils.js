@@ -15,7 +15,7 @@ const filterPanel = require("../page_objects/browsepanel/principal.filter.panel"
 const confirmationDialog = require("../page_objects/confirmation.dialog");
 const appConst = require("./app_const");
 const webDriverHelper = require("./WebDriverHelper");
-
+const itemBuilder = require('./userItems.builder');
 
 module.exports = {
     xpTabs: {},
@@ -67,28 +67,43 @@ module.exports = {
         }).then(()=> {
             return browsePanel.waitForSpinnerNotVisible();
         }).catch(err=> {
-            this.saveScreenshot(webDriverHelper.browser, 'err_confirm_dialog');
+            this.saveScreenshot('err_confirm_dialog');
             throw new Error('Error in Confirm Delete: ' + err);
         })
     },
     navigateToUsersApp: function (browser) {
-        return launcherPanel.waitForPanelVisible(appConst.TIMEOUT_3).then(()=> {
-            return launcherPanel.clickOnUsersLink();
+        return launcherPanel.waitForPanelVisible(appConst.TIMEOUT_2).then((result)=> {
+            if (result) {
+                console.log("Launcher Panel is opened, click on the `Users` link...");
+                return launcherPanel.clickOnUsersLink();
+            } else {
+                console.log("Login Page is opened, type a password and name...");
+                return this.doLoginAndSClickOnUsersLink(browser);
+            }
         }).then(()=> {
             return this.doSwitchToUsersApp(browser);
         }).catch((err)=> {
-            return this.doLoginAndSwitchToUsers(browser);
+            console.log('tried to navigate to Users app, but: ' + err);
+            this.saveScreenshot("err_navigate_to_users" + itemBuilder.generateRandomNumber());
+            throw new Error('error when navigate to Users app ' + err);
         });
     },
-    doSwitchToUsersApp_old: function (browser) {
-        console.log('testUtils:switching to users app...');
-        return browser.getTabIds().then(tabs => {
-            this.xpTabs = tabs;
-            return browser.switchTab(this.xpTabs[1]);
+
+    doLoginAndSClickOnUsersLink: function (browser) {
+        return loginPage.doLogin().pause(500).then(()=> {
+            return homePage.waitForXpTourVisible(appConst.TIMEOUT_3);
+        }).then((result)=> {
+            if (result) {
+                console.log('xp-tour dialog is present, closing it... ');
+                return homePage.doCloseXpTourDialog();
+            } else {
+                console.log('xp-tour dialog is not visible: ');
+            }
         }).then(()=> {
-            return browsePanel.waitForUsersGridLoaded(appConst.TIMEOUT_3);
-        });
+            return launcherPanel.clickOnUsersLink().pause(700);
+        })
     },
+
     doSwitchToUsersApp: function (browser) {
         console.log('testUtils:switching to users app...');
         return browser.getTabIds().then(tabs => {
@@ -131,22 +146,25 @@ module.exports = {
             })
         });
     },
-
-    doLoginAndSwitchToUsers: function (browser) {
-        return loginPage.doLogin().then(()=> {
-            return homePage.waitForXpTourVisible(appConst.TIMEOUT_3);
+    doCloseUsersApp: function (browser) {
+        return browser.getTabIds().then(tabIds=> {
+            let result = Promise.resolve();
+            tabIds.forEach((tabId)=> {
+                result = result.then(() => {
+                    return this.switchAndCheckTitle(browser, tabId, "Enonic XP Home");
+                }).then((result)=> {
+                    if (!result) {
+                        return browser.close();
+                    }
+                });
+            });
+            return result;
         }).then(()=> {
-            return homePage.doCloseXpTourDialog();
-        }).then(()=> {
-            return launcherPanel.clickOnUsersLink().pause(1000);
-        }).then(()=> {
-            return this.doSwitchToUsersApp(browser);
-        }).catch((err)=> {
-            throw new Error(err);
-        })
+            return this.doSwitchToHome(browser);
+        });
     },
 
-    doCloseUsersApp: function (browser) {
+    doCloseUsersApp1: function (browser) {
         return browser.close().pause(300).then(()=> {
             return this.doSwitchToHome(browser);
         })
@@ -154,14 +172,11 @@ module.exports = {
     selectUserAndOpenWizard: function (displayName) {
         return this.findAndSelectItem(displayName).then(()=> {
             return browsePanel.waitForEditButtonEnabled();
-        }).then((result)=> {
-            if (!result) {
-                throw new Error('Edit button is disabled!');
-            }
+        }).then(()=> {
             return browsePanel.clickOnEditButton();
         }).then(()=> {
             return userWizard.waitForOpened();
-        })
+        }).pause(500);
     },
     clickOnRolesFolderAndOpenWizard: function () {
         return browsePanel.clickOnRowByName('roles').then(()=> {
@@ -195,7 +210,7 @@ module.exports = {
         })
     },
     saveAndCloseWizard: function (displayName) {
-        return wizard.waitAndClickOnSave().pause(300).then(()=> {
+        return wizard.waitAndClickOnSave().pause(8).then(()=> {
             return browsePanel.doClickOnCloseTabAndWaitGrid(displayName);
         })
     },
@@ -216,9 +231,9 @@ module.exports = {
     openWizardAndSaveGroup: function (group) {
         return this.clickOnSystemAndOpenGroupWizard().then(()=> {
             return groupWizard.typeData(group)
-        }).then(()=> {
+        }).pause(500).then(()=> {
             return this.saveAndCloseWizard(group.displayName)
-        }).pause(500);
+        }).pause(1000);
     },
     clickOnNewOpenUserStoreWizard: function () {
         return browsePanel.clickOnNewButton().then(()=> {
@@ -276,10 +291,10 @@ module.exports = {
         //    //do something
         //}
     },
-    saveScreenshot: function (browser, name) {
+    saveScreenshot: function (name) {
         var path = require('path')
         var screenshotsDir = path.join(__dirname, '/../build/screenshots/');
-        return browser.saveScreenshot(screenshotsDir + name + '.png').then(()=> {
+        return webDriverHelper.browser.saveScreenshot(screenshotsDir + name + '.png').then(()=> {
             return console.log('screenshot saved ' + name);
         }).catch(err=> {
             return console.log('screenshot was not saved ' + screenshotsDir + 'utils  ' + err);

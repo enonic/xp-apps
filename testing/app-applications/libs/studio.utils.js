@@ -10,7 +10,11 @@ module.exports = {
     xpTabs: {},
 
     doCloseCurrentBrowserTab: function () {
-        webDriverHelper.browser.close();
+        return webDriverHelper.browser.getTitle().then(title=> {
+            if (title != 'Enonic XP Home') {
+                return webDriverHelper.browser.close();
+            }
+        })
     },
     findAndSelectItem: function (name) {
         return browsePanel.waitForRowByNameVisible(name).then(()=> {
@@ -20,25 +24,26 @@ module.exports = {
         })
     },
 
-
     navigateToApplicationsApp: function (browser) {
-        return launcherPanel.waitForPanelVisible(appConst.TIMEOUT_3).then(()=> {
-            console.log("'Application browse panel' should be loaded");
-            return launcherPanel.clickOnApplicationsLink();
+        return launcherPanel.waitForPanelVisible(appConst.TIMEOUT_2).then((result)=> {
+            if (result) {
+                console.log("Launcher Panel is opened, click on the `Applications` link...");
+                return launcherPanel.clickOnApplicationsLink();
+            } else {
+                console.log("Login Page is opened, type a password and name...");
+                return this.doLoginAndClickOnApplicationsLink(browser);
+            }
         }).then(()=> {
             return this.doSwitchToApplicationsBrowsePanel(browser);
         }).catch((err)=> {
-            return this.doLoginAndSwitchToApplications(browser);
-        }).catch((err)=> {
-            this.saveScreenshot(browser, "err_login_page");
-            throw  new Error("Content Browse Panel for was not loaded");
-        });
-
+            console.log('tried to navigate to applications, but: ' + err);
+            this.saveScreenshot(browser, "err_navigate_to_applications");
+        })
     },
     doSwitchToApplicationsBrowsePanel: function (browser) {
         console.log('testUtils:switching to Applications app...');
         return browser.getTitle().then(title=> {
-            if (title != "Content Studio - Enonic XP Admin") {
+            if (title != "Applications - Enonic XP Admin") {
                 return this.switchToApplicationsTabWindow(browser);
             }
         })
@@ -72,7 +77,7 @@ module.exports = {
     },
     doLoginAndSwitchToApplications: function (browser) {
         return loginPage.doLogin().pause(1500).then(()=> {
-            return homePage.isXpTourVisible(appConst.TIMEOUT_3);
+            return homePage.waitForXpTourVisible(appConst.TIMEOUT_3);
         }).then((result)=> {
             if (result) {
                 return homePage.doCloseXpTourDialog();
@@ -85,6 +90,18 @@ module.exports = {
             throw new Error(err);
         })
     },
+    doLoginAndClickOnApplicationsLink: function (browser) {
+        return loginPage.doLogin().pause(1500).then(()=> {
+            return homePage.waitForXpTourVisible(appConst.TIMEOUT_3);
+        }).then((result)=> {
+            if (result) {
+                return homePage.doCloseXpTourDialog();
+            }
+        }).then(()=> {
+            return launcherPanel.clickOnApplicationsLink().pause(1000);
+        })
+    },
+
     switchToApplicationsTabWindow: function (browser) {
         return browser.getTabIds().then(tabs => {
             let prevPromise = Promise.resolve(false);

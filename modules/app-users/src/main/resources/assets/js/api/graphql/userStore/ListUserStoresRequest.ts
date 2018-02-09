@@ -7,12 +7,9 @@ export class ListUserStoresRequest
     extends ListGraphQlRequest<UserStoreListResult, UserStore[]> {
 
     getQuery(): string {
-        return `query($start: Int, $count: Int, $sort: SortMode) {
-            userStores(start: $start, count: $count, sort: $sort) {
-                id,
+        return `query {
+            userStores {
                 key,
-                name,
-                path,
                 displayName,
                 description,
                 authConfig {
@@ -20,7 +17,6 @@ export class ListUserStoresRequest
                     config
                 }
                 idProviderMode,
-                modifiedTime,
                 permissions {
                     principal {
                         displayName

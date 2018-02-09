@@ -3,7 +3,7 @@ import ContentTypeName = api.schema.content.ContentTypeName;
 import ContentIconUrlResolver = api.content.util.ContentIconUrlResolver;
 import Content = api.content.Content;
 import ImgEl = api.dom.ImgEl;
-import LostConnectionDetector = api.system.LostConnectionDetector;
+import LostConnectionDetector = api.system.ConnectionDetector;
 import GetContentByIdRequest = api.content.resource.GetContentByIdRequest;
 import GetContentTypeByNameRequest = api.schema.content.GetContentTypeByNameRequest;
 
@@ -50,8 +50,12 @@ function getApplication(): api.app.Application {
 
 function startLostConnectionDetector(): LostConnectionDetector {
     let messageId;
+    let readonlyMessageId;
+
     let lostConnectionDetector = new LostConnectionDetector();
+
     lostConnectionDetector.setAuthenticated(true);
+
     lostConnectionDetector.onConnectionLost(() => {
         api.notify.NotifyManager.get().hide(messageId);
         messageId = api.notify.showError(i18n('notify.connection.loss'), false);
@@ -63,8 +67,16 @@ function startLostConnectionDetector(): LostConnectionDetector {
     lostConnectionDetector.onConnectionRestored(() => {
         api.notify.NotifyManager.get().hide(messageId);
     });
+    lostConnectionDetector.onReadonlyStatusChanged((readonly: boolean) => {
+        if (readonly && !readonlyMessageId) {
+            readonlyMessageId = api.notify.showWarning(i18n('notify.repo.readonly'), false);
+        } else if (readonlyMessageId) {
+            api.notify.NotifyManager.get().hide(readonlyMessageId);
+            readonlyMessageId = null;
+        }
+    });
 
-    lostConnectionDetector.startPolling();
+    lostConnectionDetector.startPolling(true);
     return lostConnectionDetector;
 }
 
@@ -209,7 +221,7 @@ function startApplication() {
 
     api.util.AppHelper.preventDragRedirect();
 
-    // tslint:disable-next-line:no-unused-new
+    // tslint:disable-next-line:no-unused-expression
     new DuplicateContentDialog();
 
     let contentDeleteDialog = new ContentDeleteDialog();
@@ -240,7 +252,7 @@ function startApplication() {
 
     ShowIssuesDialogEvent.on((event) => IssueDialogsManager.get().openListDialog());
 
-    // tslint:disable-next-line:no-unused-new
+    // tslint:disable-next-line:no-unused-expression
     new EditPermissionsDialog();
 
     application.setLoaded(true);
@@ -342,9 +354,9 @@ function startContentApplication(application: api.app.Application) {
     });
 
     IssueListDialog.get();
-    // tslint:disable-next-line:no-unused-new
+    // tslint:disable-next-line:no-unused-expression
     new SortContentDialog();
-    // tslint:disable-next-line:no-unused-new
+    // tslint:disable-next-line:no-unused-expression
     new MoveContentDialog();
 }
 

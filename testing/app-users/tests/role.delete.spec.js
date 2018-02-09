@@ -30,7 +30,7 @@ describe('Role - confirm and delete in wizard and in browse panel', function () 
             }).then(()=> {
                 return roleWizard.clickOnDelete();
             }).then(()=> {
-                testUtils.saveScreenshot(webDriverHelper.browser, "role_wizard_confirm_delete1");
+                testUtils.saveScreenshot("role_wizard_confirm_delete1");
                 return assert.eventually.isTrue(confirmationDialog.waitForDialogVisible(appConst.TIMEOUT_3),
                     "`Confirmation Dialog` should be displayed");
             });
@@ -49,7 +49,7 @@ describe('Role - confirm and delete in wizard and in browse panel', function () 
             }).then(()=> {
                 return testUtils.confirmDelete();
             }).then(result=> {
-                testUtils.saveScreenshot(webDriverHelper.browser, "role_deleted_confirmation_mess1");
+                testUtils.saveScreenshot("role_deleted_confirmation_mess1");
                 var expectedMessage = appConst.roleDeletedMessage(testRole.displayName);
                 return assert.eventually.isTrue(userBrowsePanel.waitForExpectedNotificationMessage(expectedMessage),
                     "Correct notification message should appear");
@@ -67,7 +67,7 @@ describe('Role - confirm and delete in wizard and in browse panel', function () 
             }).then(()=> {
                 return userBrowsePanel.clickOnDeleteButton();
             }).then(()=> {
-                testUtils.saveScreenshot(webDriverHelper.browser, "role_confirm_delete2");
+                testUtils.saveScreenshot("role_confirm_delete2");
                 return assert.eventually.isTrue(confirmationDialog.waitForDialogVisible(appConst.TIMEOUT_3),
                     "`Confirmation Dialog` should be displayed");
             });
@@ -78,7 +78,7 @@ describe('Role - confirm and delete in wizard and in browse panel', function () 
             return testUtils.selectAndDeleteItem(testRole.displayName).then(()=> {
                 return userBrowsePanel.waitForNotificationMessage();
             }).then(result=> {
-                testUtils.saveScreenshot(webDriverHelper.browser, "role_deleted_notification_mes2");
+                testUtils.saveScreenshot("role_deleted_notification_mes2");
                 var msg = appConst.roleDeletedMessage(testRole.displayName);
                 assert.strictEqual(result, msg, `'Principal "role:roleName" is deleted' the  message should be displayed`);
             });

@@ -155,8 +155,12 @@ export class PublishProcessor {
         return this.allPublishable;
     }
 
-    public isContainsInvalid() {
+    public containsInvalidItems() {
         return this.containsInvalid;
+    }
+
+    public containsInvalidDependants(): boolean {
+        return this.dependantList.getItems().some(item => !item.getContentSummary().isValid());
     }
 
     public getDependantIds(): ContentId[] {

@@ -56,8 +56,6 @@ export class ListUserItemsRequest
                         edges {
                             node {
                                 key,
-                                name,
-                                path,
                                 description,
                                 displayName
                             }

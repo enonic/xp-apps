@@ -1,3 +1,4 @@
 include ':app-users'
 include ':app-contentstudio'
+include ':app-applications'
 

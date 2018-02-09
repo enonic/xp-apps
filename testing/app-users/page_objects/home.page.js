@@ -3,8 +3,8 @@
  */
 
 const page = require('./page');
-var xpTourDialog = {
-    container: `div[class*='xp-tour']`
+const xpTourDialog = {
+    container: `//div[contains(@id,'ModalDialog') and descendant::h2[contains(.,'Welcome Tour')]]`
 };
 const home = {
     container: `div[class*='home-main-container']`
@@ -13,12 +13,14 @@ var homePage = Object.create(page, {
 
     closeXpTourButton: {
         get: function () {
-            return `${xpTourDialog.container} div[class='cancel-button-top']`
+            return `${xpTourDialog.container}//div[@class='cancel-button-top']`
         }
     },
     waitForXpTourVisible: {
         value: function (ms) {
-            return this.waitForVisible(`${xpTourDialog.container}`, ms);
+            return this.waitForVisible(`${xpTourDialog.container}`, ms).catch(err=> {
+                return false;
+            })
         }
     },
     waitForLoaded: {
@@ -28,7 +30,10 @@ var homePage = Object.create(page, {
     },
     doCloseXpTourDialog: {
         value: function () {
-            return this.doClick(this.closeXpTourButton);
+            return this.doClick(this.closeXpTourButton).catch(err=> {
+                this.saveScreenshot("err_close_xp_tour");
+                throw new Error("err when close the XpTour dialog " + err);
+            })
         }
     },
 });

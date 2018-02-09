@@ -14,7 +14,7 @@ describe('Login Page specification', function () {
 
     it('check login page', () => {
         return loginPage.getTitle().then(function (title) {
-            testUtils.saveScreenshot(webDriverHelper.browser,'login_page');
+            testUtils.saveScreenshot('login_page');
             assert.strictEqual(title, "Enonic XP - Login");
         })
     });

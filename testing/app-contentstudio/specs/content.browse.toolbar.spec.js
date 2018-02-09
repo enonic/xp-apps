@@ -7,10 +7,11 @@ const assert = chai.assert;
 var webDriverHelper = require('../libs/WebDriverHelper');
 const contentBrowsePanel = require('../page_objects/browsepanel/content.browse.panel');
 const studioUtils = require('../libs/studio.utils.js');
+const appConst = require('../libs/app_const');
 const contentWizard = require('../page_objects/wizardpanel/content.wizard.panel');
 
 describe('Content Browse panel, toolbar spec', function () {
-    this.timeout(70000);
+    this.timeout(appConst.SUITE_TIMEOUT);
     webDriverHelper.setupBrowser();
 
 

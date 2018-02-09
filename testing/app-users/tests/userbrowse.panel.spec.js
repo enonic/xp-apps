@@ -55,7 +55,7 @@ describe('User Browse Panel specification', function () {
             }).then(()=> {
                 return userBrowsePanel.getNumberInSelectionToggler();
             }).then(result=> {
-                testUtils.saveScreenshot(webDriverHelper.browser, 'number_in_selection');
+                testUtils.saveScreenshot('number_in_selection');
                 assert.isTrue(result == 1, '1 should be displayed in the selection-toggler button');
             });
         });
@@ -69,7 +69,7 @@ describe('User Browse Panel specification', function () {
             }).then(result=> {
                 return userBrowsePanel.getGridItemDisplayNames();
             }).then(names=> {
-                testUtils.saveScreenshot(webDriverHelper.browser, 'selection_toggler_clicked');
+                testUtils.saveScreenshot('selection_toggler_clicked');
                 assert.isTrue(names.length == 1, 'one folder should be listed in the grid');
                 assert.isTrue(names[0] == 'Roles', 'The name of the folder should be Roles');
             });

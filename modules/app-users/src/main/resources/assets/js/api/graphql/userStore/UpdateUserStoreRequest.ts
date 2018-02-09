@@ -3,6 +3,8 @@ import UserStore = api.security.UserStore;
 import UserStoreKey = api.security.UserStoreKey;
 import AuthConfig = api.security.AuthConfig;
 import UserStoreJson = api.security.UserStoreJson;
+import UserStoreAccess = api.security.acl.UserStoreAccess;
+import UserStoreAccessControlList = api.security.acl.UserStoreAccessControlList;
 
 export class UpdateUserStoreRequest
     extends GraphQlRequest<any, UserStore> {
@@ -14,17 +16,20 @@ export class UpdateUserStoreRequest
     private permissions: api.security.acl.UserStoreAccessControlList;
 
     getVariables(): Object {
-        let authConfig = this.authConfig ? {
+        const authConfig = this.authConfig ? {
             applicationKey: this.authConfig.getApplicationKey().toString(),
-            config: this.authConfig.getConfig() ? JSON.stringify(this.authConfig.getConfig().toJson()) : undefined
-        } : undefined;
+            config: this.authConfig.getConfig() ? JSON.stringify(this.authConfig.getConfig().toJson()) : null
+        } : null;
+
+        const createAccess = p => ({principal: p.getPrincipal().getKey().toString(), access: UserStoreAccess[p.getAccess()]});
+        const permissions = this.permissions ? this.permissions.getEntries().map(createAccess) : null;
 
         let vars = super.getVariables();
         vars['key'] = this.userStoreKey.toString();
         vars['displayName'] = this.displayName;
         vars['description'] = this.description;
         vars['authConfig'] = authConfig;
-        vars['permissions'] = this.permissions ? this.permissions.toJson() : undefined;
+        vars['permissions'] = permissions;
         return vars;
     }
 
@@ -40,7 +45,6 @@ export class UpdateUserStoreRequest
                     config
                 }
                 idProviderMode,
-                modifiedTime,
                 permissions {
                     principal {
                         displayName

@@ -67,6 +67,10 @@ export class ItemType
         return draggables;
     }
 
+    static fromComponentType(componentType: api.content.page.region.ComponentType): ItemType {
+        return ItemType.byShortName(componentType.getShortName());
+    }
+
     static byShortName(shortName: string): ItemType {
         return ItemType.shortNameToInstance[shortName];
     }

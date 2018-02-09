@@ -16,6 +16,8 @@ module.exports = Object.freeze({
     TEXT_AREA: "//textarea[contains(@id,'TextArea')]",
     DROP_DOWN_HANDLE: "//button[contains(@id,'DropdownHandle')]",
     GRID_CANVAS: `//div[@class='grid-canvas']`,
+    TEXT_INPUT: `//input[@type='text']`,
+    VALIDATION_RECORDING_VIEWER: "//div[contains(@id,'ValidationRecordingViewer')]//li",
     slickRowByDisplayName: function (container, displayName) {
         return container +
                `//div[@class='slick-viewport']//div[contains(@class,'slick-row') and descendant::h6[contains(@class,'main-name') and contains(.,'${displayName}')]]`;
@@ -26,17 +28,11 @@ module.exports = Object.freeze({
     itemByName: function (name) {
         return ` //div[contains(@id,'NamesView') and child::p[contains(@class,'sub-name') and contains(.,'${name}')]]`
     },
-    tabItemByDisplayName: function (displayName) {
-        return `//li[contains(@id,'AppBarTabMenuItem') and descendant::a[contains(.,'${displayName}')]]`
-    },
     CANCEL_BUTTON_TOP: `//div[@class='cancel-button-top']`,
 
     COMBO_BOX_OPTION_FILTER_INPUT: "//input[contains(@id,'ComboBoxOptionFilterInput')]",
 
     PRINCIPAL_SELECTED_OPTION: `//div[contains(@id,'security.PrincipalSelectedOptionView')]`,
 
-    selectedPrincipalByDisplayName: function (displayName) {
-        return `//div[contains(@id,'PrincipalSelectedOptionView') and descendant::h6[contains(@class,'main-name') and text()='${displayName}']]`
-    },
     REMOVE_ICON: `//a[@class='remove']`,
 });

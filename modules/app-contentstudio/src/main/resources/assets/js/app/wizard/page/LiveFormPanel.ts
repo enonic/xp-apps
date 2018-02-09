@@ -47,6 +47,7 @@ import {ShowWarningLiveEditEvent} from '../../../page-editor/ShowWarningLiveEdit
 import {PageUnloadedEvent} from '../../../page-editor/PageUnloadedEvent';
 import {ImageComponentView} from '../../../page-editor/image/ImageComponentView';
 import {PageModel} from '../../../page-editor/PageModel';
+import {ComponentDetachedFromFragmentEvent} from '../../../page-editor/ComponentDetachedFromFragmentEvent';
 import Content = api.content.Content;
 import ContentTypeName = api.schema.content.ContentTypeName;
 import Page = api.content.page.Page;
@@ -69,6 +70,7 @@ import ComponentPath = api.content.page.region.ComponentPath;
 import i18n = api.util.i18n;
 import ContentServerEventsHandler = api.content.event.ContentServerEventsHandler;
 import Site = api.content.site.Site;
+import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 
 export interface LiveFormPanelConfig {
 
@@ -142,7 +144,7 @@ export class LiveFormPanel
 
         const contentUpdatedHandler = summaryAndStatuses => {
             // Update action with new content on save if it gets updated
-            summaryAndStatuses.some(summaryAndStatus => {
+            summaryAndStatuses.some((summaryAndStatus: ContentSummaryAndCompareStatus) => {
                 if (this.content.getContentId().equals(summaryAndStatus.getContentId())) {
                     this.saveAsTemplateAction.setContentSummary(summaryAndStatuses[0].getContentSummary());
                     return true;
@@ -661,6 +663,12 @@ export class LiveFormPanel
 
             let summaryAndStatus = api.content.ContentSummaryAndCompareStatus.fromContentSummary(event.getFragmentContent());
             new api.content.event.EditContentEvent([summaryAndStatus]).fire();
+        });
+
+        this.liveEditPageProxy.onComponentDetached((event: ComponentDetachedFromFragmentEvent) => {
+            api.notify.showSuccess(i18n('notify.component.detached', event.getComponentView().getName()));
+
+            this.saveAndReloadOnlyComponent(event.getComponentView());
         });
 
         this.liveEditPageProxy.onFragmentReloadRequired((event: FragmentComponentReloadRequiredEvent) => {

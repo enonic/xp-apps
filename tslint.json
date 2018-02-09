@@ -1,4 +1,10 @@
 {
+  "linterOptions": {
+    "exclude": [
+      "**/*.d.ts",
+      "out/*.js"
+    ]
+  },
   "rules": {
     "forin": true,
     "label-position": true,
@@ -19,7 +25,6 @@
     "no-string-literal": false,
     "no-unsafe-finally": true,
     "no-unused-expression": true,
-    "no-unused-new": true,
     "no-use-before-declare": true,
     "radix": true,
     "switch-default": false,

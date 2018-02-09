@@ -21,7 +21,7 @@ function getApplication(): api.app.Application {
 
 function startLostConnectionDetector() {
     let messageId;
-    let lostConnectionDetector = new api.system.LostConnectionDetector();
+    let lostConnectionDetector = new api.system.ConnectionDetector();
     lostConnectionDetector.setAuthenticated(true);
     lostConnectionDetector.onConnectionLost(() => {
         api.notify.NotifyManager.get().hide(messageId);
@@ -51,7 +51,7 @@ function startApplication() {
 
     api.util.AppHelper.preventDragRedirect();
 
-    // tslint:disable-next-line:no-unused-new
+    // tslint:disable-next-line:no-unused-expression
     new ChangeUserPasswordDialog();
     application.setLoaded(true);
 

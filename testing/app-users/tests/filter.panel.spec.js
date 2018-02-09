@@ -3,6 +3,7 @@ chai.use(require('chai-as-promised'));
 const expect = chai.expect;
 const assert = chai.assert;
 const webDriverHelper = require('../libs/WebDriverHelper');
+const itemBuilder = require('../libs/userItems.builder');
 const userBrowsePanel = require('../page_objects/browsepanel/userbrowse.panel');
 const testUtils = require('../libs/test.utils');
 const filterPanel = require('../page_objects/browsepanel/principal.filter.panel');
@@ -50,15 +51,20 @@ describe('filter.panel.spec Principal Filter Panel specification', function () {
 
     it('GIVEN `Principal Filter Panel` is opened THEN three aggregation items should be present on the panel',
         () => {
-            return userBrowsePanel.clickOnSearchButton().then(()=> {
+            let testGroup = itemBuilder.buildGroup('group1434', 'simple group');
+            return testUtils.openWizardAndSaveGroup(testGroup).then(()=> {
+                return userBrowsePanel.clickOnSearchButton();
+            }).then(()=> {
                 return filterPanel.waitForOpened();
             }).then(()=> {
+                testUtils.saveScreenshot('aggregation_group_added');
                 return filterPanel.getAggregationItems();
             }).then(result=> {
-                assert.equal(result.length, 3, 'three aggregation-checkboxes should be present on the page');
-                assert.isTrue(result[0].includes('User'), 'User aggregation-item should be present');
+                assert.equal(result.length, 4, 'three aggregation-checkboxes should be present on the page');
+                assert.isTrue(result[0].includes('Group'), 'User aggregation-item should be present');
                 assert.isTrue(result[1].includes('Role'), 'Role aggregation-item should be present');
-                assert.isTrue(result[2].includes('User Store'), 'User Store aggregation-item should be present');
+                assert.isTrue(result[2].includes('User'), 'User aggregation-item should be present');
+                assert.isTrue(result[3].includes('User Store'), 'User Store aggregation-item should be present');
             })
         });
 

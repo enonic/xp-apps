@@ -10,6 +10,10 @@ import {FragmentComponentReloadRequiredEvent} from '../FragmentComponentReloadRe
 import {ItemType} from '../ItemType';
 import {LayoutItemType} from '../layout/LayoutItemType';
 import {TextItemType} from '../text/TextItemType';
+import {CreateItemViewConfig} from '../CreateItemViewConfig';
+import {RegionView} from '../RegionView';
+import {ComponentView} from '../ComponentView';
+import {ComponentDetachedFromFragmentEvent} from '../ComponentDetachedFromFragmentEvent';
 import FragmentComponent = api.content.page.region.FragmentComponent;
 import GetContentByIdRequest = api.content.resource.GetContentByIdRequest;
 import Content = api.content.Content;
@@ -18,6 +22,8 @@ import ContentUpdatedEvent = api.content.event.ContentUpdatedEvent;
 import HTMLAreaHelper = api.util.htmlarea.editor.HTMLAreaHelper;
 import ContentTypeName = api.schema.content.ContentTypeName;
 import i18n = api.util.i18n;
+import ComponentType = api.content.page.region.ComponentType;
+import Component = api.content.page.region.Component;
 
 export class FragmentComponentViewBuilder
     extends ContentBasedComponentViewBuilder<FragmentComponent> {
@@ -68,6 +74,16 @@ export class FragmentComponentView
         this.handleContentUpdatedEvent();
     }
 
+    getFragmentRootType(): ComponentType {
+        if (this.fragmentContent) {
+            let page = this.fragmentContent.getPage();
+            if (page) {
+                return page.getFragment().getType();
+            }
+        }
+        return null;
+    }
+
     private handleContentRemovedEvent() {
         let contentDeletedListener = (event) => {
             let deleted = event.getDeletedItems().some((deletedItem: api.content.event.ContentDeletedItem) => {
@@ -114,6 +130,41 @@ export class FragmentComponentView
 
     containsLayout(): boolean {
         return this.fragmentContainsLayout;
+    }
+
+    protected addComponentContextMenuActions(inspectActionRequired: boolean) {
+
+        super.addComponentContextMenuActions(inspectActionRequired);
+
+        const actions: api.ui.Action[] = [];
+
+        actions.push(new api.ui.Action(i18n('live.view.detach')).onExecuted(() => {
+
+            this.deselect();
+
+            const regionView = this.getRegionView();
+
+            let index = regionView.getComponentViewIndex(this);
+
+            const component = this.getFragmentRootComponent();
+            const componentType = this.getFragmentRootType();
+
+            const componentView = <ComponentView<any>>this.createView(
+                ItemType.fromComponentType(componentType),
+                new CreateItemViewConfig<RegionView, Component>()
+                    .setData(component)
+                    .setPositionIndex(index)
+                    .setParentView(regionView)
+                    .setParentElement(regionView));
+
+            this.addComponentView(<ComponentView<any>>componentView, index);
+            this.remove();
+
+            new ComponentDetachedFromFragmentEvent(componentView, component.getType()).fire();
+
+        }));
+
+        this.addContextMenuActions(actions);
     }
 
     getFragmentRootComponent(): api.content.page.region.Component {

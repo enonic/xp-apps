@@ -2,9 +2,15 @@
  * Created  on 1.12.2017.
  */
 module.exports = Object.freeze({
+    generateRandomName: function (part) {
+        return part + Math.round(Math.random() * 1000000);
+    },
     TEST_FOLDER_WIT_IMAGES: `All Content types images`,
     APP_CONTENT_TYPES: 'All Content Types App',
+    APP_WITH_CONFIGURATOR: 'Second Selenium App',
+    APP_WITH_METADATA_MIXIN: 'Third Selenium App',
     //waitForTimeout
+    TIMEOUT_10: 10000,
     TIMEOUT_3: 3000,
     TIMEOUT_1: 1000,
     SUITE_TIMEOUT: 180000,
@@ -19,6 +25,7 @@ module.exports = Object.freeze({
     },
     contentTypes: {
         SHORTCUT: 'base:shortcut',
+        FOLDER: `base:folder`,
         SITE: 'portal:site',
         IMG_SELECTOR_0_0: 'contenttypes:imageselector0_0',
         IMG_SELECTOR_1_1: 'contenttypes:imageselector1_1',

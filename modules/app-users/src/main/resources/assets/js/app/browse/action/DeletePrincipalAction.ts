@@ -2,10 +2,11 @@ import '../../../api.ts';
 import {UserItemsTreeGrid} from '../UserItemsTreeGrid';
 import {UserTreeGridItem, UserTreeGridItemType} from '../UserTreeGridItem';
 import {DeletePrincipalRequest} from '../../../api/graphql/principal/DeletePrincipalRequest';
-
+import {DeleteUserStoreRequest} from '../../../api/graphql/userStore/DeleteUserStoreRequest';
 import Action = api.ui.Action;
 import DeletePrincipalResult = api.security.DeletePrincipalResult;
 import i18n = api.util.i18n;
+import DeleteUserStoreResult = api.security.DeleteUserStoreResult;
 
 export class DeletePrincipalAction
     extends Action {
@@ -59,19 +60,16 @@ export class DeletePrincipalAction
                 }
 
                 if (userStoreKeys && userStoreKeys.length > 0) {
-                    new api.security.DeleteUserStoreRequest()
+                    new DeleteUserStoreRequest()
                         .setKeys(userStoreKeys)
-                        .send()
-                        .done((jsonResponse: api.rest.JsonResponse<any>) => {
-                            let json = jsonResponse.getJson();
-
-                            if (json.results && json.results.length > 0) {
-                                let key = json.results[0].userStoreKey;
-
-                                api.notify.showFeedback(i18n('notify.delete.userstore', key));
+                        .sendAndParse()
+                        .done((results: DeleteUserStoreResult[]) => {
+                            if (results && results.length > 0) {
+                                api.notify.showFeedback(i18n('notify.delete.userstore.single', results[0].getUserStoreKey()));
                                 api.security.UserItemDeletedEvent.create().setUserStores(userStoreItems).build().fire();
                             }
                         });
+
                 }
             });
 
