@@ -15,6 +15,7 @@ function handleGet() {
         appId: app.name,
         xpVersion: app.version,
         messages: admin.getPhrases(),
+        launcherPath: admin.getLauncherPath(),
         launcherUrl: admin.getLauncherUrl()
     };
 
