@@ -103,27 +103,21 @@ module.exports = {
         });
     },
     delete: function(keys) {
-        // convert keys to paths because userstores and roles
-        // can't have custom ids and thus be deleted by keys
-        common.delete(common.keysToPaths(keys));
-
-        // TODO: find which keys could not be deleted with reasons instead of returning all
-        keys.forEach(function(key) {
-            var memberships = module.exports.getMemberships(key);
-            module.exports.removeMemberships(
-                key,
-                memberships.map(function(membership) {
-                    return membership.key;
-                })
-            );
-        });
-
         return keys.map(function(key) {
-            return {
-                key: key,
-                deleted: true,
-                reason: ''
-            };
+            try {
+                var deleted = authLib.deletePrincipal(key);
+                return {
+                    key: key,
+                    deleted: deleted,
+                    reason: 'Principal [' + key + '] could not be deleted'
+                };
+            } catch (e) {
+                return {
+                    key: key,
+                    deleted: false,
+                    reason: e.message
+                }; 
+            }            
         });
     },
     Type: common.PrincipalType
