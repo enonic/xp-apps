@@ -37,7 +37,8 @@ describe('Application Browse Panel,  check buttons on the toolbar', function () 
         })
     });
 
-    it('WHEN Install button has been clicked for two applications THEN two rows should be present in the grid', () => {
+    it('GIVEN Install App dialog is opened WHEN Install button has been clicked for two applications THEN two new applications should be present in the grid',
+        () => {
         this.bail(1);
         return appBrowsePanel.clickOnInstallButton()
             .then(() => installAppDialog.waitForInstallLink(appDisplayName1))
@@ -46,8 +47,8 @@ describe('Application Browse Panel,  check buttons on the toolbar', function () 
             .then(() => installAppDialog.waitForInstallLink(appDisplayName2))
             .then(() => installAppDialog.clickOnInstallAppLink(appDisplayName2))
             .then(() => installAppDialog.waitForAppInstalled(appDisplayName2))
-            .then(() => installAppDialog.clickOnCancelButtonTop)
-            .then(() => installAppDialog.waitForClosed)
+            .then(() => installAppDialog.clickOnCancelButtonTop())
+            .then(() => installAppDialog.waitForClosed).pause(1000)
             .then(() => Promise.all([appBrowsePanel.isItemDisplayed(appDescription1), appBrowsePanel.isItemDisplayed(appDescription2)]));
     });
 

@@ -11,7 +11,7 @@ import {PrincipalWizardPanelParams} from './wizard/PrincipalWizardPanelParams';
 import {RoleWizardPanel} from './wizard/RoleWizardPanel';
 import {UserWizardPanel} from './wizard/UserWizardPanel';
 import {GroupWizardPanel} from './wizard/GroupWizardPanel';
-import GetUserStoreByKeyRequest  = api.security.GetUserStoreByKeyRequest;
+import {GetUserStoreByKeyRequest} from '../api/graphql/userStore/GetUserStoreByKeyRequest';
 import {GetPrincipalByKeyRequest} from '../api/graphql/principal/GetPrincipalByKeyRequest';
 
 import AppBarTabMenuItem = api.app.bar.AppBarTabMenuItem;

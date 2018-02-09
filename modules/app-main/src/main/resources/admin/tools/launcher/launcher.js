@@ -46,17 +46,17 @@ exports.get = function () {
         installation: uriHelperBean.getInstallation() || "Tools",
         homeToolCaption: i18n.localize({
             key: 'launcher.tools.home.caption',
-            bundles: ['admin/i18n/common'],
+            bundles: ['i18n/common'],
             locale: locales
         }),
         homeToolDescription: i18n.localize({
             key: 'launcher.tools.home.description',
-            bundles: ['admin/i18n/common'],
+            bundles: ['i18n/common'],
             locale: locales
         }),
         logOutLink: i18n.localize({
             key: 'launcher.link.logout',
-            bundles: ['admin/i18n/common'],
+            bundles: ['i18n/common'],
             locale: locales
         }),
         adminAssetsUri: admin.getAssetsUri(),

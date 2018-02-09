@@ -12,14 +12,26 @@ const appConst = require("./app_const");
 const newContentDialog = require('../page_objects/browsepanel/new.content.dialog');
 const contentWizardPanel = require('../page_objects/wizardpanel/content.wizard.panel');
 const webDriverHelper = require("./WebDriverHelper");
-const shortcutFormViewPanel = require('../page_objects/wizardpanel/shortcut.form.panel.js');
+const issueListDialog = require('../page_objects/issue.list.dialog');
+const deleteContentDialog = require('../page_objects/delete.content.dialog');
+const confirmContentDeleteDialog = require('../page_objects/confirm.content.delete.dialog');
 
 
 module.exports = {
     xpTabs: {},
     doCloseCurrentBrowserTab: function () {
-        return webDriverHelper.browser.close();
+        return webDriverHelper.browser.getTitle().then(title=> {
+            if (title != 'Enonic XP Home') {
+                return webDriverHelper.browser.close();
+            }
+        })
     },
+    openIssuesListDialog: function () {
+        return browsePanel.clickOnShowIssuesListButton().then(()=> {
+            return issueListDialog.waitForDialogVisible();
+        })
+    },
+
     openContentWizard: function (contentType) {
         return browsePanel.waitForNewButtonEnabled(appConst.TIMEOUT_3).then(()=> {
             return browsePanel.clickOnNewButton();
@@ -28,14 +40,24 @@ module.exports = {
         }).then(()=> {
             return newContentDialog.clickOnContentType(contentType);
         }).then(()=> {
-            return this.doSwitchToNewWizard(webDriverHelper.browser);
+            return this.doSwitchToNewWizard();
         }).then(()=> {
             return contentWizardPanel.waitForOpened();
         })
     },
+
     doAddShortcut: function (shortcut) {
         return this.openContentWizard(appConst.contentTypes.SHORTCUT).then(()=> {
             return contentWizardPanel.typeData(shortcut);
+        }).then(()=> {
+            return contentWizardPanel.waitAndClickOnSave();
+        }).then(()=> {
+            return this.doCloseWizardAndSwitchToGrid()
+        }).pause(1000);
+    },
+    doAddFolder: function (folder) {
+        return this.openContentWizard(appConst.contentTypes.FOLDER).then(()=> {
+            return contentWizardPanel.typeData(folder);
         }).then(()=> {
             return contentWizardPanel.waitAndClickOnSave();
         }).then(()=> {
@@ -55,7 +77,7 @@ module.exports = {
         }).then(()=> {
             return this.doCloseCurrentBrowserTab();
         }).then(()=> {
-            this.doSwitchToContentBrowsePanel(webDriverHelper.browser);
+            return this.doSwitchToContentBrowsePanel(webDriverHelper.browser);
         }).pause(2000);
     },
     doAddArticleContent: function (siteName, article) {
@@ -78,7 +100,24 @@ module.exports = {
             return browsePanel.clickOnRowByName(name);
         });
     },
-    
+    selectContentAndOpenWizard: function (name) {
+        return this.findAndSelectItem(name).then(()=> {
+            return browsePanel.waitForEditButtonEnabled();
+        }).then(()=> {
+            return browsePanel.clickOnEditButton();
+        }).then(()=> {
+            return this.doSwitchToNewWizard();
+        }).then(()=> {
+            return contentWizardPanel.waitForOpened();
+        })
+    },
+    findContentAndClickCheckBox: function (displayName) {
+        return this.typeNameInFilterPanel(name).then(()=> {
+            return browsePanel.waitForRowByNameVisible(name);
+        }).pause(400).then(()=> {
+            return browsePanel.clickCheckboxAndSelectRowByDisplayName(displayName);
+        });
+    },
     selectSiteAndOpenNewWizard: function (siteName, contentType) {
         return this.findAndSelectItem(siteName).then(()=> {
             return browsePanel.waitForNewButtonEnabled();
@@ -91,10 +130,25 @@ module.exports = {
         }).then(()=> {
             return newContentDialog.clickOnContentType(contentType);
         }).then(()=> {
-            return this.doSwitchToNewWizard(webDriverHelper.browser);
+            return this.doSwitchToNewWizard();
         }).then(()=> {
             return contentWizardPanel.waitForOpened();
         });
+    },
+    clickOnDeleteAndConfirm: function (numberOfContents) {
+        return browsePanel.clickOnDeleteButton().then(()=> {
+            return deleteContentDialog.waitForDialogVisible(1000);
+        }).then(()=> {
+            return deleteContentDialog.clickOnDeleteButton();
+        }).then(()=> {
+            return confirmContentDeleteDialog.waitForDialogVisible();
+        }).then(()=> {
+            return confirmContentDeleteDialog.typeNumberOfContent(numberOfContents);
+        }).pause(700).then(()=> {
+            return confirmContentDeleteDialog.clickOnConfirmButton();
+        }).then(()=> {
+            return deleteContentDialog.waitForDialogClosed();
+        })
     },
     typeNameInFilterPanel: function (name) {
         return filterPanel.isPanelVisible().then((result)=> {
@@ -137,19 +191,34 @@ module.exports = {
     },
 
     navigateToContentStudioApp: function (browser) {
-        return launcherPanel.waitForPanelVisible(appConst.TIMEOUT_3).then(()=> {
-            console.log("'user browse panel' should be loaded");
-            return launcherPanel.clickOnContentStudioLink();
+        return launcherPanel.waitForPanelVisible(appConst.TIMEOUT_3).then((result)=> {
+            if (result) {
+                console.log("Launcher Panel is opened, click on the `Content Studio` link...");
+                return launcherPanel.clickOnContentStudioLink();
+            } else {
+                console.log("Login Page is opened, type a password and name...");
+                return this.doLoginAndClickOnContentStudio(browser);
+            }
         }).then(()=> {
             return this.doSwitchToContentBrowsePanel(browser);
         }).catch((err)=> {
-            return this.doLoginAndSwitchToContentStudio(browser);
-        }).catch((err)=> {
-            this.saveScreenshot(browser, "err_login_page");
-            throw  new Error("Content Browse Panel for was not loaded");
-        });
-
+            console.log('tried to navigate to Content Studio app, but: ' + err);
+            this.saveScreenshot(appConst.generateRandomName("err_navigate_to_studio"));
+            throw new Error('error when navigated to studio ' + err);
+        })
     },
+    doLoginAndClickOnContentStudio: function (browser) {
+        return loginPage.doLogin().pause(900).then(()=> {
+            return homePage.waitForXpTourVisible(appConst.TIMEOUT_1);
+        }).then((result)=> {
+            if (result) {
+                return homePage.doCloseXpTourDialog();
+            }
+        }).then(()=> {
+            return launcherPanel.clickOnContentStudioLink().pause(1000);
+        })
+    },
+
     doSwitchToContentBrowsePanel: function (browser) {
         console.log('testUtils:switching to Content Studio app...');
         return browser.getTitle().then(title=> {
@@ -176,29 +245,29 @@ module.exports = {
             return homePage.waitForLoaded(appConst.TIMEOUT_3);
         });
     },
-
-    doSwitchToNewWizard: function (browser) {
+    doSwitchToNewWizard: function () {
         console.log('testUtils:switching to the new wizard tab...');
-        return browser.getTabIds().then(tabs => {
+        return webDriverHelper.browser.getTabIds().then(tabs => {
             this.xpTabs = tabs;
-            return browser.switchTab(this.xpTabs[this.xpTabs.length - 1]);
+            return webDriverHelper.browser.switchTab(this.xpTabs[this.xpTabs.length - 1]);
         }).then(()=> {
-            return contentWizardPanel.waitForOpened(appConst.TIMEOUT_3);
+            return contentWizardPanel.waitForOpened();
         });
     },
     switchAndCheckTitle: function (browser, tabId, reqTitle) {
         return browser.switchTab(tabId).then(()=> {
             return browser.getTitle().then(title=> {
                 return title == reqTitle;
-
             })
         });
     },
     doLoginAndSwitchToContentStudio: function (browser) {
-        return loginPage.doLogin().then(()=> {
+        return loginPage.doLogin().pause(1000).then(()=> {
             return homePage.waitForXpTourVisible(appConst.TIMEOUT_3);
-        }).then(()=> {
-            return homePage.doCloseXpTourDialog();
+        }).then((result)=> {
+            if (result) {
+                return homePage.doCloseXpTourDialog();
+            }
         }).then(()=> {
             return launcherPanel.clickOnContentStudioLink().pause(1000);
         }).then(()=> {
@@ -234,6 +303,9 @@ module.exports = {
             return browsePanel.waitForGridLoaded(appConst.TIMEOUT_3);
         });
     },
+    doPressBackspace: function () {
+        return webDriverHelper.browser.keys('\uE003');
+    },
     doCloseAllWindowTabsAndSwitchToHome: function (browser) {
         return browser.getTabIds().then(tabIds=> {
             let result = Promise.resolve();
@@ -252,13 +324,11 @@ module.exports = {
         }).then(()=> {
             return this.doSwitchToHome(browser);
         });
-
     },
-
-    saveScreenshot: function (browser, name) {
+    saveScreenshot: function (name) {
         var path = require('path')
         var screenshotsDir = path.join(__dirname, '/../build/screenshots/');
-        return browser.saveScreenshot(screenshotsDir + name + '.png').then(()=> {
+        return webDriverHelper.browser.saveScreenshot(screenshotsDir + name + '.png').then(()=> {
             return console.log('screenshot saved ' + name);
         }).catch(err=> {
             return console.log('screenshot was not saved ' + screenshotsDir + 'utils  ' + err);

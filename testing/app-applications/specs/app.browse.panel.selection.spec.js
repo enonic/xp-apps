@@ -10,15 +10,17 @@ const appBrowsePanel = require('../page_objects/applications/applications.browse
 // Define the test suite: a test script block or suite
 describe('Open Apllications app and verify that grid is loaded and correct title should be displayed', function () {
     //Suite-level timeouts may be applied to entire test “suites”, or disabled via this.timeout(0)
-    this.timeout(70000);
+    this.timeout(appConst.SUITE_TIMEOUT);
     //start the browse
     webDriverHelper.setupBrowser();
 
     // a test spec - "specification". put code of the ui-test here, for example, verify the title of the page
     it(`GIVEN applications grid is loaded THEN correct page-title should be displayed`, () => {
         //block of code to execute
-        return appBrowsePanel.getTitle().then(title=>{
-            studioUtils.saveScreenshot(webDriverHelper.browser, "test_title");
+        return appBrowsePanel.waitForPanelVisible(2000).then(()=> {
+            return appBrowsePanel.getTitle();
+        }).then(title=> {
+            studioUtils.saveScreenshot(webDriverHelper.browser, "app_browse_title");
             expect(title).to.equal(appConst.APPLICATION_TITLE);
         })
     });

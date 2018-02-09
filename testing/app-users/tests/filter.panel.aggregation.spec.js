@@ -20,7 +20,7 @@ describe('filter.panel.aggregation.spec Principal Aggregation specification', fu
             }).then(()=> {
                 return userBrowsePanel.waitForItemNotDisplayed('/system');
             }).then(()=> {
-                testUtils.saveScreenshot(webDriverHelper.browser, 'aggregation_in_users');
+                testUtils.saveScreenshot('aggregation_in_users');
                 return expect(userBrowsePanel.isItemDisplayed('/system/users/su')).to.eventually.be.true;
             })
         });
@@ -32,7 +32,7 @@ describe('filter.panel.aggregation.spec Principal Aggregation specification', fu
             }).then(()=> {
                 return userBrowsePanel.waitForItemNotDisplayed('/system');
             }).then(()=> {
-                testUtils.saveScreenshot(webDriverHelper.browser, 'aggregation_in_role');
+                testUtils.saveScreenshot('aggregation_in_role');
                 return expect(userBrowsePanel.isItemDisplayed('/roles/system.user.admin')).to.eventually.be.true;
             })
         });
@@ -44,7 +44,7 @@ describe('filter.panel.aggregation.spec Principal Aggregation specification', fu
             }).then(()=> {
                 return userBrowsePanel.waitForItemNotDisplayed('roles');
             }).then(()=> {
-                testUtils.saveScreenshot(webDriverHelper.browser, 'aggregation_in_store');
+                testUtils.saveScreenshot('aggregation_in_store');
                 return expect(userBrowsePanel.isItemDisplayed('/system')).to.eventually.be.true;
             })
         });

@@ -27,17 +27,15 @@ var deleteContentDialog = Object.create(page, {
     },
     clickOnDeleteButton: {
         value: function () {
-            return this.doClick(this.deleteButton).then(()=> {
-                return this.waitForNotVisible(`${dialog.container}`, appConst.TIMEOUT_3);
-            }).catch((err)=> {
-                this.saveScreenshot('err_close_delete_dialog');
-                throw new Error('Delete dialog must be closed!')
+            return this.doClick(this.deleteButton).catch((err)=> {
+                this.saveScreenshot('err_click_on_delete_dialog');
+                throw new Error(err);
             })
         }
     },
     waitForDialogVisible: {
         value: function (ms) {
-            return this.waitForVisible(`${dialog.container}`, ms);
+            return this.waitForVisible(`${dialog.deleteButton}`, ms);
         }
     },
     waitForDialogClosed: {
@@ -65,7 +63,4 @@ var deleteContentDialog = Object.create(page, {
     },
 });
 module.exports = deleteContentDialog;
-
-
-
 

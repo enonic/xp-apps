@@ -20,7 +20,7 @@ exports.UserStoreAccessControlInput = graphQl.createInputObjectType({
     description: 'Input definition for user store access control entry',
     fields: {
         principal: {
-            type: graphQl.nonNull(PrincipalInput)
+            type: graphQl.nonNull(graphQl.GraphQLString)
         },
         access: {
             type: graphQl.nonNull(graphQlEnums.UserStoreAccessEnum)

@@ -22,8 +22,7 @@
     "webpack": "^3.8.1"
   },
   "dependencies": {
-    "jquery": "^2.2.4",
-    "webcomponentsjs": "^1.0.2"
+    "jquery": "^3.3.1"
   },
   "browserslist": [
     "extends browserslist-config-enonic"

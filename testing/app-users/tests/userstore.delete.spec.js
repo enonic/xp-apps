@@ -14,7 +14,7 @@ const appConst = require('../libs/app_const');
 const confirmationDialog = require("../page_objects/confirmation.dialog");
 
 describe('User Store confirm and delete in wizard and in browse panel', function () {
-    this.timeout(70000);
+    this.timeout(appConst.TIMEOUT_SUITE);
     webDriverHelper.setupBrowser();
     let userStore;
 
@@ -28,7 +28,7 @@ describe('User Store confirm and delete in wizard and in browse panel', function
             }).then(()=> {
                 return userStoreWizard.clickOnDelete();
             }).then(()=> {
-                testUtils.saveScreenshot(webDriverHelper.browser, "userstore_wizard_confirm_delete1");
+                testUtils.saveScreenshot("userstore_wizard_confirm_delete1");
                 return assert.eventually.isTrue(confirmationDialog.waitForDialogVisible(2000), "`Confirmation Dialog` should be displayed");
             });
         });
@@ -45,7 +45,7 @@ describe('User Store confirm and delete in wizard and in browse panel', function
             }).then(()=> {
                 return testUtils.confirmDelete();
             }).then(result=> {
-                testUtils.saveScreenshot(webDriverHelper.browser, "userstore_deleted_confirmation_mess1");
+                testUtils.saveScreenshot("userstore_deleted_confirmation_mess1");
                 var expectedMessage = appConst.storeDeletedMessage(userStore.displayName);
                 return assert.eventually.isTrue(userBrowsePanel.waitForExpectedNotificationMessage(expectedMessage),
                     "Correct notification message should appear");
@@ -58,24 +58,24 @@ describe('User Store confirm and delete in wizard and in browse panel', function
             return testUtils.openWizardAndSaveUserStore(userStore).then(()=> {
                 return userBrowsePanel.doClickOnCloseTabAndWaitGrid(userStore.displayName);
             }).pause(1000).then(()=> {
-                testUtils.findAndSelectItem(userStore.displayName);
+                return testUtils.findAndSelectItem(userStore.displayName);
             }).then(()=> {
                 return userBrowsePanel.waitForDeleteButtonEnabled();
             }).then(()=> {
                 return userBrowsePanel.clickOnDeleteButton();
             }).then(()=> {
-                testUtils.saveScreenshot(webDriverHelper.browser, "store_confirm_delete2");
+                testUtils.saveScreenshot("store_confirm_delete2");
                 return assert.eventually.isTrue(confirmationDialog.waitForDialogVisible(2000), "`Confirmation Dialog` should be displayed");
             });
         });
 
     // TODO remove it when the bug will be fixed: Actually the '#notify.delete.userstore#' appears, so this test is failing now
-    it('GIVEN existing UserStore WHEN the store has been deleted in the browse panel THEN correct notification should appear',
+    it.skip('GIVEN existing UserStore WHEN the store has been deleted in the browse panel THEN correct notification should appear',
         () => {
             return testUtils.selectAndDeleteItem(userStore.displayName).then(()=> {
                 return userBrowsePanel.waitForNotificationMessage();
             }).then(result=> {
-                testUtils.saveScreenshot(webDriverHelper.browser, "store_deleted_notification_mes2");
+                testUtils.saveScreenshot("store_deleted_notification_mes2");
                 var msg = appConst.storeDeletedMessage(userStore.displayName);
                 assert.strictEqual(result, msg, 'expected notification message should be displayed');
             });

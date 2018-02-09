@@ -11,10 +11,10 @@ const userBrowsePanel = require('../page_objects/browsepanel/userbrowse.panel');
 const testUtils = require('../libs/test.utils');
 const userItemsBuilder = require('../libs/userItems.builder.js');
 const appConst = require('../libs/app_const');
-const userStatisticsPanel = require('../page_objects/browsepanel/user.statistics.panel.js');
+const userStatisticsPanel = require('../page_objects/browsepanel/user.statistics.panel');
 
 describe('`edit.user.spec`: Edit an user - change e-mail, name and roles', function () {
-    this.timeout(70000);
+    this.timeout(appConst.TIMEOUT_SUITE);
     webDriverHelper.setupBrowser();
     let testUser;
 
@@ -25,16 +25,20 @@ describe('`edit.user.spec`: Edit an user - change e-mail, name and roles', funct
             let roles = [appConst.roles.CM_ADMIN, appConst.roles.USERS_ADMINISTRATOR];
             testUser = userItemsBuilder.buildUser(userName, '1q2w3e', userItemsBuilder.generateEmail(userName), roles);
             return testUtils.clickOnSystemOpenUserWizard().then(()=> {
+                testUtils.saveScreenshot('edit_user_wizard1');
                 return userWizard.typeData(testUser);
             }).then(()=> {
+                testUtils.saveScreenshot('edit_user_wizard2');
                 return userWizard.waitAndClickOnSave();
             }).then(()=> {
                 return userBrowsePanel.clickOnAppHomeButton();
             }).then(()=> {
                 return testUtils.typeNameInFilterPanel(userName);
             }).pause(500).then(()=> {
+                testUtils.saveScreenshot('edit_user_wizard3');
                 return userBrowsePanel.clickOnRowByName(userName);
             }).then(()=> {
+                testUtils.saveScreenshot('edit_user_wizard4');
                 return userStatisticsPanel.getDisplayNameOfRoles();
             }).then((roles)=> {
                 assert.equal(roles[0], appConst.roles.CM_ADMIN, '`Content Manager Administrator` role should be present on the panel');

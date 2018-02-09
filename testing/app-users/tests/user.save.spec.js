@@ -67,7 +67,7 @@ describe('Save User spec - save an user', function () {
             }).then(()=> {
                 return userWizard.waitForErrorNotificationMessage();
             }).then(actualMessage=> {
-                testUtils.saveScreenshot(webDriverHelper.browser, 'user-already-exists-message');
+                testUtils.saveScreenshot('user-already-exists-message');
                 let expectedMessage = appConst.principalExistsMessage(testUser.displayName);
                 expect(actualMessage).to.be.equal(expectedMessage);
             })

@@ -31,6 +31,7 @@ import {RegionView} from '../../../page-editor/RegionView';
 import {CreateItemViewConfig} from '../../../page-editor/CreateItemViewConfig';
 import {SkipLiveEditReloadConfirmationEvent} from '../../../page-editor/SkipLiveEditReloadConfirmationEvent';
 import {LiveEditPageDialogCreatedEvent} from '../../../page-editor/LiveEditPageDialogCreatedEvent';
+import {ComponentDetachedFromFragmentEvent} from '../../../page-editor/ComponentDetachedFromFragmentEvent';
 
 declare var CONFIG;
 
@@ -104,6 +105,8 @@ export class LiveEditPageProxy {
     private liveEditPageInitErrorListeners: { (event: LiveEditPageInitializationErrorEvent): void; }[] = [];
 
     private fragmentCreatedListeners: { (event: ComponentFragmentCreatedEvent): void; }[] = [];
+
+    private componentDetachedListeners: { (event: ComponentDetachedFromFragmentEvent): void; }[] = [];
 
     private fragmentLoadedListeners: { (event: FragmentComponentReloadRequiredEvent): void; }[] = [];
 
@@ -492,6 +495,8 @@ export class LiveEditPageProxy {
 
         ComponentFragmentCreatedEvent.on(this.notifyFragmentCreated.bind(this), contextWindow);
 
+        ComponentDetachedFromFragmentEvent.on(this.notifyComponentDetached.bind(this), contextWindow);
+
         FragmentComponentReloadRequiredEvent.on(this.notifyFragmentReloadRequired.bind(this), contextWindow);
 
         ShowWarningLiveEditEvent.on(this.notifyShowWarning.bind(this), contextWindow);
@@ -804,6 +809,18 @@ export class LiveEditPageProxy {
 
     private notifyFragmentCreated(event: ComponentFragmentCreatedEvent) {
         this.fragmentCreatedListeners.forEach((listener) => listener(event));
+    }
+
+    onComponentDetached(listener: { (event: ComponentDetachedFromFragmentEvent): void; }) {
+        this.componentDetachedListeners.push(listener);
+    }
+
+    unComponentDetached(listener: { (event: ComponentDetachedFromFragmentEvent): void; }) {
+        this.componentDetachedListeners = this.componentDetachedListeners.filter((curr) => (curr !== listener));
+    }
+
+    private notifyComponentDetached(event: ComponentDetachedFromFragmentEvent) {
+        this.componentDetachedListeners.forEach((listener) => listener(event));
     }
 
     onFragmentReloadRequired(listener: { (event: FragmentComponentReloadRequiredEvent): void; }) {

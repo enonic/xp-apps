@@ -27,10 +27,10 @@ export abstract class IssueDialog
 
     private newItems: ContentSummary[] = [];
 
-    protected constructor(title: string, showDepenantList?: boolean) {
+    protected constructor(title: string, showDependantList?: boolean) {
         super(<DependantItemsDialogConfig>{
             title: title,
-            showDependantList: showDepenantList
+            showDependantList: showDependantList || false
         });
 
         this.publishProcessor = new PublishProcessor(this.getItemList(), this.getDependantList());
@@ -58,6 +58,9 @@ export abstract class IssueDialog
         });
 
         this.publishProcessor.onLoadingFinished(() => {
+            if (this.publishProcessor.containsInvalidDependants()) {
+                this.setDependantListVisible(true);
+            }
             this.loadMask.hide();
         });
 

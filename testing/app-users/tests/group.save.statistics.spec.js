@@ -29,7 +29,7 @@ describe('`group.save.statistics.panel`: Save a Group and check the info in the 
             }).then(()=> {
                 return groupWizard.waitForNotificationMessage();
             }).then(result=> {
-                testUtils.saveScreenshot(webDriverHelper.browser, "group_is_saved");
+                testUtils.saveScreenshot("group_is_saved");
                 expect(result).to.equal(appConst.GROUP_WAS_CREATED);
             })
         });
@@ -108,7 +108,7 @@ describe('`group.save.statistics.panel`: Save a Group and check the info in the 
                 return userBrowsePanel.clickOnEditButton();
             }).then(()=> {
                 return groupWizard.waitForOpened();
-            }).then(()=> groupWizard.removeRole(appConst.roles.USERS_APP)).then(()=>groupWizard.waitAndClickOnSave()).then(()=> {
+            }).pause(400).then(()=> groupWizard.removeRole(appConst.roles.USERS_APP)).then(()=>groupWizard.waitAndClickOnSave()).then(()=> {
                 return groupWizard.getRoles();
             }).then((roles)=> {
                 expect(roles.length).to.equal(0);

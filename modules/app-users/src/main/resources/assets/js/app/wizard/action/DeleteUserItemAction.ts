@@ -1,7 +1,6 @@
 import '../../../api.ts';
 import {DeletePrincipalRequest} from '../../../api/graphql/principal/DeletePrincipalRequest';
-import DeleteUserStoreRequest = api.security.DeleteUserStoreRequest;
-
+import {DeleteUserStoreRequest} from '../../../api/graphql/userStore/DeleteUserStoreRequest';
 import UserStore = api.security.UserStore;
 import Principal = api.security.Principal;
 import UserItem = api.security.UserItem;
@@ -30,7 +29,7 @@ export class DeleteUserItemAction extends api.ui.Action {
                         .sendAndParse()
                         .done((results: DeletePrincipalResult[]) => {
 
-                            if (results.length > 0) {
+                            if (results && results.length > 0) {
                                 const keys = results.filter(result => result.isDeleted()).map(result => result.getPrincipalKey());
                                 const msg = i18n(`notify.delete.principal.${keys.length === 1 ? 'single' : 'multiple'}`, keys.join(', '));
 

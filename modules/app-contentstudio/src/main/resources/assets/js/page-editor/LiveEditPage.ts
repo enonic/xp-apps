@@ -117,7 +117,7 @@ export class LiveEditPage {
         this.beforeUnloadListener = (event) => {
             if (!this.skipNextReloadConfirmation) {
                 const message = 'This will close this wizard!';
-                const e = event || window.event || {returnValue: ''};
+                const e: {returnValue: boolean|string} = event || window.event || {returnValue: ''};
                 e['returnValue'] = message;
                 return message;
             }

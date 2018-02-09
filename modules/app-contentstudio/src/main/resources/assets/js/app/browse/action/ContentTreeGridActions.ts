@@ -138,7 +138,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         return (<PreviewContentAction>this.actionsMap.PREVIEW).getPreviewHandler();
     }
 
-    getAllActionsNoPublish(): api.ui.Action[] {
+    getAllCommonActions(): api.ui.Action[] {
         return [
             this.actionsMap.SHOW_NEW_DIALOG,
             this.actionsMap.EDIT,
@@ -146,7 +146,13 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
             this.actionsMap.DUPLICATE,
             this.actionsMap.MOVE,
             this.actionsMap.SORT,
-            this.actionsMap.PREVIEW,
+            this.actionsMap.PREVIEW
+        ];
+    }
+
+    getAllActionsNoPublish(): api.ui.Action[] {
+        return [
+            ...this.getAllCommonActions(),
             this.actionsMap.UNDO_PENDING_DELETE
         ];
     }
@@ -280,7 +286,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         if (allArePendingDelete) {
             this.getAllActions().forEach(action => action.setVisible(false));
         } else {
-            this.getAllActionsNoPublish().forEach(action => action.setVisible(true));
+            this.getAllCommonActions().forEach(action => action.setVisible(true));
             this.actionsMap.UNPUBLISH.setVisible(unpublishEnabled);
         }
         this.actionsMap.PUBLISH.setVisible(publishEnabled);
