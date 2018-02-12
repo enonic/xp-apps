@@ -1,108 +1,69 @@
 /**
- * Created on 14.12.2017.
+ * Created on 8.02.2018.
  */
 
 const page = require('../page');
 const elements = require('../../libs/elements');
-const contentBuilder = require('../../libs/content.builder');
+const appConst = require('../../libs/app_const');
 const loaderComboBox = require('../components/loader.combobox');
-const siteConfigDialog = require('./site.configurator.dialog');
+
 const form = {
-    wizardSteps: `//div[contains(@id,'WizardStepsPanel')]`,
-    descriptionInput: `//textarea[contains(@name,'description')]`,
-    applicationsSelectedOptions: "//div[contains(@id,'SiteConfiguratorSelectedOptionView')]",
-    selectedAppByDisplayName: function (displayName) {
-        return `//div[contains(@id,'SiteConfiguratorSelectedOptionView') and descendant::h6[contains(@class,'main-name') and text()='${displayName}']]`
-    },
+    metadataWizardTabBarItem: `//li[contains(@id,'TabBarItem')]/a[text()='SEO Metadata']`,
+    metadataStepForm: `//div[contains(@id,'ContentWizardStepForm') and descendant::div[text()='Override "Title"']]`,
 }
 var testMetadataStepForm = Object.create(page, {
 
-    applicationsOptionsFilterInput: {
+    overrideTitleInput: {
         get: function () {
-            return `${form.wizardSteps}` + `${elements.FORM_VIEW}` + `${elements.COMBO_BOX_OPTION_FILTER_INPUT}`;
+            return `${form.metadataStepForm}` + `${elements.FORM_VIEW}` + `${elements.TEXT_INPUT}`;
         }
     },
-    descriptionInput: {
+    overrideDescriptionTextArea: {
         get: function () {
-            return `${elements.FORM_VIEW}` + `${form.descriptionInput}`;
+            return `${form.metadataStepForm}` + `${elements.FORM_VIEW}` + `${elements.TEXT_AREA}`;
+        }
+    },
+    descriptionErrorMessage: {
+        get: function () {
+            return `${form.metadataStepForm}` + `${elements.VALIDATION_RECORDING_VIEWER}`;
         }
     },
     type: {
-        value: function (siteData) {
-            return this.typeDescription(siteData.description).then(()=> {
-                return this.addApplications(siteData.applications);
+        value: function (metadata) {
+            return this.typeDescription(metadata.description).then(()=> {
+                return this.typeTitle(metadata.title);
             });
         }
     },
     typeDescription: {
         value: function (description) {
-            return this.typeTextInInput(this.descriptionInput, description);
-        }
-    },
-    addApplications: {
-        value: function (appDisplayNames) {
-            let result = Promise.resolve();
-            appDisplayNames.forEach((displayName)=> {
-                result = result.then(() => {
-                    return this.filterOptionsAndSelectApplication(displayName)
-                });
-            });
-            return result;
-        }
-    },
-    filterOptionsAndSelectApplication: {
-        value: function (displayName) {
-            return this.typeTextInInput(this.applicationsOptionsFilterInput, displayName).then(()=> {
-                return loaderComboBox.selectOption(displayName);
-            }).catch(err=> {
-                this.saveScreenshot(contentBuilder.generateRandomName('err_option'));
-                throw new Error('application selector :' + err);
-            });
-        }
-    },
-    getAppDisplayNames: {
-        value: function () {
-            let selector = `${form.applicationsSelectedOptions}` + `${elements.H6_DISPLAY_NAME}`;
-            return this.getTextFromElements();
-        }
-    },
-    removeApplication: {
-        value: function (displayName) {
-            let selector = `${form.selectedAppByDisplayName()}` + `${elements.REMOVE_ICON}`
-            return this.doClick(selector);
-        }
-    },
-    openSiteConfiguratorDialog: {
-        value: function (displayName) {
-            let selector = `${form.selectedAppByDisplayName(displayName)}` + `//a[@class='edit']`;
-            return this.doClick(selector).then(()=> {
-                return siteConfigDialog.waitForDialogVisible();
+            return this.typeTextInInput(this.overrideDescriptionTextArea, description).catch(err=> {
+                this.doCatch('err_metadata_description', 'error when type text in the metadata-input');
             })
         }
     },
-    isSiteConfiguratorViewInvalid: {
-        value: function (displayName) {
-            let selector = `${form.selectedAppByDisplayName(displayName)}`;
-            return this.getBrowser().getAttribute(selector, 'class').then(result=> {
-                return result.includes("invalid");
-            }).catch(err=> {
-                throw new Error('error when try to find selected application view: ' + err);
-            });
+    typeTitle: {
+        value: function (title) {
+            return this.typeTextInInput(this.overrideTitleInput, title).catch(err=> {
+                this.doCatch('err_metadata_title', 'error when type text in the metadata-input');
+            })
         }
     },
-    waitUntilSiteConfiguratorViewValid: {
-        value: function (displayName) {
-            let selector = `${form.selectedAppByDisplayName(displayName)}`;
-            return this.getBrowser().waitUntil(()=> {
-                return this.getBrowser().getAttribute(selector, 'class').then(result=> {
-                    return !result.includes('invalid');
-                })
-            }, 2000).then(()=> {
-                return true;
-            }).catch((err)=> {
-                throw new Error(err);
-            });
+    isValidationRecordingVisible: {
+        value: function () {
+            return this.isVisible(this.descriptionErrorMessage);
         }
     },
+    isOverrideTitleInputVisible: {
+        value: function () {
+            return this.isVisible(this.overrideTitleInput);
+        }
+    },
+    isOverrideDescriptionTextAreaVisible: {
+        value: function () {
+            return this.isVisible(this.overrideDescriptionTextArea);
+        }
+    },
+
 });
 module.exports = testMetadataStepForm;
