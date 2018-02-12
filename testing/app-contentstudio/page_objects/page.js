@@ -177,4 +177,15 @@ Page.prototype.waitForNotificationWarning = function () {
         return this.getBrowser().getText(selector);
     })
 };
+Page.prototype.waitUntilInvalid = function (selector) {
+    return this.getBrowser().waitUntil(()=> {
+        return this.getBrowser().getAttribute(selector, 'class').then(result=> {
+            return result.includes('invalid');
+        });
+    }, 3000).then(()=> {
+        return true;
+    }).catch((err)=> {
+        return false;
+    });
+},
 module.exports = new Page();
