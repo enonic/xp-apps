@@ -1,4 +1,3 @@
-include ':app-standardidprovider'
 include ':app-applications'
 include ':app-contentstudio'
 include ':app-users'
