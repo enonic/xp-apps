@@ -1,5 +1,8 @@
 import i18n = api.util.i18n;
-declare var CONFIG;
+declare const CONFIG;
+api.util.i18nInit(CONFIG.messages);
+
+const body = api.dom.Body.get();
 
 import './api.ts';
 import {ApplicationAppPanel} from './app/ApplicationAppPanel';
@@ -39,7 +42,6 @@ function startApplication() {
     let appBar = new api.app.bar.AppBar(application);
     let appPanel = new ApplicationAppPanel(application.getPath());
 
-    let body = api.dom.Body.get();
     body.appendChild(appBar);
     body.appendChild(appPanel);
 
@@ -61,7 +63,12 @@ function startApplication() {
 
 }
 
-window.onload = function () {
-    api.util.i18nInit(CONFIG.messages);
+const renderListener = () => {
     startApplication();
+    body.unRendered(renderListener);
 };
+if (body.isRendered()) {
+    renderListener();
+} else {
+    body.onRendered(renderListener);
+}

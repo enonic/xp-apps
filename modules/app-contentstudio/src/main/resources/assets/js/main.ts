@@ -378,7 +378,7 @@ function initSearchPanelListener(panel: ContentAppPanel) {
 
 preLoadApplication();
 
-let renderListener = () => {
+const renderListener = () => {
     startApplication();
     body.unRendered(renderListener);
 };
