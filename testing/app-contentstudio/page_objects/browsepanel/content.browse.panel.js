@@ -263,20 +263,12 @@ var contentBrowsePanel = Object.create(page, {
         }
     },
     // this method waits until 'invalid' appears in the @class
-    waitUntilInvalidIconAppears: {
+    waitForRedIconDisplayed: {
         value: function (contentName) {
             var xpath = panel.contentSummaryByName(contentName);
-            return this.getBrowser().waitUntil(()=> {
-                return this.getBrowser().getAttribute(xpath, 'class').then(result=> {
-                    return result.includes('invalid');
-                });
-            }, 2000).then(()=> {
-                return true;
-            }).catch((err)=> {
-                throw new Error('browse panel:invalid-icon for the content was not found' + err);
-            });
+            return this.waitUntilInvalid(xpath);
         }
-    },
+    }
 });
 module.exports = contentBrowsePanel;
 
