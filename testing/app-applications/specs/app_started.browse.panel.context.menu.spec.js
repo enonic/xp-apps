@@ -19,7 +19,7 @@ describe(`Applications Grid context menu`, function () {
     });
 
     it(`WHEN right click an an application THEN context menu should appear`, () => {
-        return appBrowsePanel.rightClickOnRowByDisplayName(appConst.TEST_APPLICATIONS.FIRST_APP).then(()=> {
+        return appBrowsePanel.rightClickOnRowByDisplayName(appConst.TEST_APPLICATIONS.THIRD_APP).then(()=> {
             return appBrowsePanel.waitForContextMenuDisplayed();
         }).then(result=> {
             studioUtils.saveScreenshot(webDriverHelper.browser, "app_context_menu");
@@ -27,7 +27,7 @@ describe(`Applications Grid context menu`, function () {
         })
     });
     it(`WHEN right click an an application THEN Start menu item should be disabled, because the application is started`, () => {
-        return appBrowsePanel.rightClickOnRowByDisplayName(appConst.TEST_APPLICATIONS.FIRST_APP).then(()=> {
+        return appBrowsePanel.rightClickOnRowByDisplayName(appConst.TEST_APPLICATIONS.THIRD_APP).then(()=> {
             return appBrowsePanel.waitForContextMenuDisplayed();
         }).then(()=> {
             return appBrowsePanel.waitForContextButtonVisible('Start', 'disabled');
@@ -38,7 +38,7 @@ describe(`Applications Grid context menu`, function () {
     });
 
     it(`WHEN right click an an application THEN Stop menu item should be enabled, because the application is started`, () => {
-        return appBrowsePanel.rightClickOnRowByDisplayName(appConst.TEST_APPLICATIONS.FIRST_APP).then(()=> {
+        return appBrowsePanel.rightClickOnRowByDisplayName(appConst.TEST_APPLICATIONS.THIRD_APP).then(()=> {
             return appBrowsePanel.waitForContextMenuDisplayed();
         }).then(()=> {
             return appBrowsePanel.waitForContextButtonEnabled('Stop');
@@ -49,7 +49,7 @@ describe(`Applications Grid context menu`, function () {
     });
 
     it(`WHEN right click an an application THEN Uninstall menu item should be disabled, because the application is local`, () => {
-        return appBrowsePanel.rightClickOnRowByDisplayName(appConst.TEST_APPLICATIONS.FIRST_APP).then(()=> {
+        return appBrowsePanel.rightClickOnRowByDisplayName(appConst.TEST_APPLICATIONS.THIRD_APP).then(()=> {
             return appBrowsePanel.waitForContextMenuDisplayed();
         }).then(()=> {
             return appBrowsePanel.waitForContextButtonVisible('Uninstall', 'disabled');
@@ -60,10 +60,10 @@ describe(`Applications Grid context menu`, function () {
     });
 
     it(`should close the context menu after clicking on the same row`, () => {
-        return appBrowsePanel.rightClickOnRowByDisplayName(appConst.TEST_APPLICATIONS.FIRST_APP).then(()=> {
+        return appBrowsePanel.rightClickOnRowByDisplayName(appConst.TEST_APPLICATIONS.THIRD_APP).then(()=> {
             return appBrowsePanel.waitForContextMenuDisplayed();
         }).then(() => {
-            appBrowsePanel.clickOnRowByDisplayName(appConst.TEST_APPLICATIONS.FIRST_APP)
+            appBrowsePanel.clickOnRowByDisplayName(appConst.TEST_APPLICATIONS.THIRD_APP)
         }).then(() => appBrowsePanel.waitForContextMenuNotDisplayed());
     });
 

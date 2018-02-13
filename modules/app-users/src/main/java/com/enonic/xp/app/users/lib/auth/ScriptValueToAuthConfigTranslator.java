@@ -76,7 +76,7 @@ public final class ScriptValueToAuthConfigTranslator
         }
         else
         {
-            final ScriptValue member = propertyValue.getMember( "v" );
+            final ScriptValue member = propertyValue == null ? null : propertyValue.getMember( "v" );
             value = type.fromJsonValue( member == null ? null : member.getValue() );
         }        
         parent.addProperty( name, value );

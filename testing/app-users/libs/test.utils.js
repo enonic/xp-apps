@@ -17,8 +17,6 @@ const appConst = require("./app_const");
 const webDriverHelper = require("./WebDriverHelper");
 const itemBuilder = require('./userItems.builder');
 
-
-
 module.exports = {
     xpTabs: {},
     findAndSelectItem: function (name) {
@@ -87,7 +85,7 @@ module.exports = {
         }).catch((err)=> {
             console.log('tried to navigate to Users app, but: ' + err);
             this.saveScreenshot("err_navigate_to_users" + itemBuilder.generateRandomNumber());
-            throw new Error(err);
+            throw new Error('error when navigate to Users app ' + err);
         });
     },
 
@@ -148,9 +146,25 @@ module.exports = {
             })
         });
     },
-
-
     doCloseUsersApp: function (browser) {
+        return browser.getTabIds().then(tabIds=> {
+            let result = Promise.resolve();
+            tabIds.forEach((tabId)=> {
+                result = result.then(() => {
+                    return this.switchAndCheckTitle(browser, tabId, "Enonic XP Home");
+                }).then((result)=> {
+                    if (!result) {
+                        return browser.close();
+                    }
+                });
+            });
+            return result;
+        }).then(()=> {
+            return this.doSwitchToHome(browser);
+        });
+    },
+
+    doCloseUsersApp1: function (browser) {
         return browser.close().pause(300).then(()=> {
             return this.doSwitchToHome(browser);
         })
@@ -196,7 +210,7 @@ module.exports = {
         })
     },
     saveAndCloseWizard: function (displayName) {
-        return wizard.waitAndClickOnSave().pause(300).then(()=> {
+        return wizard.waitAndClickOnSave().pause(8).then(()=> {
             return browsePanel.doClickOnCloseTabAndWaitGrid(displayName);
         })
     },

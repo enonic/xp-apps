@@ -16,7 +16,7 @@ const siteFormPanel = require('../page_objects/wizardpanel/site.form.panel');
 const siteConfiguratorDialog = require('../page_objects/wizardpanel/site.configurator.dialog');
 
 
-describe('csite.configurator.required.input.spec: verifies the wizard-validation when the dialog contains required input', function () {
+describe('site.configurator.required.input.spec: verifies the wizard-validation when the dialog contains required input', function () {
     this.timeout(appConstant.SUITE_TIMEOUT);
     webDriverHelper.setupBrowser();
 

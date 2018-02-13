@@ -39,10 +39,17 @@ ext {
     distroDir = "$unpackDir${File.separator}enonic-xp-$xpVersion"
     deployDir = "$distroDir${File.separator}home${File.separator}deploy"
     allureResultsDir = "allure-results"
+    testDataDir = "$projectDir${File.separator}test-data${File.separator}common-config"
     xpHome = "$distroDir${File.separator}home"
+    configDir = "$xpHome${File.separator}config"
     xpServer = new ServerInstance()
 }
-
+task copyConfig( type: Copy ) {
+    println testDataDir
+    from testDataDir
+    include '**.*.cfg'
+    into file( configDir )
+}
 dependencies {
     compile "com.enonic.xp:core-api:$xpVersion"
     distro "com.enonic.xp:distro:$xpVersion@zip"
@@ -80,7 +87,7 @@ artifacts {
 
 jar.enabled = true
 
-task startServer( dependsOn: unpackDistro ) {
+task startServer( dependsOn: [unpackDistro, copyConfig] ) {
     doLast {
         xpServer.installDir = file( distroDir )
         xpServer.startupDelay = 40000

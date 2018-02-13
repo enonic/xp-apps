@@ -10,6 +10,7 @@ module.exports = Object.freeze({
     TEST_APPLICATIONS: {
         FIRST_APP: 'First Selenium App',
         SECOND_APP: 'Second Selenium App',
+        THIRD_APP: 'Third Selenium App',
     },
     TEST_IMAGES: {
         HAND: 'hand',

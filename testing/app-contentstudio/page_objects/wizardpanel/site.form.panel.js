@@ -4,7 +4,7 @@
 
 const page = require('../page');
 const elements = require('../../libs/elements');
-const contentBuilder = require('../../libs/content.builder');
+const appConst = require('../../libs/app_const');
 const loaderComboBox = require('../components/loader.combobox');
 const siteConfigDialog = require('./site.configurator.dialog');
 const form = {
@@ -55,7 +55,7 @@ var siteForm = Object.create(page, {
             return this.typeTextInInput(this.applicationsOptionsFilterInput, displayName).then(()=> {
                 return loaderComboBox.selectOption(displayName);
             }).catch(err=> {
-                this.saveScreenshot(contentBuilder.generateRandomName('err_option'));
+                this.saveScreenshot(appConst.generateRandomName('err_option'));
                 throw new Error('application selector :' + err);
             });
         }

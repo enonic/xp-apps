@@ -4,7 +4,7 @@
 
 const page = require('./page');
 const xpTourDialog = {
-    container: `//div[contains(@id,'ModalDialog') and descendant::h2[contains(.,'Welcome Tour - Step 1 of 5')]]`
+    container: `//div[contains(@id,'ModalDialog') and descendant::h2[contains(.,'Welcome Tour')]]`
 };
 const home = {
     container: `div[class*='home-main-container']`

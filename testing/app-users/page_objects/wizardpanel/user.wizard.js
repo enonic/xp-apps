@@ -133,12 +133,20 @@ var userWizard = Object.create(wizard, {
     },
     clearPasswordInput: {
         value: function () {
-            return this.clearElement(this.passwordInput);
+            return this.clearElement(this.passwordInput).pause(400).then(()=> {
+                return this.typeTextInInput(this.passwordInput, 'a');
+            }).then(()=> {
+                return this.getBrowser().keys('\uE003');
+            });
         }
     },
     clearEmailInput: {
         value: function () {
-            return this.clearElement(this.emailInput).pause(500);
+            return this.clearElement(this.emailInput).pause(400).then(()=> {
+                return this.typeTextInInput(this.emailInput, 'a');
+            }).then(()=> {
+                return this.getBrowser().keys('\uE003');
+            });
         }
     },
 
@@ -185,6 +193,16 @@ var userWizard = Object.create(wizard, {
     typePassword: {
         value: function (password) {
             return this.typeTextInInput(this.passwordInput, password);
+        }
+    },
+    clickInPasswordInput: {
+        value: function () {
+            return this.doClick(this.passwordInput);
+        }
+    },
+    clickInEmaildInput: {
+        value: function () {
+            return this.doClick(this.emailInput);
         }
     },
     clickOnDelete: {

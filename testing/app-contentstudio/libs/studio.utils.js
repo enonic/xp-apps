@@ -203,12 +203,13 @@ module.exports = {
             return this.doSwitchToContentBrowsePanel(browser);
         }).catch((err)=> {
             console.log('tried to navigate to Content Studio app, but: ' + err);
-            this.saveScreenshot(browser, "err_navigate_to_studio");
+            this.saveScreenshot(appConst.generateRandomName("err_navigate_to_studio"));
+            throw new Error('error when navigated to studio ' + err);
         })
     },
     doLoginAndClickOnContentStudio: function (browser) {
-        return loginPage.doLogin().pause(1500).then(()=> {
-            return homePage.waitForXpTourVisible(appConst.TIMEOUT_3);
+        return loginPage.doLogin().pause(900).then(()=> {
+            return homePage.waitForXpTourVisible(appConst.TIMEOUT_1);
         }).then((result)=> {
             if (result) {
                 return homePage.doCloseXpTourDialog();
@@ -301,6 +302,9 @@ module.exports = {
         }).then(()=> {
             return browsePanel.waitForGridLoaded(appConst.TIMEOUT_3);
         });
+    },
+    doPressBackspace: function () {
+        return webDriverHelper.browser.keys('\uE003');
     },
     doCloseAllWindowTabsAndSwitchToHome: function (browser) {
         return browser.getTabIds().then(tabIds=> {

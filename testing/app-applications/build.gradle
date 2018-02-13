@@ -39,9 +39,15 @@ ext {
     appDir = "$projectDir${File.separator}test-applications"
     xpHome = "$distroDir${File.separator}home"
     allureResultsDir = "allure-results"
+    configDir = "$xpHome${File.separator}config"
     xpServer = new ServerInstance()
 }
-
+task copyConfig( type: Copy ) {
+    println "$appDir${File.separator}common-config"
+    from "$appDir${File.separator}common-config"
+    include '**.*.cfg'
+    into file( configDir )
+}
 task copyApps( type: Copy ) {
     println '*********************************************************'
     println '* task started:copyApps  *'
@@ -88,7 +94,7 @@ artifacts {
 
 jar.enabled = true
 
-task startServer( dependsOn: unpackDistro ) {
+task startServer( dependsOn: [unpackDistro, copyConfig] ) {
     doLast {
         xpServer.installDir = file( distroDir )
         xpServer.startupDelay = 40000
