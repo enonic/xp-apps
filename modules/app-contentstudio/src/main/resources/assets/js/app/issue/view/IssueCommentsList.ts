@@ -1,6 +1,7 @@
 import ListBox = api.ui.selector.list.ListBox;
 import PrincipalViewerCompact = api.ui.security.PrincipalViewerCompact;
-import NamesView = api.app.NamesView;
+import H6El = api.dom.H6El;
+import InPlaceTextArea = api.ui.text.InPlaceTextArea;
 import Principal = api.security.Principal;
 import i18n = api.util.i18n;
 import ContextMenu = api.ui.menu.ContextMenu;
@@ -11,6 +12,7 @@ import {IssueComment} from '../IssueComment';
 import {DeleteIssueCommentRequest} from '../resource/DeleteIssueCommentRequest';
 import {Issue} from '../Issue';
 import {ListIssueCommentsRequest} from '../resource/ListIssueCommentsRequest';
+import {UpdateIssueCommentRequest} from '../resource/UpdateIssueCommentRequest';
 
 export class IssueCommentsList
     extends ListBox<IssueComment> {
@@ -47,7 +49,7 @@ export class IssueCommentsList
     }
 
     protected createItemView(item: IssueComment, readOnly: boolean): api.dom.Element {
-        const listItem = new IssueCommentsListItem(item);
+        const listItem = new IssueCommentsListItem(item, this.parentIssue);
         listItem.onContextMenuClicked((x: number, y: number, comment: IssueComment) => {
             this.activeItem = comment;
             this.menu.showAt(x, y);
@@ -56,8 +58,8 @@ export class IssueCommentsList
     }
 
     private createContextMenu(): ContextMenu {
-        const editAction = new Action(i18n('action.edit')).onExecuted(action => {
-            console.log(`Edit '${this.activeItem.getText()}' comment`);
+        const editAction = new Action(i18n('action.edit')).onExecuted(() => {
+            (<IssueCommentsListItem> this.getItemView(this.activeItem)).beginEdit();
         });
         const removeAction = new Action(i18n('action.delete')).onExecuted(action => {
             if (this.parentIssue && this.activeItem) {
@@ -93,11 +95,12 @@ export class IssueCommentsList
 class IssueCommentsListItem
     extends api.ui.Viewer<IssueComment> {
 
-    private namesView: NamesView;
+    private header: H6El;
+    private text: InPlaceTextArea;
     private principalViewer: PrincipalViewerCompact;
     private contextMenuClickedListeners: { (x: number, y: number, comment: IssueComment): void }[] = [];
 
-    constructor(comment: IssueComment) {
+    constructor(comment: IssueComment, private parentIssue: Issue) {
         super('issue-comments-list-item');
         this.setObject(comment);
     }
@@ -117,11 +120,20 @@ class IssueCommentsListItem
             this.principalViewer.doLayout(p);
         }
 
-        if (!this.namesView) {
-            this.namesView = new NamesView(false);
-            this.appendChild(this.namesView);
+        if (!this.header) {
+            this.header = new H6El("header");
+            this.header.setHtml(this.resolveDisplayName(comment), false);
+            this.text = new InPlaceTextArea(this.resolveSubName(comment));
+            this.text.onEditModeChanged((editMode, newVal, oldVal) => {
+                if (!editMode && newVal !== oldVal) {
+                    new UpdateIssueCommentRequest(this.parentIssue.getId(), comment.getName()).setText(newVal).sendAndParse().done(() => {
+                        api.notify.showFeedback(i18n('notify.issue.commentUpdated'));
+                    });
+                }
+            });
+            this.appendChildren(this.header, this.text);
 
-            this.namesView.onClicked((event: MouseEvent) => {
+            this.header.onClicked((event: MouseEvent) => {
                 const targetEl = (<HTMLElement>event.target);
                 if (targetEl.tagName === 'I' && targetEl.classList.contains('icon-menu2')) {
                     event.stopImmediatePropagation();
@@ -131,7 +143,6 @@ class IssueCommentsListItem
                 }
             });
         }
-        this.namesView.setMainName(this.resolveDisplayName(comment), false).setSubName(this.resolveSubName(comment));
 
         this.setObject(comment);
     }
@@ -143,6 +154,10 @@ class IssueCommentsListItem
 
     private resolveSubName(comment: IssueComment): string {
         return comment.getText();
+    }
+
+    public beginEdit() {
+        this.text.setEditMode(true);
     }
 
     public onContextMenuClicked(listener: (x: number, y: number, comment: IssueComment) => void) {
