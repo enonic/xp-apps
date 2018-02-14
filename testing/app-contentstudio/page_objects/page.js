@@ -110,9 +110,7 @@ Page.prototype.getDisplayedElements = function (selector) {
         //    return elems.value.filter((el,i)=>result[i].value);
         //});
         return Promise.all(pr).then(result => elems.value.filter((el, i) => result[i].value));
-
     })
-
 };
 
 Page.prototype.getTextFromElements = function (selector) {

@@ -107,11 +107,10 @@ Page.prototype.isAttributePresent = function (selector, atrName) {
 };
 
 Page.prototype.getDisplayedElements = function (selector) {
-    let displayedElements = [];
-    return this.getBrowser().elements(selector).then(results=> {
-        results.value.filter
+    return this.getBrowser().elements(selector).then(elems=> {
+        let pr = elems.value.map(el => this.getBrowser().elementIdDisplayed(el.ELEMENT));
+        return Promise.all(pr).then(result => elems.value.filter((el, i) => result[i].value));
     })
-    return this.getBrowser().elementIdDisplayed(el.ELEMENT);
 };
 
 Page.prototype.getTextFromElements = function (selector) {

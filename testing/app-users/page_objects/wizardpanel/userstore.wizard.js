@@ -8,6 +8,10 @@ var panel = {
     permissionsFilterInput: `//div[contains(@id,'UserStoreAccessControlComboBox')]` + `${loaderComboBox.optionFilterInput}`,
     permissionsLink: `//li[child::a[text()='Permissions']]`,
     aclList: `//ul[contains(@class,'access-control-list')]`,
+    aceAccessSelector: `//div[contains(@id,'UserStoreAccessSelector')]`,
+    selectedAcEntryByDisplayName: function (displayName) {
+        return `//div[contains(@id,'UserStoreACESelectedOptionView') and descendant::h6[contains(@class,'main-name') and contains(.,'${displayName}')]]`
+    },
     providerComboBox: `//div[contains(@id,'AuthApplicationComboBox')]`,
     selectedProviderView: "//div[contains(@id,'AuthApplicationSelectedOptionView')]",
     removeProviderIcon: `//a[contains(@class,'remove')]`,
@@ -63,6 +67,23 @@ var userStoreWizard = Object.create(wizard, {
                 result = result.then(() => this.filterOptionsAndSelectPermission(displayName));
             });
             return result;
+        }
+    },
+    clickOnSelectedACEAndShowMenuOperations: {
+        value: function (entryDisplayName) {
+            let selector = `${panel.selectedAcEntryByDisplayName(entryDisplayName)}` + `${panel.aceAccessSelector}`;
+            let menu = `${panel.aceAccessSelector}`;
+            return this.doClick(selector).pause(300).then(()=> {
+                //return this.getDisplayedElements(menu);
+            })
+        }
+    },
+    isAceMenuOptionsExpanded: {
+        value: function (entryDisplayName) {
+            let selector = `${panel.selectedAcEntryByDisplayName(entryDisplayName)}` + `${panel.aceAccessSelector}`;
+            return this.getAttribute(selector, 'class').then(result=> {
+                return result.includes('expanded');
+            })
         }
     },
     clickOnPermissionsTabItem: {

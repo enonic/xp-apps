@@ -18,7 +18,7 @@ const webDriverHelper = require("./WebDriverHelper");
 const itemBuilder = require('./userItems.builder');
 
 module.exports = {
-    xpTabs: {},
+
     findAndSelectItem: function (name) {
         return this.typeNameInFilterPanel(name).then(()=> {
             return browsePanel.waitForRowByNameVisible(name);
@@ -178,6 +178,15 @@ module.exports = {
             return userWizard.waitForOpened();
         }).pause(500);
     },
+    selectSystemUserStoreAndOpenWizard: function () {
+        return this.findAndSelectItem('system').then(()=> {
+            return browsePanel.waitForEditButtonEnabled();
+        }).then(()=> {
+            return browsePanel.clickOnEditButton();
+        }).then(()=> {
+            return userStoreWizard.waitForOpened();
+        }).pause(500);
+    },
     clickOnRolesFolderAndOpenWizard: function () {
         return browsePanel.clickOnRowByName('roles').then(()=> {
             return browsePanel.clickOnNewButton();
@@ -210,7 +219,7 @@ module.exports = {
         })
     },
     saveAndCloseWizard: function (displayName) {
-        return wizard.waitAndClickOnSave().pause(8).then(()=> {
+        return wizard.waitAndClickOnSave().pause(1000).then(()=> {
             return browsePanel.doClickOnCloseTabAndWaitGrid(displayName);
         })
     },
@@ -281,15 +290,6 @@ module.exports = {
         }).then(()=> {
             return userWizard.waitForOpened();
         }).pause(300);
-    },
-    getDisplayedElements: function (browser, selector) {
-        var elems = browser.elements(selector).filter;
-        elems.value.map((element)=> {
-
-        })
-        //if(!elem.isVisible()){
-        //    //do something
-        //}
     },
     saveScreenshot: function (name) {
         var path = require('path')

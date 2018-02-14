@@ -12,6 +12,7 @@ var panel = {
     groupOptionsFilterInput: "//div[contains(@id,'FormItem') and child::label[text()='Groups']]" + `${loaderComboBox.optionFilterInput}`,
     roleOptionsFilterInput: "//div[contains(@id,'FormItem') and child::label[text()='Roles']]" + `${loaderComboBox.optionFilterInput}`,
     rolesGroupLink: `//li[child::a[text()='Roles & Groups']]`,
+    passwordGenerator: `//div[contains(@id,'PasswordGenerator')]`,
     showPasswordLink: `//a[text()='Show']`,
     generatePasswordLink: `//a[text()='Generate']`,
     changePasswordButton: `//button[contains(@class,'change-password-button')]`,
@@ -112,6 +113,22 @@ var userWizard = Object.create(wizard, {
             return this.doClick(this.rolesGroupsLink);
         }
     },
+    getUserName: {
+        value: function () {
+            return this.getText(this.displayNameInput).catch(err=> {
+                throw new Error('error when get text from display name input ' + err);
+            })
+        }
+    },
+    getPasswordValidationMessage: {
+        value: function () {
+            let selector = `${panel.container}` + `${panel.passwordGenerator}`;
+            return this.getAttribute(selector, 'data-i18n').catch(err=> {
+                throw new Error('error when get attribute in password-input ' + err);
+            })
+        }
+    },
+
     typeData: {
         value: function (user) {
             return this.typeDisplayName(user.displayName).then(()=> {

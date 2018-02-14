@@ -13,29 +13,41 @@ describe('User Browse Panel specification', function () {
 
     it('WHEN navigate to the browse panel THEN folders with names `roles` and `/system` should  be present',
         () => {
-            return userBrowsePanel.isItemDisplayed('roles').then(()=> {
+            return userBrowsePanel.isItemDisplayed('roles').then((result)=> {
+                assert.isTrue(result, 'roles folder should be present in the root directory');
+            }).then(()=> {
                 return userBrowsePanel.isItemDisplayed('/system');
+            }).then((result)=> {
+                assert.isTrue(result, '`/system` folder should be present in the root directory');
             }).then(()=> {
                 return assert.eventually.isFalse(userBrowsePanel.isSelectionTogglerVisible(),
                     "`Selection toggler` should not be displayed");
             })
+
         });
     it('GIVEN navigate to the browse panel WHEN `roles` folder has been expanded THEN all system roles should be listed',
         () => {
             return userBrowsePanel.clickOnExpanderIcon('roles').then(()=> {
-                return userBrowsePanel.isItemDisplayed('system.user.admin');
+                return assert.eventually.isTrue(userBrowsePanel.isItemDisplayed('system.user.admin'),
+                    "`User Administrator` role should be displayed");
             }).then(()=> {
-                return userBrowsePanel.isItemDisplayed('system.admin');
+                return assert.eventually.isTrue(userBrowsePanel.isItemDisplayed('system.admin'),
+                    "`Administrator` role should be displayed");
             }).then(()=> {
-                return userBrowsePanel.isItemDisplayed('cms.admin');
+                return assert.eventually.isTrue(userBrowsePanel.isItemDisplayed('cms.admin'),
+                    "`Content Manager Administrator` role should be displayed");
             }).then(()=> {
-                return userBrowsePanel.isItemDisplayed('system.admin.login');
+                return assert.eventually.isTrue(userBrowsePanel.isItemDisplayed('system.admin.login'),
+                    "`Administration Console Login` role should be displayed");
             }).then(()=> {
-                return userBrowsePanel.isItemDisplayed('system.everyone');
+                return assert.eventually.isTrue(userBrowsePanel.isItemDisplayed('system.everyone'),
+                    "`Everyone` role should be displayed");
             }).then(()=> {
-                return userBrowsePanel.isItemDisplayed('cms.expert');
+                return assert.eventually.isTrue(userBrowsePanel.isItemDisplayed('cms.expert'),
+                    "`Content Manager Expert` role should be displayed");
             }).then(()=> {
-                return userBrowsePanel.isItemDisplayed('system.authenticated');
+                return assert.eventually.isTrue(userBrowsePanel.isItemDisplayed('system.authenticated'),
+                    "`Authenticated` role should be displayed");
             });
         });
 
@@ -43,8 +55,12 @@ describe('User Browse Panel specification', function () {
         () => {
             return userBrowsePanel.clickOnExpanderIcon('/system').then(()=> {
                 return userBrowsePanel.isItemDisplayed('groups');
+            }).then(result=> {
+                assert.isTrue(result, '`Groups` folder should be present beneath the `system`');
             }).then(()=> {
                 return userBrowsePanel.isItemDisplayed('users');
+            }).then(result=> {
+                assert.isTrue(result, '`Users` folder should be present beneath the `system`');
             });
         });
 

@@ -13,10 +13,11 @@ const userItemsBuilder = require('../libs/userItems.builder.js');
 const userBrowsePanel = require('../page_objects/browsepanel/userbrowse.panel');
 const userStoreWizard = require('../page_objects/wizardpanel/userstore.wizard');
 const testUtils = require('../libs/test.utils');
+const appConst = require('../libs/app_const');
 const userWizard = require('../page_objects/wizardpanel/user.wizard');
 
 describe('User Store spec - save and edit', function () {
-    this.timeout(70000);
+    this.timeout(appConst.TIMEOUT_SUITE);
     webDriverHelper.setupBrowser();
     let userStore;
     let testUser;
@@ -66,7 +67,7 @@ describe('User Store spec - save and edit', function () {
                 userItemsBuilder.buildUserStore(userItemsBuilder.generateRandomName('store'), 'test user store', null, permissions);
             return testUtils.clickOnNewOpenUserStoreWizard(testStore).then(()=> {
                 return userStoreWizard.typeData(testStore);
-            }).then(()=>{
+            }).then(()=> {
                 return userStoreWizard.waitAndClickOnSave();
             }).pause(1000).then(()=> {
                 return userBrowsePanel.doClickOnCloseTabAndWaitGrid(testStore.displayName);
