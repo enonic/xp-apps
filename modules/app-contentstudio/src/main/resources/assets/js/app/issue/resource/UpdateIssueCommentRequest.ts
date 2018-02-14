@@ -7,15 +7,13 @@ import JsonResponse = api.rest.JsonResponse;
 export class UpdateIssueCommentRequest
     extends IssueResourceRequest<IssueCommentJson, IssueComment> {
 
-    private commentName: string;
     private text: string;
-    private issueId: string;
+    private commentId: string;
 
-    constructor(issueId: string, commentName: string) {
+    constructor(commentId: string) {
         super();
         super.setMethod('POST');
-        this.issueId = issueId;
-        this.commentName = commentName;
+        this.commentId = commentId;
     }
 
     setText(text: string) {
@@ -25,9 +23,8 @@ export class UpdateIssueCommentRequest
 
     getParams(): Object {
         return {
-            issue: this.issueId,
-            text: this.text,
-            comment: this.commentName
+            comment: this.commentId,
+            text: this.text
         };
     }
 

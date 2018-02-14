@@ -1,5 +1,5 @@
 export interface IssueCommentJson {
-    name: string;
+    id: string;
 
     creatorKey: string;
 

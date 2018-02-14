@@ -49,7 +49,7 @@ export class IssueCommentsList
     }
 
     protected createItemView(item: IssueComment, readOnly: boolean): api.dom.Element {
-        const listItem = new IssueCommentsListItem(item, this.parentIssue);
+        const listItem = new IssueCommentsListItem(item);
         listItem.onContextMenuClicked((x: number, y: number, comment: IssueComment) => {
             this.activeItem = comment;
             this.menu.showAt(x, y);
@@ -62,11 +62,11 @@ export class IssueCommentsList
             (<IssueCommentsListItem> this.getItemView(this.activeItem)).beginEdit();
         });
         const removeAction = new Action(i18n('action.delete')).onExecuted(action => {
-            if (this.parentIssue && this.activeItem) {
-                ((parentIssue, activeItem) => {  // closure to remember activeItem in case it changes during request
+            if (this.activeItem) {
+                ((activeItem) => {  // closure to remember activeItem in case it changes during request
 
                     this.confirmDialog.setYesCallback(() => {
-                        new DeleteIssueCommentRequest(parentIssue.getId(), activeItem.getName()).sendAndParse().done(result => {
+                        new DeleteIssueCommentRequest(activeItem.getId()).sendAndParse().done(result => {
                             if (result) {
                                 this.removeItem(activeItem);
                                 api.notify.showFeedback(i18n('notify.issue.commentDeleted'));
@@ -74,7 +74,7 @@ export class IssueCommentsList
                         });
                     }).open();
 
-                })(this.parentIssue, this.activeItem);
+                })(this.activeItem);
             }
         });
 
@@ -100,7 +100,7 @@ class IssueCommentsListItem
     private principalViewer: PrincipalViewerCompact;
     private contextMenuClickedListeners: { (x: number, y: number, comment: IssueComment): void }[] = [];
 
-    constructor(comment: IssueComment, private parentIssue: Issue) {
+    constructor(comment: IssueComment) {
         super('issue-comments-list-item');
         this.setObject(comment);
     }
@@ -126,7 +126,7 @@ class IssueCommentsListItem
             this.text = new InPlaceTextArea(this.resolveSubName(comment));
             this.text.onEditModeChanged((editMode, newVal, oldVal) => {
                 if (!editMode && newVal !== oldVal) {
-                    new UpdateIssueCommentRequest(this.parentIssue.getId(), comment.getName()).setText(newVal).sendAndParse().done(() => {
+                    new UpdateIssueCommentRequest(comment.getId()).setText(newVal).sendAndParse().done(() => {
                         api.notify.showFeedback(i18n('notify.issue.commentUpdated'));
                     });
                 }

@@ -5,20 +5,17 @@ import JsonResponse = api.rest.JsonResponse;
 export class DeleteIssueCommentRequest
     extends IssueResourceRequest<any, boolean> {
 
-    private commentName: string;
-    private issueId: string;
+    private commentId: string;
 
-    constructor(issueId: string, commentName: string) {
+    constructor(commentId: string) {
         super();
         super.setMethod('POST');
-        this.issueId = issueId;
-        this.commentName = commentName;
+        this.commentId = commentId;
     }
 
     getParams(): Object {
         return {
-            issue: this.issueId,
-            comment: this.commentName
+            comment: this.commentId
         };
     }
 

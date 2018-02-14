@@ -3,7 +3,7 @@ import PrincipalKey = api.security.PrincipalKey;
 
 export class IssueComment {
 
-    private name: string;
+    private id: string;
 
     private creatorKey: PrincipalKey;
 
@@ -14,15 +14,15 @@ export class IssueComment {
     private createdTime: Date;
 
     constructor(builder: IssueCommentBuilder) {
-        this.name = builder.name;
+        this.id = builder.id;
         this.creatorKey = builder.creatorKey;
         this.creatorDisplayName = builder.creatorDisplayName;
         this.text = builder.text;
         this.createdTime = builder.createdTime;
     }
 
-    getName(): string {
-        return this.name;
+    getId(): string {
+        return this.id;
     }
 
     getCreatorKey(): PrincipalKey {
@@ -41,14 +41,10 @@ export class IssueComment {
         return this.createdTime;
     }
 
-    getId(): string {
-        return '' + api.util.StringHelper.hashCode(this.creatorKey.toString() + this.createdTime.getTime());
-    }
-
     static fromJson(json: IssueCommentJson): IssueComment {
         const createdTime = json.createdTime ? new Date(Date.parse(json.createdTime)) : null;
         return IssueComment.create()
-            .setName(json.name)
+            .setId(json.id)
             .setCreatorKey(PrincipalKey.fromString(json.creatorKey))
             .setCreatorDisplayName(json.creatorDisplayName)
             .setText(json.text)
@@ -64,7 +60,7 @@ export class IssueComment {
 
 class IssueCommentBuilder {
 
-    name: string;
+    id: string;
 
     creatorKey: PrincipalKey;
 
@@ -78,8 +74,8 @@ class IssueCommentBuilder {
         this.createdTime = new Date();
     }
 
-    setName(name: string): IssueCommentBuilder {
-        this.name = name;
+    setId(id: string): IssueCommentBuilder {
+        this.id = id;
         return this;
     }
 
