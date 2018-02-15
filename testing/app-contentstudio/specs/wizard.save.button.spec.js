@@ -48,7 +48,7 @@ describe('wizard.save.button.spec:  Save and Saved buttons spec', function () {
             }).then(()=> {
                 return contentWizard.waitForSaveButtonVisible();
             }).then(()=> {
-                return contentWizard.waitForSaveButtonEnabled();
+                return contentWizard.waitForSaveButtonDisabled();
             }).then(isEnabled=> {
                 assert.isTrue(isEnabled, 'Save button is getting enabled');
             });
