@@ -11,6 +11,7 @@ import BrowseItem = api.app.browse.BrowseItem;
 import UserStore = api.security.UserStore;
 import User = api.security.User;
 import BrowseItemsChanges = api.app.browse.BrowseItemsChanges;
+import Principal = api.security.Principal;
 
 export class UserTreeGridActions implements TreeGridActions<UserTreeGridItem> {
 
@@ -76,7 +77,9 @@ export class UserTreeGridActions implements TreeGridActions<UserTreeGridItem> {
             this.NEW.setEnabled(true);
             this.EDIT.setEnabled(directoriesSelected < 1 && (anyUserStore || anyPrincipal));
 
-            if (onlyUsersSelected || onePrincipalSelected) {
+            if (this.isSystemUserSelected(browseItems)) {
+                this.DELETE.setEnabled(false);
+            } else if (onlyUsersSelected || onePrincipalSelected) {
                 this.DELETE.setEnabled(true);
             } else if (totalSelection === 1) {
                 this.establishDeleteActionState((<BrowseItem<UserTreeGridItem>>browseItems[0]).getModel());
@@ -86,6 +89,12 @@ export class UserTreeGridActions implements TreeGridActions<UserTreeGridItem> {
 
             this.SYNC.setEnabled(anyUserStore);
         });
+    }
+
+    private isSystemUserSelected(browseItems: BrowseItem<UserTreeGridItem>[]) {
+        const principals: Principal[] = browseItems.map(item => (<BrowseItem<UserTreeGridItem>>item).getModel().getPrincipal());
+
+        return principals.some(principal => principal.isSystemUser());
     }
 
     private establishDeleteActionState(userBrowseItem: UserTreeGridItem) {
