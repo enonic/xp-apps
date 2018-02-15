@@ -1,6 +1,5 @@
 import '../../api.ts';
 import {ContentPermissionsApplyEvent} from './ContentPermissionsApplyEvent';
-
 import Content = api.content.Content;
 import ModalDialogConfig = api.ui.dialog.ModalDialogConfig;
 import AccessControlComboBox = api.ui.security.acl.AccessControlComboBox;
@@ -250,7 +249,7 @@ export class EditPermissionsDialog
 }
 
 export class EditPermissionsDialogHeader
-    extends api.ui.dialog.ModalDialogHeader {
+    extends api.ui.dialog.DefaultModalDialogHeader {
 
     private pathEl: api.dom.PEl;
 

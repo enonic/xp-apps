@@ -299,7 +299,8 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
     }
 }
 
-export class NewContentDialogHeader extends api.ui.dialog.ModalDialogHeader {
+export class NewContentDialogHeader
+    extends api.ui.dialog.DefaultModalDialogHeader {
 
     private pathEl: api.dom.PEl;
 
