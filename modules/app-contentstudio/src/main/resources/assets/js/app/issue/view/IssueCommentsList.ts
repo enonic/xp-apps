@@ -121,7 +121,7 @@ class IssueCommentsListItem
         }
 
         if (!this.header) {
-            this.header = new H6El("header");
+            this.header = new H6El('header');
             this.header.setHtml(this.resolveDisplayName(comment), false);
             this.text = new InPlaceTextArea(this.resolveSubName(comment));
             this.text.onEditModeChanged((editMode, newVal, oldVal) => {
