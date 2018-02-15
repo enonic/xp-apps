@@ -92,9 +92,11 @@ export class UserTreeGridActions implements TreeGridActions<UserTreeGridItem> {
     }
 
     private isSystemUserSelected(browseItems: BrowseItem<UserTreeGridItem>[]) {
-        const principals: Principal[] = browseItems.map(item => (<BrowseItem<UserTreeGridItem>>item).getModel().getPrincipal());
+        const users: Principal[] = browseItems
+            .filter(item => (<BrowseItem<UserTreeGridItem>>item).getModel().isPrincipal())
+            .map(item => (<BrowseItem<UserTreeGridItem>>item).getModel().getPrincipal());
 
-        return principals.some(principal => principal.isSystemUser());
+        return users.some(user => user.isSystemUser());
     }
 
     private establishDeleteActionState(userBrowseItem: UserTreeGridItem) {
