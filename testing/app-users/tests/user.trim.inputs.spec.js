@@ -39,7 +39,7 @@ describe('user.trim.inputs.spec Save user, trim the password and display name', 
             })
         });
 
-    it('GIVEN user wizard is opened WHEN password with white space has been typed THEN name without spaces should be displayed in the grid ',
+    it('GIVEN user wizard is opened WHEN password with white space has been typed THEN `Invalid password` validation message should be displayed ',
         () => {
             let passwordWithSpaces = '   1q2w3e  ';
             let userName = userItemsBuilder.generateRandomName('user');
