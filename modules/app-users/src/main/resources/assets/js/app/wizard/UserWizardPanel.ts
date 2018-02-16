@@ -87,6 +87,8 @@ export class UserWizardPanel extends PrincipalWizardPanel {
 
         return super.doLayoutPersistedItem(principal).then(() => {
             if (principal) {
+
+                this.decorateDeletedAction(principal.getKey());
                 this.userEmailWizardStepForm.layout(principal);
                 this.userPasswordWizardStepForm.layout(principal);
                 this.membershipsWizardStepForm.layout(principal);
@@ -96,6 +98,8 @@ export class UserWizardPanel extends PrincipalWizardPanel {
 
     persistNewItem(): wemQ.Promise<Principal> {
         return this.produceCreateUserRequest().sendAndParse().then((principal: Principal) => {
+
+            this.decorateDeletedAction(principal.getKey());
 
             new api.security.UserItemCreatedEvent(principal, this.getUserStore(), this.isParentOfSameType()).fire();
 
@@ -236,5 +240,9 @@ export class UserWizardPanel extends PrincipalWizardPanel {
                (!!email && email !== '') ||
                (!!password && password !== '') ||
                (!!memberships && memberships.length !== 0);
+    }
+
+    private decorateDeletedAction(principalKey: PrincipalKey) {
+        this.wizardActions.getDeleteAction().setEnabled(!principalKey.isOfSystemUser());
     }
 }

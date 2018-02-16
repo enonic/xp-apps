@@ -74,7 +74,6 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
             switch (this.getParams().persistedType) {
             case PrincipalType.USER:
                 this.formIcon.addClass('icon-user');
-                this.wizardActions.getDeleteAction().setEnabled(!this.params.principalKey.isOfSystemUser());
                 break;
             case PrincipalType.GROUP:
                 this.formIcon.addClass('icon-users');
