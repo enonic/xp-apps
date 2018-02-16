@@ -75,7 +75,7 @@ export class IssueDialogForm
         this.descriptionText = new PEl('description-text');
 
         const principalLoader = new PrincipalLoader().setAllowedTypes([PrincipalType.USER]).skipPrincipals(
-            [PrincipalKey.ofAnonymous(), PrincipalKey.ofUser(UserStoreKey.SYSTEM, 'su')]);
+            [PrincipalKey.ofAnonymous(), PrincipalKey.ofSU()]);
 
         this.approversSelector = api.ui.security.PrincipalComboBox.create().setLoader(principalLoader).setMaxOccurences(0).setCompactView(
             this.compactAssigneesView).build();

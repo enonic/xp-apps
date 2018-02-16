@@ -171,7 +171,7 @@ export class IssueDetailsDialog
     private createAssigneesPanel() {
         const assigneesPanel = new Panel();
         let userLoader = new PrincipalLoader().setAllowedTypes([PrincipalType.USER]).skipPrincipals(
-            [PrincipalKey.ofAnonymous(), PrincipalKey.ofUser(UserStoreKey.SYSTEM, 'su')]);
+            [PrincipalKey.ofAnonymous(), PrincipalKey.ofSU()]);
         this.assigneesCombobox = new PrincipalComboBoxBuilder().setLoader(userLoader).build();
         const updateTabCount = (save) => {
             const num = this.assigneesCombobox.getValue().split(ComboBox.VALUE_SEPARATOR).length;
