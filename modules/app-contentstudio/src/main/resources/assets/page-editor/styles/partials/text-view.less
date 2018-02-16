@@ -43,7 +43,7 @@
   }
 
   &.edit-mode {
-    min-height: 0px;
+    min-height: 0;
 
     .mce-content-body {
       display: block;
@@ -51,7 +51,7 @@
     }
 
     &.editor-focused {
-      .box-shadow(0px 0px 5px @admin-input-blue);
+      box-shadow: 0 0 5px @admin-input-blue;
       .input-border(@admin-input-blue);
     }
 
@@ -75,8 +75,8 @@
 
   & > section {
     padding: 5px;
-    .outline(0 none);
-    .box-sizing(content-box);
+    outline: 0 none;
+    box-sizing: content-box;
 
     & > *:first-child {
       margin-top: 0;
@@ -104,7 +104,7 @@
     display: none;
   }
   &.visible {
-    .box-shadow(0px 8px 8px 0 @admin-toolbar-shadow);
+    box-shadow: 0 8px 8px 0 @admin-toolbar-shadow;
 
     > div {
       display: block;
