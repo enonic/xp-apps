@@ -46,5 +46,10 @@ task cleanNode( type: Delete ) {
     delete 'node_modules'
 }
 
-jar.dependsOn += webpack
+jar {
+    exclude 'assets/**/*.ts'
+    exclude 'assets/**/*.less'
+    dependsOn += webpack
+}
+
 jar.outputs.dir "${buildDir}/resources/main"

@@ -7,31 +7,46 @@
   url('./fonts/icomoon.svg?d2dpl4#icomoon-release') format('svg');
 }
 
-.icon-base {
-  font-weight: normal;
-  font-style: normal;
-  font-variant: normal;
-  text-transform: none;
-  speak: none;
-  line-height: 1;
-  color: @admin-dark-gray;
-}
-
 .icon {
-  &:extend(.icon-base);
-
-  // important to override buttons font if icon is applied to button
-  &:before, &:after {
-    font-family: 'icomoon' !important;
-    /* Better Font Rendering =========== */
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
+  .icon-mixin('icomoon');
 }
 
 .icon-small {
   &:before {
     font-size: 14px;
+  }
+}
+
+.icon-medium {
+  &:before {
+    font-size: 24px;
+  }
+}
+
+.icon-large {
+  &:before {
+    font-size: 30px;
+  }
+}
+
+.icon-spinner {
+  .icon;
+  &:before {
+    content: "\e007";
+  }
+}
+
+.icon-image {
+  .icon;
+  &:before {
+    content: "\e90d";
+  }
+}
+
+.icon-calendar {
+  .icon;
+  &:before {
+    content: "\e953";
   }
 }
 
@@ -44,6 +59,57 @@
 
 .icon-fragment {
   .icon-pie();
+}
+
+.icon-signup {
+  .icon;
+  &:before {
+    content: "\e296";
+  }
+}
+
+.icon-list {
+  .icon;
+  &:before {
+    content: "\e299";
+  }
+}
+
+.icon-attachment {
+  .icon;
+  &:before {
+    content: "\e9cd";
+  }
+}
+
+.icon-close {
+  .icon;
+  &:before {
+    content: "\e36b";
+  }
+}
+
+.icon-keyboard_arrow_left {
+  .icon;
+  &:before {
+    content: "\e900";
+  }
+}
+
+.icon-arrow-left {
+  .icon-keyboard_arrow_left;
+}
+
+.icon-arrow-right {
+  .icon-keyboard_arrow_left;
+  .rotate(180deg);
+}
+
+.icon-arrow-left2 {
+  .icon;
+  &:before {
+    content: "\ea40";
+  }
 }
 
 .icon-font-size {

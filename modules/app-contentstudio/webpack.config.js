@@ -13,9 +13,10 @@ module.exports = {
     context: __dirname + '/src/main/resources/assets',
     entry: {
         'js/bundle': './js/main.ts',
+        'styles/_all': './styles/_module.less',
         'page-editor/js/_all': './js/page-editor.ts',
         'page-editor/lib/_all': './page-editor/lib/_include.js',
-        'page-editor/styles/styles': './page-editor/styles/_module.less'
+        'page-editor/styles/_all': './page-editor/styles/_module.less'
     },
     output: {
         path: __dirname + '/build/resources/main/assets',
@@ -55,7 +56,7 @@ module.exports = {
     plugins: [
         new ErrorLoggerPlugin(),
         new ExtractTextPlugin({
-            filename: './page-editor/styles/_all.css',
+            filename: '[name].css',
             allChunks: true,
             disable: false
         }),
