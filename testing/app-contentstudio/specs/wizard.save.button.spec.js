@@ -46,11 +46,12 @@ describe('wizard.save.button.spec:  Save and Saved buttons spec', function () {
             }).pause(3000).then(()=> {
                 return contentWizard.clearDisplayNameInput();
             }).then(()=> {
+                studioUtils.saveScreenshot('save_button_clear_name');
                 return contentWizard.waitForSaveButtonVisible();
             }).then(()=> {
                 return contentWizard.waitForSaveButtonDisabled();
-            }).then(isEnabled=> {
-                assert.isTrue(isEnabled, 'Save button is getting enabled');
+            }).then(isDisabled=> {
+                assert.isTrue(isDisabled, 'Save button is getting disabled');
             });
         });
 

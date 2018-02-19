@@ -6,13 +6,19 @@ const elements = require('../../libs/elements');
 const appConst = require('../../libs/app_const');
 const contentBuilder = require('../../libs/content.builder');
 const contentStepForm = require('./content.wizard.step.form');
+const contextWindow = require('./liveform/liveform.context.window');
 var wizard = {
     container: `//div[contains(@id,'ContentWizardPanel')]`,
     displayNameInput: `//input[contains(@name,'displayName')]`,
+    toolbar: `//div[contains(@id,'ContentWizardToolbar')]`,
     saveButton: `//button[contains(@id,'ActionButton') and child::span[text()='Save']]`,
     savedButton: `//button[contains(@id,'ActionButton') and child::span[text()='Saved']]`,
-    deleteButton: `//button[contains(@id,'ActionButton') and child::span[text()='Delete']]`,
+    deleteButton: `//button[contains(@id,'ActionButton') and child::span[text()='Delete...']]`,
+    inspectionPanelToggler: "//button[contains(@id, 'TogglerButton') and contains(@class,'icon-cog')]",
     thumbnailUploader: "//div[contains(@id,'ThumbnailUploaderEl')]",
+    controllerOptionFilterInput: "//input[contains(@id,'DropdownOptionFilterInput')]",
+    liveEditFrame: "//iframe[contains(@class,'live-edit-frame')]",
+    pageDescriptorViewer: `//div[contains(@id,'PageDescriptorViewer')]`,
 };
 var contentWizardPanel = Object.create(page, {
 
@@ -26,6 +32,11 @@ var contentWizardPanel = Object.create(page, {
             return `${wizard.container}` + `${wizard.saveButton}`;
         }
     },
+    savedButton: {
+        get: function () {
+            return `${wizard.container}` + `${wizard.savedButton}`;
+        }
+    },
     thumbnailUploader: {
         get: function () {
             return `${wizard.container}` + `${wizard.thumbnailUploader}`;
@@ -34,6 +45,40 @@ var contentWizardPanel = Object.create(page, {
     deleteButton: {
         get: function () {
             return `${wizard.container}` + `${wizard.deleteButton}`;
+        }
+    },
+
+    controllerOptionFilterInput: {
+        get: function () {
+            return `${wizard.liveEditFrame}` + `${elements.DROPDOWN_OPTION_FILTER_INPUT}`;
+        }
+    },
+    //opens the ContextWindow with tabs:
+    showInspectionPanelButton: {
+        get: function () {
+            return `${wizard.container}` + `${wizard.toolbar}` + `${wizard.inspectionPanelToggler}`;
+        }
+    },
+    waitForInspectionPanelToggler: {
+        value: function (ms) {
+            return this.waitForVisible(this.showInspectionPanelButton, ms).catch((err)=> {
+                this.saveScreenshot('err_open_inspection_panel');
+                throw new Error('Context Window is not opened in ' + ms + '  ' + err);
+            })
+        }
+    },
+    clickOnShowInspectionPanelButton: {
+        value: function () {
+            return this.doClick(this.showInspectionPanelButton).catch(err=> {
+                return this.doCatch('err_click_on_show_inspection_button', err);
+            })
+        }
+    },
+    doOpenContextWindow: {
+        value: function () {
+            return this.clickOnShowInspectionPanelButton().then(()=> {
+                return contextWindow.waitForOpened();
+            });
         }
     },
     typeData: {
@@ -157,6 +202,40 @@ var contentWizardPanel = Object.create(page, {
         value: function (screenshotName, errString) {
             this.saveScreenshot(screenshotName);
             throw new Error(errString);
+        }
+    },
+    switchToLiveEditFrame: {
+        value: function () {
+            return this.getBrowser().element(`${wizard.liveEditFrame}`).then(result=> {
+                return this.frame(result.value);
+            });
+        }
+    },
+    doFilterAndClickOnOption: {
+        value: function (pageControllerDisplayName) {
+            let optionSelector = elements.slickRowByDisplayName(`//div[contains(@id,'PageDescriptorDropdown')]`,
+                pageControllerDisplayName);
+            return this.typeTextInInput(wizard.controllerOptionFilterInput, pageControllerDisplayName).then(()=> {
+                return this.waitForVisible(optionSelector, appConst.TIMEOUT_3);
+            }).catch(err=> {
+                throw new Error('option was not found! ' + pageControllerDisplayName + ' ' + err);
+            }).then(()=> {
+                return this.doClick(optionSelector).catch((err)=> {
+                    this.saveScreenshot('err_select_option');
+                    throw new Error('option not found!' + pageControllerDisplayName);
+                })
+            });
+        }
+    },
+    selectPageDescriptor: {
+        value: function (pageControllerDisplayName) {
+            return this.switchToLiveEditFrame().then(()=> {
+                return this.doFilterAndClickOnOption(pageControllerDisplayName);
+            }).then(()=> {
+                return this.getBrowser().frameParent();
+            }).then(()=> {
+                return contextWindow.waitForOpened(1500);
+            })
         }
     }
 });

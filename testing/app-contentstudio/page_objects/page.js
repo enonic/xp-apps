@@ -148,6 +148,13 @@ Page.prototype.getAttribute = function (selector, attributeName) {
     return this.getBrowser().getAttribute(selector, attributeName);
 };
 
+Page.prototype.frame = function (id) {
+    return this.getBrowser().frame(id).catch(err=> {
+        console.log('Error when switch to frame ' + id);
+        throw new Error('Error when switch to frame  ' + id);
+    })
+};
+
 Page.prototype.waitForNotificationMessage = function () {
     return this.getBrowser().waitForVisible(`//div[@class='notification-content']/span`, appConst.TIMEOUT_3).then(()=> {
         return this.getBrowser().getText(`//div[@class='notification-content']/span`);
