@@ -11,7 +11,6 @@ export class UndoPendingDeleteContentAction extends Action {
         super(i18n('action.undoDelete'));
 
         this.setEnabled(true);
-        this.setVisible(false);
 
         this.onExecuted(() => {
             let contents: api.content.ContentSummaryAndCompareStatus[]
