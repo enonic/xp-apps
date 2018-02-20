@@ -52,10 +52,8 @@ export class IssueDetailsDialogHeader
         return this;
     }
 
-    cancelEdit() {
-        if (this.input.isEditMode()) {
-            this.input.setEditMode(false, true);
-        }
+    setReadOnly(readOnly: boolean) {
+        this.input.setReadOnly(readOnly);
     }
 
     onTitleChanged(listener: (newTitle: string, oldTitle: string) => void) {
