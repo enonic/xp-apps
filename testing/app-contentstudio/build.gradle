@@ -106,6 +106,7 @@ task startServer( dependsOn: [unpackDistro, copyConfig] ) {
         xpServer.startupDelay = 40000
         xpServer.start()
     }
+    copyConfig.mustRunAfter unpackDistro
 }
 
 task stopServer {
