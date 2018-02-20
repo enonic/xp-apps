@@ -48,6 +48,7 @@ task copyConfig( type: Copy ) {
     println testDataDir
     from testDataDir
     include '**.*.cfg'
+    include '*.properties'
     into file( configDir )
 }
 dependencies {
