@@ -46,8 +46,8 @@ var confirmationDialog = Object.create(page, {
         }
     },
     isWarningMessageVisible: {
-        value: function (ms) {
-            return this.isVisible(this.warningMessage, ms);
+        value: function () {
+            return this.isVisible(this.warningMessage);
         }
     },
 

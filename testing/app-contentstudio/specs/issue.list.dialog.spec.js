@@ -8,10 +8,10 @@ const assert = chai.assert;
 const webDriverHelper = require('../libs/WebDriverHelper');
 const appConstant = require('../libs/app_const');
 const studioUtils = require('../libs/studio.utils.js');
-const issueListDialog = require('../page_objects/issue.list.dialog');
+const issueListDialog = require('../page_objects/issue/issue.list.dialog');
 
 
-describe('create.issue.dialog.spec: Create Issue Dialog specification', function () {
+describe('issue.list.dialog.spec: Issue List Dialog specification', function () {
     this.timeout(appConstant.SUITE_TIMEOUT);
     webDriverHelper.setupBrowser();
 

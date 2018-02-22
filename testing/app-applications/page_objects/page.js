@@ -39,10 +39,6 @@ Page.prototype.isEnabled = function (selector) {
     return this.getBrowser().isEnabled(selector);
 };
 
-Page.prototype.isDisabled = function (selector) {
-    return this.getBrowser().isDisabled(selector);
-};
-
 Page.prototype.waitForVisible = function (selector, ms) {
     return this.getBrowser().waitForVisible(selector, ms);
 };
