@@ -69,9 +69,13 @@ public final class AuthConfigMapper
         }
         else
         {
-            gen.map();
-            gen.value( "v", value.getValue().getObject() );
-            gen.end();
+            final Object v = value.getValue().getObject();
+            if ( v != null )
+            {
+                gen.map();
+                gen.value( "v", v );
+                gen.end();
+            }
         }
 
     }

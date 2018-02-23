@@ -59,6 +59,11 @@ exports.modifyUserStore = function () {
                     name: 'emptySet',
                     type: 'PropertySet',
                     values: []
+                },
+                {
+                    name: 'defaultGroups',
+                    type: 'Reference',
+                    values: []
                 }
             ]
         }
@@ -122,6 +127,11 @@ exports.modifyUserStore = function () {
                     {
                         name: 'emptySet',
                         type: 'PropertySet',
+                        values: []
+                    },
+                    {
+                        name: 'defaultGroups',
+                        type: 'Reference',
                         values: []
                     }
                 ]
