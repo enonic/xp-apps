@@ -13,9 +13,10 @@ const createIssueDialog = require('../page_objects/issue/create.issue.dialog');
 const issueDetailsDialog = require('../page_objects/issue/issue.details.dialog');
 
 
-describe('issue.details.dialog.spec: Issue Details Dialog specification', function () {
+describe('issue.details.dialog.spec: add a comment and check CommentsTabItem', function () {
     this.timeout(appConstant.SUITE_TIMEOUT);
     webDriverHelper.setupBrowser();
+    let MY_COMMENT = appConstant.generateRandomName('comment');
     let issueTitle = appConstant.generateRandomName('issue')
     it(`WHEN new issue has been created THEN correct notification should be displayed`,
         () => {
@@ -31,6 +32,7 @@ describe('issue.details.dialog.spec: Issue Details Dialog specification', functi
                     'correct notification message should appear');
             });
         });
+
     it(`GIVEN issues list dialog is opened WHEN issue has been clicked THEN Issue Details dialog should be displayed`,
         () => {
             return studioUtils.openIssuesListDialog().then(()=> {
@@ -42,11 +44,85 @@ describe('issue.details.dialog.spec: Issue Details Dialog specification', functi
             }).then(result=> {
                 assert.isTrue(result, 'Comments Tab should be active');
             }).then(()=> {
-                assert.eventually.isTrue(issueDetailsDialog.isCloseIssueButtonDisplayed(), 'Close Issue button should be present');
+                return assert.eventually.isTrue(issueDetailsDialog.isCloseIssueButtonDisplayed(), 'Close Issue button should be present');
             }).then(()=> {
-                assert.eventually.isTrue(issueDetailsDialog.isAddCommentButtonDisplayed(), 'Add Comment button should be displayed');
+                return assert.eventually.isTrue(issueDetailsDialog.isAddCommentButtonDisplayed(), 'Add Comment button should be displayed');
             }).then(()=> {
-                assert.eventually.isFalse(issueDetailsDialog.isAddCommentButtonEnabled(), 'Add Comment button should be disabled');
+                return assert.eventually.isFalse(issueDetailsDialog.isAddCommentButtonEnabled(), 'Add Comment button should be disabled');
+            })
+        });
+
+    it(`GIVEN issues list dialog is opened WHEN issue has been clicked THEN Issue Details dialog should be displayed`,
+        () => {
+            return studioUtils.openIssuesListDialog().then(()=> {
+                return issueListDialog.clickOnIssue(issueTitle);
+            }).then(()=> {
+                return issueDetailsDialog.waitForDialogLoaded();
+            }).then(()=> {
+                return issueDetailsDialog.isCommentsTabBarItemActive();
+            }).then(result=> {
+                assert.isTrue(result, 'Comments Tab should be active');
+            }).then(()=> {
+                return assert.eventually.isTrue(issueDetailsDialog.isCloseIssueButtonDisplayed(), 'Close Issue button should be present');
+            }).then(()=> {
+                return assert.eventually.isTrue(issueDetailsDialog.isAddCommentButtonDisplayed(), 'Add Comment button should be displayed');
+            }).then(()=> {
+                return assert.eventually.isFalse(issueDetailsDialog.isAddCommentButtonEnabled(), 'Add Comment button should be disabled');
+            }).then(()=> {
+                return assert.eventually.isTrue(issueDetailsDialog.isCommentTextAreaDisplayed(),
+                    'Text area for comments should be displayed');
+            })
+        });
+
+    it(`GIVEN Issue Details dialog is opened WHEN comment typed in the area THEN Add Comment is getting enabled`,
+        () => {
+            return studioUtils.openIssuesListDialog().then(()=> {
+                return issueListDialog.clickOnIssue(issueTitle);
+            }).then(()=> {
+                return issueDetailsDialog.waitForDialogLoaded();
+            }).then(()=> {
+                return issueDetailsDialog.typeComment(MY_COMMENT);
+            }).then(()=> {
+                studioUtils.saveScreenshot("issue_comment_typed");
+                return assert.eventually.isTrue(issueDetailsDialog.waitForAddCommentButtonEnabled(),
+                    'Add Comment button is getting enabled');
+            });
+        });
+
+    it(`GIVEN Issue Details dialog is opened WHEN comment typed AND add comment button has been pressed THEN correct notification should be shown`,
+        () => {
+            return studioUtils.openIssuesListDialog().then(()=> {
+                return issueListDialog.clickOnIssue(issueTitle);
+            }).then(()=> {
+                return issueDetailsDialog.waitForDialogLoaded();
+            }).then(()=> {
+                return issueDetailsDialog.typeComment(MY_COMMENT);
+            }).then(()=> {
+                return issueDetailsDialog.clickOnAddCommentButton();
+            }).then(()=> {
+                return issueDetailsDialog.waitForNotificationMessage();
+            }).then((message)=> {
+                studioUtils.saveScreenshot("issue_comment_added");
+                assert.isTrue(message == 'Your comment is added to issue',
+                    'Correct notification message should be shown when the comment has been added');
+            }).then(()=> {
+                studioUtils.saveScreenshot("issue_comment_button_disabled");
+                //TODO remove it when https://github.com/enonic/xp-apps/issues/603 will be merged
+                //return assert.eventually.isTrue(issueDetailsDialog.waitForAddCommentButtonDisabled(), 'Add Comment button is getting disabled');
+            });
+        });
+
+    it(`WHEN Issue Details dialog is opened THEN just created comment should be present in the comments-list`,
+        () => {
+            return studioUtils.openIssuesListDialog().then(()=> {
+                return issueListDialog.clickOnIssue(issueTitle);
+            }).then(()=> {
+                return issueDetailsDialog.waitForDialogLoaded();
+            }).then(()=> {
+                return issueDetailsDialog.isCommentPresent(MY_COMMENT);
+            }).then((result)=> {
+                studioUtils.saveScreenshot("issue_comment_added");
+                assert.isTrue(result, 'Comment with the name should be present ');
             })
         });
 
