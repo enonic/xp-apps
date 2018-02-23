@@ -1395,6 +1395,8 @@ export class ContentWizardPanel
 
                     let extraData = new ExtraData(mixin.getMixinName(), new PropertyTree());
 
+                    extraData.getData().onChanged(this.dataChangedHandler);
+
                     stepForm.layout(formContext, extraData.getData(), mixin.toForm());
                 }
             });
