@@ -250,7 +250,10 @@ var contentBrowsePanel = Object.create(page, {
     clickOnExpanderIcon: {
         value: function (name) {
             var expanderIcon = panel.treeGrid + panel.expanderIconByName(name);
-            return this.doClick(expanderIcon);
+            return this.doClick(expanderIcon).pause(700).catch(err=> {
+                this.saveScreenshot('err_click_on_expander ' + name);
+                throw new Error('error when click on expander-icon ' + err);
+            })
         }
     },
     // this method does not wait, it just checks the attribute

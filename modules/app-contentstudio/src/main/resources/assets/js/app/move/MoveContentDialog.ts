@@ -108,7 +108,7 @@ export class MoveContentDialog
                     this.doMove();
                 }
             });
-        this.addAction(this.moveAction, true);
+        this.addAction(this.moveAction);
     }
 
     private initProgressManager() {
@@ -210,9 +210,7 @@ export class MoveContentDialog
     show() {
         api.dom.Body.get().appendChild(this);
         super.show();
-        if (this.isProgressBarEnabled()) {
-            this.destinationSearchInput.giveFocus();
-        }
+        this.destinationSearchInput.giveFocus();
     }
 
     close() {

@@ -80,6 +80,25 @@ module.exports = {
             return this.doSwitchToContentBrowsePanel(webDriverHelper.browser);
         }).pause(2000);
     },
+    doOpenSiteWizard: function () {
+        return this.openContentWizard(appConst.contentTypes.SITE);
+    },
+    doOpenPageTemplateWizard: function (siteName) {
+        return this.typeNameInFilterPanel(siteName).then(()=> {
+            return browsePanel.waitForContentDisplayed(siteName);
+        }).then(()=> {
+            return browsePanel.clickOnExpanderIcon(siteName);
+        }).pause(1000).then(()=> {
+            return browsePanel.clickCheckboxAndSelectRowByName('Templates');
+        }).pause(500).then(()=> {
+            return browsePanel.clickOnNewButton();
+        }).then(()=> {
+            return this.doSwitchToNewWizard();
+        }).then(()=> {
+            return contentWizardPanel.waitForOpened();
+        });
+    },
+
     doAddArticleContent: function (siteName, article) {
         return this.findAndSelectItem(siteName).then(()=> {
             return this.openContentWizard(article.contentType);

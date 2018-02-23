@@ -160,7 +160,7 @@ export class IssueDetailsDialog
             this.prependChildToFooter(this.commentTextArea);
 
             this.initElementListeners();
-            this.updateCountsAndActions();
+            this.updateItemsCountAndButtons();
 
             if (this.issue) {
                 this.setIssue(this.issue);
@@ -170,7 +170,7 @@ export class IssueDetailsDialog
         });
     }
 
-    private updateCountsAndActions() {
+    private updateItemsCountAndButtons() {
         const count = this.countTotal();
         this.itemsTab.setLabel(i18n('field.items') + (count > 0 ? ` (${count})` : ''));
         this.updateButtonCount(i18n('action.publishAndCloseIssue'), count);
@@ -246,7 +246,7 @@ export class IssueDetailsDialog
             this.saveOnLoaded = true;
             const id = o.getSelectedOption().getOption().displayValue.getContentId();
             const items = this.getItemList().getItems().filter(item => !item.getContentId().equals(id));
-            this.setListItems(items, true);
+            this.setListItems(items);
         });
         const itemList = this.getItemList();
         itemList.setCanBeEmpty(true);
@@ -285,11 +285,11 @@ export class IssueDetailsDialog
         const itemList = this.getItemList();
         itemList.onItemsAdded(items => {
             this.initItemListTogglers(itemList);
-            this.updateCountsAndActions();
+            this.updateItemsCountAndButtons();
             this.updateShowScheduleDialogButton();
         });
         itemList.onItemsRemoved(items => {
-            this.updateCountsAndActions();
+            this.updateItemsCountAndButtons();
             this.updateShowScheduleDialogButton();
         });
         itemList.onItemRemoveClicked(handleRemoveItemClicked);
@@ -304,7 +304,7 @@ export class IssueDetailsDialog
         this.getDependantList().onItemRemoveClicked(handleRemoveItemClicked);
 
         this.publishProcessor.onLoadingFinished(() => {
-            this.updateCountsAndActions();
+            this.updateItemsCountAndButtons();
             if (this.saveOnLoaded) {
                 this.debouncedUpdateIssue(this.issue.getIssueStatus(), true);
                 this.saveOnLoaded = false;
