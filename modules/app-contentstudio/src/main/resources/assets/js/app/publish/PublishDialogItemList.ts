@@ -24,10 +24,9 @@ export class PublishDialogItemList
         super('publish-dialog-item-list');
 
         this.onItemsAdded(this.itemChangedHandler.bind(this));
-        this.onItemsRemoved(this.itemChangedHandler.bind(this));
-
         this.onItemsRemoved(() => {
-            this.getItemViews().forEach(view => this.updateRemovableState(view));
+            this.itemChangedHandler();
+            this.getItemViews().forEach(this.updateRemovableState.bind(this));
         });
 
         this.debounceNotifyListChanged = api.util.AppHelper.debounce(() => {
