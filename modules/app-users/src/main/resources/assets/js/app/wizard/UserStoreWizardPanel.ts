@@ -53,10 +53,13 @@ export class UserStoreWizardPanel
             });
     }
 
+    protected isSystemUserItem(): boolean {
+        return this.getParams().userStoreKey.isSystem();
+    }
+
     protected createFormIcon(): api.app.wizard.FormIcon {
-        let iconUrl = api.dom.ImgEl.PLACEHOLDER;
-        let formIcon = new FormIcon(iconUrl, 'icon');
-        formIcon.addClass('icon-xlarge icon-address-book');
+        let formIcon = super.createFormIcon();
+        formIcon.addClass('icon-address-book');
         return formIcon;
     }
 

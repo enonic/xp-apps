@@ -39,7 +39,7 @@ export class UserTreeGridItemViewer extends api.ui.NamesAndIconViewer<UserTreeGr
         switch (object.getType()) {
             case UserTreeGridItemType.USER_STORE:
                 if (object.getUserStore().getKey().isSystem()) {
-                    iconClass += 'is-system ';
+                    iconClass += 'icon-system ';
                 }
                 return iconClass + 'icon-address-book';
             case UserTreeGridItemType.PRINCIPAL:
@@ -50,7 +50,7 @@ export class UserTreeGridItemViewer extends api.ui.NamesAndIconViewer<UserTreeGr
                     return iconClass + 'icon-users';
                 }
                 if (object.getPrincipal().isSystemUser()) {
-                    iconClass += 'is-system ';
+                    iconClass += 'icon-system ';
                 }
                 return iconClass + 'icon-user';
 
