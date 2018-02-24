@@ -34,24 +34,28 @@ export class UserTreeGridItemViewer extends api.ui.NamesAndIconViewer<UserTreeGr
     }
 
     resolveIconClass(object: UserTreeGridItem): string {
+        let iconClass = 'icon-large ';
 
         switch (object.getType()) {
             case UserTreeGridItemType.USER_STORE:
-                return 'icon-address-book icon-large';
+                if (object.getUserStore().getKey().isSystem()) {
+                    iconClass += 'is-system ';
+                }
+                return iconClass + 'icon-address-book';
             case UserTreeGridItemType.PRINCIPAL:
                 if (object.getPrincipal().isRole()) {
-                    return 'icon-masks icon-large';
-                } else if (object.getPrincipal().isGroup()) {
-                    return 'icon-users icon-large';
-                } else { // object.getPrincipal().isUser()
-                    return 'icon-user icon-large';
+                    return iconClass + 'icon-masks';
                 }
-            case UserTreeGridItemType.GROUPS:
-                return 'icon-folder icon-large';
-            case UserTreeGridItemType.ROLES:
-                return 'icon-folder icon-large';
-            default: // UserTreeGridItemType.USERS:
-                return 'icon-folder icon-large';
+                if (object.getPrincipal().isGroup()) {
+                    return iconClass + 'icon-users';
+                }
+                if (object.getPrincipal().isSystemUser()) {
+                    iconClass += 'is-system ';
+                }
+                return iconClass + 'icon-user';
+
+            default:
+                return iconClass + 'icon-folder';
         }
     }
 }
