@@ -20,6 +20,7 @@ export class IssueCommentsList
     private activeItem: IssueComment;
     private menu: ContextMenu;
     private confirmDialog: ConfirmationDialog;
+    private editListeners: { (editMode: boolean): void }[] = [];
 
     constructor() {
         super('issue-comments-list');
@@ -54,6 +55,7 @@ export class IssueCommentsList
             this.activeItem = comment;
             this.menu.showAt(x, y);
         });
+        listItem.onEditModeChanged(editMode => this.notifyEditModeChanged(editMode));
         return listItem;
     }
 
@@ -90,6 +92,18 @@ export class IssueCommentsList
         menu.onHidden(() => this.activeItem = undefined);
         return menu;
     }
+
+    private notifyEditModeChanged(editMode: boolean) {
+        this.editListeners.forEach(listener => listener(editMode));
+    }
+
+    public onEditModeChanged(listener: (editMode: boolean) => void) {
+        this.editListeners.push(listener);
+    }
+
+    public unEditModeChanged(listener: (editMode: boolean) => void) {
+        this.editListeners = this.editListeners.filter(curr => curr !== listener);
+    }
 }
 
 class IssueCommentsListItem
@@ -103,6 +117,7 @@ class IssueCommentsListItem
     constructor(comment: IssueComment) {
         super('issue-comments-list-item');
         this.setObject(comment);
+        this.text = new InPlaceTextArea(this.resolveSubName(comment));
     }
 
     protected doLayout(comment: IssueComment) {
@@ -123,7 +138,6 @@ class IssueCommentsListItem
         if (!this.header) {
             this.header = new H6El('header');
             this.header.setHtml(this.resolveDisplayName(comment), false);
-            this.text = new InPlaceTextArea(this.resolveSubName(comment));
             this.text.onEditModeChanged((editMode, newVal, oldVal) => {
                 if (!editMode && newVal !== oldVal) {
                     new UpdateIssueCommentRequest(comment.getId()).setText(newVal).sendAndParse().done(() => {
@@ -158,6 +172,14 @@ class IssueCommentsListItem
 
     public beginEdit() {
         this.text.setEditMode(true);
+    }
+
+    public onEditModeChanged(listener: (editMode: boolean) => void) {
+        this.text.onEditModeChanged(listener);
+    }
+
+    public unEditModeChanged(listener: (editMode: boolean) => void) {
+        this.text.unEditModeChanged(listener);
     }
 
     public onContextMenuClicked(listener: (x: number, y: number, comment: IssueComment) => void) {

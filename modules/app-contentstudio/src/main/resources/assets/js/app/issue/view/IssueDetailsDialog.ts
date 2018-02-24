@@ -91,9 +91,25 @@ export class IssueDetailsDialog
         this.debouncedUpdateIssue = AppHelper.debounce(this.doUpdateIssue.bind(this), 1000);
 
         this.commentTextArea = new IssueCommentTextArea();
-        this.commentTextArea.onKeyUp(event => {
+        this.commentTextArea.onValueChanged(event => {
+            const saveAllowed = event.getNewValue().length > 0;
+            this.commentAction.setEnabled(saveAllowed);
+        });
+        this.commentTextArea.onKeyDown(event => {
+            event.stopImmediatePropagation();
             const value = this.commentTextArea.getValue();
-            this.commentAction.setEnabled(value.length > 0);
+            const saveAllowed = value.length > 0;
+            switch (event.keyCode) {
+            case 27:
+                this.commentTextArea.setValue('').giveBlur();
+                break;
+            case 13:
+                // ctrl/cmd + enter
+                if (saveAllowed && (event.ctrlKey || event.metaKey)) {
+                    this.saveComment(value, this.commentAction);
+                }
+                break;
+            }
         });
         this.loadCurrentUser().done(currentUser => {
             this.commentTextArea.setUser(currentUser);
@@ -199,8 +215,18 @@ export class IssueDetailsDialog
 
         this.commentsList.onItemsAdded(updateCommentsCount);
         this.commentsList.onItemsRemoved(updateCommentsCount);
+        this.commentsList.onEditModeChanged(editMode => {
+            this.commentTextArea.setReadOnly(editMode);
+            (<IssueDetailsDialogHeader>this.header).setReadOnly(editMode);
+            this.setActionsEnabled(!editMode);
+        });
         commentsPanel.appendChild(this.commentsList);
         return commentsPanel;
+    }
+
+    private setActionsEnabled(flag: boolean) {
+        this.getButtonRow().getActions().forEach(action => action.setEnabled(flag));
+        this.closeAction.setEnabled(flag);
     }
 
     private createItemsPanel() {
@@ -222,7 +248,9 @@ export class IssueDetailsDialog
             const items = this.getItemList().getItems().filter(item => !item.getContentId().equals(id));
             this.setListItems(items);
         });
-        itemsPanel.appendChildren<api.dom.DivEl>(this.itemSelector, this.getItemList(), this.getDependantsContainer());
+        const itemList = this.getItemList();
+        itemList.setCanBeEmpty(true);
+        itemsPanel.appendChildren<api.dom.DivEl>(this.itemSelector, itemList, this.getDependantsContainer());
         return itemsPanel;
     }
 
@@ -359,6 +387,7 @@ export class IssueDetailsDialog
             this.commentsList.setParentIssue(issue);
 
             this.assigneesCombobox.setValue(issue.getApprovers().join(ComboBox.VALUE_SEPARATOR));
+            this.commentTextArea.setValue('', true);
         }
 
         this.setReadOnly(issue && issue.getIssueStatus() == IssueStatus.CLOSED);
@@ -381,6 +410,19 @@ export class IssueDetailsDialog
         return changesMade;
     }
 
+    private saveComment(text: string, action: Action) {
+        this.skipNextServerUpdatedEvent = true;
+        action.setEnabled(false);
+        new CreateIssueCommentRequest(this.issue.getId())
+            .setCreator(this.currentUser.getKey())
+            .setText(text).sendAndParse()
+            .done(issueComment => {
+                this.commentsList.addItem(issueComment);
+                this.commentTextArea.setValue('').giveFocus();
+                api.notify.showFeedback(i18n('notify.issue.commentAdded'));
+            });
+    }
+
     protected initActions() {
         super.initActions();
 
@@ -397,15 +439,7 @@ export class IssueDetailsDialog
         this.commentAction = new Action(i18n('action.commentIssue'));
         this.commentAction.setEnabled(false).onExecuted(action => {
             const comment = this.commentTextArea.getValue();
-            this.skipNextServerUpdatedEvent = true;
-            action.setEnabled(false);
-            new CreateIssueCommentRequest(this.issue.getId()).setCreator(this.currentUser.getKey()).setText(
-                comment).sendAndParse().done(issueComment => {
-                this.commentsList.addItem(issueComment);
-                this.commentTextArea.setValue('', true).giveFocus();
-                action.setEnabled(true);
-                api.notify.showFeedback(i18n('notify.issue.commentAdded'));
-            });
+            this.saveComment(comment, action);
         });
 
         this.publishButton = this.createPublishButton();
@@ -591,7 +625,6 @@ export class IssueDetailsDialog
 
     close() {
         this.getItemList().clearExcludeChildrenIds();
-        (<IssueDetailsDialogHeader> this.header).cancelEdit();
         super.close(false);
     }
 
