@@ -28,7 +28,7 @@ export class UserTreeGridActions implements TreeGridActions<UserTreeGridItem> {
         this.DELETE = new DeletePrincipalAction(grid);
         this.SYNC = new SyncPrincipalAction(grid);
 
-        this.actions.push(this.NEW, this.EDIT, this.DELETE, this.SYNC);
+        this.actions.push(this.NEW, this.EDIT, this.DELETE/*, this.SYNC*/);
     }
 
     getAllActions(): api.ui.Action[] {
