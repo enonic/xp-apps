@@ -75,7 +75,9 @@ var siteForm = Object.create(page, {
     openSiteConfiguratorDialog: {
         value: function (displayName) {
             let selector = `${form.selectedAppByDisplayName(displayName)}` + `//a[@class='edit']`;
-            return this.doClick(selector).then(()=> {
+            return this.waitForVisible(selector,2000).then(()=>{
+                return this.doClick(selector);
+            }).then(()=> {
                 return siteConfigDialog.waitForDialogVisible();
             })
         }
