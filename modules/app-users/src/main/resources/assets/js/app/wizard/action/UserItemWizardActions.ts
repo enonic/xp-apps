@@ -26,8 +26,9 @@ export class UserItemWizardActions<USER_ITEM_TYPE extends UserItem> extends api.
         this.delete.setEnabled(false);
     }
 
-    enableActionsForExisting() {
+    enableActionsForExisting(userItem: UserItem) {
         this.save.setEnabled(false);
+        this.delete.setEnabled(!userItem.getKey().isSystem());
     }
 
     getDeleteAction(): api.ui.Action {

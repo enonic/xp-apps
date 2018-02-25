@@ -78,8 +78,8 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends UserItem>
         return <WizardHeaderWithDisplayNameAndName> super.getWizardHeader();
     }
 
-    protected isSystemUserItem(): boolean {
-        return false;
+    isSystemUserItem(): boolean {
+        return this.getParams().isSystemKey();
     }
 
     protected createFormIcon(): FormIcon {

@@ -245,6 +245,6 @@ export class UserWizardPanel extends PrincipalWizardPanel {
     }
 
     private decorateDeletedAction(principalKey: PrincipalKey) {
-        this.wizardActions.getDeleteAction().setEnabled(!principalKey.isOfSystemUser());
+        this.wizardActions.getDeleteAction().setEnabled(!principalKey.isSystem());
     }
 }

@@ -53,10 +53,6 @@ export class UserStoreWizardPanel
             });
     }
 
-    protected isSystemUserItem(): boolean {
-        return this.getParams().userStoreKey.isSystem();
-    }
-
     protected createFormIcon(): api.app.wizard.FormIcon {
         let formIcon = super.createFormIcon();
         formIcon.addClass('icon-address-book');

@@ -65,10 +65,6 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
         return this.getPersistedItem().getKey().toPath();
     }
 
-    protected isSystemUserItem(): boolean {
-        return this.getParams().principalKey.isOfSystemUser();
-    }
-
     protected createFormIcon(): api.app.wizard.FormIcon {
         let formIcon = super.createFormIcon();
         switch (this.getParams().persistedType) {
