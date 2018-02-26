@@ -25,11 +25,14 @@ export class PublishProcessor {
 
     private loadingFinishedListeners: { (): void }[] = [];
 
+    private reloadDependenciesDebounced: Function;
+
     private static debug: boolean = false;
 
     constructor(itemList: PublishDialogItemList, dependantList: PublishDialogDependantList) {
         this.itemList = itemList;
         this.dependantList = dependantList;
+        this.reloadDependenciesDebounced = api.util.AppHelper.debounce(this.reloadPublishDependencies.bind(this), 100);
 
         this.initListeners();
     }
@@ -37,7 +40,7 @@ export class PublishProcessor {
     private initListeners() {
         this.itemList.onItemsRemoved(() => {
             if (!this.ignoreItemsChanged) {
-                this.reloadPublishDependencies();
+                this.reloadDependenciesDebounced();
             }
         });
 
@@ -45,12 +48,12 @@ export class PublishProcessor {
             const newIds: string[] = items.map(item => item.getId());
             this.excludedIds = this.excludedIds.filter(id => newIds.indexOf(id.toString()) < 0);
             if (!this.ignoreItemsChanged) {
-                this.reloadPublishDependencies(true);
+                this.reloadDependenciesDebounced(true);
             }
         });
 
         this.itemList.onExcludeChildrenListChanged((ids) => {
-            this.reloadPublishDependencies(true);
+            this.reloadDependenciesDebounced(true);
         });
 
         this.dependantList.onItemClicked((item: ContentSummaryAndCompareStatus) => {
@@ -61,7 +64,7 @@ export class PublishProcessor {
 
         this.dependantList.onItemRemoveClicked((item: ContentSummaryAndCompareStatus) => {
             this.excludedIds.push(item.getContentId());
-            this.reloadPublishDependencies();
+            this.reloadDependenciesDebounced();
         });
     }
 

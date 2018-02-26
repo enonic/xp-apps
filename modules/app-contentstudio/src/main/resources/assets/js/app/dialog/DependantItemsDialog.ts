@@ -208,6 +208,10 @@ export class DependantItemsDialog
         this.itemList.addItems(items, silent);
     }
 
+    removeListItems(items: ContentSummaryAndCompareStatus[], silent?: boolean) {
+        this.itemList.removeItems(items, silent);
+    }
+
     setDependantItems(items: ContentSummaryAndCompareStatus[]) {
         this.dependantList.setItems(items);
     }

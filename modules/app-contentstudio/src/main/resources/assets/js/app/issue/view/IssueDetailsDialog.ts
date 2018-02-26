@@ -245,8 +245,8 @@ export class IssueDetailsDialog
         this.itemSelector.onOptionDeselected(o => {
             this.saveOnLoaded = true;
             const id = o.getSelectedOption().getOption().displayValue.getContentId();
-            const items = this.getItemList().getItems().filter(item => !item.getContentId().equals(id));
-            this.setListItems(items);
+            const items = [this.getItemList().getItem(id.toString())];
+            this.removeListItems(items);
         });
         const itemList = this.getItemList();
         itemList.setCanBeEmpty(true);
