@@ -313,7 +313,6 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
                 PUBLISH: allArePendingDelete || publishEnabled
             });
 
-
         } else {
             this.getAllCommonActions().forEach(action => action.setVisible(true));
 
