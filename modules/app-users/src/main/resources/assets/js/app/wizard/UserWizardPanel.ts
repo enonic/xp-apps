@@ -44,11 +44,13 @@ export class UserWizardPanel extends PrincipalWizardPanel {
     createSteps(principal?: Principal): WizardStep[] {
         let steps: WizardStep[] = [];
 
-        this.userEmailWizardStepForm = new UserEmailWizardStepForm(this.getParams().userStore.getKey());
+        this.userEmailWizardStepForm = new UserEmailWizardStepForm(this.getParams().userStore.getKey(), this.isSystemUserItem());
         this.userPasswordWizardStepForm = new UserPasswordWizardStepForm();
         this.membershipsWizardStepForm = new MembershipsWizardStepForm(MembershipsType.ALL);
 
-        steps.push(new WizardStep(i18n('field.user'), this.userEmailWizardStepForm));
+        if (!this.isSystemUserItem()) {
+            steps.push(new WizardStep(i18n('field.user'), this.userEmailWizardStepForm));
+        }
         steps.push(new WizardStep(i18n('field.authentication'), this.userPasswordWizardStepForm));
         steps.push(new WizardStep(i18n('field.rolesAndGroups'), this.membershipsWizardStepForm));
 
@@ -243,6 +245,6 @@ export class UserWizardPanel extends PrincipalWizardPanel {
     }
 
     private decorateDeletedAction(principalKey: PrincipalKey) {
-        this.wizardActions.getDeleteAction().setEnabled(!principalKey.isOfSystemUser());
+        this.wizardActions.getDeleteAction().setEnabled(!principalKey.isSystem());
     }
 }

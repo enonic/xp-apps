@@ -45,7 +45,10 @@ ext {
 task copyConfig( type: Copy ) {
     println "$appDir${File.separator}common-config"
     from "$appDir${File.separator}common-config"
+    //include '**.*.cfg'
+    //include '**.*.cfg', '**.properties'
     include '**.*.cfg'
+    include '*.properties'
     into file( configDir )
 }
 task copyApps( type: Copy ) {
@@ -100,6 +103,7 @@ task startServer( dependsOn: [unpackDistro, copyConfig] ) {
         xpServer.startupDelay = 40000
         xpServer.start()
     }
+    copyConfig.mustRunAfter unpackDistro
 }
 
 task stopServer {

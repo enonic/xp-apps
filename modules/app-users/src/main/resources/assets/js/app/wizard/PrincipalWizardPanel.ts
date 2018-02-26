@@ -24,6 +24,7 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
     constructor(params: PrincipalWizardPanelParams) {
         super(params);
 
+        this.addClass('principal-wizard-panel');
         this.principalNamedListeners = [];
     }
 
@@ -64,27 +65,20 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
         return this.getPersistedItem().getKey().toPath();
     }
 
-    doRenderOnDataLoaded(rendered: boolean): Q.Promise<boolean> {
-        return super.doRenderOnDataLoaded(rendered).then((nextRendered) => {
-            if (PrincipalWizardPanel.debug) {
-                console.debug('PrincipalWizardPanel.doRenderOnDataLoaded');
-            }
-            this.addClass('principal-wizard-panel');
-
-            switch (this.getParams().persistedType) {
+    protected createFormIcon(): api.app.wizard.FormIcon {
+        let formIcon = super.createFormIcon();
+        switch (this.getParams().persistedType) {
             case PrincipalType.USER:
-                this.formIcon.addClass('icon-user');
+                formIcon.addClass('icon-user');
                 break;
             case PrincipalType.GROUP:
-                this.formIcon.addClass('icon-users');
+                formIcon.addClass('icon-users');
                 break;
             case PrincipalType.ROLE:
-                this.formIcon.addClass('icon-masks');
+                formIcon.addClass('icon-masks');
                 break;
-            }
-
-            return nextRendered;
-        });
+        }
+        return formIcon;
     }
 
     getUserItemType(): string {

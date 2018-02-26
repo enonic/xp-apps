@@ -78,10 +78,18 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends UserItem>
         return <WizardHeaderWithDisplayNameAndName> super.getWizardHeader();
     }
 
+    isSystemUserItem(): boolean {
+        return this.getParams().isSystemKey();
+    }
+
     protected createFormIcon(): FormIcon {
         let iconUrl = api.dom.ImgEl.PLACEHOLDER;
         let formIcon = new FormIcon(iconUrl, 'icon');
         formIcon.addClass('icon icon-xlarge');
+
+        if (this.isSystemUserItem()) {
+            formIcon.addClass('icon-system');
+        }
         return formIcon;
     }
 

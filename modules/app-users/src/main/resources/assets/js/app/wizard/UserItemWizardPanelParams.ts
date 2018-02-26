@@ -38,4 +38,7 @@ export class UserItemWizardPanelParams<USER_ITEM_TYPE extends UserItem> {
         return this;
     }
 
+    isSystemKey(): boolean {
+        return !!this.userStoreKey && this.userStoreKey.isSystem();
+    }
 }

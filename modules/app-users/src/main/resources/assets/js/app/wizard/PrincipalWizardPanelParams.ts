@@ -34,4 +34,8 @@ export class PrincipalWizardPanelParams extends UserItemWizardPanelParams<Princi
         this.parentOfSameType = value;
         return this;
     }
+
+    isSystemKey(): boolean {
+        return !!this.principalKey && this.principalKey.isSystem();
+    }
 }

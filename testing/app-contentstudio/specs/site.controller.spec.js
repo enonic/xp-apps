@@ -20,7 +20,7 @@ describe('site.configurator.required.input.spec: verifies the wizard-validation 
     webDriverHelper.setupBrowser();
 
     let SITE;
-    it(`GIVEN existing site is opened WHEN 'edit' button on the 'selected-option-view' has been clicked THEN 'site configurator dialog should appear'`,
+    it(`GIVEN wizard for new site is opened WHEN page controller has been selected THEN  required options should be present in the Inspection Panel`,
         () => {
             this.bail(1);
             let displayName = contentBuilder.generateRandomName('site');

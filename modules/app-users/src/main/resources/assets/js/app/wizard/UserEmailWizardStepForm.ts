@@ -13,12 +13,15 @@ export class UserEmailWizardStepForm
 
     private userStoreKey: api.security.UserStoreKey;
 
-    constructor(userStoreKey: api.security.UserStoreKey) {
+    private isSystemUser: boolean;
+
+    constructor(userStoreKey: api.security.UserStoreKey, isSystemUser: boolean) {
         super();
 
         this.userStoreKey = userStoreKey;
         this.email = new EmailInput();
         this.email.setUserStoreKey(this.userStoreKey);
+        this.isSystemUser = isSystemUser;
 
         let emailFormItem = new FormItemBuilder(this.email).setLabel(i18n('field.email')).setValidator(Validators.required).build();
 
@@ -52,7 +55,7 @@ export class UserEmailWizardStepForm
     }
 
     isValid(): boolean {
-        return this.email.isValid();
+        return this.isSystemUser || this.email.isValid();
     }
 
     getEmail(): string {
