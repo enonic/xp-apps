@@ -13,7 +13,6 @@ import PageTemplateKey = api.content.page.PageTemplateKey;
 import GetPageTemplateByKeyRequest = api.content.page.GetPageTemplateByKeyRequest;
 import SiteModel = api.content.site.SiteModel;
 import ContentFormContext = api.content.form.ContentFormContext;
-import ContentTypeName = api.schema.content.ContentTypeName;
 import i18n = api.util.i18n;
 
 export class LiveEditModel {
@@ -140,8 +139,8 @@ export class LiveEditModelInitializer {
             if (content.getPage().hasTemplate()) {
                 return this.loadPageTemplate(content.getPage().getTemplate())
                     .then(pageTemplate => {
-                        // despite listed in page, template might have lost its support for rendering site
-                        return pageTemplate.isCanRender(ContentTypeName.SITE) ? pageTemplate : null;
+                        // despite listed in page, template might have lost its support for rendering content
+                        return pageTemplate.isCanRender(content.getType()) ? pageTemplate : null;
                     })
                     .fail(reason => {
                         // template might have been deleted
