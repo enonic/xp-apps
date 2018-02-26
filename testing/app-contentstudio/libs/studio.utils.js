@@ -12,7 +12,8 @@ const appConst = require("./app_const");
 const newContentDialog = require('../page_objects/browsepanel/new.content.dialog');
 const contentWizardPanel = require('../page_objects/wizardpanel/content.wizard.panel');
 const webDriverHelper = require("./WebDriverHelper");
-const issueListDialog = require('../page_objects/issue.list.dialog');
+const issueListDialog = require('../page_objects/issue/issue.list.dialog');
+const createIssueDialog = require('../page_objects/issue/create.issue.dialog');
 const deleteContentDialog = require('../page_objects/delete.content.dialog');
 const confirmContentDeleteDialog = require('../page_objects/confirm.content.delete.dialog');
 
@@ -31,7 +32,15 @@ module.exports = {
             return issueListDialog.waitForDialogVisible();
         })
     },
-
+    openCreateIssueDialog: function () {
+        return browsePanel.clickOnShowIssuesListButton().then(()=> {
+            return issueListDialog.waitForDialogVisible(500);
+        }).then(()=> {
+            return issueListDialog.clickOnNewIssueButton();
+        }).then(()=> {
+            return createIssueDialog.waitForDialogLoaded();
+        });
+    },
     openContentWizard: function (contentType) {
         return browsePanel.waitForNewButtonEnabled(appConst.TIMEOUT_3).then(()=> {
             return browsePanel.clickOnNewButton();
@@ -210,7 +219,7 @@ module.exports = {
     },
 
     navigateToContentStudioApp: function (browser) {
-        return launcherPanel.waitForPanelVisible(appConst.TIMEOUT_3).then((result)=> {
+        return launcherPanel.waitForPanelVisible(appConst.TIMEOUT_2).then((result)=> {
             if (result) {
                 console.log("Launcher Panel is opened, click on the `Content Studio` link...");
                 return launcherPanel.clickOnContentStudioLink();

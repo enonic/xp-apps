@@ -25,7 +25,7 @@ module.exports = {
     },
 
     navigateToApplicationsApp: function (browser) {
-        return launcherPanel.waitForPanelVisible(appConst.TIMEOUT_2).then((result)=> {
+        return launcherPanel.waitForPanelVisible(appConst.TIMEOUT_1).then((result)=> {
             if (result) {
                 console.log("Launcher Panel is opened, click on the `Applications` link...");
                 return launcherPanel.clickOnApplicationsLink();

@@ -24,8 +24,8 @@ var homePage = Object.create(page, {
         }
     },
     isXpTourVisible: {
-        value: function (ms) {
-            return this.isVisible(`${xpTourDialog.container}`, ms);
+        value: function () {
+            return this.isVisible(`${xpTourDialog.container}`);
         }
     },
     waitForLoaded: {

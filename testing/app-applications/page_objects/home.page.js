@@ -24,7 +24,7 @@ var homePage = Object.create(page, {
         }
     },
     isXpTourVisible: {
-        value: function (ms) {
+        value: function () {
             return this.isVisible(`${xpTourDialog.container}`);
         }
     },

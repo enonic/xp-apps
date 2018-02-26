@@ -1,10 +1,13 @@
-const page = require('./page');
-const elements = require('../libs/elements');
+const page = require('../page');
+const elements = require('../../libs/elements');
 const xpath = {
     container: `//div[contains(@id,'IssueListDialog')]`,
     newIssueButton: `//button[contains(@id,'DialogButton') and child::span[text()='New Issue...']]`,
     showClosedIssuesLink: "//li[contains(@id,'TabBarItem') and child::a[contains(.,'Show closed issues')]]",
-    showOpenIssuesLink: "//li[contains(@id,'TabBarItem') and child::a[contains(.,'Show open issues')]]"
+    showOpenIssuesLink: "//li[contains(@id,'TabBarItem') and child::a[contains(.,'Show open issues')]]",
+    issueByName: function (name) {
+        return `//li[contains(@id,'IssueListItem')]//h6[contains(@class,'main-name') and contains(.,'${name}')]`
+    },
 };
 const issuesListDialog = Object.create(page, {
 
@@ -50,10 +53,9 @@ const issuesListDialog = Object.create(page, {
             return this.waitForNotVisible(`${xpath.container}`, ms);
         }
     },
-
     isDialogPresent: {
-        value: function (ms) {
-            return this.isVisible(`${xpath.container}`, ms);
+        value: function () {
+            return this.isVisible(`${xpath.container}`);
         }
     },
     clickOnCancelTopButton: {
@@ -98,6 +100,15 @@ const issuesListDialog = Object.create(page, {
         value: function () {
             return this.doClick(this.showClosedIssuesLink).catch(err=> {
                 this.doCatch('err_issue_list_show_closed', err)
+            })
+        }
+    },
+    clickOnIssue: {
+        value: function (issueName) {
+            let issueXpath = xpath.issueByName(issueName);
+            return this.doClick(issueXpath).catch(err=> {
+                this.saveScreenshot('err_click_on_issue');
+                throw new Error('error when clicked on issue' + err)
             })
         }
     },
