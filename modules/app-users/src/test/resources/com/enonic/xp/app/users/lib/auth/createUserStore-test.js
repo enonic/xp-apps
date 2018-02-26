@@ -67,6 +67,11 @@ function createAndAssert(params) {
                     name: 'emptySet',
                     type: 'PropertySet',
                     values: []
+                },
+                {
+                    name: 'defaultGroups',
+                    type: 'Reference',
+                    values: []
                 }
             ]
         }
@@ -141,6 +146,11 @@ exports.createUserStore = function () {
                 {
                     name: 'emptySet',
                     type: 'PropertySet',
+                    values: []
+                },
+                {
+                    name: 'defaultGroups',
+                    type: 'Reference',
                     values: []
                 }
             ]

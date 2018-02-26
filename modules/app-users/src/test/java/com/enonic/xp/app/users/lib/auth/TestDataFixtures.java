@@ -96,6 +96,7 @@ public class TestDataFixtures
         config.setLong( "sessionTimeout", null );
         config.setSet( "forgotPassword", passwordPropertySet );
         config.setSet( "emptySet", null );
+        config.setReference( "defaultGroups", null );
 
         return config;
     }

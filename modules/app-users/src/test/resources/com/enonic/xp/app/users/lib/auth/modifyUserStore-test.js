@@ -28,6 +28,11 @@ exports.modifyUserStore = function () {
                     ]
                 },
                 {
+                    name: "sessionTimeout",
+                    type: "Long",
+                    values: [{}]
+                },
+                {
                     name: 'forgotPassword',
                     type: 'PropertySet',
                     values: [
@@ -58,6 +63,11 @@ exports.modifyUserStore = function () {
                 {
                     name: 'emptySet',
                     type: 'PropertySet',
+                    values: []
+                },
+                {
+                    name: 'defaultGroups',
+                    type: 'Reference',
                     values: []
                 }
             ]
@@ -92,6 +102,15 @@ exports.modifyUserStore = function () {
                         ]
                     },
                     {
+                        name: "sessionTimeout",
+                        type: "Long",
+                        values: [
+                            {
+                                v: null
+                            }
+                        ]
+                    },
+                    {
                         name: 'forgotPassword',
                         type: 'PropertySet',
                         values: [
@@ -122,6 +141,11 @@ exports.modifyUserStore = function () {
                     {
                         name: 'emptySet',
                         type: 'PropertySet',
+                        values: []
+                    },
+                    {
+                        name: 'defaultGroups',
+                        type: 'Reference',
                         values: []
                     }
                 ]
