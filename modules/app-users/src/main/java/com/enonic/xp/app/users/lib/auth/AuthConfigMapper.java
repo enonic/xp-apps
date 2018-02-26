@@ -70,7 +70,9 @@ public final class AuthConfigMapper
         else
         {
             final Object v = value.getValue().getObject();
-            if ( v != null )
+            final boolean ofNullableType =
+                value.getType().equals( ValueTypes.REFERENCE ) || value.getType().equals( ValueTypes.BINARY_REFERENCE );
+            if ( !ofNullableType || v != null )
             {
                 gen.map();
                 gen.value( "v", v );

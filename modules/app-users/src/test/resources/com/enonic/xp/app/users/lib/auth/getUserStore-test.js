@@ -69,6 +69,11 @@ exports.getUserStore = function () {
                     "name": "emptySet",
                     "type": "PropertySet",
                     "values": []
+                },
+                {
+                    "name": "defaultGroups",
+                    "type": "Reference",
+                    "values": []
                 }
             ]
         }

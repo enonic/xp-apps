@@ -28,6 +28,11 @@ exports.modifyUserStore = function () {
                     ]
                 },
                 {
+                    name: "sessionTimeout",
+                    type: "Long",
+                    values: [{}]
+                },
+                {
                     name: 'forgotPassword',
                     type: 'PropertySet',
                     values: [
@@ -93,6 +98,15 @@ exports.modifyUserStore = function () {
                         values: [
                             {
                                 v: true
+                            }
+                        ]
+                    },
+                    {
+                        name: "sessionTimeout",
+                        type: "Long",
+                        values: [
+                            {
+                                v: null
                             }
                         ]
                     },
