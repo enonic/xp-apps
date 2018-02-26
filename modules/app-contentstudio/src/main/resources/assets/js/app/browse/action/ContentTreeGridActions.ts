@@ -173,7 +173,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
     getAllActionsNoPendingDelete(): api.ui.Action[] {
         return [
             ...this.getAllCommonActions(),
-            ...this.getPublishActions()
+            this.actionsMap.UNPUBLISH
         ];
     }
 
@@ -304,6 +304,15 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         if (anyIsPendingDelete) {
             const invisibleActions = allArePendingDelete ? this.getAllActionsNoPendingDelete() : this.getAllActions();
             invisibleActions.forEach(action => action.setVisible(false));
+
+            this.actionsMap.PUBLISH.setVisible(allArePendingDelete || publishEnabled);
+
+            this.enableActions({
+                PUBLISH_TREE: false,
+                UNPUBLISH: false,
+                PUBLISH: allArePendingDelete || publishEnabled
+            });
+
         } else {
             this.getAllCommonActions().forEach(action => action.setVisible(true));
 
