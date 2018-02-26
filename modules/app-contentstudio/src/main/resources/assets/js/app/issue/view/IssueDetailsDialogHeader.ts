@@ -40,6 +40,7 @@ export class IssueDetailsDialogHeader
 
     setTitle(value: string, escapeHtml: boolean = true): IssueDetailsDialogHeader {
         this.input.setValue(value);
+        this.input.resetBaseValues();   // reset original value and dirty as if it was newly created
         return this;
     }
 
