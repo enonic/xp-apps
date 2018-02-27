@@ -735,7 +735,7 @@ export class ContentWizardPanel
 
         const loadDefaultModelsAndUpdatePageModel = (reloadPage: boolean = true) => {
             const item = this.getPersistedItem();
-            const site = item instanceof Site ? item : null;
+            const site = item.isSite() ? <Site>item : this.site;
 
             return new ContentWizardDataLoader().loadDefaultModels(site, this.contentType.getContentTypeName()).then(
                 defaultModels => {
@@ -854,9 +854,11 @@ export class ContentWizardPanel
 
                 const isPageTemplate = updatedContent.getType().isPageTemplate();
                 const item = this.getPersistedItem();
-                const site = item instanceof Site ? item : null;
+                const site = item.isSite() ? <Site>item : this.site;
+                const isDescendantOfMySite = updatedContent.getPath().isDescendantOf(site.getPath());
+
                 let templateUpdatedPromise: wemQ.Promise<boolean>;
-                if (isPageTemplate && site && updatedContent.getPath().isDescendantOf(site.getPath())) {
+                if (isPageTemplate && isDescendantOfMySite) {
                     templateUpdatedPromise = loadDefaultModelsAndUpdatePageModel(false);
                 } else {
                     templateUpdatedPromise = wemQ(false);
@@ -1941,7 +1943,7 @@ export class ContentWizardPanel
 
     onLiveModelChanged(listener: () => void) {
 
-        if(this.getLivePanel()) {
+        if (this.getLivePanel()) {
             if (this.getLivePanel().getPageView()) {
                 this.onPageChanged(listener);
             }
