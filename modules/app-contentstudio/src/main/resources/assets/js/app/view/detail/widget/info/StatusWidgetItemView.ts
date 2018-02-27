@@ -1,6 +1,5 @@
 import '../../../../../api.ts';
 import {WidgetItemView} from '../../WidgetItemView';
-
 import CompareStatus = api.content.CompareStatus;
 import PublishStatus = api.content.PublishStatus;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
@@ -22,7 +21,12 @@ export class StatusWidgetItemView extends WidgetItemView {
             console.debug('StatusWidgetItemView.setCompareStatus: ', compareStatus);
             console.debug('StatusWidgetItemView.setPublishStatus: ', publishStatus);
         }
-        if (compareStatus !== this.getCompareStatus() || publishStatus !== this.getPublishStatus()) {
+        const timePublished = content =>
+            content && content.getContentSummary() && content.getContentSummary().getPublishFirstTime() || 0;
+        const statusChanged = publishStatus !== this.getPublishStatus() ||
+                              compareStatus !== this.getCompareStatus() ||
+                              (compareStatus === CompareStatus.NEW && timePublished(item) !== timePublished(this.content));
+        if (statusChanged) {
             this.content = item;
             return this.layout();
         }
