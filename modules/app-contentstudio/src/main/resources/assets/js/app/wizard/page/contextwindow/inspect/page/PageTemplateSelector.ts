@@ -75,7 +75,7 @@ export class PageTemplateSelector
                 const selectedValue = this.getValue();
                 this.removeAllOptions();
                 this.initOptionsList(options);
-                this.setValue(selectedValue);
+                this.setValue(selectedValue, true);
             }
         }).catch(api.DefaultErrorHandler.handle);
     }
