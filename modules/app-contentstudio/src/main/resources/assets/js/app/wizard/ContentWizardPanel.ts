@@ -729,6 +729,21 @@ export class ContentWizardPanel
         this.wizardActions.refreshPendingDeleteDecorations();
     }
 
+    private isUpdateOfPageModelRequired(content: ContentSummaryAndCompareStatus) {
+
+        const item = this.getPersistedItem();
+        const isSiteUpdated = content.getType().isSite();
+        const isPageTemplateUpdated = content.getType().isPageTemplate();
+        const isItemUnderUpdatedSite  = item.getPath().isDescendantOf(content.getPath());
+        const site = item.isSite() ? <Site>item : this.site;
+        const isUpdatedItemUnderSite = content.getPath().isDescendantOf(site.getPath());
+
+        // 1. template of the nearest site was updated
+        // 2. nearest site was updated (app may have been added)
+
+        return (isPageTemplateUpdated && isUpdatedItemUnderSite) || (isSiteUpdated && isItemUnderUpdatedSite);
+    }
+
     private listenToContentEvents() {
 
         let serverEvents = api.content.event.ContentServerEventsHandler.getInstance();
@@ -852,13 +867,9 @@ export class ContentWizardPanel
                     }
                 });
 
-                const isPageTemplate = updatedContent.getType().isPageTemplate();
-                const item = this.getPersistedItem();
-                const site = item.isSite() ? <Site>item : this.site;
-                const isDescendantOfMySite = updatedContent.getPath().isDescendantOf(site.getPath());
-
                 let templateUpdatedPromise: wemQ.Promise<boolean>;
-                if (isPageTemplate && isDescendantOfMySite) {
+
+                if (this.isUpdateOfPageModelRequired(updatedContent)) {
                     templateUpdatedPromise = loadDefaultModelsAndUpdatePageModel(false);
                 } else {
                     templateUpdatedPromise = wemQ(false);
