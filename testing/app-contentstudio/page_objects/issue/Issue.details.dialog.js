@@ -11,7 +11,8 @@ const xpath = {
     issueStatusSelector: `//div[contains(@id,'IssueStatusSelector')]`,
     issueCommentTextArea: `//div[contains(@id,'IssueCommentTextArea')]`,
     issueCommentsListItem: `//div[contains(@id,'IssueCommentsListItem')]`,
-    issueCommentsListItemByText: text => `${xpath.issueCommentsListItem}//p[@class='inplace-text' and text()='${text}']`,
+    issueCommentsListItemByText:
+        text => `//div[contains(@id,'IssueCommentsListItem') and descendant::p[@class='inplace-text' and text()='${text}']]`,
 
 };
 const issueDetailsDialog = Object.create(page, {
@@ -164,7 +165,36 @@ const issueDetailsDialog = Object.create(page, {
                 throw new Error('error when get issue comment: ' + err)
             })
         }
-    }
-
+    },
+    clickOnEditCommentMenuItem: {
+        value: function (text) {
+            let selector = xpath.issueCommentsListItemByText(text) + `//h6/i[contains(@class,'icon-menu')]`;
+            return this.doClick(selector).pause(500).then(()=> {
+                let editMenuItem = `//li[contains(@id,'MenuItem')]`;
+                return this.getDisplayedElements(editMenuItem);
+            }).then((result)=> {
+                return this.getBrowser().elementIdClick(result[0].ELEMENT);
+            }).pause(500).catch(err=> {
+                this.saveScreenshot('err_get_comment_issue');
+                throw new Error('error when get issue comment: ' + err)
+            })
+        }
+    },
+    updateComment: {
+        value: function (comment, text) {
+            let commentTextarea = xpath.issueCommentsListItemByText(comment) + `//textarea`;
+            return this.typeTextInInput(commentTextarea, text).catch(err=> {
+                throw new Error('error type text in issue comment: ' + err)
+            })
+        }
+    },
+    clickOnSaveCommentButton: {
+        value: function (text) {
+            let saveButton = xpath.issueCommentsListItemByText(text) + `//button[contains(@id,'Button') and child::span[,'Save']]`;
+            return this.doClick(saveButton).pause(500).catch(err=> {
+                throw new Error('error when save the issue comment: ' + err)
+            })
+        }
+    },
 });
 module.exports = issueDetailsDialog;
