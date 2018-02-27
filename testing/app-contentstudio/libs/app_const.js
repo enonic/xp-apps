@@ -12,6 +12,7 @@ module.exports = Object.freeze({
     //waitForTimeout
     TIMEOUT_10: 10000,
     TIMEOUT_3: 3000,
+    TIMEOUT_2: 2000,
     TIMEOUT_1: 1000,
     SUITE_TIMEOUT: 180000,
     DELETE_INBOUND_MESSAGE: 'The content you are about to delete has inbound references. Please verify them before deletion.',
