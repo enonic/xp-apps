@@ -189,7 +189,8 @@ export class IssueDetailsDialog
             [PrincipalKey.ofAnonymous(), PrincipalKey.ofSU()]);
         this.assigneesCombobox = new PrincipalComboBoxBuilder().setLoader(userLoader).build();
         const updateTabCount = (save) => {
-            const num = this.assigneesCombobox.getValue().split(ComboBox.VALUE_SEPARATOR).length;
+            const val = this.assigneesCombobox.getValue();
+            const num = !api.util.StringHelper.isBlank(val) ? val.split(ComboBox.VALUE_SEPARATOR).length : 0;
             this.assigneesTab.setHtml(i18n('field.assignees') + (num > 0 ? ` (${num})` : ''));
             if (save) {
                 this.debouncedUpdateIssue(this.issue.getIssueStatus(), true);
