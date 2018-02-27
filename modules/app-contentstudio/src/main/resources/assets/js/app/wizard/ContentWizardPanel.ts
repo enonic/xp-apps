@@ -729,6 +729,21 @@ export class ContentWizardPanel
         this.wizardActions.refreshPendingDeleteDecorations();
     }
 
+    private isUpdateOfPageModelRequired(content: ContentSummaryAndCompareStatus) {
+
+        const item = this.getPersistedItem();
+        const isSiteUpdated = content.getType().isSite();
+        const isPageTemplateUpdated = content.getType().isPageTemplate();
+        const isItemUnderUpdatedSite  = item.getPath().isDescendantOf(content.getPath());
+        const site = item.isSite() ? <Site>item : this.site;
+        const isUpdatedItemUnderSite = content.getPath().isDescendantOf(site.getPath());
+
+        // 1. template of the nearest site was updated
+        // 2. nearest site was updated (app may have been added)
+
+        return (isPageTemplateUpdated && isUpdatedItemUnderSite) || (isSiteUpdated && isItemUnderUpdatedSite);
+    }
+
     private listenToContentEvents() {
 
         let serverEvents = api.content.event.ContentServerEventsHandler.getInstance();
@@ -852,17 +867,9 @@ export class ContentWizardPanel
                     }
                 });
 
-                const item = this.getPersistedItem();
-                const isSiteUpdated = updatedContent.getType().isSite();
-                const amIDescendantOfUpdatedSite = item.getPath().isDescendantOf(updatedContent.getPath());
-                const site = item.isSite() ? <Site>item : this.site;
-                const isPageTemplateUpdated = updatedContent.getType().isPageTemplate();
-                const isDescendantOfMySiteUpdated = updatedContent.getPath().isDescendantOf(site.getPath());
-
                 let templateUpdatedPromise: wemQ.Promise<boolean>;
-                // 1. template of the nearest site was updated
-                // 2. nearest site was updated (app may have been added)
-                if (isPageTemplateUpdated && isDescendantOfMySiteUpdated || isSiteUpdated && amIDescendantOfUpdatedSite) {
+
+                if (this.isUpdateOfPageModelRequired(updatedContent)) {
                     templateUpdatedPromise = loadDefaultModelsAndUpdatePageModel(false);
                 } else {
                     templateUpdatedPromise = wemQ(false);
