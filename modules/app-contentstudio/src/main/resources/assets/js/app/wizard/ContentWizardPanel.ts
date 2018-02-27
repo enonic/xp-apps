@@ -852,13 +852,17 @@ export class ContentWizardPanel
                     }
                 });
 
-                const isPageTemplate = updatedContent.getType().isPageTemplate();
                 const item = this.getPersistedItem();
+                const isSiteUpdated = updatedContent.getType().isSite();
+                const amIDescendantOfUpdatedSite = item.getPath().isDescendantOf(updatedContent.getPath());
                 const site = item.isSite() ? <Site>item : this.site;
-                const isDescendantOfMySite = updatedContent.getPath().isDescendantOf(site.getPath());
+                const isPageTemplateUpdated = updatedContent.getType().isPageTemplate();
+                const isDescendantOfMySiteUpdated = updatedContent.getPath().isDescendantOf(site.getPath());
 
                 let templateUpdatedPromise: wemQ.Promise<boolean>;
-                if (isPageTemplate && isDescendantOfMySite) {
+                // 1. template of the nearest site was updated
+                // 2. nearest site was updated (app may have been added)
+                if (isPageTemplateUpdated && isDescendantOfMySiteUpdated || isSiteUpdated && amIDescendantOfUpdatedSite) {
                     templateUpdatedPromise = loadDefaultModelsAndUpdatePageModel(false);
                 } else {
                     templateUpdatedPromise = wemQ(false);
