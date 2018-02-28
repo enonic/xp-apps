@@ -9,7 +9,7 @@ var panel = {
     container: "//div[contains(@id,'PrincipalBrowseFilterPanel')]",
     clearFilterButton: "//a[contains(@id,'ClearFilterButton')]",
     searchInput: "//input[contains(@id,'browse.filter.TextSearchField')]",
-    aggregationGroupView: "//div[contains(@id,'PrincipalTypeAggregationGroupView')]",
+    aggregationGroupView: "//div[contains(@id,'AggregationContainer')]",
     userAggregationCheckbox: "//div[contains(@id,'Checkbox') and child::label[contains(.,'User (')]]",
     roleAggregationCheckbox: "//div[contains(@id,'Checkbox') and child::label[contains(.,'Role (')]]",
     storeAggregationCheckbox: "//div[contains(@id,'Checkbox') and child::label[contains(.,'User Store (')]]",
