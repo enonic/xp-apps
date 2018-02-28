@@ -170,13 +170,27 @@ const issueDetailsDialog = Object.create(page, {
         value: function (text) {
             let selector = xpath.issueCommentsListItemByText(text) + `//h6/i[contains(@class,'icon-menu')]`;
             return this.doClick(selector).pause(500).then(()=> {
-                let editMenuItem = `//li[contains(@id,'MenuItem')]`;
+                let editMenuItem = `//li[contains(@id,'MenuItem') and text()='Edit']`;
                 return this.getDisplayedElements(editMenuItem);
             }).then((result)=> {
                 return this.getBrowser().elementIdClick(result[0].ELEMENT);
             }).pause(500).catch(err=> {
-                this.saveScreenshot('err_get_comment_issue');
-                throw new Error('error when get issue comment: ' + err)
+                this.saveScreenshot('err_click_on_edit_comment_issue');
+                throw new Error('error when click on edit the issue comment: ' + err)
+            })
+        }
+    },
+    clickOnDeleteCommentMenuItem: {
+        value: function (text) {
+            let selector = xpath.issueCommentsListItemByText(text) + `//h6/i[contains(@class,'icon-menu')]`;
+            return this.doClick(selector).pause(500).then(()=> {
+                let deleteMenuItem = `//li[contains(@id,'MenuItem') and text()='Delete']`;
+                return this.getDisplayedElements(deleteMenuItem);
+            }).then((result)=> {
+                return this.getBrowser().elementIdClick(result[0].ELEMENT);
+            }).pause(500).catch(err=> {
+                this.saveScreenshot('err_click_on_delete_comment');
+                throw new Error('error when click on delete the issue comment: ' + err)
             })
         }
     },
@@ -190,7 +204,7 @@ const issueDetailsDialog = Object.create(page, {
     },
     clickOnSaveCommentButton: {
         value: function (text) {
-            let saveButton = xpath.issueCommentsListItemByText(text) + `//button[contains(@id,'Button') and child::span[,'Save']]`;
+            let saveButton = xpath.issueCommentsListItemByText(text) + `//button[contains(@id,'Button') and child::span[text()='Save']]`;
             return this.doClick(saveButton).pause(500).catch(err=> {
                 throw new Error('error when save the issue comment: ' + err)
             })
