@@ -736,7 +736,8 @@ export class ContentWizardPanel
         const isPageTemplateUpdated = content.getType().isPageTemplate();
         const isItemUnderUpdatedSite  = item.getPath().isDescendantOf(content.getPath());
         const site = item.isSite() ? <Site>item : this.site;
-        const isUpdatedItemUnderSite = content.getPath().isDescendantOf(site.getPath());
+
+        const isUpdatedItemUnderSite = site ? content.getPath().isDescendantOf(site.getPath()) : false;
 
         // 1. template of the nearest site was updated
         // 2. nearest site was updated (app may have been added)
