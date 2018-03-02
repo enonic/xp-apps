@@ -158,8 +158,13 @@ export class ComponentView<COMPONENT extends Component>
             .setContextMenuTitle(new ComponentViewContextMenuTitle(builder.component, builder.type))
         );
 
+        this.initListeners();
+        this.setComponent(builder.component);
         this.addComponentContextMenuActions(builder.inspectActionRequired);
+        this.initKeyBoardBindings();
+    }
 
+    private initListeners() {
         this.propertyChangedListener = () => this.refreshEmptyState();
         this.resetListener = () => {
             // recreate the component view from scratch
@@ -173,14 +178,11 @@ export class ComponentView<COMPONENT extends Component>
             new UIComponentResetEvent(clone, this).fire();
         };
 
-        this.setComponent(builder.component);
         this.onRemoved(event => {
             if (this.component) {
                 this.unregisterComponentListeners(this.component);
             }
         });
-
-        this.initKeyBoardBindings();
     }
 
     private registerComponentListeners(component: COMPONENT) {
