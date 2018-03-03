@@ -51,6 +51,10 @@
         messages: {{{messages}}},
         launcherUrl: '{{launcherUrl}}'
     };
+
+    if (CKEDITOR) {
+        CKEDITOR.config.language = '{{locale}}';
+    }
 </script>
 
 <!-- App javascript -->
