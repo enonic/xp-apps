@@ -362,7 +362,8 @@ export class TextComponentView
             this.appendChild(this.editorContainer);
         }
 
-        new HTMLAreaBuilder().setSelector('div.' + id + ' .tiny-mce-here').setAssetsUri(assetsUri).setInline(true).onCreateDialog(event => {
+        new HTMLAreaBuilder().setSelector('div.' + id + ' .tiny-mce-here').setTextAreaId(this.getId()).setAssetsUri(assetsUri).setInline(
+            true).onCreateDialog(event => {
             this.currentDialogConfig = event.getConfig();
         }).setFocusHandler(this.onFocusHandler.bind(this))
             .setBlurHandler(this.onBlurHandler.bind(this))
@@ -373,8 +374,8 @@ export class TextComponentView
             .setEditableSourceCode(this.editableSourceCode)
             .setContentPath(this.getContentPath())
             .setApplicationKeys(this.getApplicationKeys())
-            .createEditor()
-            .then(this.handleEditorCreated.bind(this));
+            .createEditor();
+        // .then(this.handleEditorCreated.bind(this));
     }
 
     private handleEditorCreated(editor: HtmlAreaEditor) {
