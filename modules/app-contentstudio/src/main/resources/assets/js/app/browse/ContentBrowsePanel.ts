@@ -37,6 +37,7 @@ import TreeGridItemClickedEvent = api.ui.treegrid.TreeGridItemClickedEvent;
 import GetContentByIdRequest = api.content.resource.GetContentByIdRequest;
 import ContentIconUrlResolver = api.content.util.ContentIconUrlResolver;
 import IsRenderableRequest = api.content.page.IsRenderableRequest;
+import RepositoryEvent = api.content.event.RepositoryEvent;
 
 export class ContentBrowsePanel
     extends api.app.browse.BrowsePanel<ContentSummaryAndCompareStatus> {
@@ -278,7 +279,8 @@ export class ContentBrowsePanel
 
     // tslint:disable-next-line:max-line-length
     private getFirstSelectedOrHighlightedBrowseItem(fullSelection?: TreeNode<ContentSummaryAndCompareStatus>[]): BrowseItem<ContentSummaryAndCompareStatus> {
-        if (!fullSelection && !this.treeGrid.getFirstSelectedOrHighlightedNode()) {
+        const highlightedNode = this.treeGrid.getFirstSelectedOrHighlightedNode();
+        if (!fullSelection && !highlightedNode) {
             return null;
         }
 
@@ -286,10 +288,8 @@ export class ContentBrowsePanel
 
         if (fullSelection && fullSelection.length > 0) {
             nodes = fullSelection;
-        }
-
-        if (this.treeGrid.getFirstSelectedOrHighlightedNode()) {
-            nodes = [this.treeGrid.getFirstSelectedOrHighlightedNode()];
+        } else if (highlightedNode) {
+            nodes = [highlightedNode];
         }
 
         return this.treeNodeToBrowseItem(nodes[0]);
@@ -363,6 +363,14 @@ export class ContentBrowsePanel
 
         ContentPreviewPathChangedEvent.on((event: ContentPreviewPathChangedEvent) => {
             this.selectPreviewedContentInGrid(event.getPreviewPath());
+        });
+        RepositoryEvent.on(event => {
+            if (event.isRestored()) {
+                this.treeGrid.reload().then(() => {
+                    const fullSelection = this.treeGrid.getRoot().getFullSelection();
+                    this.updateDetailsPanelOnItemChange(fullSelection);
+                });
+            }
         });
     }
 
