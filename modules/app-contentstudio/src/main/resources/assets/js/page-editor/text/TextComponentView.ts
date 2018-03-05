@@ -18,7 +18,7 @@ import HTMLAreaHelper = api.util.htmlarea.editor.HTMLAreaHelper;
 import ModalDialog = api.util.htmlarea.dialog.ModalDialog;
 import Promise = Q.Promise;
 import i18n = api.util.i18n;
-import editor = CKEDITOR.editor;
+import HTMLAreaEditor = CKEDITOR.editor;
 
 export class TextComponentViewBuilder
     extends ComponentViewBuilder<TextComponent> {
@@ -33,7 +33,7 @@ export class TextComponentView
 
     private rootElement: api.dom.Element;
 
-    private htmlAreaEditor: editor;
+    private htmlAreaEditor: HTMLAreaEditor;
 
     private isInitializingEditor: boolean;
 
