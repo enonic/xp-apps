@@ -1,6 +1,8 @@
 import '../../api.ts';
 import {ApplicationBrowseActions} from '../browse/ApplicationBrowseActions';
-
+import {GetApplicationInfoRequest} from '../resource/GetApplicationInfoRequest';
+import {ApplicationInfo} from '../resource/ApplicationInfo';
+import {ContentReference} from '../resource/ContentReference';
 import ContentTypeSummary = api.schema.content.ContentTypeSummary;
 import RelationshipType = api.schema.relationshiptype.RelationshipType;
 import PageDescriptor = api.content.page.PageDescriptor;
@@ -10,14 +12,13 @@ import ItemDataGroup = api.app.view.ItemDataGroup;
 import ApplicationKey = api.application.ApplicationKey;
 import Application = api.application.Application;
 import MacroDescriptor = api.macro.MacroDescriptor;
+import Widget = api.content.Widget;
+import Tooltip = api.ui.Tooltip;
 import i18n = api.util.i18n;
 import DivEl = api.dom.DivEl;
-import {GetApplicationInfoRequest} from '../resource/GetApplicationInfoRequest';
-import {ApplicationInfo} from '../resource/ApplicationInfo';
 import DateTimeFormatter = api.ui.treegrid.DateTimeFormatter;
 import StringHelper = api.util.StringHelper;
 import AEl = api.dom.AEl;
-import {ContentReference} from '../resource/ContentReference';
 import IdProviderMode = api.security.IdProviderMode;
 
 export class ApplicationItemStatisticsPanel
@@ -89,6 +90,7 @@ export class ApplicationItemStatisticsPanel
             const providers = this.initProviders(applicationInfo);
             const tasks = this.initTasks(applicationInfo);
             const deployment = this.initDeployment(applicationInfo);
+            const extensions = this.initExtensions(applicationInfo);
 
             if (!infoGroup.isEmpty()) {
                 this.applicationDataContainer.appendChild(infoGroup);
@@ -109,6 +111,9 @@ export class ApplicationItemStatisticsPanel
             if (tasks && !tasks.isEmpty()) {
                 this.applicationDataContainer.appendChild(tasks);
             }
+            if (extensions && !extensions.isEmpty()) {
+                this.applicationDataContainer.appendChild(extensions);
+            }
 
             if (deployment && !deployment.isEmpty()) {
                 this.applicationDataContainer.appendChild(deployment);
@@ -128,6 +133,25 @@ export class ApplicationItemStatisticsPanel
         macrosGroup.addDataArray(i18n('field.name'), macroNames);
 
         return macrosGroup;
+    }
+
+    private initExtensions(applicationInfo: ApplicationInfo): ItemDataGroup {
+        let extensionGroup = new ItemDataGroup(i18n('field.extensions'), 'extensions');
+
+        const widgets = applicationInfo.getWidgets().map(
+            (widget: Widget) => {
+                const interfacesStr = widget.getInterfaces().join(', ');
+                const displayString = widget.getDisplayName() + (StringHelper.isBlank(interfacesStr) ? '' : ' (' + interfacesStr + ')');
+
+                const spanEl = new api.dom.SpanEl().setHtml(displayString);
+                new Tooltip(spanEl, widget.getWidgetDescriptorKey().toString(), 200).setMode(Tooltip.MODE_GLOBAL_STATIC);
+                return spanEl;
+
+            }).sort(this.sortElInAlphabeticallyAsc);
+
+        extensionGroup.addDataElements(i18n('field.widgets'), widgets);
+
+        return extensionGroup;
     }
 
     private initSite(applicationInfo: ApplicationInfo): ItemDataGroup {
@@ -201,6 +225,10 @@ export class ApplicationItemStatisticsPanel
 
     private sortAlphabeticallyAsc(a: string, b: string): number {
         return a.toLocaleLowerCase().localeCompare(b.toLocaleLowerCase());
+    }
+
+    private sortElInAlphabeticallyAsc(a: api.dom.Element, b: api.dom.Element): number {
+        return a.getHtml().toLocaleLowerCase().localeCompare(b.getHtml().toLocaleLowerCase());
     }
 
     private getLocalizedState(state: string): string {
