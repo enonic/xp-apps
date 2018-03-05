@@ -200,7 +200,7 @@ export class UserWizardPanel extends PrincipalWizardPanel {
         let password = this.userPasswordWizardStepForm.getPassword();
         if (api.util.StringHelper.isEmpty(password)) {
             throw i18n('notify.empty.password');
-        } else if (!this.userEmailWizardStepForm.isValid()) {
+        } else if (!this.userPasswordWizardStepForm.isValid()) {
             throw `${i18n('field.password.invalid')}.`;
         }
     }

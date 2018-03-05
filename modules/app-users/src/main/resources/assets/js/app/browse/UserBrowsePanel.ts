@@ -70,6 +70,14 @@ export class UserBrowsePanel
         serverHandler.onUserItemCreated((principal: Principal, userStore: UserStore, sameTypeParent?: boolean) => {
             this.treeGrid.appendUserNode(principal, userStore, sameTypeParent);
             this.setRefreshOfFilterRequired();
+
+            /*
+                In case you switch to UserBrowsePanel before this event occured you need to trigger refresh manually
+                Otherwise 'shown' event won't update filter
+             */
+            if (this.isVisible()) {
+                this.refreshFilter();
+            }
         });
 
         serverHandler.onUserItemUpdated((principal: Principal, userStore: UserStore) => {
