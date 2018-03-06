@@ -5,14 +5,49 @@ plugins {
 allprojects {
     apply plugin: 'com.moowork.node'
     group = 'com.enonic.xp'
+
+    task flush( type: Delete ) {
+        description = 'Clean the project from built sources and dependencies'
+        delete '.xp'
+    }
+
+    task npmInstallForce( type: NpmTask ) {
+        description = 'Update all project node dependencies'
+        args = ['install', '--force']
+    }
 }
 
 subprojects {
     apply plugin: 'java'
+
+    flush.dependsOn += clean
 }
 
-task build {
-    if (project.hasProperty('all')) {
-        dependsOn gradle.includedBuild( 'lib-admin-ui' ).task( ':buildNoLint' )
+if ( hasProperty( 'env' ) )
+{
+    addBuildDependency()
+    applyExcludedTasks()
+}
+
+def applyExcludedTasks() {
+    def libAdminUi = gradle.includedBuild( 'lib-admin-ui' )
+    Closure permittedTasks = { it == 'lint' || it == 'test' }
+    def excludedTasks = gradle.startParameter.getExcludedTaskNames().findAll( permittedTasks )
+    libAdminUi.getLoadedSettings().getStartParameter().setExcludedTaskNames( excludedTasks )
+}
+
+def addBuildDependency() {
+    def buildTask = gradle.includedBuild( 'lib-admin-ui' ).task( ':build' )
+
+    task build {
+        dependsOn buildTask
+    }
+
+    subprojects.each {
+        def webpackTask = tasks.findByPath( ":${it.name}:webpack" )
+        def unpackDevResources = tasks.findByPath( ":${it.name}:unpackDevResources" )
+
+        if ( webpackTask != null ) webpackTask.dependsOn += unpackDevResources
+        unpackDevResources.dependsOn += buildTask
     }
 }
