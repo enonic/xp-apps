@@ -1,5 +1,7 @@
 /**
  * Created on 01.02.2018.
+ *
+ * Verifies xp-apps#359 "Page Inspection panel - Template name is missing for the Automatic template option"
  */
 const chai = require('chai');
 chai.use(require('chai-as-promised'));
@@ -15,7 +17,7 @@ const pageInspectionPanel = require('../page_objects/wizardpanel/liveform/page.i
 const contextWindow = require('../page_objects/wizardpanel/liveform/liveform.context.window');
 
 
-describe('site.configurator.required.input.spec: verifies the wizard-validation when the dialog contains required input', function () {
+describe('site.controller.spec: verifies the wizard-validation when the dialog contains required input', function () {
     this.timeout(appConstant.SUITE_TIMEOUT);
     webDriverHelper.setupBrowser();
 
@@ -29,7 +31,7 @@ describe('site.configurator.required.input.spec: verifies the wizard-validation 
                 return contentWizard.typeData(SITE);
             }).then(()=> {
                 return contentWizard.selectPageDescriptor('Page');
-            }).pause().then(()=> {
+            }).pause(500).then(()=> {
                 return contextWindow.clickOnInspectTabBarItem();
             }).then(()=> {
                 return pageInspectionPanel.getPageTemplateDropdownOptions();

@@ -234,7 +234,7 @@ var contentWizardPanel = Object.create(page, {
             }).then(()=> {
                 return this.getBrowser().frameParent();
             }).then(()=> {
-                return contextWindow.waitForOpened(1500);
+                return contextWindow.waitForOpened(appConst.TIMEOUT_3);
             })
         }
     }

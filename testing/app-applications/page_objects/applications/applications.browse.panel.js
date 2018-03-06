@@ -52,8 +52,6 @@ module.exports = Object.create(page, {
         value: function (itemName) {
             return this.waitForVisible(XPath.rowByName(itemName), 1000).catch(() => {
                 console.log("item is not displayed:" + itemName);
-                //this.saveScreenshot(`err_find_${itemName}`);
-                //throw new Error(`Item was not found!  ${itemName}`);
                 return false;
             });
         }
