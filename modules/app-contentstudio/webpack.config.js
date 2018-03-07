@@ -9,14 +9,16 @@ const detectCirculars = new CircularDependencyPlugin({
     failOnError: true
 });
 
+const isProd = process.env.NODE_ENV === 'production';
+
 module.exports = {
     context: __dirname + '/src/main/resources/assets',
     entry: {
         'js/bundle': './js/main.ts',
-        'styles/_all': './styles/_module.less',
+        'styles/_all': './styles/main.less',
         'page-editor/js/_all': './js/page-editor.ts',
         'page-editor/lib/_all': './page-editor/lib/_include.js',
-        'page-editor/styles/_all': './page-editor/styles/_module.less'
+        'page-editor/styles/_all': './page-editor/styles/main.less'
     },
     output: {
         path: __dirname + '/build/resources/main/assets',
@@ -37,18 +39,18 @@ module.exports = {
                     fallback: 'style-loader',
                     publicPath: '../../',
                     use: [
-                        { loader: 'css-loader', options: { sourceMap: true, importLoaders: 1 } },
-                        { loader: 'postcss-loader', options: { sourceMap: true, config: { path: '../../postcss.config.js' } } },
-                        { loader: 'less-loader', options: { sourceMap: true } }
+                        {loader: 'css-loader', options: {sourceMap: !isProd, importLoaders: 1}},
+                        {loader: 'postcss-loader', options: {sourceMap: !isProd, config: {path: '../../postcss.config.js'}}},
+                        {loader: 'less-loader', options: {sourceMap: !isProd}}
                     ]
                 })
             },
             {
-                test: /\.(eot|woff|woff2|ttf)$/,
+                test: /\.(eot|woff|woff2|ttf)$|icomoon.svg/,
                 use: 'file-loader?name=fonts/[name].[ext]'
             },
             {
-                test: /\.(svg|png|jpg|gif)$/,
+                test: /^((?!icomoon).)*\.(svg|png|jpg|gif)$/,
                 use: 'file-loader?name=img/[name].[ext]'
             }
         ]
@@ -62,5 +64,5 @@ module.exports = {
         }),
         detectCirculars
     ],
-    devtool: 'source-map'
+    devtool: isProd ? false : 'source-map'
 };
