@@ -77,7 +77,6 @@ export class ApplicationInfo {
             return Widget.fromJson(widgetJson);
         }) : [];
 
-        debugger;
         result.tools = (json.tools && json.tools.descriptors) ? json.tools.descriptors.map((toolJson) => {
             return AdminToolDescriptor.fromJson(toolJson);
         }) : [];

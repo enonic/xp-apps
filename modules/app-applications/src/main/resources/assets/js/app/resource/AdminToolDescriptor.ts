@@ -3,7 +3,7 @@ import AdminToolDescriptorJson = api.content.json.AdminToolDescriptorJson;
 
 export class AdminToolDescriptor {
 
-    private static BASE_TOOL_URI: string = "/admin/tool";
+    private static BASE_TOOL_URI: string = '/admin/tool';
     private key: DescriptorKey;
     private applicationKey: ApplicationKey;
     private name: string;
@@ -77,7 +77,6 @@ class AdminToolDescriptorBuilder {
     description: string;
 
     icon: string;
-
 
     public setKey(value: DescriptorKey) {
         this.key = value;

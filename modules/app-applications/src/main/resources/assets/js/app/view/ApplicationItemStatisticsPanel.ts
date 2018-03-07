@@ -139,7 +139,6 @@ export class ApplicationItemStatisticsPanel
     private initExtensions(applicationInfo: ApplicationInfo): ItemDataGroup {
         let extensionGroup = new ItemDataGroup(i18n('field.extensions'), 'extensions');
 
-        debugger;
         const widgets = applicationInfo.getWidgets().map(
             (widget: Widget) => {
                 const interfacesStr = widget.getInterfaces().join(', ');
