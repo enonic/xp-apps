@@ -12,5 +12,7 @@ module api.content.json {
         description: string;
 
         icon: string;
+
+        toolUrl: string;
     }
 }

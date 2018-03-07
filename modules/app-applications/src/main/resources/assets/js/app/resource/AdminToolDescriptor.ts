@@ -3,13 +3,19 @@ import AdminToolDescriptorJson = api.content.json.AdminToolDescriptorJson;
 
 export class AdminToolDescriptor {
 
-    private static BASE_TOOL_URI: string = '/admin/tool';
     private key: DescriptorKey;
+
     private applicationKey: ApplicationKey;
+
     private name: string;
+
     private displayName: string;
+
     private description: string;
+
     private icon: string;
+
+    private toolUrl: string;
 
     public constructor(builder: AdminToolDescriptorBuilder) {
         this.key = builder.key;
@@ -18,6 +24,7 @@ export class AdminToolDescriptor {
         this.displayName = builder.displayName;
         this.description = builder.description;
         this.icon = builder.icon;
+        this.toolUrl = builder.toolUrl;
     }
 
     public static create(): AdminToolDescriptorBuilder {
@@ -32,6 +39,7 @@ export class AdminToolDescriptor {
             .setDisplayName(json.displayName)
             .setDescription(json.description)
             .setIcon(json.icon)
+            .setToolUrl(json.toolUrl)
             .build();
     }
 
@@ -60,7 +68,7 @@ export class AdminToolDescriptor {
     }
 
     getToolUrl(): string {
-        return AdminToolDescriptor.BASE_TOOL_URI + '/' + this.applicationKey.toString() + '/' + this.name;
+        return this.toolUrl;
     }
 }
 
@@ -77,6 +85,8 @@ class AdminToolDescriptorBuilder {
     description: string;
 
     icon: string;
+
+    toolUrl: string;
 
     public setKey(value: DescriptorKey) {
         this.key = value;
@@ -105,6 +115,11 @@ class AdminToolDescriptorBuilder {
 
     public setIcon(value: string) {
         this.icon = value;
+        return this;
+    }
+
+    public setToolUrl(value: string) {
+        this.toolUrl = value;
         return this;
     }
 
