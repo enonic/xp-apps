@@ -27,26 +27,40 @@ export class WidgetItemView extends api.dom.DivEl {
     }
 
     public setUrl(url: string, contentId: string, keepId: boolean = false): wemQ.Promise<void> {
-        let deferred = wemQ.defer<void>();
-        let uid = (!keepId || !this.uid) ? Date.now().toString() : this.uid;
-        let linkEl = new LinkEl(this.getFullWidgetUrl(url, uid, contentId)).setAsync();
-        let el = this.getEl();
-        let onLinkLoaded = ((event: UIEvent) => {
-                let mainContainer = event.target['import'].body;
-                if (mainContainer) {
-                    let html = this.stripOffAssets(mainContainer.innerHTML);
-                    el.getHTMLElement().insertAdjacentHTML('beforeend', html);
-                }
+        const deferred = wemQ.defer<void>();
+        const uid = (!keepId || !this.uid) ? Date.now().toString() : this.uid;
+        const linkEl = new LinkEl(this.getFullWidgetUrl(url, uid, contentId)).setAsync();
+        const el = this.getEl();
+        const onLinkLoaded = (() => {
 
-                linkEl.unLoaded(onLinkLoaded);
+            const importedDocument: HTMLDocument = linkEl.getHTMLElement()['import'];
+
+            if (!importedDocument) {
                 deferred.resolve(null);
-            });
+                return;
+            }
+
+            if (!!importedDocument.body) {
+                el.getHTMLElement().insertAdjacentHTML('beforeend', importedDocument.body.innerHTML);
+            } else {
+                for (let i = 0; i < importedDocument.childNodes.length; i++) {
+                    if (importedDocument.childNodes[i].nodeType === 1) {
+                        el.appendChild(importedDocument.childNodes[i]);
+                    }
+                }
+            }
+
+            this.removeChild(linkEl);
+            deferred.resolve(null);
+        });
 
         this.uid = uid;
         this.removeChildren();
 
         linkEl.onLoaded(onLinkLoaded);
         this.appendChild(linkEl);
+
+        window['HTMLImports'].loadImports(document.body);
 
         return deferred.promise;
     }
