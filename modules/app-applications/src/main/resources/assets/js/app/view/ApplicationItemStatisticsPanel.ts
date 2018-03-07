@@ -3,6 +3,7 @@ import {ApplicationBrowseActions} from '../browse/ApplicationBrowseActions';
 import {GetApplicationInfoRequest} from '../resource/GetApplicationInfoRequest';
 import {ApplicationInfo} from '../resource/ApplicationInfo';
 import {ContentReference} from '../resource/ContentReference';
+import {AdminToolDescriptor} from '../resource/AdminToolDescriptor';
 import ContentTypeSummary = api.schema.content.ContentTypeSummary;
 import RelationshipType = api.schema.relationshiptype.RelationshipType;
 import PageDescriptor = api.content.page.PageDescriptor;
@@ -138,6 +139,7 @@ export class ApplicationItemStatisticsPanel
     private initExtensions(applicationInfo: ApplicationInfo): ItemDataGroup {
         let extensionGroup = new ItemDataGroup(i18n('field.extensions'), 'extensions');
 
+        debugger;
         const widgets = applicationInfo.getWidgets().map(
             (widget: Widget) => {
                 const interfacesStr = widget.getInterfaces().join(', ');
@@ -149,6 +151,13 @@ export class ApplicationItemStatisticsPanel
 
             }).sort(this.sortElInAlphabeticallyAsc);
 
+        const tools = applicationInfo.getTools().map((adminToolDescriptor: AdminToolDescriptor) => {
+            const aEl = new api.dom.AEl().setUrl(adminToolDescriptor.getToolUrl(), '_blank').setHtml(adminToolDescriptor.getDisplayName());
+            new Tooltip(aEl, adminToolDescriptor.getKey().toString(), 200).setMode(Tooltip.MODE_GLOBAL_STATIC);
+            return aEl;
+        }).sort(this.sortElInAlphabeticallyAsc);
+
+        extensionGroup.addDataElements(i18n('field.tools'), tools);
         extensionGroup.addDataElements(i18n('field.widgets'), widgets);
 
         return extensionGroup;

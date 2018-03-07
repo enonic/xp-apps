@@ -9,6 +9,7 @@ import PartDescriptorsJson = api.content.page.region.PartDescriptorsJson;
 import LayoutDescriptorsJson = api.content.page.region.LayoutDescriptorsJson;
 import RelationshipTypeListJson = api.schema.relationshiptype.RelationshipTypeListJson;
 import WidgetDescriptorsJson = api.content.json.WidgetDescriptorsJson;
+import AdminToolDescriptorsJson = api.content.json.AdminToolDescriptorsJson;
 import MacrosJson = api.macro.resource.MacrosJson;
 
 export interface ApplicationInfoJson {
@@ -34,5 +35,7 @@ export interface ApplicationInfoJson {
     deployment: ApplicationDeployment;
 
     widgets: WidgetDescriptorsJson;
+
+    tools: AdminToolDescriptorsJson;
 
 }

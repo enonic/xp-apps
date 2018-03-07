@@ -4,6 +4,7 @@ import {ContentReference} from './ContentReference';
 import {ApplicationDeployment} from './json/ApplicationDeployment';
 import {ApplicationTask} from './ApplicationTask';
 import {ApplicationIdProvider} from './ApplicationIdProvider';
+import {AdminToolDescriptor} from './AdminToolDescriptor';
 import ContentTypeSummary = api.schema.content.ContentTypeSummary;
 import PageDescriptor = api.content.page.PageDescriptor;
 import PartDescriptor = api.content.page.region.PartDescriptor;
@@ -31,6 +32,8 @@ export class ApplicationInfo {
     private tasks: ApplicationTask[];
 
     private widgets: Widget[];
+
+    private tools: AdminToolDescriptor[];
 
     private idProvider: ApplicationIdProvider;
 
@@ -74,6 +77,11 @@ export class ApplicationInfo {
             return Widget.fromJson(widgetJson);
         }) : [];
 
+        debugger;
+        result.tools = (json.tools && json.tools.descriptors) ? json.tools.descriptors.map((toolJson) => {
+            return AdminToolDescriptor.fromJson(toolJson);
+        }) : [];
+
         result.idProvider = json.idProvider ? ApplicationIdProvider.fromJson(json.idProvider) : null;
 
         result.deployment = json.deployment;
@@ -115,6 +123,10 @@ export class ApplicationInfo {
 
     getWidgets(): Widget[] {
         return this.widgets;
+    }
+
+    getTools(): AdminToolDescriptor[] {
+        return this.tools;
     }
 
     getIdProvider(): ApplicationIdProvider {
