@@ -408,4 +408,22 @@ export class DialogDependantList
     getItemId(item: ContentSummaryAndCompareStatus): string {
         return item.getContentSummary().getId();
     }
+
+    setItems(items: ContentSummaryAndCompareStatus[], silent?: boolean) {
+        items.sort(DialogDependantList.invalidAndReadOnlyOnTop);
+        super.setItems(items, silent);
+    }
+
+    private static invalidAndReadOnlyOnTop(a: ContentSummaryAndCompareStatus, b: ContentSummaryAndCompareStatus): number {
+        return DialogDependantList.readOnlyToNumber(b) - DialogDependantList.readOnlyToNumber(a) +
+               DialogDependantList.validityToNumber(a) - DialogDependantList.validityToNumber(b);
+    }
+
+    private static readOnlyToNumber(a: ContentSummaryAndCompareStatus): number {
+        return +(a.isReadOnly() == true);
+    }
+
+    private static validityToNumber(a: ContentSummaryAndCompareStatus): number {
+        return +(a.getContentSummary().isValid() == true);
+    }
 }

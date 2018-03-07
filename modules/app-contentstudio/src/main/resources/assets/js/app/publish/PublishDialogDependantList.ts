@@ -1,7 +1,6 @@
 import '../../api.ts';
 import {DialogDependantList} from '../dialog/DependantItemsDialog';
 import {StatusSelectionItem} from '../dialog/StatusSelectionItem';
-
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import CompareStatus = api.content.CompareStatus;
 import ContentIds = api.content.ContentIds;
@@ -47,6 +46,10 @@ export class PublishDialogDependantList extends DialogDependantList {
         if (!isContentSummaryValid(item)) {
             view.addClass('invalid');
             view.getEl().setTitle(i18n('dialog.publish.editInvalid'));
+        }
+        if (isContentSummaryReadOnly(item)) {
+            view.addClass('readonly');
+            view.getEl().setTitle(i18n('field.readOnly'));
         }
 
         return view;
@@ -99,4 +102,8 @@ export function isContentSummaryValid(item: ContentSummaryAndCompareStatus): boo
 
     return status === CompareStatus.PENDING_DELETE ||
            (summary.isValid() && !api.util.StringHelper.isBlank(summary.getDisplayName()) && !summary.getName().isUnnamed());
+}
+
+export function isContentSummaryReadOnly(item: ContentSummaryAndCompareStatus): boolean {
+    return item.isReadOnly() == true; // can be undefined so thus to true
 }

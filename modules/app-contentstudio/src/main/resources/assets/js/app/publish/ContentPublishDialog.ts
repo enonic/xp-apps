@@ -83,7 +83,7 @@ export class ContentPublishDialog
                 });
             });
 
-            if (this.publishProcessor.containsInvalidDependants()) {
+            if (this.publishProcessor.containsInvalidDependants() || !this.isAllPublishable()) {
                 this.setDependantListVisible(true);
             }
 
@@ -133,6 +133,7 @@ export class ContentPublishDialog
         this.createIssueAction = new CreateIssueDialogAction(this.createIssue.bind(this));
 
         const actionMenu: MenuButton = this.getButtonRow().makeActionMenu(publishAction, [this.showScheduleAction, this.createIssueAction]);
+        actionMenu.getDropdownHandle().addClass('force-enabled');
 
         this.actionButton = actionMenu.getActionButton();
         this.publishButton = actionMenu.getActionButton();
@@ -268,10 +269,6 @@ export class ContentPublishDialog
         this.toggleClass('publishable', this.isAllPublishable());
     }
 
-    protected getDependantsHeader(listVisible: boolean): string {
-        return this.isAllPublishable() ? super.getDependantsHeader(listVisible) : i18n('dialog.publish.dependantsIssue');
-    }
-
     private doPublish(scheduled: boolean = false) {
 
         this.lockControls();
@@ -364,12 +361,12 @@ export class ContentPublishDialog
 
     protected lockControls() {
         super.lockControls();
-        this.getButtonRow().getActionMenu().setEnabled(false);
+        this.publishButton.setEnabled(false);
     }
 
     protected unlockControls() {
         super.unlockControls();
-        this.getButtonRow().getActionMenu().setEnabled(true);
+        this.publishButton.setEnabled(true);
     }
 }
 
