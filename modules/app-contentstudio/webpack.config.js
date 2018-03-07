@@ -1,6 +1,7 @@
 const ErrorLoggerPlugin = require('error-logger-webpack-plugin');
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const CircularDependencyPlugin = require('circular-dependency-plugin');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 const detectCirculars = new CircularDependencyPlugin({
     // exclude detection of files based on a RegExp
@@ -62,7 +63,18 @@ module.exports = {
             allChunks: true,
             disable: false
         }),
-        detectCirculars
+        detectCirculars,
+        ...(isProd ? [
+            new UglifyJsPlugin({
+                cache: true,
+                parallel: true,
+                uglifyOptions: {
+                    mangle: false,
+                    keep_classnames: true,
+                    keep_fnames: true
+                }
+            })
+        ] : [])
     ],
     devtool: isProd ? false : 'source-map'
 };
