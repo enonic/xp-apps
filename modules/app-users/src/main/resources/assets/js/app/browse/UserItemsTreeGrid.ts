@@ -144,7 +144,7 @@ export class UserItemsTreeGrid
 
     private loadParentNode(principal: api.security.Principal, userStore: api.security.UserStore): wemQ.Promise<TreeNode<UserTreeGridItem>> {
         let deferred = wemQ.defer<TreeNode<UserTreeGridItem>>();
-        let parentNode = this.getParentNode();
+        let parentNode = this.getParentNode(true);
 
         if (!parentNode.getData() && !principal.isRole()) { // No parent selected
             const userStoreId = userStore.getKey().getId();

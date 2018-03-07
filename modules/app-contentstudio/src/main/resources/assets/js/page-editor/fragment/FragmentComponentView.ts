@@ -136,6 +136,12 @@ export class FragmentComponentView
 
         super.addComponentContextMenuActions(inspectActionRequired);
 
+        if (this.component && this.component.getFragment()) {
+            this.addDetachAction();
+        }
+    }
+
+    private addDetachAction() {
         const actions: api.ui.Action[] = [];
 
         actions.push(new api.ui.Action(i18n('live.view.detach')).onExecuted(() => {
@@ -144,7 +150,7 @@ export class FragmentComponentView
 
             const regionView = this.getRegionView();
 
-            let index = regionView.getComponentViewIndex(this);
+            const index = regionView.getComponentViewIndex(this);
 
             const component = this.getFragmentRootComponent();
             const componentType = this.getFragmentRootType();

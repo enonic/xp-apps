@@ -223,7 +223,7 @@ var contentWizardPanel = Object.create(page, {
                 return this.doClick(optionSelector).catch((err)=> {
                     this.saveScreenshot('err_select_option');
                     throw new Error('option not found!' + pageControllerDisplayName);
-                })
+                }).pause(500);
             });
         }
     },
@@ -234,7 +234,7 @@ var contentWizardPanel = Object.create(page, {
             }).then(()=> {
                 return this.getBrowser().frameParent();
             }).then(()=> {
-                return contextWindow.waitForOpened(1500);
+                return contextWindow.waitForOpened(4000);
             })
         }
     }
