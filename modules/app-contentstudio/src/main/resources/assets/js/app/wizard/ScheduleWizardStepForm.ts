@@ -130,7 +130,7 @@ export class ScheduleWizardStepForm
     }
 
     hasHelpText(): boolean {
-        return this.formView.hasHelpText();
+        return this.isVisible() && this.formView.hasHelpText();
     }
 
 }

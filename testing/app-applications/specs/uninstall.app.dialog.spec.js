@@ -57,8 +57,10 @@ function openUninstallDialog() {
     const chuckDisplayName = 'Chuck Norris';
 
     return appBrowsePanel.isItemDisplayed(chuckDisplayName)
-        .catch(() => {
-            return installApp(chuckDisplayName);
+        .then((result) => {
+            if (!result) {
+                return installApp(chuckDisplayName);
+            }
         }).then(() => {
             return appBrowsePanel.clickOnRowByName(chuckName);
         }).pause(1000).then(() => {

@@ -1,6 +1,5 @@
 import '../../../../../api.ts';
 import {ContentVersionViewer} from './ContentVersionViewer';
-
 import ContentVersion = api.content.ContentVersion;
 import ContentId = api.content.ContentId;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
@@ -173,6 +172,10 @@ export class VersionsView
 
         if (isActive) {
             restoreButton.addClass('active');
+        }
+
+        if (this.content.isReadOnly()) {
+            restoreButton.setEnabled(false);
         }
 
         restoreButton.onClicked((event: MouseEvent) => {

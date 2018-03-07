@@ -1,6 +1,7 @@
 /**
  * Created on 01.02.2018.
  * Verifies the https://github.com/enonic/xp-apps/issues/533
+ * Impossible to save application metadata in the site wizard when the site is opened for the first time #533
  */
 const chai = require('chai');
 chai.use(require('chai-as-promised'));
@@ -73,10 +74,8 @@ describe('site.with.meta.fields.spec: verifies application-metadata in a site-wi
         });
 
     //Verifies the https://github.com/enonic/xp-apps/issues/533
-    it.skip(
-        `GIVEN creating of a new site with application-metadata AND name and applications is typed AND these data is saved WHEN description in metadata has been typed THEN 'Saved' label-button should be changed to 'Save'`,
+    it(`GIVEN creating of a new site with application-metadata AND data is saved WHEN description in metadata has been typed THEN 'Saved' label-button should be changed to 'Save'`,
         () => {
-            this.bail(1);
             let displayName = contentBuilder.generateRandomName('site-meta');
             let testSite = contentBuilder.buildSite(displayName, 'test for displaying of metadata', [appConstant.APP_WITH_METADATA_MIXIN]);
             return studioUtils.openContentWizard(appConst.contentTypes.SITE).then(()=> {
@@ -90,7 +89,7 @@ describe('site.with.meta.fields.spec: verifies application-metadata in a site-wi
                 return metadataStepForm.typeDescription('test description');
             }).then(()=> {
                 return assert.eventually.isTrue(contentWizard.waitForSaveButtonEnabled(),
-                    "`Save` button should be present on the toolbar, because the required input for metadata has been updated");
+                    "`Save` button should be enabled, because the required input for metadata has been updated");
             });
         });
 
