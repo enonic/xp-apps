@@ -50,6 +50,12 @@ task cleanNode( type: Delete ) {
 jar {
     exclude 'assets/**/*.ts'
     exclude 'assets/**/*.less'
+
+    exclude 'assets/styles/*.js'
+    exclude 'assets/page-editor/styles/*.js'
+    exclude 'assets/page-editor/lib/_include.js'
+    exclude 'assets/page-editor/lib/jquery*.js'
+
     dependsOn += webpack
 }
 
