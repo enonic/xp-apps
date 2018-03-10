@@ -3,17 +3,12 @@ const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
-const detectCirculars = new CircularDependencyPlugin({
-    // exclude detection of files based on a RegExp
-    exclude: /a\.js|node_modules/,
-    // add errors to webpack instead of warnings
-    failOnError: true
-});
+const path = require('path');
 
 const isProd = process.env.NODE_ENV === 'production';
 
 module.exports = {
-    context: __dirname + '/src/main/resources/assets',
+    context: path.join(__dirname, '/src/main/resources/assets'),
     entry: {
         'js/bundle': './js/main.ts',
         'styles/_all': './styles/main.less',
@@ -22,7 +17,7 @@ module.exports = {
         'page-editor/styles/_all': './page-editor/styles/main.less'
     },
     output: {
-        path: __dirname + '/build/resources/main/assets',
+        path: path.join(__dirname, '/build/resources/main/assets'),
         filename: './[name].js'
     },
     resolve: {
@@ -63,7 +58,10 @@ module.exports = {
             allChunks: true,
             disable: false
         }),
-        detectCirculars,
+        new CircularDependencyPlugin({
+            exclude: /a\.js|node_modules/,
+            failOnError: true
+        }),
         ...(isProd ? [
             new UglifyJsPlugin({
                 cache: true,
