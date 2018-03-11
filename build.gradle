@@ -42,6 +42,10 @@ def addBuildDependency() {
     task build {
         dependsOn buildTask
     }
+    task clean {
+        dependsOn gradle.includedBuild( 'lib-admin-ui' ).task( ':clean' )
+    }
+    flush.dependsOn += gradle.includedBuild( 'lib-admin-ui' ).task( ':flush' )
 
     subprojects.each {
         def webpackTask = tasks.findByPath( ":${it.name}:webpack" )
