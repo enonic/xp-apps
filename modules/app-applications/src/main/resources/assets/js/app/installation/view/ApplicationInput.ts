@@ -69,6 +69,11 @@ export class ApplicationInput extends api.dom.CompositeFormInputEl {
             clearTimeout(this.lastTimeKeyPressedTimer);
 
             switch (event.keyCode) {
+            case 13:
+                if (this.isUrlTyped()) {
+                    this.installWithUrl(this.textInput.getValue());
+                }
+                break;
             case 27: //esc
                 break;
             case 9: //tab
@@ -82,13 +87,14 @@ export class ApplicationInput extends api.dom.CompositeFormInputEl {
         });
     }
 
+    isUrlTyped() {
+        const value = this.textInput.getValue();
+        return api.util.StringHelper.testRegex(ApplicationInput.APPLICATION_ADDRESS_MASK, value);
+    }
+
     private startInstall() {
         if (!api.util.StringHelper.isEmpty(this.textInput.getValue())) {
-
-            let url = this.textInput.getValue();
-            if (api.util.StringHelper.testRegex(ApplicationInput.APPLICATION_ADDRESS_MASK, url)) {
-                this.installWithUrl(url);
-            } else {
+            if (!this.isUrlTyped()) {
                 this.notifyTextValueChanged();
             }
         } else {
