@@ -41,6 +41,11 @@ module.exports = {
             return createIssueDialog.waitForDialogLoaded();
         });
     },
+    openPublishMenuAndClickOnCreateIssue: function () {
+        return browsePanel.openShowPublishMenuAndClickOnCreateIssue().then(()=> {
+            return createIssueDialog.waitForDialogLoaded();
+        })
+    },
     openContentWizard: function (contentType) {
         return browsePanel.waitForNewButtonEnabled(appConst.TIMEOUT_3).then(()=> {
             return browsePanel.clickOnNewButton();
