@@ -90,9 +90,11 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
         };
         this.applicationInput.onTextValueChanged(changeHandler);
 
-        let showMask = api.util.AppHelper.debounce(this.mask.bind(this), 300, false);
+        const showMask = api.util.AppHelper.debounce(this.mask.bind(this), 300, false);
         this.applicationInput.getTextInput().onValueChanged(() => {
-            showMask();
+            if (!this.applicationInput.isUrlTyped()) {
+                showMask();
+            }
         });
         this.applicationInput.onAppInstallFinished(() => {
             this.unmask();
@@ -103,9 +105,6 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
 
             this.unmask();
         });
-        this.applicationInput.getTextInput().getHTMLElement().onpaste = () => {
-            this.mask();
-        };
     }
 
     private subscribeOnUninstallEvent() { // set status of market app to NOT_INSTALLED if it was uninstalled
