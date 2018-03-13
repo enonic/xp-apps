@@ -228,7 +228,7 @@ module.exports = {
             return userStoreWizard.typeData(userStoreData)
         }).then(()=> {
             return userStoreWizard.waitAndClickOnSave()
-        }).pause(500);
+        }).pause(700);
     },
     openWizardAndSaveRole: function (role) {
         return this.clickOnRolesFolderAndOpenWizard().then(()=> {
