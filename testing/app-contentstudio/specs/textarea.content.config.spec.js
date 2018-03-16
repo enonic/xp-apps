@@ -81,6 +81,6 @@ describe('textarea.content.config.spec:  verifies `max-length value config for T
             });
         });
 
-    beforeEach(() => studioUtils.navigateToContentStudioApp(webDriverHelper.browser));
-    afterEach(() => studioUtils.doCloseAllWindowTabsAndSwitchToHome(webDriverHelper.browser));
+    beforeEach(() => studioUtils.navigateToContentStudioApp());
+    afterEach(() => studioUtils.doCloseAllWindowTabsAndSwitchToHome());
 });

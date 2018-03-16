@@ -34,11 +34,12 @@ module.exports = {
     typeNameInFilterPanel: function (name) {
         return filterPanel.isPanelVisible().then((result)=> {
             if (!result) {
-                return browsePanel.clickOnSearchButton().then(()=> {
+                return browsePanel.clickOnSearchButton().then(() => {
                     return filterPanel.waitForOpened();
-                })
+                });
+            } else {
+                this.saveScreenshot('filterpanel_opened');
             }
-            return;
         }).then(()=> {
             return filterPanel.typeSearchText(name);
         }).then(()=> {
@@ -228,7 +229,7 @@ module.exports = {
             return userStoreWizard.typeData(userStoreData)
         }).then(()=> {
             return userStoreWizard.waitAndClickOnSave()
-        }).pause(500);
+        }).pause(700);
     },
     openWizardAndSaveRole: function (role) {
         return this.clickOnRolesFolderAndOpenWizard().then(()=> {

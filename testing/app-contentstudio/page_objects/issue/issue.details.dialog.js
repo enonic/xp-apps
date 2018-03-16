@@ -56,16 +56,30 @@ const issueDetailsDialog = Object.create(page, {
 
     waitForDialogLoaded: {
         value: function () {
-            return this.waitForVisible(this.closeIssueButton, 1000);
+            return this.waitForVisible(this.closeIssueButton, 1000).catch(err=> {
+                throw new Error('Issue Details dialog is not loaded ' + err)
+            });
         }
     },
     waitForDialogClosed: {
         value: function () {
-            return this.waitForNotVisible(`${xpath.container}`, 1000);
+            return this.waitForNotVisible(`${xpath.container}`, 1000).catch(err=> {
+                this.saveScreenshot('err_close_is_det_dialog');
+                throw new Error('Issue Details Dialog should be closed! ' + err)
+            })
         }
     },
-
-    isDialogPresent: {
+    getNumberOfItems: {
+        value: function () {
+            let xpath = this.itemsTabBarItem + '/a';
+            return this.getText(xpath).then(result=> {
+                let startIndex = result.indexOf('(');
+                let endIndex = result.indexOf(')');
+                return result.substring(startIndex + 1, endIndex);
+            })
+        }
+    },
+    isDialogOpened: {
         value: function () {
             return this.isVisible(`${xpath.container}`);
         }
@@ -79,7 +93,7 @@ const issueDetailsDialog = Object.create(page, {
         value: function () {
             return this.doClick(this.closeIssueButton).catch(err=> {
                 this.saveScreenshot('err_click_close_issue_button');
-                throw  new Error('Error when click on the `Close Issue`  ' + err);
+                throw  new Error('Error when clicking on the `Close Issue`  ' + err);
             })
         }
     },
@@ -95,7 +109,7 @@ const issueDetailsDialog = Object.create(page, {
         value: function () {
             return this.doClick(this.addCommentButton).catch(err=> {
                 this.saveScreenshot('err_click_add_comment_button');
-                throw  new Error('Error when click on the `Add Comment`  ' + err);
+                throw  new Error('Error when clicking on the `Add Comment`  ' + err);
             })
         }
     },
@@ -143,6 +157,15 @@ const issueDetailsDialog = Object.create(page, {
             })
         }
     },
+    isItemsTabBarItemActive: {
+        value: function () {
+            return this.getAttribute(this.itemsTabBarItem, 'class').then(result=> {
+                return result.includes('active');
+            }).catch(err=> {
+                throw  new Error('Issue Details Dialog  ' + err);
+            })
+        }
+    },
 
     getIssueName: {
         value: function () {
@@ -163,6 +186,14 @@ const issueDetailsDialog = Object.create(page, {
             return this.isVisible(selector).catch(err=> {
                 this.saveScreenshot('err_get_comment_issue');
                 throw new Error('error when get issue comment: ' + err)
+            })
+        }
+    },
+    clickOnItemsTabBarItem: {
+        value: function (text) {
+            return this.doClick(this.itemsTabBarItem).pause(300).catch(err=> {
+                this.saveScreenshot('err_click_on_items_tabbar_item');
+                throw new Error('Issue Details Dialog:error when click on Items tab bar item: ' + err)
             })
         }
     },
@@ -208,6 +239,17 @@ const issueDetailsDialog = Object.create(page, {
             return this.doClick(saveButton).pause(500).catch(err=> {
                 throw new Error('error when save the issue comment: ' + err)
             })
+        }
+    },
+    getNumberOfItemsInTabMenuBar: {
+        value: function () {
+            return this.getText(this.itemsTabBarItem).then(result=> {
+                let startIndex = result.indexOf('(');
+                let endIndex = result.indexOf(')');
+                return result.substring(startIndex + 1, endIndex);
+            }).catch(err=> {
+                throw new Error('error when getting number from the Items(...) link ' + err);
+            });
         }
     },
 });

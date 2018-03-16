@@ -6,10 +6,17 @@ const elements = require('../../libs/elements');
 const appConst = require('../../libs/app_const');
 
 var component = {
-    container: `//div[contains(@id,'LoaderComboBox')]`
+    container: `//div[contains(@id,'LoaderComboBox')]`,
+    modeTogglerButton: `//button[contains(@id,'ModeTogglerButton')]`,
+    flatOptionView: `//div[contains(@id,'ImageSelectorViewer')]//img`,
 
 };
 const loaderComboBox = Object.create(page, {
+    optionsFilterInput: {
+        get: function () {
+            return `${component.container}` + `${elements.COMBO_BOX_OPTION_FILTER_INPUT}`;
+        }
+    },
     selectOption: {
         value: function (optionDisplayName) {
             let optionSelector = elements.slickRowByDisplayName(`${component.container}`, optionDisplayName);

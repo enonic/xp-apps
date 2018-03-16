@@ -149,6 +149,9 @@ describe('issue.details.dialog.spec: add a comment and check CommentsTabItem', f
                 assert.isFalse(result, 'Comment with the text should be deleted');
             })
         });
-    beforeEach(() => studioUtils.navigateToContentStudioApp(webDriverHelper.browser));
-    afterEach(() => studioUtils.doCloseAllWindowTabsAndSwitchToHome(webDriverHelper.browser));
+    beforeEach(() => studioUtils.navigateToContentStudioApp());
+    afterEach(() => studioUtils.doCloseAllWindowTabsAndSwitchToHome());
+    before(()=> {
+        return console.log('specification is starting: ' + this.title);
+    });
 });

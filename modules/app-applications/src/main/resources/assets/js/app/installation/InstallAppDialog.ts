@@ -81,6 +81,7 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
             this.dropzoneContainer.hide();
             this.appendChild(this.dropzoneContainer);
 
+            this.applicationInput.appendChild(this.clearButton = this.createClearFilterButton());
             this.applicationInput.getUploader().addDropzone(this.dropzoneContainer.getDropzone().getId());
 
             this.initDragAndDropUploaderEvents();
@@ -89,7 +90,7 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
                 this.marketAppPanel = new MarketAppPanel(this.applicationInput);
             }
 
-            this.header.appendChildren(...[this.applicationInput, this.statusMessage, this.clearButton = this.createClearFilterButton()]);
+            this.header.appendChildren(...[this.applicationInput, this.statusMessage]);
 
             const marketAppPanelWrapper: DivEl = new DivEl('market-app-panel-wrapper');
             marketAppPanelWrapper.appendChild(this.marketAppPanel);

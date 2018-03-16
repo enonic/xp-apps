@@ -58,7 +58,7 @@ describe('`group.save.statistics.panel`: Save a Group and check the info in the 
                 return groupWizard.waitAndClickOnSave();
             }).then(()=> {
                 return userBrowsePanel.doClickOnCloseTabAndWaitGrid(testGroup.displayName);
-            }).then(result=> {
+            }).then(()=> {
                 return testUtils.typeNameInFilterPanel(testGroup.displayName);
             }).then(()=> {
                 return expect(userBrowsePanel.isItemDisplayed(testGroup.displayName)).to.eventually.be.true;

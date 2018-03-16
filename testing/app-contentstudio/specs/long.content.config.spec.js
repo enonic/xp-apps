@@ -80,7 +80,7 @@ describe('long.content.config.spec:  verifies `Min/max value config for Long`', 
                 assert.isTrue(result, 'Validation recording should appear');
             });
         });
-    
+
     it(`GIVEN wizard for 'Long(min 1,max 10)' is opened WHEN max value has been typed THEN validation record should not be visible`,
         () => {
             return studioUtils.selectSiteAndOpenNewWizard(SITE.displayName, appConstant.contentTypes.LONG_MIN_MAX).then(()=> {
@@ -92,7 +92,7 @@ describe('long.content.config.spec:  verifies `Min/max value config for Long`', 
                 assert.isFalse(result, 'Validation recording should not be displayed');
             });
         });
-    
+
     it(`GIVEN wizard for 'Long(min 1,max 10)' is opened WHEN min value has been typed THEN validation record should not be visible`,
         () => {
             return studioUtils.selectSiteAndOpenNewWizard(SITE.displayName, appConstant.contentTypes.LONG_MIN_MAX).then(()=> {
@@ -105,6 +105,9 @@ describe('long.content.config.spec:  verifies `Min/max value config for Long`', 
             });
         });
 
-    beforeEach(() => studioUtils.navigateToContentStudioApp(webDriverHelper.browser));
-    afterEach(() => studioUtils.doCloseAllWindowTabsAndSwitchToHome(webDriverHelper.browser));
+    beforeEach(() => studioUtils.navigateToContentStudioApp());
+    afterEach(() => studioUtils.doCloseAllWindowTabsAndSwitchToHome());
+    before(()=> {
+        return console.log('specification is starting: ' + this.title);
+    });
 });

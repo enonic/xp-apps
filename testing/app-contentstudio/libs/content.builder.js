@@ -28,6 +28,17 @@ module.exports = {
             },
         };
     },
+    buildPageTemplate: function (displayName, supports, controllerDisplayName) {
+        return {
+            contentType: appConst.contentTypes.PAGE_TEMPLATE,
+            displayName: displayName,
+
+            data: {
+                supports: supports,
+                controllerDisplayName: controllerDisplayName
+            },
+        };
+    },
     buildFolder: function (displayName, owner, language) {
         return {
             contentType: appConst.contentTypes.FOLDER,

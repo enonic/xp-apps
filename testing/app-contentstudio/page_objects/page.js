@@ -109,6 +109,12 @@ Page.prototype.getDisplayedElements = function (selector) {
     })
 };
 
+Page.prototype.isElementDisplayed = function (selector) {
+    return this.getDisplayedElements(selector).then(result=> {
+        return result.length > 0;
+    })
+};
+
 Page.prototype.getTextFromElements = function (selector) {
     let json = [];
     return this.getBrowser().elements(selector).then((result)=> {
@@ -189,4 +195,4 @@ Page.prototype.waitUntilInvalid = function (selector) {
         return false;
     });
 },
-module.exports = new Page();
+    module.exports = new Page();
