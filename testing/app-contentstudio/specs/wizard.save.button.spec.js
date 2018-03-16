@@ -57,7 +57,6 @@ describe('wizard.save.button.spec:  Save and Saved buttons spec', function () {
 
     it(`WHEN folder-wizard is opened AND name was typed WHEN 'Save' button has been pressed THEN 'Saved' button should be visible`,
         () => {
-
             return studioUtils.openContentWizard(appConst.contentTypes.FOLDER).then(()=> {
             }).then(()=> {
                 return contentWizard.typeDisplayName('test999');
@@ -70,6 +69,9 @@ describe('wizard.save.button.spec:  Save and Saved buttons spec', function () {
             });
         });
 
-    beforeEach(() => studioUtils.navigateToContentStudioApp(webDriverHelper.browser));
-    afterEach(() => studioUtils.doCloseAllWindowTabsAndSwitchToHome(webDriverHelper.browser));
+    beforeEach(() => studioUtils.navigateToContentStudioApp());
+    afterEach(() => studioUtils.doCloseAllWindowTabsAndSwitchToHome());
+    before(()=> {
+        return console.log('specification is starting: ' + this.title);
+    });
 });

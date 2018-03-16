@@ -28,6 +28,7 @@ module.exports = Object.freeze({
         SHORTCUT: 'base:shortcut',
         FOLDER: `base:folder`,
         SITE: 'portal:site',
+        PAGE_TEMPLATE: `portal:page-template`,
         IMG_SELECTOR_0_0: 'contenttypes:imageselector0_0',
         IMG_SELECTOR_1_1: 'contenttypes:imageselector1_1',
         IMG_SELECTOR_2_4: ':imageselector2_4',

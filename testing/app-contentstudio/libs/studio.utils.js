@@ -80,7 +80,7 @@ module.exports = {
     },
     doCloseWizardAndSwitchToGrid: function () {
         return this.doCloseCurrentBrowserTab().then(()=> {
-            return this.doSwitchToContentBrowsePanel(webDriverHelper.browser);
+            return this.doSwitchToContentBrowsePanel();
         });
     },
     doAddSite: function (site) {
@@ -91,7 +91,7 @@ module.exports = {
         }).then(()=> {
             return this.doCloseCurrentBrowserTab();
         }).then(()=> {
-            return this.doSwitchToContentBrowsePanel(webDriverHelper.browser);
+            return this.doSwitchToContentBrowsePanel();
         }).pause(2000);
     },
     doOpenSiteWizard: function () {
@@ -100,17 +100,32 @@ module.exports = {
     doOpenPageTemplateWizard: function (siteName) {
         return this.typeNameInFilterPanel(siteName).then(()=> {
             return browsePanel.waitForContentDisplayed(siteName);
-        }).then(()=> {
+        }).pause(700).then(()=> {
             return browsePanel.clickOnExpanderIcon(siteName);
-        }).pause(1000).then(()=> {
-            return browsePanel.clickCheckboxAndSelectRowByName('Templates');
+        }).pause(700).then(()=> {
+            return browsePanel.clickCheckboxAndSelectRowByDisplayName('Templates');
         }).pause(500).then(()=> {
             return browsePanel.clickOnNewButton();
+        }).then(()=> {
+            return newContentDialog.clickOnContentType(appConst.contentTypes.PAGE_TEMPLATE);
         }).then(()=> {
             return this.doSwitchToNewWizard();
         }).then(()=> {
             return contentWizardPanel.waitForOpened();
         });
+    },
+    doAddPageTemplate: function (siteName, template) {
+        return this.doOpenPageTemplateWizard(siteName).then(()=> {
+            return contentWizardPanel.typeData(template);
+        }).then(()=> {
+            //autosaving should be here:
+            return contentWizardPanel.selectPageDescriptor(template.data.controllerDisplayName);
+        }).then(()=> {
+            this.saveScreenshot(template.displayName + '_created');
+            return this.doCloseCurrentBrowserTab();
+        }).then(()=> {
+            return this.doSwitchToContentBrowsePanel();
+        }).pause(2000);
     },
 
     doAddArticleContent: function (siteName, article) {
@@ -123,7 +138,7 @@ module.exports = {
         }).then(()=> {
             return this.doCloseCurrentBrowserTab();
         }).then(()=> {
-            this.doSwitchToContentBrowsePanel(webDriverHelper.browser);
+            this.doSwitchToContentBrowsePanel();
         }).pause(2000);
     },
     findAndSelectItem: function (name) {
@@ -132,6 +147,13 @@ module.exports = {
         }).pause(400).then(()=> {
             return browsePanel.clickOnRowByName(name);
         });
+    },
+    doDeleteContent: function (name) {
+        return this.findAndSelectItem(name).then(()=> {
+            return browsePanel.clickOnDeleteButton();
+        }).pause(500).then(()=> {
+            return deleteContentDialog.clickOnDeleteButton();
+        })
     },
     selectContentAndOpenWizard: function (name) {
         return this.findAndSelectItem(name).then(()=> {
@@ -223,24 +245,24 @@ module.exports = {
         });
     },
 
-    navigateToContentStudioApp: function (browser) {
+    navigateToContentStudioApp: function () {
         return launcherPanel.waitForPanelVisible(appConst.TIMEOUT_3).then((result)=> {
             if (result) {
                 console.log("Launcher Panel is opened, click on the `Content Studio` link...");
                 return launcherPanel.clickOnContentStudioLink();
             } else {
                 console.log("Login Page is opened, type a password and name...");
-                return this.doLoginAndClickOnContentStudio(browser);
+                return this.doLoginAndClickOnContentStudio();
             }
         }).then(()=> {
-            return this.doSwitchToContentBrowsePanel(browser);
+            return this.doSwitchToContentBrowsePanel();
         }).catch((err)=> {
             console.log('tried to navigate to Content Studio app, but: ' + err);
             this.saveScreenshot(appConst.generateRandomName("err_navigate_to_studio"));
             throw new Error('error when navigated to studio ' + err);
         })
     },
-    doLoginAndClickOnContentStudio: function (browser) {
+    doLoginAndClickOnContentStudio: function () {
         return loginPage.doLogin().pause(900).then(()=> {
             return homePage.waitForXpTourVisible(appConst.TIMEOUT_1);
         }).then((result)=> {
@@ -252,23 +274,23 @@ module.exports = {
         })
     },
 
-    doSwitchToContentBrowsePanel: function (browser) {
+    doSwitchToContentBrowsePanel: function () {
         console.log('testUtils:switching to Content Studio app...');
-        return browser.getTitle().then(title=> {
+        return webDriverHelper.browser.getTitle().then(title=> {
             if (title != "Content Studio - Enonic XP Admin") {
-                return this.switchToStudioTabWindow(browser);
+                return this.switchToStudioTabWindow();
             }
         })
     },
 
-    doSwitchToHome: function (browser) {
+    doSwitchToHome: function () {
         console.log('testUtils:switching to Home page...');
-        return browser.getTabIds().then(tabs => {
+        return webDriverHelper.browser.getTabIds().then(tabs => {
             let prevPromise = Promise.resolve(false);
             tabs.some((tabId)=> {
                 prevPromise = prevPromise.then((isHome) => {
                     if (!isHome) {
-                        return this.switchAndCheckTitle(browser, tabId, "Enonic XP Home");
+                        return this.switchAndCheckTitle(tabId, "Enonic XP Home");
                     }
                     return false;
                 });
@@ -287,14 +309,14 @@ module.exports = {
             return contentWizardPanel.waitForOpened();
         });
     },
-    switchAndCheckTitle: function (browser, tabId, reqTitle) {
-        return browser.switchTab(tabId).then(()=> {
-            return browser.getTitle().then(title=> {
+    switchAndCheckTitle: function (tabId, reqTitle) {
+        return webDriverHelper.browser.switchTab(tabId).then(()=> {
+            return webDriverHelper.browser.getTitle().then(title=> {
                 return title == reqTitle;
             })
         });
     },
-    doLoginAndSwitchToContentStudio: function (browser) {
+    doLoginAndSwitchToContentStudio: function () {
         return loginPage.doLogin().pause(1000).then(()=> {
             return homePage.waitForXpTourVisible(appConst.TIMEOUT_3);
         }).then((result)=> {
@@ -304,14 +326,14 @@ module.exports = {
         }).then(()=> {
             return launcherPanel.clickOnContentStudioLink().pause(1000);
         }).then(()=> {
-            return this.doSwitchToContentBrowsePanel(browser);
+            return this.doSwitchToContentBrowsePanel();
         }).catch((err)=> {
             throw new Error(err);
         })
     },
-    doCloseWindowTabAndSwitchToBrowsePanel: function (browser) {
-        return browser.close().pause(300).then(()=> {
-            return this.doSwitchToContentBrowsePanel(browser);
+    doCloseWindowTabAndSwitchToBrowsePanel: function () {
+        return webDriverHelper.browser.close().pause(300).then(()=> {
+            return this.doSwitchToContentBrowsePanel();
         })
     },
 
@@ -320,13 +342,13 @@ module.exports = {
             return this.doCloseWindowTabAndSwitchToBrowsePanel()
         })
     },
-    switchToStudioTabWindow: function (browser) {
-        return browser.getTabIds().then(tabs => {
+    switchToStudioTabWindow: function () {
+        return webDriverHelper.browser.getTabIds().then(tabs => {
             let prevPromise = Promise.resolve(false);
             tabs.some((tabId)=> {
                 prevPromise = prevPromise.then((isStudio) => {
                     if (!isStudio) {
-                        return this.switchAndCheckTitle(browser, tabId, "Content Studio - Enonic XP Admin");
+                        return this.switchAndCheckTitle(tabId, "Content Studio - Enonic XP Admin");
                     }
                     return false;
                 });
@@ -336,26 +358,40 @@ module.exports = {
             return browsePanel.waitForGridLoaded(appConst.TIMEOUT_3);
         });
     },
+    switchToContentTabWindow: function (contentDisplayName) {
+        return webDriverHelper.browser.getTabIds().then(tabs => {
+            let prevPromise = Promise.resolve(false);
+            tabs.some((tabId)=> {
+                prevPromise = prevPromise.then((isStudio) => {
+                    if (!isStudio) {
+                        return this.switchAndCheckTitle(tabId, contentDisplayName);
+                    }
+                    return false;
+                });
+            });
+            return prevPromise;
+        }).pause(300);
+    },
     doPressBackspace: function () {
         return webDriverHelper.browser.keys('\uE003');
     },
-    doCloseAllWindowTabsAndSwitchToHome: function (browser) {
-        return browser.getTabIds().then(tabIds=> {
+    doCloseAllWindowTabsAndSwitchToHome: function () {
+        return webDriverHelper.browser.getTabIds().then(tabIds=> {
             let result = Promise.resolve();
             tabIds.forEach((tabId)=> {
                 result = result.then(() => {
-                    return this.switchAndCheckTitle(browser, tabId, "Enonic XP Home");
+                    return this.switchAndCheckTitle(tabId, "Enonic XP Home");
                 }).then((result)=> {
                     if (!result) {
-                        return browser.close().then(()=> {
-                            //return this.doSwitchToHome(browser);
+                        return webDriverHelper.browser.close().then(()=> {
+                            //return this.doSwitchToHome();
                         });
                     }
                 });
             });
             return result;
         }).then(()=> {
-            return this.doSwitchToHome(browser);
+            return this.doSwitchToHome();
         });
     },
     saveScreenshot: function (name) {

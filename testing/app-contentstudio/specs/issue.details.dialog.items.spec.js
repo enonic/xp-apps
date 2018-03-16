@@ -90,11 +90,11 @@ describe('issue.details.dialog.items.spec: add items and check it on ItemsTabIte
             }).then(()=> {
                 return issueDetailsDialog.getNumberOfItemsInTabMenuBar();
             }).then(result=> {
-                return assert.equal(result, '11', 'Correct number of items should be displayed 11');
+                return assert.equal(result, '11', 'Correct number of items should be displayed');
             })
         });
 
-    it(`GIVEN existing issue (child items are included) WHEN issue details is opened  AND 'Show Dependent items' link has been THEN 'hide dependent items' link should appear`,
+    it(`GIVEN existing issue (child items are included) WHEN issue details is opened  AND 'Show Dependent items' link has been clicked THEN 'hide dependent items' link should appear`,
         () => {
             return studioUtils.openIssuesListDialog().then(()=> {
                 return issueListDialog.clickOnIssue(issueTitle);
@@ -111,9 +111,9 @@ describe('issue.details.dialog.items.spec: add items and check it on ItemsTabIte
         });
 
 
-    beforeEach(() => studioUtils.navigateToContentStudioApp(webDriverHelper.browser));
-    afterEach(() => studioUtils.doCloseAllWindowTabsAndSwitchToHome(webDriverHelper.browser));
+    beforeEach(() => studioUtils.navigateToContentStudioApp());
+    afterEach(() => studioUtils.doCloseAllWindowTabsAndSwitchToHome());
     before(()=> {
-        return console.log('specification starting: ' + this.title);
+        return console.log('specification is starting: ' + this.title);
     });
 });

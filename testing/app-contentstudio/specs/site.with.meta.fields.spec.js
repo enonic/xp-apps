@@ -93,9 +93,9 @@ describe('site.with.meta.fields.spec: verifies application-metadata in a site-wi
             });
         });
 
-    beforeEach(() => studioUtils.navigateToContentStudioApp(webDriverHelper.browser));
-    afterEach(() => studioUtils.doCloseAllWindowTabsAndSwitchToHome(webDriverHelper.browser));
+    beforeEach(() => studioUtils.navigateToContentStudioApp());
+    afterEach(() => studioUtils.doCloseAllWindowTabsAndSwitchToHome());
     before(()=> {
-        return console.log('specification starting: ' + this.title);
+        return console.log('specification is starting: ' + this.title);
     });
 });
