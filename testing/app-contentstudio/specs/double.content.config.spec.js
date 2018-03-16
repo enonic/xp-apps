@@ -104,6 +104,9 @@ describe('double.content.config.spec:  verifies `Min/max value config for Double
             });
         });
 
-    beforeEach(() => studioUtils.navigateToContentStudioApp(webDriverHelper.browser));
-    afterEach(() => studioUtils.doCloseAllWindowTabsAndSwitchToHome(webDriverHelper.browser));
+    beforeEach(() => studioUtils.navigateToContentStudioApp());
+    afterEach(() => studioUtils.doCloseAllWindowTabsAndSwitchToHome());
+    before(()=> {
+        return console.log('specification is starting: ' + this.title);
+    });
 });

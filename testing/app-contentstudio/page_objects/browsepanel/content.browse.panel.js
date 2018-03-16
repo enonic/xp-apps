@@ -255,7 +255,7 @@ var contentBrowsePanel = Object.create(page, {
                     });
                 }
             }).then(()=> {
-                return this.doSwitchToContentBrowsePanel(1000);
+                return this.doSwitchToContentBrowsePanel();
             });
         }
     },

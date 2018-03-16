@@ -57,7 +57,7 @@ describe('content.image.selector: Image content specification', function () {
             }).then(imagesNames=> {
                 studioUtils.saveScreenshot('img_sel_flat_mode');
                 assert.isTrue(imagesNames.length > 0, 'images should be present in the dropdown list');
-                assert.isTrue(imagesNames[0].includes('.png') || imagesNames[0].includes('.jpg'),
+                assert.isTrue(imagesNames[0].includes('.png') || imagesNames[0].includes('.jpg') || imagesNames[0].includes('.svg'),
                     'correct extension should be in the name');
             });
         });
@@ -84,8 +84,8 @@ describe('content.image.selector: Image content specification', function () {
             });
         });
 
-    beforeEach(() => studioUtils.navigateToContentStudioApp(webDriverHelper.browser));
-    afterEach(() => studioUtils.doCloseAllWindowTabsAndSwitchToHome(webDriverHelper.browser));
+    beforeEach(() => studioUtils.navigateToContentStudioApp());
+    afterEach(() => studioUtils.doCloseAllWindowTabsAndSwitchToHome());
     before(()=> {
         return console.log('specification starting: ' + this.title);
     });

@@ -34,11 +34,12 @@ module.exports = {
     typeNameInFilterPanel: function (name) {
         return filterPanel.isPanelVisible().then((result)=> {
             if (!result) {
-                return browsePanel.clickOnSearchButton().then(()=> {
+                return browsePanel.clickOnSearchButton().then(() => {
                     return filterPanel.waitForOpened();
-                })
+                });
+            } else {
+                this.saveScreenshot('filterpanel_opened');
             }
-            return;
         }).then(()=> {
             return filterPanel.typeSearchText(name);
         }).then(()=> {

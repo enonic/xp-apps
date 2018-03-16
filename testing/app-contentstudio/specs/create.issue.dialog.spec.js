@@ -62,9 +62,12 @@ describe('create.issue.dialog.spec: Create Issue Dialog specification', function
             })
         });
 
-    beforeEach(() => studioUtils.navigateToContentStudioApp(webDriverHelper.browser));
+    beforeEach(() => studioUtils.navigateToContentStudioApp());
 
     afterEach(function () {
-        return studioUtils.doCloseAllWindowTabsAndSwitchToHome(webDriverHelper.browser)
+        return studioUtils.doCloseAllWindowTabsAndSwitchToHome();
+    });
+    before(()=> {
+        return console.log('specification is starting: ' + this.title);
     });
 });
