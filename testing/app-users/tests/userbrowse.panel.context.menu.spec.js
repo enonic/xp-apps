@@ -32,7 +32,33 @@ describe('userbrowse.panel.context.menu.spec User Browse Panel Context Menu spec
                 assert.isTrue(result[0] == 'New...');
             })
         });
+    it('WHEN right click on the `Anonymous` user THEN `Delete` menu item should be disabled ',
+        () => {
+            return testUtils.findAndSelectItem('anonymous').then(()=> {
+                return userBrowsePanel.rightClickOnRowByDisplayName('Anonymous User');
+            }).then(()=> {
+                return gridContextMenu.waitForContextMenuVisible();
+            }).then(()=> {
+                testUtils.saveScreenshot('anonymous_context_menu');
+                return gridContextMenu.waitForDeleteMenuItemDisabled();
+            }).then(result=> {
+                assert.isTrue(result, 'Delete menu item should be disabled');
+            })
+        });
 
+    it('WHEN right click on the `su` user THEN `Delete` menu item should be disabled',
+        () => {
+            return testUtils.findAndSelectItem('su').then(()=> {
+                return userBrowsePanel.rightClickOnRowByDisplayName('Super User');
+            }).then(()=> {
+                return gridContextMenu.waitForContextMenuVisible();
+            }).then(()=> {
+                testUtils.saveScreenshot('su_context_menu');
+                return gridContextMenu.waitForDeleteMenuItemDisabled();
+            }).then(result=> {
+                assert.isTrue(result, 'Delete menu item should be disabled');
+            })
+        });
     it('GIVEN navigate to the browse panel WHEN right click on the `System` folder THEN `Delete` menu item should be disabled ',
         () => {
             return userBrowsePanel.rightClickOnRowByDisplayName('System User Store').then(()=> {
@@ -91,8 +117,8 @@ describe('userbrowse.panel.context.menu.spec User Browse Panel Context Menu spec
             });
         });
 
-    beforeEach(() => testUtils.navigateToUsersApp(webDriverHelper.browser));
-    afterEach(() => testUtils.doCloseUsersApp(webDriverHelper.browser));
+    beforeEach(() => testUtils.navigateToUsersApp());
+    afterEach(() => testUtils.doCloseUsersApp());
     before(()=> {
         return console.log('specification starting: ' + this.title);
     });

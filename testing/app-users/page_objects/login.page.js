@@ -62,9 +62,13 @@ var loginPage = Object.create(page, {
     },
 
     doLogin: {
-        value: function () {
-            return this.typeTextInInput(this.usernameInput, 'su')
-                .then(() => this.typeTextInInput(loginPage.passwordInput, 'password'))
+        value: function (userName, password) {
+            let name = userName ? userName : 'su';
+            return this.typeTextInInput(this.usernameInput, name)
+                .then(() => {
+                    let pass = password ? password : 'password';
+                    return this.typeTextInInput(loginPage.passwordInput, pass);
+                })
                 .then(() => this.waitForLoginButtonVisible(1000))
                 .then(() => this.doClick(loginPage.loginButton));
         }

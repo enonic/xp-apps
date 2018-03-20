@@ -13,7 +13,7 @@ const testUtils = require('../libs/test.utils');
 const appConst = require('../libs/app_const');
 
 describe('User Store wizard - validation and inputs', function () {
-    this.timeout(70000);
+    this.timeout(appConst.TIMEOUT_SUITE);
     webDriverHelper.setupBrowser();
 
     it('WHEN `UserStore` wizard is opened THEN red circle should be present, because required inputs are empty',
@@ -93,8 +93,8 @@ describe('User Store wizard - validation and inputs', function () {
             });
         });
 
-    beforeEach(() => testUtils.navigateToUsersApp(webDriverHelper.browser));
-    afterEach(() => testUtils.doCloseUsersApp(webDriverHelper.browser));
+    beforeEach(() => testUtils.navigateToUsersApp());
+    afterEach(() => testUtils.doCloseUsersApp());
     before(()=> {
         return console.log('specification starting: ' + this.title);
     });
