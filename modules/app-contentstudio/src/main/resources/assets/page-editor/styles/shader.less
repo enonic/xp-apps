@@ -2,7 +2,7 @@
   position: absolute;
   display: none;
   background-color: #000;
-  .opacity(.2);
+  opacity: .2;
   z-index: @z-index-shader;
   pointer-events: none;
 
@@ -21,12 +21,12 @@
     }
 
     .@{_CLS_PREFIX}page-view.locked.force-locked & {
-      .opacity(.2);
+      opacity: .2;
     }
 
     .@{_CLS_PREFIX}page-view.locked & {
-      .opacity(0);
-      .transition(all 50ms);
+      opacity: 0;
+      transition: all 50ms;
 
       .centered {
         display: block;

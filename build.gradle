@@ -51,3 +51,9 @@ def addBuildDependency() {
         unpackDevResources.dependsOn += buildTask
     }
 }
+
+def nodeEnvironment() {
+    def environments = [ prod : 'production', dev: 'development' ]
+    def nodeEnv = environments[hasProperty( 'env' ) ? env : 'prod']
+    return nodeEnv != null ? nodeEnv : 'production'
+}

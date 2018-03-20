@@ -1,24 +1,23 @@
 const ErrorLoggerPlugin = require('error-logger-webpack-plugin');
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const CircularDependencyPlugin = require('circular-dependency-plugin');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
-const detectCirculars = new CircularDependencyPlugin({
-    // exclude detection of files based on a RegExp
-    exclude: /a\.js|node_modules/,
-    // add errors to webpack instead of warnings
-    failOnError: true
-});
+const path = require('path');
+
+const isProd = process.env.NODE_ENV === 'production';
 
 module.exports = {
-    context: __dirname + '/src/main/resources/assets',
+    context: path.join(__dirname, '/src/main/resources/assets'),
     entry: {
         'js/bundle': './js/main.ts',
+        'styles/_all': './styles/main.less',
         'page-editor/js/_all': './js/page-editor.ts',
         'page-editor/lib/_all': './page-editor/lib/_include.js',
-        'page-editor/styles/styles': './page-editor/styles/_module.less'
+        'page-editor/styles/_all': './page-editor/styles/main.less'
     },
     output: {
-        path: __dirname + '/build/resources/main/assets',
+        path: path.join(__dirname, '/build/resources/main/assets'),
         filename: './[name].js'
     },
     resolve: {
@@ -36,18 +35,18 @@ module.exports = {
                     fallback: 'style-loader',
                     publicPath: '../../',
                     use: [
-                        { loader: 'css-loader', options: { sourceMap: true, importLoaders: 1 } },
-                        { loader: 'postcss-loader', options: { sourceMap: true, config: { path: '../../postcss.config.js' } } },
-                        { loader: 'less-loader', options: { sourceMap: true } }
+                        {loader: 'css-loader', options: {sourceMap: !isProd, importLoaders: 1}},
+                        {loader: 'postcss-loader', options: {sourceMap: !isProd, config: {path: '../../postcss.config.js'}}},
+                        {loader: 'less-loader', options: {sourceMap: !isProd}}
                     ]
                 })
             },
             {
-                test: /\.(eot|woff|woff2|ttf)$/,
+                test: /\.(eot|woff|woff2|ttf)$|icomoon.svg/,
                 use: 'file-loader?name=fonts/[name].[ext]'
             },
             {
-                test: /\.(svg|png|jpg|gif)$/,
+                test: /^((?!icomoon).)*\.(svg|png|jpg|gif)$/,
                 use: 'file-loader?name=img/[name].[ext]'
             }
         ]
@@ -55,11 +54,25 @@ module.exports = {
     plugins: [
         new ErrorLoggerPlugin(),
         new ExtractTextPlugin({
-            filename: './page-editor/styles/_all.css',
+            filename: '[name].css',
             allChunks: true,
             disable: false
         }),
-        detectCirculars
+        new CircularDependencyPlugin({
+            exclude: /a\.js|node_modules/,
+            failOnError: true
+        }),
+        ...(isProd ? [
+            new UglifyJsPlugin({
+                cache: true,
+                parallel: true,
+                uglifyOptions: {
+                    mangle: false,
+                    keep_classnames: true,
+                    keep_fnames: true
+                }
+            })
+        ] : [])
     ],
-    devtool: 'source-map'
+    devtool: isProd ? false : 'source-map'
 };

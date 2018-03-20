@@ -1,9 +1,11 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "sourceMap": true
+    "sourceMap": true,
+    "baseUrl": "."
   },
   "include": [
+    "src/**/*.ts",
     ".xp/dev/d.ts/admin.d.ts"
   ],
   "exclude": [
