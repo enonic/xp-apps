@@ -20,7 +20,7 @@ describe('User Store confirm and delete in wizard and in browse panel', function
 
     // verifies the xp-apps#689
     //User Store wizard - Confirmation about unsaved changes when no changes were made #689
-    it('GIVEN `UserStore` wizard is opened WHEN no any data has been typed AND `close` icon pressed THEN SaveBeforeClose dialog must not appear',
+    it('GIVEN `UserStore` wizard is opened WHEN no data has been typed AND `close` icon pressed THEN SaveBeforeClose dialog must not appear',
         () => {
             return testUtils.clickOnNewOpenUserStoreWizard().then(()=> {
                 return userBrowsePanel.doClickOnCloseTabButton('<Unnamed User Store>');
@@ -42,7 +42,7 @@ describe('User Store confirm and delete in wizard and in browse panel', function
             })
         });
 
-    it(`GIVEN User Store wizard is opened AND name and idProvider have been typed  WHEN 'close' icon has been pressed THEN 'Save Before' dialog should be displayed`,
+    it(`GIVEN User Store wizard is opened AND name and idProvider have been typed WHEN 'close' icon has been pressed THEN 'Save Before' dialog should be displayed`,
         () => {
             let testStore =
                 userItemsBuilder.buildUserStore(userItemsBuilder.generateRandomName('store'), 'test user store', 'First Selenium App',

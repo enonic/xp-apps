@@ -42,6 +42,7 @@ ext {
     testDataDir = "$projectDir${File.separator}test-data${File.separator}common-config"
     xpHome = "$distroDir${File.separator}home"
     configDir = "$xpHome${File.separator}config"
+    appDir = "$projectDir${File.separator}test-data${File.separator}test-applications"
     xpServer = new ServerInstance()
 }
 task copyConfig( type: Copy ) {
@@ -50,6 +51,15 @@ task copyConfig( type: Copy ) {
     include '**.*.cfg'
     include '*.properties'
     into file( configDir )
+}
+task copyApps( type: Copy ) {
+    println '*********************************************************'
+    println '* task started:copyApps  *'
+    println '*********************************************************'
+    println appDir
+    from file( appDir )
+    include '*.jar'
+    into file( deployDir )
 }
 dependencies {
     compile "com.enonic.xp:core-api:$xpVersion"
@@ -112,11 +122,12 @@ tasks.withType( Test ) {
     }
 }
 
-task testUsersApp( type: GulpTask, dependsOn: [npmInstall, startServer] ) {
+task testUsersApp( type: GulpTask, dependsOn: [npmInstall, startServer, copyApps] ) {
     inputs.files fileTree( dir: '.' )
     outputs.files fileTree( dir: '/test-results' )
     args = ['test']
     startServer.mustRunAfter npmInstall
+    copyApps.mustRunAfter startServer
     finalizedBy stopServer
 }
 
