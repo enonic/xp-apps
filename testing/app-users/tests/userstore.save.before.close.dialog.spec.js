@@ -14,7 +14,7 @@ const userItemsBuilder = require('../libs/userItems.builder.js');
 const appConst = require('../libs/app_const');
 const saveBeforeCloseDialog = require('../page_objects/save.before.close.dialog');
 
-describe('User Store confirm and delete in wizard and in browse panel', function () {
+describe('User Store and Save Before Close dialog', function () {
     this.timeout(appConst.TIMEOUT_SUITE);
     webDriverHelper.setupBrowser();
 
