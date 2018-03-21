@@ -56,8 +56,8 @@ describe('User Store, Access Control Entry - expand and collapse menu-operations
                 assert.isFalse(result, 'the menu should be collapsed, because was clicked outside the expanded menu');
             })
         });
-    beforeEach(() => testUtils.navigateToUsersApp(webDriverHelper.browser));
-    afterEach(() => testUtils.doCloseUsersApp(webDriverHelper.browser));
+    beforeEach(() => testUtils.navigateToUsersApp());
+    afterEach(() => testUtils.doCloseUsersApp());
     before(()=> {
         return console.log('specification starting: ' + this.title);
     });

@@ -75,8 +75,8 @@ describe('User Wizard and `Save Before Close dialog`', function () {
                 return saveBeforeClose.waitForDialogVisible(appConst.TIMEOUT_3);
             });
         });
-    beforeEach(() => testUtils.navigateToUsersApp(webDriverHelper.browser));
-    afterEach(() => testUtils.doCloseUsersApp(webDriverHelper.browser));
+    beforeEach(() => testUtils.navigateToUsersApp());
+    afterEach(() => testUtils.doCloseUsersApp());
     before(()=> {
         return console.log('specification starting: ' + this.title);
     });

@@ -3,7 +3,7 @@
  */
 var page = require('./page');
 var panel = {
-    container: `div[class^='launcher-main-container']`
+    container: `//div[contains(@class,'launcher-main-container')]`
 };
 
 var launcherPanel = Object.create(page, {
@@ -12,22 +12,28 @@ var launcherPanel = Object.create(page, {
      */
     homeLink: {
         get: function () {
-            return `${panel.container} a[data-id*='home']`
+            return `${panel.container}` + `//a[contains(@data-id,'home')]`;
         }
     },
-    applications: {
+    applicationsLink: {
         get: function (userName) {
-            return `${panel.container} a[data-id*='app.applications']`
+            return `${panel.container}` + `//a[contains(@data-id,'app.applications')]`;
         }
     },
     contentStudioLink: {
         get: function () {
-            return `${panel.container} a[data-id*='app.contentstudio']`
+            return `${panel.container}` + `//a[contains(@data-id,'app.contentstudio')]`;
         }
     },
     usersLink: {
         get: function () {
-            return `${panel.container} a[data-id*='app.users']`
+            return `${panel.container}` + `//a[contains(@data-id,'app.users')]`;
+        }
+    },
+
+    logoutLink: {
+        get: function () {
+            return `${panel.container}` + `//div[@class='user-logout']`;
         }
     },
 
@@ -41,12 +47,32 @@ var launcherPanel = Object.create(page, {
             })
         }
     },
+    clickOnLogoutLink: {
+        value: function () {
+            return this.waitForVisible(this.logoutLink, 2000).then(()=> {
+                return this.doClick(this.logoutLink).catch(err=> {
+                    console.log('err when click on Log Out link' + err);
+                    throw new Error(err);
+                })
+            }).pause(800);
+        }
+    },
     waitForPanelVisible: {
         value: function (ms) {
             return this.waitForVisible(`${panel.container}`, ms).catch((err)=> {
-                console.log('launcher panel is not opened  ')
+                console.log('launcher panel is not opened ')
                 return false;
             })
+        }
+    },
+    isApplicationsLinkDisplayed: {
+        value: function () {
+            return this.isVisible(this.applicationsLink);
+        }
+    },
+    isUsersLinkDisplayed: {
+        value: function () {
+            return this.isVisible(this.usersLink);
         }
     },
 

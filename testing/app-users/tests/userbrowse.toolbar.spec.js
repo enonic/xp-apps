@@ -1,5 +1,6 @@
 /**
- * Created on 6/27/2017.
+ * Created on 27/06/2017.
+ * verifies xp-apps#547 (Don't allow deleting SU and Anonymous users)
  */
 const chai = require('chai');
 const expect = chai.expect;
@@ -7,10 +8,32 @@ const assert = chai.assert;
 var webDriverHelper = require('../libs/WebDriverHelper');
 const userBrowsePanel = require('../page_objects/browsepanel/userbrowse.panel');
 const testUtils = require('../libs/test.utils');
+const filterPanel = require('../page_objects/browsepanel/principal.filter.panel');
 
 describe('User Browse panel, toolbar spec', function () {
     this.timeout(70000);
     webDriverHelper.setupBrowser();
+
+    //verifies xp-apps#547
+    it(`WHEN 'su' user is selected THEN Delete button should be disabled`, () => {
+        return testUtils.findAndSelectItem('su').then(()=> {
+            return userBrowsePanel.waitForDeleteButtonDisabled();
+        }).then(result => {
+            assert.isTrue(result, `Delete button is getting disabled`);
+        }).isEnabled(userBrowsePanel.editButton).then(result => {
+            assert.isTrue(result, 'Edit button should be enabled');
+        });
+    });
+
+    it(`WHEN 'anonymous' user is selected THEN Delete button should be disabled`, () => {
+        return testUtils.findAndSelectItem('anonymous').then(()=> {
+            return userBrowsePanel.waitForDeleteButtonDisabled();
+        }).then(result => {
+            assert.isTrue(result, `Delete button is getting disabled`);
+        }).isEnabled(userBrowsePanel.editButton).then(result => {
+            assert.isTrue(result, 'Edit button should be enabled');
+        });
+    });
 
     it(`GIVEN 'user browse panel' is opened WHEN no any items are selected THEN all buttons should have correct states`, () => {
         return userBrowsePanel.waitForNewButtonEnabled().then(result => {
@@ -70,8 +93,8 @@ describe('User Browse panel, toolbar spec', function () {
         });
     });
 
-    beforeEach(() => testUtils.navigateToUsersApp(webDriverHelper.browser));
-    afterEach(() => testUtils.doCloseUsersApp(webDriverHelper.browser));
+    beforeEach(() => testUtils.navigateToUsersApp());
+    afterEach(() => testUtils.doCloseUsersApp());
     before(()=> {
         return console.log('specification starting: ' + this.title);
     });
