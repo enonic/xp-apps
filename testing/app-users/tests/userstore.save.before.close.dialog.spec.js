@@ -51,7 +51,7 @@ describe('User Store and Save Before Close dialog', function () {
                 return userStoreWizard.typeData(testStore);
             }).then(()=> {
                 return userBrowsePanel.doClickOnCloseTabButton(testStore.displayName);
-            }).pause(300).then(()=> {
+            }).pause(700).then(()=> {
                 return assert.eventually.isTrue(saveBeforeCloseDialog.isDialogPresent(),
                     "`Save before close` dialog should appear");
             })
