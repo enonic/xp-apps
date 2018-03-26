@@ -34,17 +34,18 @@ dependencies {
 
 node {
     download = true
-    version = '6.9.2'
+    version = '8.10.0'
 }
 
 task lint( type: NpmTask, dependsOn: npmInstall ) {
-    args = ['run', 'lint']
+    args = [ 'run', 'lint' ]
     inputs.files fileTree( dir: 'modules', include: '**/src/main/**.*' )
     outputs.dir file('gradle')
     outputs.upToDateWhen { false }
 }
 
 task webpack( type: NodeTask, dependsOn: lint ) {
+    environment = [ 'NODE_ENV': nodeEnvironment() ]
     description = 'Build UI resources (ts, css, etc).'
     inputs.dir 'src/main'
     outputs.dir "${buildDir}/resources/main"
@@ -55,6 +56,14 @@ task cleanNode( type: Delete ) {
     delete 'node_modules'
 }
 
-jar.dependsOn += webpack
+jar {
+    exclude 'assets/**/*.ts'
+    exclude 'assets/**/*.less'
+
+    exclude 'assets/styles/*.js'
+
+    dependsOn += webpack
+}
+
 jar.outputs.dir "${buildDir}/resources/main"
 processResources.dependsOn += unpackDevResources

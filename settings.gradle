@@ -2,8 +2,7 @@ include ':app-applications'
 include ':app-contentstudio'
 include ':app-users'
 
-
-if (startParameter.getProjectProperties().containsKey('all')) {
+if ( hasProperty( 'env' ) ) {
     addBuild('../xp')
     addBuild('../lib-admin-ui')
 }
