@@ -144,7 +144,6 @@ var userWizard = Object.create(wizard, {
                 if (user.roles != null) {
                     return this.addRoles(user.roles);
                 }
-                return;
             })
         }
     },

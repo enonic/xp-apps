@@ -56,7 +56,7 @@ describe('filter.panel.spec Principal Filter Panel specification', function () {
                 return userBrowsePanel.clickOnSearchButton();
             }).then(()=> {
                 return filterPanel.waitForOpened();
-            }).then(()=> {
+            }).pause(400).then(()=> {
                 testUtils.saveScreenshot('aggregation_group_added');
                 return filterPanel.getAggregationItems();
             }).then(result=> {
@@ -68,8 +68,8 @@ describe('filter.panel.spec Principal Filter Panel specification', function () {
             })
         });
 
-    beforeEach(() => testUtils.navigateToUsersApp(webDriverHelper.browser));
-    afterEach(() => testUtils.doCloseUsersApp(webDriverHelper.browser));
+    beforeEach(() => testUtils.navigateToUsersApp());
+    afterEach(() => testUtils.doCloseUsersApp());
     before(()=> {
         return console.log('specification starting: ' + this.title);
     });

@@ -3,6 +3,7 @@ const shortcutForm = require('./shortcut.form.panel');
 const siteForm = require('./site.form.panel');
 const imageSelectorForm = require('./imageselector.form.panel');
 const articleForm = require('./article.form.panel');
+const pageTemplateForm = require('./page.template.form.panel');
 const appConst = require('../../libs/app_const');
 var panel = {
     container: `//div[contains(@id,'ContentWizardPanel')]`,
@@ -22,6 +23,9 @@ var contentWizardStepForm = Object.create(page, {
             }
             if (contentType.includes(appConst.contentTypes.ARTICLE)) {
                 return articleForm.type(data);
+            }
+            if (contentType.includes(appConst.contentTypes.PAGE_TEMPLATE)) {
+                return pageTemplateForm.type(data);
             }
         }
     },

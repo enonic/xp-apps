@@ -11,6 +11,8 @@ var panel = {
     treeGrid: `//div[contains(@id,'ContentTreeGrid')]`,
     searchButton: "//button[contains(@class, 'icon-search')]",
     showIssuesListButton: "//button[contains(@id,'ShowIssuesDialogButton')]",
+    createIssueMenuItem: "//ul[contains(@id,'Menu')]//li[contains(@id,'MenuItem') and text()='Create Issue...']",
+    contentPublishMenuButton: `//div[contains(@id,'ContentPublishMenuButton')]`,
     contentSummaryByName: function (name) {
         return `//div[contains(@id,'ContentSummaryAndCompareStatusViewer') and descendant::p[contains(@class,'sub-name') and contains(.,'${name}')]]`
     },
@@ -32,6 +34,16 @@ var contentBrowsePanel = Object.create(page, {
     searchButton: {
         get: function () {
             return `${panel.toolbar}` + `${panel.searchButton}`;
+        }
+    },
+    showPublishMenuButton: {
+        get: function () {
+            return `${panel.toolbar}` + `${panel.contentPublishMenuButton}` + `${elements.DROP_DOWN_HANDLE}`;
+        }
+    },
+    createIssueMenuItem: {
+        get: function () {
+            return `${panel.toolbar}` + `${panel.createIssueMenuItem}`;
         }
     },
     showIssuesListButton: {
@@ -243,7 +255,7 @@ var contentBrowsePanel = Object.create(page, {
                     });
                 }
             }).then(()=> {
-                return this.doSwitchToContentBrowsePanel(1000);
+                return this.doSwitchToContentBrowsePanel();
             });
         }
     },
@@ -270,6 +282,19 @@ var contentBrowsePanel = Object.create(page, {
         value: function (contentName) {
             var xpath = panel.contentSummaryByName(contentName);
             return this.waitUntilInvalid(xpath);
+        }
+    },
+    openShowPublishMenuAndClickOnCreateIssue: {
+        value: function () {
+            return this.doClick(this.showPublishMenuButton).then(()=> {
+                return this.waitForVisible(this.createIssueMenuItem);
+            }).then(()=> {
+                return this.doClick(this.createIssueMenuItem);
+            }).catch(err=> {
+                this.saveScreenshot("err_click_create_issue_menuItem");
+                throw new Error('error when try to click on Create Issue menu item, ' + err);
+            })
+
         }
     }
 });

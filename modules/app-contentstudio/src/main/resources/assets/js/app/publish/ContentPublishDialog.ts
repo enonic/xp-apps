@@ -63,7 +63,10 @@ export class ContentPublishDialog
         });
 
         this.publishProcessor.onLoadingFinished(() => {
-            this.updateButtonAction();
+            const header = this.getDependantsHeader(this.getDependantList().isVisible());
+            this.updateDependantsHeader(header);
+
+            this.updatePublishableStatus();
 
             const ids = this.getContentToPublishIds();
 
@@ -80,7 +83,7 @@ export class ContentPublishDialog
                 });
             });
 
-            if (this.publishProcessor.containsInvalidDependants()) {
+            if (this.publishProcessor.containsInvalidDependants() || !this.isAllPublishable()) {
                 this.setDependantListVisible(true);
             }
 
@@ -130,6 +133,7 @@ export class ContentPublishDialog
         this.createIssueAction = new CreateIssueDialogAction(this.createIssue.bind(this));
 
         const actionMenu: MenuButton = this.getButtonRow().makeActionMenu(publishAction, [this.showScheduleAction, this.createIssueAction]);
+        actionMenu.getDropdownHandle().addClass('force-enabled');
 
         this.actionButton = actionMenu.getActionButton();
         this.publishButton = actionMenu.getActionButton();
@@ -206,7 +210,7 @@ export class ContentPublishDialog
     }
 
     public isAllPublishable(): boolean {
-        return this.publishProcessor.isAllPublishable();
+        return this.publishProcessor && this.publishProcessor.isAllPublishable();
     }
 
     private reloadPublishDependencies(resetDependantItems?: boolean): wemQ.Promise<void> {
@@ -265,13 +269,6 @@ export class ContentPublishDialog
         this.toggleClass('publishable', this.isAllPublishable());
     }
 
-    private updateButtonAction() {
-        const header = this.isAllPublishable() ? null : i18n('dialog.publish.dependantsIssue');
-        this.updateDependantsHeader(header);
-
-        this.updatePublishableStatus();
-    }
-
     private doPublish(scheduled: boolean = false) {
 
         this.lockControls();
@@ -315,16 +312,18 @@ export class ContentPublishDialog
         let subTitle = (count === 0) ? i18n('dialog.publish.noItems') : this.isAllPublishable() ? (allValid
                 ? i18n('dialog.publish.changesReady')
                 : i18n('dialog.publish.invalidError')
-        ) : i18n('dialog.publish.newIssue');
+        ) : i18n('dialog.publish.readOnlyError');
 
         this.setSubTitle(subTitle);
-        this.toggleClass('invalid', !allValid && this.isAllPublishable());
+        this.toggleClass('invalid', !allValid || !this.isAllPublishable());
     }
 
     protected updateButtonCount(actionString: string, count: number) {
-        const canPublish = count > 0 && this.areItemsAndDependantsValid();
+        const allValid = this.areItemsAndDependantsValid();
+        const allPublishable = this.isAllPublishable();
+        const canPublish = count > 0 && allValid;
 
-        this.updateButtonStatus(canPublish);
+        this.toggleAction(canPublish && allPublishable);
 
         if (canPublish) {
             this.getButtonRow().focusDefaultAction();
@@ -337,10 +336,6 @@ export class ContentPublishDialog
 
         this.showScheduleAction.setLabel(labelWithNumber(count, i18n('action.scheduleMore')));
         this.createIssueAction.setLabel(labelWithNumber(this.getItemList().getItemCount(), i18n('action.createIssueMore')));
-    }
-
-    protected updateButtonStatus(enabled: boolean) {
-        this.toggleAction(!this.isAllPublishable() || enabled);
     }
 
     protected doScheduledAction() {
@@ -366,12 +361,12 @@ export class ContentPublishDialog
 
     protected lockControls() {
         super.lockControls();
-        this.getButtonRow().getActionMenu().setEnabled(false);
+        this.publishButton.setEnabled(false);
     }
 
     protected unlockControls() {
         super.unlockControls();
-        this.getButtonRow().getActionMenu().setEnabled(true);
+        this.publishButton.setEnabled(true);
     }
 }
 

@@ -58,7 +58,7 @@ describe('`group.save.statistics.panel`: Save a Group and check the info in the 
                 return groupWizard.waitAndClickOnSave();
             }).then(()=> {
                 return userBrowsePanel.doClickOnCloseTabAndWaitGrid(testGroup.displayName);
-            }).then(result=> {
+            }).then(()=> {
                 return testUtils.typeNameInFilterPanel(testGroup.displayName);
             }).then(()=> {
                 return expect(userBrowsePanel.isItemDisplayed(testGroup.displayName)).to.eventually.be.true;
@@ -115,8 +115,8 @@ describe('`group.save.statistics.panel`: Save a Group and check the info in the 
             })
         });
 
-    beforeEach(() => testUtils.navigateToUsersApp(webDriverHelper.browser));
-    afterEach(() => testUtils.doCloseUsersApp(webDriverHelper.browser));
+    beforeEach(() => testUtils.navigateToUsersApp());
+    afterEach(() => testUtils.doCloseUsersApp());
     before(()=> {
         return console.log('specification starting: ' + this.title);
     });

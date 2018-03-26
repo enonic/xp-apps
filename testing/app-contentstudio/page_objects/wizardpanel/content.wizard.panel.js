@@ -15,6 +15,7 @@ var wizard = {
     savedButton: `//button[contains(@id,'ActionButton') and child::span[text()='Saved']]`,
     deleteButton: `//button[contains(@id,'ActionButton') and child::span[text()='Delete...']]`,
     inspectionPanelToggler: "//button[contains(@id, 'TogglerButton') and contains(@class,'icon-cog')]",
+    showComponentViewToggler: "//button[contains(@id, 'TogglerButton') and @title='Show Component View']",
     thumbnailUploader: "//div[contains(@id,'ThumbnailUploaderEl')]",
     controllerOptionFilterInput: "//input[contains(@id,'DropdownOptionFilterInput')]",
     liveEditFrame: "//iframe[contains(@class,'live-edit-frame')]",
@@ -54,29 +55,49 @@ var contentWizardPanel = Object.create(page, {
         }
     },
     //opens the ContextWindow with tabs:
-    showInspectionPanelButton: {
+    showInspectionPanelToggler: {
         get: function () {
             return `${wizard.container}` + `${wizard.toolbar}` + `${wizard.inspectionPanelToggler}`;
         }
     },
-    waitForInspectionPanelToggler: {
+    showComponentViewToggler: {
+        get: function () {
+            return `${wizard.container}` + `${wizard.toolbar}` + `${wizard.showComponentViewToggler}`;
+        }
+    },
+    waitForInspectionPanelTogglerVisible: {
         value: function (ms) {
-            return this.waitForVisible(this.showInspectionPanelButton, ms).catch((err)=> {
+            return this.waitForVisible(this.showInspectionPanelToggler, ms).catch((err)=> {
                 this.saveScreenshot('err_open_inspection_panel');
-                throw new Error('Context Window is not opened in ' + ms + '  ' + err);
+                throw new Error('Inspection Panel is not opened in ' + ms + '  ' + err);
             })
         }
     },
-    clickOnShowInspectionPanelButton: {
+    waitForShowComponentVewTogglerVisible: {
+        value: function (ms) {
+            return this.waitForVisible(this.showComponentViewToggler, ms).catch((err)=> {
+                this.saveScreenshot('err_open_component_view');
+                throw new Error('Component View is not opened in ' + ms + '  ' + err);
+            })
+        }
+    },
+    clickOnShowInspectionPanelToggler: {
         value: function () {
-            return this.doClick(this.showInspectionPanelButton).catch(err=> {
+            return this.doClick(this.showInspectionPanelToggler).catch(err=> {
                 return this.doCatch('err_click_on_show_inspection_button', err);
+            })
+        }
+    },
+    clickOnShowComponentViewToggler: {
+        value: function () {
+            return this.doClick(this.showComponentViewToggler).catch(err=> {
+                return this.doCatch('err_click_on_show_component_view', err);
             })
         }
     },
     doOpenContextWindow: {
         value: function () {
-            return this.clickOnShowInspectionPanelButton().then(()=> {
+            return this.clickOnShowInspectionPanelToggler().then(()=> {
                 return contextWindow.waitForOpened();
             });
         }
@@ -144,10 +165,17 @@ var contentWizardPanel = Object.create(page, {
     waitAndClickOnSave: {
         value: function () {
             return this.waitForSaveButtonEnabled().then((result)=> {
-                return this.doClick(this.saveButton);
+                if (result) {
+                    return this.doClick(this.saveButton);
+                } else {
+                    throw new Error('Save button is disabled');
+                }
+
             }).catch(err=> {
                 this.saveScreenshot('err_click_on_save');
                 throw new Error(`Error when click on Save button!` + err);
+            }).then(()=> {
+                return this.waitForNotificationMessage();
             })
         }
     },
@@ -223,7 +251,7 @@ var contentWizardPanel = Object.create(page, {
                 return this.doClick(optionSelector).catch((err)=> {
                     this.saveScreenshot('err_select_option');
                     throw new Error('option not found!' + pageControllerDisplayName);
-                })
+                }).pause(500);
             });
         }
     },
@@ -234,7 +262,19 @@ var contentWizardPanel = Object.create(page, {
             }).then(()=> {
                 return this.getBrowser().frameParent();
             }).then(()=> {
-                return contextWindow.waitForOpened(1500);
+                return this.waitForInspectionPanelTogglerVisible();
+            })
+        }
+    },
+    waitForControllerOptionFilterInputVisible: {
+        value: function () {
+            return this.switchToLiveEditFrame().then(()=> {
+                return this.waitForVisible(this.controllerOptionFilterInput, appConst.TIMEOUT_3);
+            }).catch(err=> {
+                console.log(err);
+                return this.getBrowser().frameParent().then(()=> {
+                    return false;
+                })
             })
         }
     }

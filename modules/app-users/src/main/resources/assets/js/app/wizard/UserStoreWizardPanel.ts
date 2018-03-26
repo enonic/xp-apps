@@ -245,7 +245,7 @@ export class UserStoreWizardPanel
         const authConfig = this.userStoreWizardStepForm.getAuthConfig();
         return wizardHeader.getName() !== '' ||
                wizardHeader.getDisplayName() !== '' ||
-               this.userStoreWizardStepForm.getDescription() !== this.defaultUserStore.getDescription() ||
+               !api.ObjectHelper.stringEquals(this.userStoreWizardStepForm.getDescription(), this.defaultUserStore.getDescription()) ||
                !(!authConfig || authConfig.equals(this.defaultUserStore.getAuthConfig())) ||
                !this.permissionsWizardStepForm.getPermissions().equals(this.defaultUserStore.getPermissions());
     }

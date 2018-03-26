@@ -69,8 +69,7 @@ describe('User Store confirm and delete in wizard and in browse panel', function
             });
         });
 
-    // TODO remove it when the bug will be fixed: Actually the '#notify.delete.userstore#' appears, so this test is failing now
-    it.skip('GIVEN existing UserStore WHEN the store has been deleted in the browse panel THEN correct notification should appear',
+    it('GIVEN existing UserStore WHEN the store has been deleted in the browse panel THEN correct notification should appear',
         () => {
             return testUtils.selectAndDeleteItem(userStore.displayName).then(()=> {
                 return userBrowsePanel.waitForNotificationMessage();
@@ -81,8 +80,8 @@ describe('User Store confirm and delete in wizard and in browse panel', function
             });
         });
 
-    beforeEach(() => testUtils.navigateToUsersApp(webDriverHelper.browser));
-    afterEach(() => testUtils.doCloseUsersApp(webDriverHelper.browser));
+    beforeEach(() => testUtils.navigateToUsersApp());
+    afterEach(() => testUtils.doCloseUsersApp());
     before(()=> {
         return console.log('specification starting: ' + this.title);
     });

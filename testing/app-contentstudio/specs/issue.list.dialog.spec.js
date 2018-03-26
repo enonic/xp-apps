@@ -42,6 +42,9 @@ describe('issue.list.dialog.spec: Issue List Dialog specification', function () 
             });
         });
 
-    beforeEach(() => studioUtils.navigateToContentStudioApp(webDriverHelper.browser));
-    afterEach(() => studioUtils.doCloseAllWindowTabsAndSwitchToHome(webDriverHelper.browser));
+    beforeEach(() => studioUtils.navigateToContentStudioApp());
+    afterEach(() => studioUtils.doCloseAllWindowTabsAndSwitchToHome());
+    before(()=> {
+        return console.log('specification starting: ' + this.title);
+    });
 });

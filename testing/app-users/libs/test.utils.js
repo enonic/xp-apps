@@ -34,11 +34,12 @@ module.exports = {
     typeNameInFilterPanel: function (name) {
         return filterPanel.isPanelVisible().then((result)=> {
             if (!result) {
-                return browsePanel.clickOnSearchButton().then(()=> {
+                return browsePanel.clickOnSearchButton().then(() => {
                     return filterPanel.waitForOpened();
-                })
+                });
+            } else {
+                this.saveScreenshot('filterpanel_opened');
             }
-            return;
         }).then(()=> {
             return filterPanel.typeSearchText(name);
         }).then(()=> {
@@ -71,17 +72,17 @@ module.exports = {
             throw new Error('Error in Confirm Delete: ' + err);
         })
     },
-    navigateToUsersApp: function (browser) {
+    navigateToUsersApp: function (userName, password) {
         return launcherPanel.waitForPanelVisible(appConst.TIMEOUT_1).then((result)=> {
             if (result) {
                 console.log("Launcher Panel is opened, click on the `Users` link...");
                 return launcherPanel.clickOnUsersLink();
             } else {
                 console.log("Login Page is opened, type a password and name...");
-                return this.doLoginAndSClickOnUsersLink(browser);
+                return this.doLoginAndSClickOnUsersLink(userName, password);
             }
         }).then(()=> {
-            return this.doSwitchToUsersApp(browser);
+            return this.doSwitchToUsersApp();
         }).catch((err)=> {
             console.log('tried to navigate to Users app, but: ' + err);
             this.saveScreenshot("err_navigate_to_users" + itemBuilder.generateRandomNumber());
@@ -89,8 +90,8 @@ module.exports = {
         });
     },
 
-    doLoginAndSClickOnUsersLink: function (browser) {
-        return loginPage.doLogin().pause(500).then(()=> {
+    doLoginAndSClickOnUsersLink: function (userName, password) {
+        return loginPage.doLogin(userName, password).pause(500).then(()=> {
             return homePage.waitForXpTourVisible(appConst.TIMEOUT_3);
         }).then((result)=> {
             if (result) {
@@ -104,14 +105,14 @@ module.exports = {
         })
     },
 
-    doSwitchToUsersApp: function (browser) {
+    doSwitchToUsersApp: function () {
         console.log('testUtils:switching to users app...');
-        return browser.getTabIds().then(tabs => {
+        return webDriverHelper.browser.getTabIds().then(tabs => {
             let prevPromise = Promise.resolve(false);
             tabs.some((tabId)=> {
                 prevPromise = prevPromise.then((isUsers) => {
                     if (!isUsers) {
-                        return this.switchAndCheckTitle(browser, tabId, "Users - Enonic XP Admin");
+                        return this.switchAndCheckTitle(tabId, "Users - Enonic XP Admin");
                     }
                     return false;
                 });
@@ -121,14 +122,14 @@ module.exports = {
             return browsePanel.waitForUsersGridLoaded(appConst.TIMEOUT_3);
         });
     },
-    doSwitchToHome: function (browser) {
+    doSwitchToHome: function () {
         console.log('testUtils:switching to Home page...');
-        return browser.getTabIds().then(tabs => {
+        return webDriverHelper.browser.getTabIds().then(tabs => {
             let prevPromise = Promise.resolve(false);
             tabs.some((tabId)=> {
                 prevPromise = prevPromise.then((isHome) => {
                     if (!isHome) {
-                        return this.switchAndCheckTitle(browser, tabId, "Enonic XP Home");
+                        return this.switchAndCheckTitle(webDriverHelper.browser, tabId, "Enonic XP Home");
                     }
                     return false;
                 });
@@ -138,37 +139,32 @@ module.exports = {
             return homePage.waitForLoaded(appConst.TIMEOUT_3);
         });
     },
-    switchAndCheckTitle: function (browser, tabId, reqTitle) {
-        return browser.switchTab(tabId).then(()=> {
-            return browser.getTitle().then(title=> {
+    switchAndCheckTitle: function (tabId, reqTitle) {
+        return webDriverHelper.browser.switchTab(tabId).then(()=> {
+            return webDriverHelper.browser.getTitle().then(title=> {
                 return title == reqTitle;
 
             })
         });
     },
-    doCloseUsersApp: function (browser) {
-        return browser.getTabIds().then(tabIds=> {
+    doCloseUsersApp: function () {
+        return webDriverHelper.browser.getTabIds().then(tabIds=> {
             let result = Promise.resolve();
             tabIds.forEach((tabId)=> {
                 result = result.then(() => {
-                    return this.switchAndCheckTitle(browser, tabId, "Enonic XP Home");
+                    return this.switchAndCheckTitle(tabId, "Enonic XP Home");
                 }).then((result)=> {
                     if (!result) {
-                        return browser.close();
+                        return webDriverHelper.browser.close();
                     }
                 });
             });
             return result;
         }).then(()=> {
-            return this.doSwitchToHome(browser);
+            return this.doSwitchToHome();
         });
     },
 
-    doCloseUsersApp1: function (browser) {
-        return browser.close().pause(300).then(()=> {
-            return this.doSwitchToHome(browser);
-        })
-    },
     selectUserAndOpenWizard: function (displayName) {
         return this.findAndSelectItem(displayName).then(()=> {
             return browsePanel.waitForEditButtonEnabled();
@@ -228,7 +224,7 @@ module.exports = {
             return userStoreWizard.typeData(userStoreData)
         }).then(()=> {
             return userStoreWizard.waitAndClickOnSave()
-        }).pause(500);
+        }).pause(700);
     },
     openWizardAndSaveRole: function (role) {
         return this.clickOnRolesFolderAndOpenWizard().then(()=> {

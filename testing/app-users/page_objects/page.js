@@ -176,4 +176,10 @@ Page.prototype.scroll = function (xoffset, yoffset) {
             throw Error(err.message + ` when scroll`);
         })
 };
+
+Page.prototype.isElementDisplayed = function (selector) {
+    return this.getDisplayedElements(selector).then(result=> {
+        return result.length > 0;
+    })
+};
 module.exports = new Page();

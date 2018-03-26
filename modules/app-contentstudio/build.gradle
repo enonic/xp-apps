@@ -2,7 +2,7 @@ plugins {
     id 'java'
     id 'maven'
     id 'com.enonic.defaults' version '1.0.3'
-    id 'com.enonic.xp.app' version '1.0.13'
+    id 'com.enonic.xp.app' version '1.1.0'
 }
 
 apply from: "$rootDir/gradle/defaults.gradle"
@@ -11,6 +11,7 @@ app {
     name = 'com.enonic.xp.app.contentstudio'
     displayName = 'Content Studio'
     systemApp = true
+    systemVersion = "${version}"
 }
 
 dependencies {
@@ -60,3 +61,4 @@ jar {
 }
 
 jar.outputs.dir "${buildDir}/resources/main"
+processResources.dependsOn += unpackDevResources

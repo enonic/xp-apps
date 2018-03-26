@@ -43,7 +43,10 @@ const liveContextWindow = Object.create(page, {
     },
     waitForOpened: {
         value: function (ms) {
-            return this.waitForVisible(panel.container, ms);
+            return this.waitForVisible(panel.container, ms).catch(err=> {
+                this.saveScreenshot('err_load_context_window');
+                throw new Error('Live Edit, Context window is not opened' + err);
+            });
         }
     },
 });

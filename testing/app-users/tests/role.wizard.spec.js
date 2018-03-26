@@ -1,5 +1,6 @@
 /**
  * Created on 12.09.2017.
+ * verifies: xp-apps#93
  */
 
 const chai = require('chai');
@@ -33,7 +34,7 @@ describe('Role Wizard and Statistics Panel spec', function () {
                 expect(result).to.equal('Role was created');
             })
         });
-    //verifies: Incorrect message appears when try to create a role with name that already in use #93
+    //verifies: xp-apps#93 Incorrect message appears when try to create a role with name that already in use #93
     it(`GIVEN 'role' wizard is opened WHEN the name that already in use has been typed THEN correct notification message should be present`,
         ()=> {
             return testUtils.clickOnRolesFolderAndOpenWizard().then(()=> {
@@ -95,8 +96,8 @@ describe('Role Wizard and Statistics Panel spec', function () {
             })
         });
 
-    beforeEach(() => testUtils.navigateToUsersApp(webDriverHelper.browser));
-    afterEach(() => testUtils.doCloseUsersApp(webDriverHelper.browser));
+    beforeEach(() => testUtils.navigateToUsersApp());
+    afterEach(() => testUtils.doCloseUsersApp());
     before(()=> {
         return console.log('specification starting: ' + this.title);
     });
