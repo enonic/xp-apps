@@ -328,7 +328,7 @@ export class PageView
 
     appendContainerForTextToolbar() {
         if (!this.hasToolbarContainer()) {
-            this.editorToolbar = new api.dom.DivEl('cke-toolbar-container').setId('cke-toolbar-container').setContentEditable(true);
+            this.editorToolbar = new api.dom.DivEl('mce-toolbar-container');
             this.appendChild(this.editorToolbar);
             this.addClass('has-toolbar-container');
             PageViewController.get().setEditorToolbar(this.editorToolbar);
@@ -337,14 +337,6 @@ export class PageView
 
     private hasToolbarContainer(): boolean {
         return this.hasClass('has-toolbar-container');
-    }
-
-    getEditorToolbarContainerId(): string {
-        if (this.editorToolbar) {
-            return this.editorToolbar.getId();
-        }
-
-        return null;
     }
 
     private setIgnorePropertyChanges(value: boolean) {
@@ -481,8 +473,8 @@ export class PageView
         let target = <HTMLElement> event.target;
         if (!!target) {
             let parent = <HTMLElement> target.parentElement;
-            return (target.id.indexOf('cke') >= 0 || target.className.indexOf('cke') >= 0 ||
-                    parent.id.indexOf('cke') >= 0 || parent.className.indexOf('cke') >= 0);
+            return (target.id.indexOf('mce') >= 0 || target.className.indexOf('mce') >= 0 ||
+                    parent.id.indexOf('mce') >= 0 || parent.className.indexOf('mce') >= 0);
         }
         return false;
     }
@@ -619,7 +611,7 @@ export class PageView
     }
 
     private getEditorToolbarWidth(): number {
-        return wemjq(`.cke-toolbar-container .cke_reset_all:not([style*='display: none']) .cke_top`).outerHeight();
+        return wemjq(`.mce-toolbar-container .mce-tinymce-inline:not([style*='display: none'])`).outerHeight();
     }
 
     hasTargetWithinTextComponent(target: HTMLElement) {
