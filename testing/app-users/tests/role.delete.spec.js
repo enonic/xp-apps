@@ -19,7 +19,7 @@ describe('Role - confirm and delete in wizard and in browse panel', function () 
     webDriverHelper.setupBrowser();
     let testRole;
 
-    it('GIVEN `Role` is saved WHEN Delete button on toolbar has been pressed THEN Confirmation dialog should appear',
+    it('GIVEN `Role` is saved in wizard WHEN Delete button on wizard-toolbar has been pressed THEN Confirmation dialog should appear',
         () => {
             testRole =
                 userItemsBuilder.buildRole(userItemsBuilder.generateRandomName('role'), 'test role 2');
@@ -56,7 +56,7 @@ describe('Role - confirm and delete in wizard and in browse panel', function () 
             });
         });
 
-    it('GIVEN `Role` is saved WHEN Delete button on browse-toolbar has been pressed THEN Confirmation dialog should appear',
+    it('GIVEN `Role` is selected WHEN Delete button on browse-toolbar has been pressed THEN Confirmation dialog should appear',
         () => {
             testRole =
                 userItemsBuilder.buildRole(userItemsBuilder.generateRandomName('role'), 'test role 2');
@@ -84,8 +84,8 @@ describe('Role - confirm and delete in wizard and in browse panel', function () 
             });
         });
 
-    beforeEach(() => testUtils.navigateToUsersApp(webDriverHelper.browser));
-    afterEach(() => testUtils.doCloseUsersApp(webDriverHelper.browser));
+    beforeEach(() => testUtils.navigateToUsersApp());
+    afterEach(() => testUtils.doCloseUsersApp());
     before(()=> {
         return console.log('specification starting: ' + this.title);
     });

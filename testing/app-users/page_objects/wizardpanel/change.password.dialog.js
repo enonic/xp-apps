@@ -107,11 +107,6 @@ var changeUserPasswordDialog = Object.create(page, {
         }
     },
 
-    clickOnCancelTopButton: {
-        value: function () {
-            return this.doClick(this.cancelButtonTop);
-        }
-    },
     clickOnCancelButton: {
         value: function () {
             return this.doClick(this.cancelButton);

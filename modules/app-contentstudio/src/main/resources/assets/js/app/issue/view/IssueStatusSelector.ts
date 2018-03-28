@@ -2,12 +2,12 @@ import {IssueStatus, IssueStatusFormatter} from '../IssueStatus';
 import TabMenuItem = api.ui.tab.TabMenuItem;
 import TabMenu = api.ui.tab.TabMenu;
 
-type IssueOptions = [{ value: IssueStatus, name: string }];
+type IssueOption = { value: IssueStatus, name: string };
 
 export class IssueStatusSelector
     extends TabMenu {
 
-    private static OPTIONS: IssueOptions = [
+    private static OPTIONS: IssueOption[] = [
         {value: IssueStatus.OPEN, name: 'Open'},
         {value: IssueStatus.CLOSED, name: 'Closed'}
     ];
@@ -19,7 +19,7 @@ export class IssueStatusSelector
     constructor() {
         super('issue-status-selector');
 
-        IssueStatusSelector.OPTIONS.forEach((option, index: number) => {
+        IssueStatusSelector.OPTIONS.forEach(option => {
             const menuItem: TabMenuItem = TabMenuItem.create()
                 .setLabel(option.name)
                 .setAddLabelTitleAttribute(false)

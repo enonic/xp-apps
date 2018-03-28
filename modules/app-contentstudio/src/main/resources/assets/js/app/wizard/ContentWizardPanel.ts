@@ -69,6 +69,8 @@ import Permission = api.security.acl.Permission;
 import AccessControlEntry = api.security.acl.AccessControlEntry;
 import i18n = api.util.i18n;
 
+import IsRenderableRequest = api.content.page.IsRenderableRequest;
+
 export class ContentWizardPanel
     extends api.app.wizard.WizardPanel<Content> {
 
@@ -146,6 +148,8 @@ export class ContentWizardPanel
     private missingOrStoppedAppKeys: ApplicationKey[] = [];
 
     private contentDeleted: boolean;
+
+    private renderable: boolean = false;
 
     private reloadPageEditorOnSave: boolean = true;
 
@@ -643,7 +647,6 @@ export class ContentWizardPanel
     private handleMissingApp() {
         const appsIsMissing = this.missingOrStoppedAppKeys.length > 0;
         const livePanel = this.getLivePanel();
-        const isRenderable = this.isContentRenderable();
 
         if (livePanel) {
             livePanel.toggleClass('no-preview', appsIsMissing);
@@ -651,8 +654,8 @@ export class ContentWizardPanel
 
         this.getCycleViewModeButton().setEnabled(!appsIsMissing);
 
-        this.getComponentsViewToggler().setVisible(isRenderable && !appsIsMissing);
-        this.getContextWindowToggler().setVisible(isRenderable && !appsIsMissing);
+        this.getComponentsViewToggler().setVisible(this.renderable && !appsIsMissing);
+        this.getContextWindowToggler().setVisible(this.renderable && !appsIsMissing);
     }
 
     saveChanges(): wemQ.Promise<Content> {
@@ -1430,13 +1433,13 @@ export class ContentWizardPanel
             .build();
 
         return this.initPageModel(liveEditModel, this.defaultModels).then(pageModel => {
-
-            this.updateButtonsState();
-            if (pageModel) {
-                pageModel.onPageModeChanged(this.updateButtonsState.bind(this));
-            }
-
-            return liveEditModel;
+            return this.checkIfRenderable().then(() => {
+                this.updateButtonsState();
+                if (pageModel) {
+                    pageModel.onPageModeChanged(this.updateButtonsState.bind(this));
+                }
+                return liveEditModel;
+            });
         });
     }
 
@@ -1882,8 +1885,12 @@ export class ContentWizardPanel
         }
     }
 
-    private isContentRenderable(): boolean {
-        return !!this.liveEditModel && this.liveEditModel.isPageRenderable();
+    private checkIfRenderable(): Promise<Boolean> {
+        return new IsRenderableRequest(this.getPersistedItem().getContentId()).sendAndParse().then((renderable: boolean) => {
+            this.renderable = renderable;
+
+            return renderable;
+        });
     }
 
     public isContentDeleted(): boolean {
@@ -1894,7 +1901,7 @@ export class ContentWizardPanel
         let isTemplate = this.contentType.getContentTypeName().isPageTemplate();
         let isSite = this.contentType.getContentTypeName().isSite();
 
-        return this.isContentRenderable() || isSite || isTemplate;
+        return this.renderable || isSite || isTemplate;
     }
 
     private isEditorEnabled(): boolean {
@@ -1904,15 +1911,13 @@ export class ContentWizardPanel
     }
 
     private updateButtonsState() {
-        let isRenderable = this.isContentRenderable();
-
-        this.wizardActions.getPreviewAction().setEnabled(isRenderable);
+        this.wizardActions.getPreviewAction().setEnabled(this.renderable);
         this.wizardActions.refreshPendingDeleteDecorations();
-        this.getContextWindowToggler().setEnabled(isRenderable);
-        this.getComponentsViewToggler().setEnabled(isRenderable);
+        this.getContextWindowToggler().setEnabled(this.renderable);
+        this.getComponentsViewToggler().setEnabled(this.renderable);
 
-        this.getComponentsViewToggler().setVisible(isRenderable);
-        this.getContextWindowToggler().setVisible(isRenderable);
+        this.getComponentsViewToggler().setVisible(this.renderable);
+        this.getContextWindowToggler().setVisible(this.renderable);
     }
 
     private updatePublishStatusOnDataChange() {
@@ -1970,6 +1975,7 @@ export class ContentWizardPanel
         const pageView = this.getLivePanel().getPageView();
 
         if (pageView) {
+            pageView.setRenderable(this.renderable);
             pageView.onItemViewAdded(listener);
             pageView.onItemViewRemoved(listener);
             pageView.onPageLocked(listener);

@@ -1,7 +1,8 @@
 /**
- * Created on 6/29/2017.
- * verifies the xp-apps#205 (Save Before Close issue)
- * https://github.com/enonic/xp-apps/issues/205
+ * Created on 29/06/2017.
+ * verifies:
+ * xp-apps#205 (Save Before Close issue) https://github.com/enonic/xp-apps/issues/205
+ * 
  */
 const chai = require('chai');
 var should = require('chai').should;
@@ -125,8 +126,8 @@ describe('User Store spec - save and edit', function () {
         });
     });
 
-    beforeEach(() => testUtils.navigateToUsersApp(webDriverHelper.browser));
-    afterEach(() => testUtils.doCloseUsersApp(webDriverHelper.browser));
+    beforeEach(() => testUtils.navigateToUsersApp());
+    afterEach(() => testUtils.doCloseUsersApp());
     before(()=> {
         return console.log('specification starting: ' + this.title);
     });
