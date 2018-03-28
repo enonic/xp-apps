@@ -94,21 +94,6 @@
     }
   }
 
-  .mobile-details-panel-toggle-button,
-  .mobile-details-panel-back-button {
-    z-index: 3;
-    width: @app-header-height;
-    height: @app-header-height;
-    line-height: @app-header-height;;
-    position: absolute;
-    top: 0;
-    cursor: pointer;
-
-    &:before {
-      color: @admin-white;
-    }
-  }
-
   .mobile-details-panel-toggle-button {
     right: -2px;
 
@@ -131,6 +116,21 @@
     font-size: 20px;
 
     .icon-arrow-left2();
+  }
+
+  .mobile-details-panel-toggle-button,
+  .mobile-details-panel-back-button {
+    z-index: 3;
+    width: @app-header-height;
+    height: @app-header-height;
+    line-height: @app-header-height;
+    position: absolute;
+    top: 0;
+    cursor: pointer;
+
+    &:before {
+      color: @admin-white;
+    }
   }
 
   .mobile-preview-fold-button {
