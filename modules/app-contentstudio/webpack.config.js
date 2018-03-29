@@ -1,5 +1,6 @@
 const ErrorLoggerPlugin = require('error-logger-webpack-plugin');
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
@@ -33,7 +34,7 @@ module.exports = {
                 test: /\.less$/,
                 use: ExtractTextPlugin.extract({
                     fallback: 'style-loader',
-                    publicPath: '../../',
+                    publicPath: '../', // ..for root and ../.. for page-editor
                     use: [
                         {loader: 'css-loader', options: {sourceMap: !isProd, importLoaders: 1}},
                         {loader: 'postcss-loader', options: {sourceMap: !isProd, config: {path: '../../postcss.config.js'}}},
@@ -58,6 +59,9 @@ module.exports = {
             allChunks: true,
             disable: false
         }),
+        new CopyWebpackPlugin([
+            { from: 'icons/fonts/icomoon.*', to: 'page-editor/fonts/[name].[ext]' }
+        ]),
         new CircularDependencyPlugin({
             exclude: /a\.js|node_modules/,
             failOnError: true
