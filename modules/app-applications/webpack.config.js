@@ -29,7 +29,7 @@ module.exports = {
                 test: /\.less$/,
                 use: ExtractTextPlugin.extract({
                     fallback: 'style-loader',
-                    publicPath: '../../',
+                    publicPath: '../',
                     use: [
                         {loader: 'css-loader', options: {sourceMap: !isProd, importLoaders: 1}},
                         {loader: 'postcss-loader', options: {sourceMap: !isProd, config: {path: '../../postcss.config.js'}}},
