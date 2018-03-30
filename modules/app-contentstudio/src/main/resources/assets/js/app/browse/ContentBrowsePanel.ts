@@ -238,7 +238,10 @@ export class ContentBrowsePanel
         this.mobileContentItemStatisticsPanel = new MobileContentItemStatisticsPanel(this.getBrowseActions(), detailsView);
 
         // selection opens detail panel in mobile mode, so deselect it when returning back to grid
-        this.mobileContentItemStatisticsPanel.onSlideOut(() => this.treeGrid.deselectAll());
+        this.mobileContentItemStatisticsPanel.onSlideOut(() => {
+            this.treeGrid.deselectAll();
+            this.getBrowseActions().updateActionsEnabledState([]);
+        });
 
         const updateMobilePanel = (content: ContentSummaryAndCompareStatus, changed: boolean) => {
             if (changed) {
