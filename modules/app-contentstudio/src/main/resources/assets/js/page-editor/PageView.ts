@@ -155,8 +155,6 @@ export class PageView
 
         this.appendChild(this.closeTextEditModeButton);
 
-        this.setRenderable(false);
-
         // lock page by default for every content that has not been modified except for page template
         let isCustomized = this.liveEditModel.getPageModel().isCustomized();
         let isFragment = !!this.fragmentView;
@@ -632,12 +630,8 @@ export class PageView
         return result;
     }
 
-    private isEmptyPageTemplate(): boolean {
-        return this.pageModel.isPageTemplate() && !this.pageModel.getController();
-    }
-
     setRenderable(value: boolean): ItemView {
-        this.toggleClass('empty', this.isEmptyPageTemplate() || !value);
+        this.toggleClass('empty', !value);
         return this;
     }
 
