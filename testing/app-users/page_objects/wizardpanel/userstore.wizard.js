@@ -88,7 +88,7 @@ var userStoreWizard = Object.create(wizard, {
     },
     clickOnPermissionsTabItem: {
         value: function () {
-            return this.doClick(this.permissionsLink).pause(300);
+            return this.doClick(this.permissionsLink).pause(500);
         }
     },
     typeData: {
@@ -126,6 +126,7 @@ var userStoreWizard = Object.create(wizard, {
             }).then(()=> {
                 return loaderComboBox.clickOnOption(`${panel.container}`, providerName);
             }).catch((err)=> {
+                this.saveScreenshot('err_id_provider');
                 throw new Error('Error when selecting the ID Provider: ' + providerName + ' ' + err);
             })
         }
