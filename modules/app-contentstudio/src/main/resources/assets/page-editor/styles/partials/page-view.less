@@ -1,6 +1,11 @@
 .@{_CLS_PREFIX}page-view {
 
   &.empty {
+
+    .@{_CLS_PREFIX}item-view {
+      display: none;
+    }
+
     // placeholder should occupy whole page when empty
     & > .@{_CLS_PREFIX}page-placeholder {
       height: 100%;

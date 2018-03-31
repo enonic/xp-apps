@@ -443,10 +443,6 @@ export class ContentWizardPanel
                 ResponsiveManager.unAvailableSizeChanged(this);
             });
 
-            this.onShown(() => {
-                this.updateButtonsState();
-            });
-
             const thumbnailUploader = this.getFormIcon();
 
             this.onValidityChanged((event: api.ValidityChangedEvent) => {
@@ -687,6 +683,7 @@ export class ContentWizardPanel
             return content;
         }).finally(() => {
             this.contentUpdateDisabled = false;
+            this.updateButtonsState().then(() => this.getLivePanel().maximizeContentFormPanelIfNeeded());
         });
     }
 
@@ -1433,13 +1430,7 @@ export class ContentWizardPanel
             .build();
 
         return this.initPageModel(liveEditModel, this.defaultModels).then(pageModel => {
-            return this.checkIfRenderable().then(() => {
-                this.updateButtonsState();
-                if (pageModel) {
-                    pageModel.onPageModeChanged(this.updateButtonsState.bind(this));
-                }
-                return liveEditModel;
-            });
+            return liveEditModel;
         });
     }
 
@@ -1910,14 +1901,16 @@ export class ContentWizardPanel
             this.contentType.getContentTypeName()));
     }
 
-    private updateButtonsState() {
-        this.wizardActions.getPreviewAction().setEnabled(this.renderable);
-        this.wizardActions.refreshPendingDeleteDecorations();
-        this.getContextWindowToggler().setEnabled(this.renderable);
-        this.getComponentsViewToggler().setEnabled(this.renderable);
+    private updateButtonsState(): Promise<void> {
+        return this.checkIfRenderable().then(() => {
+            this.wizardActions.getPreviewAction().setEnabled(this.renderable);
+            this.wizardActions.refreshPendingDeleteDecorations();
+            this.getContextWindowToggler().setEnabled(this.renderable);
+            this.getComponentsViewToggler().setEnabled(this.renderable);
 
-        this.getComponentsViewToggler().setVisible(this.renderable);
-        this.getContextWindowToggler().setVisible(this.renderable);
+            this.getComponentsViewToggler().setVisible(this.renderable);
+            this.getContextWindowToggler().setVisible(this.renderable);
+        });
     }
 
     private updatePublishStatusOnDataChange() {
