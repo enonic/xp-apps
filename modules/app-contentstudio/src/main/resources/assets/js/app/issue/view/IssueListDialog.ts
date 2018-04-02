@@ -179,6 +179,7 @@ export class IssueListDialog
             this.openIssuesPanel.updateAssignedToMeCheckbox(stats.openAssignedToMe);
             this.closedIssuesPanel.updateMyIssuesCheckbox(stats.closedCreatedByMe);
             this.closedIssuesPanel.updateAssignedToMeCheckbox(stats.closedAssignedToMe);
+            this.dockedPanel.selectPanel(stats.open == 0 && stats.closed > 0 ? this.closedIssuesPanel : this.openIssuesPanel);
         }).catch((reason: any) => {
             api.DefaultErrorHandler.handle(reason);
         });
