@@ -38,6 +38,8 @@ export class ContentUnpublishDialog
                 this.reloadUnpublishDependencies().done();
             }
         });
+
+        this.onProgressComplete(() => this.setSubTitle(i18n('dialog.unpublish.subname'), false));
     }
 
     open() {

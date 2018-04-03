@@ -17,14 +17,15 @@ module.exports = {
             parameters: parameters
         };
     },
-    buildSite: function (displayName, description, applications) {
+    buildSite: function (displayName, description, applications, controller) {
         return {
             contentType: appConst.contentTypes.SITE,
             displayName: displayName,
 
             data: {
                 description: description,
-                applications: applications
+                applications: applications,
+                controller: controller,
             },
         };
     },

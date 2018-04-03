@@ -290,13 +290,7 @@ export class LiveFormPanel
             this.appendChildren<api.dom.Element>(this.frameContainer, this.contextWindow,
                 noPreviewMessageEl);
 
-            this.contextWindow.onDisplayModeChanged(() => {
-                const enabled = this.contentWizardPanel.getComponentsViewToggler().isEnabled();
-                if (!this.contextWindow.isFloating() && enabled) {
-                    this.contentWizardPanel.getContextWindowToggler().setActive(true);
-                    this.contextWindow.slideIn();
-                }
-            });
+            this.contextWindow.onDisplayModeChanged(() => this.maximizeContentFormPanelIfNeeded());
 
             this.liveEditListen();
 
@@ -724,6 +718,14 @@ export class LiveFormPanel
     private minimizeContentFormPanelIfNeeded() {
         if (this.contextWindow.isFloating() && !this.contentWizardPanel.isMinimized()) {
             this.contentWizardPanel.toggleMinimize();
+        }
+    }
+
+    public maximizeContentFormPanelIfNeeded() {
+        const enabled = this.contentWizardPanel.getComponentsViewToggler().isEnabled();
+        if (!this.contextWindow.isFloating() && enabled) {
+            this.contentWizardPanel.getContextWindowToggler().setActive(true);
+            this.contextWindow.slideIn();
         }
     }
 

@@ -88,24 +88,24 @@ var userStoreWizard = Object.create(wizard, {
     },
     clickOnPermissionsTabItem: {
         value: function () {
-            return this.doClick(this.permissionsLink).pause(300);
+            return this.doClick(this.permissionsLink).pause(500);
         }
     },
     typeData: {
         value: function (userstore) {
-            return this.typeDisplayName(userstore.displayName)
-                .then(() => this.typeDescription(userstore.description)).then(()=> {
-
-                    if (userstore.permissions != null) {
-                        return this.clickOnPermissionsTabItem().then(()=> {
-                            return this.addPrincipals(userstore.permissions);
-                        })
-                    }
-                }).then(()=> {
-                    if (userstore.providerName != null) {
-                        return this.filterOptionsAndSelectIdProvider(userstore.providerName);
-                    }
-                }).pause(400);
+            return this.typeDisplayName(userstore.displayName).then(() => {
+                return this.typeDescription(userstore.description);
+            }).pause(500).then(()=> {
+                if (userstore.permissions != null) {
+                    return this.clickOnPermissionsTabItem().then(()=> {
+                        return this.addPrincipals(userstore.permissions);
+                    })
+                }
+            }).then(()=> {
+                if (userstore.providerName != null) {
+                    return this.filterOptionsAndSelectIdProvider(userstore.providerName);
+                }
+            }).pause(400);
         }
     },
     waitForOpened: {
@@ -126,6 +126,7 @@ var userStoreWizard = Object.create(wizard, {
             }).then(()=> {
                 return loaderComboBox.clickOnOption(`${panel.container}`, providerName);
             }).catch((err)=> {
+                this.saveScreenshot('err_id_provider');
                 throw new Error('Error when selecting the ID Provider: ' + providerName + ' ' + err);
             })
         }

@@ -12,7 +12,6 @@ import UserStoreKey = api.security.UserStoreKey;
 import UserStoreBuilder = api.security.UserStoreBuilder;
 
 import WizardStep = api.app.wizard.WizardStep;
-import FormIcon = api.app.wizard.FormIcon;
 import i18n = api.util.i18n;
 
 export class UserStoreWizardPanel
@@ -248,6 +247,17 @@ export class UserStoreWizardPanel
                !api.ObjectHelper.stringEquals(this.userStoreWizardStepForm.getDescription(), this.defaultUserStore.getDescription()) ||
                !(!authConfig || authConfig.equals(this.defaultUserStore.getAuthConfig())) ||
                !this.permissionsWizardStepForm.getPermissions().equals(this.defaultUserStore.getPermissions());
+    }
+
+    saveChanges(): wemQ.Promise<UserStore> {
+        if (this.isRendered()) {
+            if (!this.userStoreWizardStepForm.isValid()) {
+                return wemQ.fcall(() => {
+                    throw i18n('notify.invalid.idProviderConfig');
+                });
+            }
+        }
+        return super.saveChanges();
     }
 
 }

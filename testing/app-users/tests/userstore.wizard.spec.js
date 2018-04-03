@@ -63,6 +63,19 @@ describe('User Store wizard - validation and inputs', function () {
             });
         });
 
+    it('WHEN new `User Store Wizard` is opened  THEN three default roles should be present',
+        () => {
+            return testUtils.clickOnNewOpenUserStoreWizard().then(()=> {
+                return userStoreWizard.clickOnPermissionsTabItem();
+            }).then(()=> {
+                return userStoreWizard.getPermissions();
+            }).then(result=> {
+                expect(result.length).to.equal(3);
+                expect(result[0]).to.equal(appConst.roles.AUTHENTICATED);
+                expect(result[1]).to.equal(appConst.roles.ADMINISTRATOR);
+                expect(result[2]).to.equal(appConst.roles.USERS_ADMINISTRATOR);
+            })
+        });
     it('GIVEN `User Store Wizard` is opened WHEN `Everyone` role has been selected THEN `Permissions Options Filter` input should be displayed',
         () => {
             return testUtils.clickOnNewOpenUserStoreWizard().then(()=> {
@@ -79,7 +92,6 @@ describe('User Store wizard - validation and inputs', function () {
                 expect(result[3]).to.equal(appConst.roles.EVERYONE);
             })
         });
-
 
     it('GIVEN `User Store Wizard` is opened WHEN name has been typed THEN red icon should not be present on the page',
         () => {
