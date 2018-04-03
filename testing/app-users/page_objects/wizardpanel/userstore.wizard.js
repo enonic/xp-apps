@@ -93,19 +93,19 @@ var userStoreWizard = Object.create(wizard, {
     },
     typeData: {
         value: function (userstore) {
-            return this.typeDisplayName(userstore.displayName)
-                .then(() => this.typeDescription(userstore.description)).then(()=> {
-
-                    if (userstore.permissions != null) {
-                        return this.clickOnPermissionsTabItem().then(()=> {
-                            return this.addPrincipals(userstore.permissions);
-                        })
-                    }
-                }).then(()=> {
-                    if (userstore.providerName != null) {
-                        return this.filterOptionsAndSelectIdProvider(userstore.providerName);
-                    }
-                }).pause(400);
+            return this.typeDisplayName(userstore.displayName).then(() => {
+                return this.typeDescription(userstore.description);
+            }).pause(500).then(()=> {
+                if (userstore.permissions != null) {
+                    return this.clickOnPermissionsTabItem().then(()=> {
+                        return this.addPrincipals(userstore.permissions);
+                    })
+                }
+            }).then(()=> {
+                if (userstore.providerName != null) {
+                    return this.filterOptionsAndSelectIdProvider(userstore.providerName);
+                }
+            }).pause(400);
         }
     },
     waitForOpened: {
