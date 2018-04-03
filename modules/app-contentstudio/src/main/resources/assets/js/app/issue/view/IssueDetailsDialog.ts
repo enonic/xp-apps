@@ -503,6 +503,7 @@ export class IssueDetailsDialog
                             .setIsPublish(true)
                             .sendAndParse()
                             .then((updatedIssue: Issue) => {
+                                this.setIssue(updatedIssue);
                                 api.notify.showFeedback(i18n('notify.issue.closed', updatedIssue.getTitle()));
                             }).catch(() => {
                             api.notify.showError(i18n('notify.issue.closeError', issue.getTitle()));
@@ -532,9 +533,7 @@ export class IssueDetailsDialog
     }
 
     private doPublishAndClose(scheduled: boolean) {
-        return this.doPublish(scheduled).then(() => {
-            return this.debouncedUpdateIssue(IssueStatus.CLOSED);
-        });
+        return this.doPublish(scheduled);
     }
 
     private doUpdateIssue(newStatus: IssueStatus, autoSave: boolean = false): wemQ.Promise<void> {
