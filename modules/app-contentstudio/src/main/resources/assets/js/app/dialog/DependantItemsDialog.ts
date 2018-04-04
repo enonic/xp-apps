@@ -85,6 +85,7 @@ export class DependantItemsDialog
         this.dependantContainerHeader.onClicked(e => {
             const doShow = !this.dependantList.isVisible();
             this.setDependantListVisible(doShow);
+            this.notifyResize();
         });
 
         this.dependantContainerBody = new api.dom.DivEl('dependants-body');
@@ -110,6 +111,7 @@ export class DependantItemsDialog
             if (doShow) {
                 // update dependants header according to list visibility
                 this.updateDependantsHeader(this.getDependantsHeader(this.dependantList.isVisible()));
+                this.notifyResize();
             }
         };
         this.dependantList.onItemsRemoved(dependantsChangedListener);
