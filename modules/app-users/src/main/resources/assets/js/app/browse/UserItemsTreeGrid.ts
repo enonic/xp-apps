@@ -112,6 +112,10 @@ export class UserItemsTreeGrid
     }
 
     updateUserNode(principal: api.security.Principal, userStore: api.security.UserStore) {
+        if (!principal && !userStore) {
+            return;
+        }
+
         let userTreeGridItem;
         let builder = new UserTreeGridItemBuilder();
 
