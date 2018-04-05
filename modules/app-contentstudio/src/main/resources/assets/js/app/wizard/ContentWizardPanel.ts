@@ -1953,15 +1953,17 @@ export class ContentWizardPanel
 
     onLiveModelChanged(listener: () => void) {
 
-        if (this.getLivePanel()) {
-            if (this.getLivePanel().getPageView()) {
-                this.onPageChanged(listener);
-            }
+        this.checkIfRenderable().then(() => {
+            if (this.getLivePanel()) {
+                if (this.getLivePanel().getPageView()) {
+                    this.onPageChanged(listener);
+                }
 
-            this.getLivePanel().onPageViewReady((pageView) => {
-                this.onPageChanged(listener);
-            });
-        }
+                this.getLivePanel().onPageViewReady((pageView) => {
+                    this.onPageChanged(listener);
+                });
+            }
+        });
     }
 
     private onPageChanged(listener: () => void) {
