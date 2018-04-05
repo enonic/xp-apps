@@ -284,7 +284,7 @@ var userBrowsePanel = Object.create(page, {
             }).then(()=> {
                 return this.waitForSpinnerNotVisible(1000);
             }).then(()=> {
-                return this.waitForUsersGridLoaded(1000);
+                return this.waitForUsersGridLoaded(2000);
             })
         }
     },
