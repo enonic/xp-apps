@@ -88,6 +88,10 @@ export class ApplicationBrowsePanel extends api.app.browse.BrowsePanel<Applicati
         });
 
         ApplicationEvent.on((event: ApplicationEvent) => {
+            if (event.isSystemApplication()) {
+                return;
+            }
+
             if (ApplicationEventType.INSTALLED === event.getEventType()) {
                 this.treeGrid.placeApplicationNode(event.getApplicationKey()).then(() => {
                     setTimeout(() => { // timeout lets grid to remove UploadMockNode so that its not counted in the toolbar
