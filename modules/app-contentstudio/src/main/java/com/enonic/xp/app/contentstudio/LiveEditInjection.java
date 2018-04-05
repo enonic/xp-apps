@@ -27,13 +27,13 @@ public final class LiveEditInjection
 {
     private LocaleService localeService;
 
-    private final StringTemplate headEndTemplate;
+    private final StringTemplate headBeginTemplate;
 
     private final StringTemplate bodyEndTemplate;
 
     public LiveEditInjection()
     {
-        this.headEndTemplate = StringTemplate.load( getClass(), "liveEditHeadEnd.html" );
+        this.headBeginTemplate = StringTemplate.load( getClass(), "liveEditHeadBegin.html" );
         this.bodyEndTemplate = StringTemplate.load( getClass(), "liveEditBodyEnd.html" );
     }
 
@@ -45,9 +45,9 @@ public final class LiveEditInjection
             return null;
         }
 
-        if ( htmlTag == HtmlTag.HEAD_END )
+        if ( htmlTag == HtmlTag.HEAD_BEGIN )
         {
-            return Collections.singletonList( injectHeadEnd( portalRequest ) );
+            return Collections.singletonList( injectHeadBegin( portalRequest ) );
         }
 
         if ( htmlTag == HtmlTag.BODY_END )
@@ -58,9 +58,9 @@ public final class LiveEditInjection
         return null;
     }
 
-    private String injectHeadEnd( final PortalRequest portalRequest )
+    private String injectHeadBegin( final PortalRequest portalRequest )
     {
-        return injectUsingTemplate( this.headEndTemplate, makeModelForHeadEnd( portalRequest ) );
+        return injectUsingTemplate( this.headBeginTemplate, makeModelForHeadBegin( portalRequest ) );
     }
 
     private String injectBodyEnd( final PortalRequest portalRequest )
@@ -73,7 +73,7 @@ public final class LiveEditInjection
         return template.apply( model ).trim() + "\n";
     }
 
-    private Map<String, String> makeModelForHeadEnd( final PortalRequest portalRequest )
+    private Map<String, String> makeModelForHeadBegin( final PortalRequest portalRequest )
     {
         final Map<String, String> map = Maps.newHashMap();
         map.put( "assetsUrl", portalRequest.rewriteUri( "/admin/_/asset/com.enonic.xp.app.contentstudio" ) );
@@ -82,7 +82,7 @@ public final class LiveEditInjection
 
     private Map<String, String> makeModelForBodyEnd( final PortalRequest portalRequest )
     {
-        final Map<String, String> map = makeModelForHeadEnd( portalRequest );
+        final Map<String, String> map = makeModelForHeadBegin( portalRequest );
 
         final MessageBundle bundle =
             this.localeService.getBundle( ApplicationKey.from( "com.enonic.xp.app.contentstudio" ), resolveLocale( portalRequest ),
