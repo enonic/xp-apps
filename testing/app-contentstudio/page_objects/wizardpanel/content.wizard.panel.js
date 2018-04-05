@@ -92,7 +92,7 @@ var contentWizardPanel = Object.create(page, {
         value: function () {
             return this.doClick(this.showComponentViewToggler).catch(err=> {
                 return this.doCatch('err_click_on_show_component_view', err);
-            })
+            }).pause(700);
         }
     },
     doOpenContextWindow: {
@@ -243,7 +243,9 @@ var contentWizardPanel = Object.create(page, {
         value: function (pageControllerDisplayName) {
             let optionSelector = elements.slickRowByDisplayName(`//div[contains(@id,'PageDescriptorDropdown')]`,
                 pageControllerDisplayName);
-            return this.typeTextInInput(wizard.controllerOptionFilterInput, pageControllerDisplayName).then(()=> {
+            return this.waitForVisible(wizard.controllerOptionFilterInput, appConst.TIMEOUT_5).then(()=> {
+                return this.typeTextInInput(wizard.controllerOptionFilterInput, pageControllerDisplayName);
+            }).then(()=> {
                 return this.waitForVisible(optionSelector, appConst.TIMEOUT_3);
             }).catch(err=> {
                 throw new Error('option was not found! ' + pageControllerDisplayName + ' ' + err);

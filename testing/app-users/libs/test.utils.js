@@ -19,6 +19,9 @@ const itemBuilder = require('./userItems.builder');
 
 module.exports = {
 
+    generateRandomName: function (part) {
+        return part + Math.round(Math.random() * 1000000);
+    },
     findAndSelectItem: function (name) {
         return this.typeNameInFilterPanel(name).then(()=> {
             return browsePanel.waitForRowByNameVisible(name);

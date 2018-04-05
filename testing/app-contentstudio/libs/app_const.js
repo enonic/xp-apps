@@ -12,6 +12,7 @@ module.exports = Object.freeze({
     //waitForTimeout
     TIMEOUT_10: 10000,
     TIMEOUT_3: 3000,
+    TIMEOUT_5: 5000,
     TIMEOUT_2: 2000,
     TIMEOUT_1: 1000,
     SUITE_TIMEOUT: 180000,
@@ -21,6 +22,13 @@ module.exports = Object.freeze({
         HAND: 'hand',
         WHALE: 'whale',
         RENAULT: 'renault',
+        SPUMANS: 'spumans',
+        BOOK: 'book',
+    },
+    MENU_ITEMS: {
+        INSERT: 'Insert',
+        SAVE_AS_FRAGMENT: 'Save as Fragment',
+        DETACH_FROM_FRAGMENT: 'Detach from fragment',
         SPUMANS: 'spumans',
         BOOK: 'book',
     },

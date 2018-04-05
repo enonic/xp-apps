@@ -89,6 +89,10 @@ module.exports = {
         }).then(()=> {
             return contentWizardPanel.waitAndClickOnSave();
         }).then(()=> {
+            if (site.data.controller) {
+                return contentWizardPanel.selectPageDescriptor(site.data.controller);
+            }
+        }).then(()=> {
             return this.doCloseCurrentBrowserTab();
         }).then(()=> {
             return this.doSwitchToContentBrowsePanel();
@@ -264,7 +268,7 @@ module.exports = {
     },
     doLoginAndClickOnContentStudio: function () {
         return loginPage.doLogin().pause(900).then(()=> {
-            return homePage.waitForXpTourVisible(appConst.TIMEOUT_1);
+            return homePage.waitForXpTourVisible(appConst.TIMEOUT_2);
         }).then((result)=> {
             if (result) {
                 return homePage.doCloseXpTourDialog();

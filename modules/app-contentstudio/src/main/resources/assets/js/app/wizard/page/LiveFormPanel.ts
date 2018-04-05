@@ -368,6 +368,7 @@ export class LiveFormPanel
 
                 if (event.getPropertyName() === PageModel.PROPERTY_CONTROLLER && !api.ObjectHelper.objectEquals(oldValue, newValue)) {
                     this.contentWizardPanel.saveChanges();
+                    this.minimizeContentFormPanelIfNeeded();
                 }
                 if (event.getPropertyName() === PageModel.PROPERTY_TEMPLATE) {
 

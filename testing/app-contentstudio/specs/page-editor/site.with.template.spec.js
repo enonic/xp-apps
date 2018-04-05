@@ -62,7 +62,11 @@ describe('site.wit.template: when a template has been deleted, then site-wizard 
                 return studioUtils.switchToContentTabWindow(SITE.displayName);
             }).then(()=> {
                 return contentWizard.waitForControllerOptionFilterInputVisible();
-            }).then(()=> studioUtils.saveScreenshot(SITE.displayName + '_reset'));
+            }).then((result)=> {
+                studioUtils.saveScreenshot(SITE.displayName + '_reset');
+                assert.isTrue(result, 'Options filter input should appear in the site, because the template was deleted')
+
+            });
         });
 
 
