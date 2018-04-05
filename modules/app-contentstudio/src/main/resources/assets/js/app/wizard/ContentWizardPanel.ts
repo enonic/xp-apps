@@ -1162,11 +1162,6 @@ export class ContentWizardPanel
             console.debug('ContentWizardPanel.initLiveEditor at ' + new Date().toISOString());
         }
         let deferred = wemQ.defer<void>();
-
-        this.wizardActions.getShowLiveEditAction().setEnabled(false);
-        this.wizardActions.getPreviewAction().setVisible(false);
-        this.wizardActions.getPreviewAction().setEnabled(false);
-
         let liveFormPanel = this.getLivePanel();
         if (liveFormPanel) {
 
