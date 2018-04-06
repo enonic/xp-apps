@@ -152,6 +152,13 @@ module.exports = {
             return browsePanel.clickOnRowByName(name);
         });
     },
+    findAndSelectContentByDisplayName: function (displayName) {
+        return this.typeNameInFilterPanel(displayName).then(()=> {
+            return browsePanel.waitForContentByDisplayNameVisible(displayName);
+        }).pause(400).then(()=> {
+            return browsePanel.clickOnRowByDisplayName(displayName);
+        });
+    },
     doDeleteContent: function (name) {
         return this.findAndSelectItem(name).then(()=> {
             return browsePanel.clickOnDeleteButton();

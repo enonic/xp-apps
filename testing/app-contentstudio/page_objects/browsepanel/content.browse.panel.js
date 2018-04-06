@@ -67,6 +67,11 @@ var contentBrowsePanel = Object.create(page, {
             return `${panel.toolbar}/*[contains(@id, 'ActionButton') and child::span[text()='Delete...']]`;
         }
     },
+    moveButton: {
+        get: function () {
+            return `${panel.toolbar}/*[contains(@id, 'ActionButton') and child::span[text()='Move...']]`;
+        }
+    },
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     waitForPanelVisible: {
@@ -74,6 +79,13 @@ var contentBrowsePanel = Object.create(page, {
             return this.waitForVisible(`${panel.toolbar}`, ms).catch(err=> {
                 throw new Error('Content browse panel was not loaded in ' + ms);
             });
+        }
+    },
+    clickOnMoveButton: {
+        value: function () {
+            return this.doClick(this.moveButton).catch(err=> {
+                throw new Error('error when clicking on the Move button ' + err);
+            })
         }
     },
     clickOnShowIssuesListButton: {
@@ -211,6 +223,17 @@ var contentBrowsePanel = Object.create(page, {
             })
         }
     },
+    clickOnRowByDisplayName: {
+        value: function (displayName) {
+            var nameXpath = panel.treeGrid + elements.itemByDisplayName(displayName);
+            return this.waitForVisible(nameXpath, 3000).then(()=> {
+                return this.doClick(nameXpath);
+            }).pause(400).catch((err)=> {
+                this.saveScreenshot('err_find_' + displayName);
+                throw Error('Row with the displayName ' + displayName + ' was not found')
+            })
+        }
+    },
     waitForRowByNameVisible: {
         value: function (name) {
             var nameXpath = panel.treeGrid + elements.itemByName(name);
@@ -218,6 +241,15 @@ var contentBrowsePanel = Object.create(page, {
                 .catch((err)=> {
                     this.saveScreenshot('err_find_' + name);
                     throw Error('Row with the name ' + name + ' is not visible after ' + 3000 + 'ms')
+                })
+        }
+    },
+    waitForContentByDisplayNameVisible: {
+        value: function (displayName) {
+            var nameXpath = panel.treeGrid + elements.itemByDisplayName(displayName);
+            return this.waitForVisible(nameXpath, 3000).catch((err)=> {
+                this.saveScreenshot('err_find_' + displayName);
+                throw Error('Content with the displayName ' + displayName + ' is not visible after ' + 3000 + 'ms')
                 })
         }
     },
