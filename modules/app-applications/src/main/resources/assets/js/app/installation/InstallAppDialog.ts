@@ -41,6 +41,7 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
                 this.statusMessage.removeClass('empty');
             }
             this.statusMessage.addClass('loaded');
+            this.notifyResize();
         };
 
         api.dom.Body.get().appendChild(this);
