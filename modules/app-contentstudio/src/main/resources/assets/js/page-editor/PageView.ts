@@ -117,6 +117,8 @@ export class PageView
 
     private editorToolbar: api.dom.DivEl;
 
+    private isRenderable: boolean;
+
     constructor(builder: PageViewBuilder) {
 
         super(new ItemViewBuilder()
@@ -631,12 +633,19 @@ export class PageView
     }
 
     setRenderable(value: boolean): ItemView {
-        this.toggleClass('empty', !value);
+        this.isRenderable = value;
+        this.refreshEmptyState();
+
         return this;
     }
 
     isEmpty(): boolean {
-        return !this.pageModel || this.pageModel.getMode() === PageMode.NO_CONTROLLER;
+        return !this.pageModel || this.pageModel.getMode() === PageMode.NO_CONTROLLER ||
+               this.isEmptyPageTemplate() || (this.isRenderable == false);
+    }
+
+    private isEmptyPageTemplate(): boolean {
+        return this.pageModel.isPageTemplate() && !this.pageModel.getController();
     }
 
     getName(): string {
