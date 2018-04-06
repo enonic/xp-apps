@@ -59,7 +59,7 @@ var browseFilterPanel = Object.create(page, {
     },
     typeSearchText: {
         value: function (text) {
-            return this.typeTextInInput(this.searchTextInput, text);
+            return this.typeTextInInput(this.searchTextInput, text).pause(500);
         }
     },
     waitForOpened: {
@@ -83,7 +83,10 @@ var browseFilterPanel = Object.create(page, {
     },
     waitForClearLinkVisible: {
         value: function () {
-            return this.waitForVisible(this.clearFilterLink)
+            return this.waitForVisible(this.clearFilterLink, appConst.TIMEOUT_2).catch(err=> {
+                this.saveScreenshot('err_clear_users_filter_panel');
+                throw new Error('Clear link should be visible: ' + err);
+            })
         }
     },
     waitForClearLinkNotVisible: {

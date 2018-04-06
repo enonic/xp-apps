@@ -1162,11 +1162,6 @@ export class ContentWizardPanel
             console.debug('ContentWizardPanel.initLiveEditor at ' + new Date().toISOString());
         }
         let deferred = wemQ.defer<void>();
-
-        this.wizardActions.getShowLiveEditAction().setEnabled(false);
-        this.wizardActions.getPreviewAction().setVisible(false);
-        this.wizardActions.getPreviewAction().setEnabled(false);
-
         let liveFormPanel = this.getLivePanel();
         if (liveFormPanel) {
 
@@ -1206,61 +1201,63 @@ export class ContentWizardPanel
 
         let formContext = this.getFormContext(content);
 
-        return this.initLiveEditor(formContext, content).then(() => {
-            this.updateButtonsState();
-            return this.createSteps().then((schemas: Mixin[]) => {
+        return this.updateButtonsState().then(() => {
+            return this.initLiveEditor(formContext, content).then(() => {
 
-                let contentData = content.getContentData();
+                return this.createSteps().then((schemas: Mixin[]) => {
 
-                contentData.onChanged(this.dataChangedHandler);
+                    let contentData = content.getContentData();
 
-                let formViewLayoutPromises: wemQ.Promise<void>[] = [];
-                formViewLayoutPromises.push(this.contentWizardStepForm.layout(formContext, contentData, this.contentType.getForm()));
-                // Must pass FormView from contentWizardStepForm displayNameScriptExecutor,
-                // since a new is created for each call to renderExisting
-                this.displayNameScriptExecutor.setFormView(this.contentWizardStepForm.getFormView());
-                this.settingsWizardStepForm.layout(content);
-                this.settingsWizardStepForm.onPropertyChanged(this.dataChangedHandler);
-                this.scheduleWizardStepForm.layout(content);
-                this.scheduleWizardStepForm.onPropertyChanged(this.dataChangedHandler);
-                this.refreshScheduleWizardStep();
-                this.securityWizardStepForm.layout(content);
+                    contentData.onChanged(this.dataChangedHandler);
 
-                schemas.forEach((schema: Mixin, index: number) => {
-                    let extraData = content.getExtraData(schema.getMixinName());
-                    if (!extraData) {
-                        extraData = this.enrichWithExtraData(content, schema.getMixinName());
-                    }
-                    let metadataFormView = this.metadataStepFormByName[schema.getMixinName().toString()];
-                    let metadataForm = new api.form.FormBuilder().addFormItems(schema.getFormItems()).build();
+                    let formViewLayoutPromises: wemQ.Promise<void>[] = [];
+                    formViewLayoutPromises.push(this.contentWizardStepForm.layout(formContext, contentData, this.contentType.getForm()));
+                    // Must pass FormView from contentWizardStepForm displayNameScriptExecutor,
+                    // since a new is created for each call to renderExisting
+                    this.displayNameScriptExecutor.setFormView(this.contentWizardStepForm.getFormView());
+                    this.settingsWizardStepForm.layout(content);
+                    this.settingsWizardStepForm.onPropertyChanged(this.dataChangedHandler);
+                    this.scheduleWizardStepForm.layout(content);
+                    this.scheduleWizardStepForm.onPropertyChanged(this.dataChangedHandler);
+                    this.refreshScheduleWizardStep();
+                    this.securityWizardStepForm.layout(content);
 
-                    let data = extraData.getData();
-                    data.onChanged(this.dataChangedHandler);
+                    schemas.forEach((schema: Mixin, index: number) => {
+                        let extraData = content.getExtraData(schema.getMixinName());
+                        if (!extraData) {
+                            extraData = this.enrichWithExtraData(content, schema.getMixinName());
+                        }
+                        let metadataFormView = this.metadataStepFormByName[schema.getMixinName().toString()];
+                        let metadataForm = new api.form.FormBuilder().addFormItems(schema.getFormItems()).build();
 
-                    formViewLayoutPromises.push(metadataFormView.layout(formContext, data, metadataForm));
+                        let data = extraData.getData();
+                        data.onChanged(this.dataChangedHandler);
 
-                    this.synchPersistedItemWithMixinData(schema.getMixinName(), data);
-                });
+                        formViewLayoutPromises.push(metadataFormView.layout(formContext, data, metadataForm));
 
-                return wemQ.all(formViewLayoutPromises).spread<void>(() => {
+                        this.synchPersistedItemWithMixinData(schema.getMixinName(), data);
+                    });
 
-                    this.contentWizardStepForm.getFormView().addClass('panel-may-display-validation-errors');
-                    if (this.formState.isNew()) {
-                        this.contentWizardStepForm.getFormView().highlightInputsOnValidityChange(true);
-                    } else {
-                        this.displayValidationErrors(!this.isValid());
-                    }
+                    return wemQ.all(formViewLayoutPromises).spread<void>(() => {
 
-                    this.enableDisplayNameScriptExecution(this.contentWizardStepForm.getFormView());
+                        this.contentWizardStepForm.getFormView().addClass('panel-may-display-validation-errors');
+                        if (this.formState.isNew()) {
+                            this.contentWizardStepForm.getFormView().highlightInputsOnValidityChange(true);
+                        } else {
+                            this.displayValidationErrors(!this.isValid());
+                        }
 
-                    if (!this.siteModel && content.isSite()) {
-                        this.siteModel = new SiteModel(<Site>content);
-                        this.initSiteModelListeners();
-                    }
+                        this.enableDisplayNameScriptExecution(this.contentWizardStepForm.getFormView());
 
-                    this.wizardActions.setUnsavedChangesCallback(this.hasUnsavedChanges.bind(this));
+                        if (!this.siteModel && content.isSite()) {
+                            this.siteModel = new SiteModel(<Site>content);
+                            this.initSiteModelListeners();
+                        }
 
-                    return wemQ(null);
+                        this.wizardActions.setUnsavedChangesCallback(this.hasUnsavedChanges.bind(this));
+
+                        return wemQ(null);
+                    });
                 });
             });
         });
@@ -1876,7 +1873,7 @@ export class ContentWizardPanel
         }
     }
 
-    private checkIfRenderable(): Promise<Boolean> {
+    private checkIfRenderable(): wemQ.Promise<Boolean> {
         return new IsRenderableRequest(this.getPersistedItem().getContentId()).sendAndParse().then((renderable: boolean) => {
             this.renderable = renderable;
 
@@ -1901,7 +1898,7 @@ export class ContentWizardPanel
             this.contentType.getContentTypeName()));
     }
 
-    private updateButtonsState(): Promise<void> {
+    private updateButtonsState(): wemQ.Promise<void> {
         return this.checkIfRenderable().then(() => {
             this.wizardActions.getPreviewAction().setEnabled(this.renderable);
             this.wizardActions.refreshPendingDeleteDecorations();
@@ -1952,14 +1949,15 @@ export class ContentWizardPanel
     }
 
     onLiveModelChanged(listener: () => void) {
-
         if (this.getLivePanel()) {
             if (this.getLivePanel().getPageView()) {
                 this.onPageChanged(listener);
             }
 
             this.getLivePanel().onPageViewReady((pageView) => {
-                this.onPageChanged(listener);
+                this.checkIfRenderable().then(() => {
+                    this.onPageChanged(listener);
+                });
             });
         }
     }
