@@ -15,7 +15,7 @@ const contentWizard = require('../../page_objects/wizardpanel/content.wizard.pan
 const contentBuilder = require("../../libs/content.builder");
 const liveContextWindow = require('../../page_objects/wizardpanel/liveform/liveform.context.window');
 
-describe('site.wit.template: when a template has been deleted, then site-wizard should be refreshed', function () {
+describe('page.template.controller: select a controller in a template-wizard', function () {
     this.timeout(appConstant.SUITE_TIMEOUT);
     webDriverHelper.setupBrowser();
 
