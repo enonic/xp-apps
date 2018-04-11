@@ -11,10 +11,8 @@ const form = {
     wizardStep: `//div[contains(@id,'ContentWizardStepForm')]`,
     supportsCombobox: `//div[contains(@id,'ContentTypeComboBox')]`,
     supportOptionFilterInput: "//div[contains(@id,'ContentTypeFilter')]//input[contains(@class,'option-filter-input')]",
-    applicationsSelectedOptions: "//div[contains(@id,'SiteConfiguratorSelectedOptionView')]",
-    selectedAppByDisplayName: function (displayName) {
-        return `//div[contains(@id,'SiteConfiguratorSelectedOptionView') and descendant::h6[contains(@class,'main-name') and text()='${displayName}']]`
-    },
+    contentTypeSelectedOptionsView: "//div[contains(@id,'ContentTypeSelectedOptionsView')]",
+
 }
 
 var pageTemplateForm = Object.create(page, {
@@ -36,6 +34,15 @@ var pageTemplateForm = Object.create(page, {
             });
         }
     },
+    clickOnRemoveSupportIcon: {
+        value: function () {
+            let selector = form.contentTypeSelectedOptionsView + elements.REMOVE_ICON;
+            return this.doClick(selector).catch(err=> {
+                this.saveScreenshot('err_remove_support');
+                throw new Error('error when clicking on remove-support icon ' + err);
+            })
+        }
+    }
 });
 module.exports = pageTemplateForm;
 

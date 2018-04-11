@@ -323,10 +323,11 @@ module.exports = {
     switchAndCheckTitle: function (tabId, reqTitle) {
         return webDriverHelper.browser.switchTab(tabId).then(()=> {
             return webDriverHelper.browser.getTitle().then(title=> {
-                return title == reqTitle;
+                return title.includes(reqTitle);
             })
         });
     },
+
     doLoginAndSwitchToContentStudio: function () {
         return loginPage.doLogin().pause(1000).then(()=> {
             return homePage.waitForXpTourVisible(appConst.TIMEOUT_3);
@@ -361,7 +362,7 @@ module.exports = {
                     if (!isStudio) {
                         return this.switchAndCheckTitle(tabId, "Content Studio - Enonic XP Admin");
                     }
-                    return false;
+                    return true;
                 });
             });
             return prevPromise;
@@ -377,7 +378,7 @@ module.exports = {
                     if (!isStudio) {
                         return this.switchAndCheckTitle(tabId, contentDisplayName);
                     }
-                    return false;
+                    return true;
                 });
             });
             return prevPromise;
