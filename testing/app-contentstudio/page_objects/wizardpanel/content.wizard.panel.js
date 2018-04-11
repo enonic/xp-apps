@@ -51,7 +51,7 @@ var contentWizardPanel = Object.create(page, {
 
     controllerOptionFilterInput: {
         get: function () {
-            return `${wizard.liveEditFrame}` + `${elements.DROPDOWN_OPTION_FILTER_INPUT}`;
+            return `${elements.DROPDOWN_OPTION_FILTER_INPUT}`;
         }
     },
     //opens the ContextWindow with tabs:
@@ -271,11 +271,25 @@ var contentWizardPanel = Object.create(page, {
     waitForControllerOptionFilterInputVisible: {
         value: function () {
             return this.switchToLiveEditFrame().then(()=> {
-                return this.waitForVisible(this.controllerOptionFilterInput, appConst.TIMEOUT_3);
+                return this.waitForVisible(this.controllerOptionFilterInput, appConst.TIMEOUT_5);
             }).catch(err=> {
                 console.log(err);
                 return this.getBrowser().frameParent().then(()=> {
                     return false;
+                })
+            })
+        }
+    },
+    waitForControllerOptionFilterInputNotVisible: {
+        value: function () {
+            return this.switchToLiveEditFrame().then(()=> {
+                return this.waitForNotVisible(this.controllerOptionFilterInput, appConst.TIMEOUT_3);
+            }).catch(err=> {
+                console.log(err);
+                return this.getBrowser().frameParent().then(()=> {
+                    return false;
+                }).then(()=> {
+                    return this.getBrowser().frameParent();
                 })
             })
         }
