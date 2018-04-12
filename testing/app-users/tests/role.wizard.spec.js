@@ -54,10 +54,11 @@ describe('Role Wizard and Statistics Panel spec', function () {
             return userBrowsePanel.clickOnEditButton();
         }).then(()=> {
             return roleWizard.waitForOpened();
-        }).then(()=> roleWizard.filterOptionsAndAddMember(appConst.SUPER_USER)).then(()=>roleWizard.waitAndClickOnSave()).then(()=> {
+        }).then(()=> roleWizard.filterOptionsAndAddMember(appConst.SUPER_USER_DISPLAY_NAME)).then(()=>roleWizard.waitAndClickOnSave()).then(
+            ()=> {
             return roleWizard.getMembers();
         }).then((members)=> {
-            expect(members[0]).to.equal(appConst.SUPER_USER);
+            expect(members[0]).to.equal(appConst.SUPER_USER_DISPLAY_NAME);
         })
     });
 
@@ -85,7 +86,7 @@ describe('Role Wizard and Statistics Panel spec', function () {
     it(`GIVEN existing 'Role' with a member is opened WHEN member has been removed AND navigated to the grid THEN no one member should be present on the 'statistics panel'`,
         () => {
             return testUtils.selectRoleAndOpenWizard(testRole.displayName).then(()=> {
-                return roleWizard.removeMember(appConst.SUPER_USER)
+                return roleWizard.removeMember(appConst.SUPER_USER_DISPLAY_NAME)
             }).then(()=> {
                 // role has been saved and the wizard closed
                 return testUtils.saveAndCloseWizard(testRole.displayName);

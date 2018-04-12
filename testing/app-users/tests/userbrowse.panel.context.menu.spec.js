@@ -7,6 +7,7 @@ const userBrowsePanel = require('../page_objects/browsepanel/userbrowse.panel');
 const testUtils = require('../libs/test.utils');
 const gridContextMenu = require('../page_objects/browsepanel/grid.context.menu');
 const userItemsBuilder = require('../libs/userItems.builder.js');
+const appConst = require('../libs/app_const');
 
 describe('userbrowse.panel.context.menu.spec User Browse Panel Context Menu specification', function () {
     this.timeout(0);
@@ -14,7 +15,7 @@ describe('userbrowse.panel.context.menu.spec User Browse Panel Context Menu spec
 
     it('GIVEN navigate to the browse panel WHEN right click on the `Roles` folder THEN `New role` menu item should be first ',
         () => {
-            return userBrowsePanel.rightClickOnRowByDisplayName('Roles').then(()=> {
+            return userBrowsePanel.rightClickOnRowByDisplayName(appConst.ROLES).then(()=> {
                 return gridContextMenu.waitForContextMenuVisible();
             }).then(()=> {
                 return gridContextMenu.getGridContextMenuItems();
@@ -48,8 +49,8 @@ describe('userbrowse.panel.context.menu.spec User Browse Panel Context Menu spec
 
     it('WHEN right click on the `su` user THEN `Delete` menu item should be disabled',
         () => {
-            return testUtils.findAndSelectItem('su').then(()=> {
-                return userBrowsePanel.rightClickOnRowByDisplayName('Super User');
+            return testUtils.findAndSelectItem(appConst.SUPER_USER_NAME).then(()=> {
+                return userBrowsePanel.rightClickOnRowByDisplayName(appConst.SUPER_USER_DISPLAY_NAME);
             }).then(()=> {
                 return gridContextMenu.waitForContextMenuVisible();
             }).then(()=> {
