@@ -82,10 +82,11 @@ describe('`group.save.statistics.panel`: Save a Group and check the info in the 
             return userBrowsePanel.clickOnEditButton();
         }).then(()=> {
             return groupWizard.waitForOpened();
-        }).then(()=> groupWizard.filterOptionsAndAddMember(appConst.SUPER_USER)).then(()=>groupWizard.waitAndClickOnSave()).then(()=> {
+        }).then(()=> groupWizard.filterOptionsAndAddMember(appConst.SUPER_USER_DISPLAY_NAME)).then(
+            ()=>groupWizard.waitAndClickOnSave()).then(()=> {
             return groupWizard.getMembers();
         }).then((members)=> {
-            expect(members[0]).to.equal(appConst.SUPER_USER);
+            expect(members[0]).to.equal(appConst.SUPER_USER_DISPLAY_NAME);
         })
     });
 
@@ -94,7 +95,7 @@ describe('`group.save.statistics.panel`: Save a Group and check the info in the 
             return testUtils.findAndSelectItem(testGroup.displayName).then(()=> {
                 return groupStatisticsPanel.getDisplayNameOfMembers();
             }).then((members)=> {
-                expect(members[0]).to.equal(appConst.SUPER_USER);
+                expect(members[0]).to.equal(appConst.SUPER_USER_DISPLAY_NAME);
             }).then(()=> {
                 return groupStatisticsPanel.getDisplayNameOfRoles();
             }).then(roles=> {

@@ -37,6 +37,16 @@ var wizardPanel = Object.create(page, {
             return this.waitForDisabled(this.saveButton, appConst.TIMEOUT_3);
         }
     },
+    isSaveButtonEnabled: {
+        value: function () {
+            return this.isEnabled(this.saveButton);
+        }
+    },
+    isDeleteButtonEnabled: {
+        value: function () {
+            return this.isEnabled(this.deleteButton);
+        }
+    },
     typeDisplayName: {
         value: function (displayName) {
             return this.typeTextInInput(this.displayNameInput, displayName);
