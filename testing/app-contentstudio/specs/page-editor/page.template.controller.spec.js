@@ -115,7 +115,7 @@ describe('page.template.controller: select a controller in a template-wizard', f
                 return studioUtils.doSwitchToContentBrowsePanel();
             }).then(()=> {
                 return studioUtils.doDeleteContent(TEMPLATE.displayName);
-            }).then(()=> {
+            }).pause(1000).then(()=> {
                 return studioUtils.switchToContentTabWindow(SITE.displayName);
             }).then(()=> {
                 return contentWizard.waitForControllerOptionFilterInputVisible();

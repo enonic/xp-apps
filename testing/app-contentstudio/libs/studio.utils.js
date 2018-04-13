@@ -164,7 +164,9 @@ module.exports = {
             return browsePanel.clickOnDeleteButton();
         }).pause(500).then(()=> {
             return deleteContentDialog.clickOnDeleteButton();
-        })
+        }).then(()=> {
+            return deleteContentDialog.waitForDialogClosed();
+        }).pause(500);
     },
     selectContentAndOpenWizard: function (name) {
         return this.findAndSelectItem(name).then(()=> {
