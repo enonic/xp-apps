@@ -69,6 +69,9 @@ Page.prototype.clearElement = function (selector) {
 Page.prototype.elements = function (selector) {
     return this.getBrowser().elements(selector);
 };
+Page.prototype.element = function (selector) {
+    return this.getBrowser().element(selector);
+};
 
 Page.prototype.getText = function (selector) {
     return this.getBrowser().getText(selector);

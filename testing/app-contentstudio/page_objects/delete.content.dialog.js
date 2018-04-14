@@ -39,8 +39,11 @@ var deleteContentDialog = Object.create(page, {
         }
     },
     waitForDialogClosed: {
-        value: function (ms) {
-            return this.waitForNotVisible(`${dialog.container}`, ms);
+        value: function () {
+            return this.waitForNotVisible(`${dialog.container}`, appConst.TIMEOUT_3).catch(err=> {
+                this.saveScreenshot('err_close_delete_content_dialog');
+                throw new Error('Delete content dialog must be closed');
+            })
         }
     },
     isItemHasInboundLink: {
