@@ -6,13 +6,16 @@ import CompareStatus = api.content.CompareStatus;
 import ContentIds = api.content.ContentIds;
 import i18n = api.util.i18n;
 
-export class PublishDialogDependantList extends DialogDependantList {
+export class PublishDialogDependantList
+    extends DialogDependantList {
 
     private requiredIds: ContentIds;
 
-    private itemClickListeners: {(item: ContentSummaryAndCompareStatus): void}[] = [];
+    private itemClickListeners: { (item: ContentSummaryAndCompareStatus): void }[] = [];
 
-    private removeClickListeners: {(item: ContentSummaryAndCompareStatus): void}[] = [];
+    private removeClickListeners: { (item: ContentSummaryAndCompareStatus): void }[] = [];
+
+    private listChangedListeners: { (): void }[] = [];
 
     constructor() {
         super();
@@ -33,16 +36,6 @@ export class PublishDialogDependantList extends DialogDependantList {
         (<StatusSelectionItem>view).setIsRemovableFn(() => !this.requiredIds.contains(item.getContentId()) && !isPendingDelete);
         (<StatusSelectionItem>view).setRemoveHandlerFn(() => this.notifyItemRemoveClicked(item));
 
-        view.onClicked((event) => {
-            if (!new api.dom.ElementHelper(<HTMLElement>event.target).hasClass('remove')) {
-                this.notifyItemClicked(item);
-            }
-        });
-
-        view.onRendered(() => {
-            (<StatusSelectionItem>view).setRemoveButtonTooltip(i18n('dialog.publish.excludeFromPublishing'));
-        });
-
         if (!isContentSummaryValid(item)) {
             view.addClass('invalid');
             view.getEl().setTitle(i18n('dialog.publish.editInvalid'));
@@ -52,7 +45,13 @@ export class PublishDialogDependantList extends DialogDependantList {
             view.getEl().setTitle(i18n('field.readOnly'));
         }
 
+        this.initListItemListeners(item, view);
+
         return view;
+    }
+
+    onListChanged(listener: () => void) {
+        this.listChangedListeners.push(listener);
     }
 
     setRequiredIds(value: ContentId[]) {
@@ -94,6 +93,51 @@ export class PublishDialogDependantList extends DialogDependantList {
             listener(item);
         });
     }
+
+    unListChanged(listener: () => void) {
+        this.listChangedListeners = this.listChangedListeners.filter((curr) => {
+            return curr !== listener;
+        });
+    }
+
+    private initListItemListeners(item: ContentSummaryAndCompareStatus, view: api.dom.Element) {
+        view.onClicked((event) => {
+            if (!new api.dom.ElementHelper(<HTMLElement>event.target).hasClass('remove')) {
+                this.notifyItemClicked(item);
+            }
+        });
+
+        view.onRendered(() => {
+            (<StatusSelectionItem>view).setRemoveButtonTooltip(i18n('dialog.publish.excludeFromPublishing'));
+        });
+
+        const serverEvents = api.content.event.ContentServerEventsHandler.getInstance();
+
+        const updatedHandler = (data: ContentSummaryAndCompareStatus[]) => {
+            if (data.some(updatedContent => updatedContent.getContentId().equals(item.getContentId()))) {
+                this.notifyListChanged();
+            }
+        };
+        const deletedHandler = (changedItems: api.content.event.ContentServerChangeItem[], pending?: boolean) => {
+            if (changedItems.some(changedItem => changedItem.getContentId().equals(item.getContentId()))) {
+                this.notifyListChanged();
+            }
+        };
+        serverEvents.onContentUpdated(updatedHandler);
+        serverEvents.onContentDeleted(deletedHandler);
+
+        view.onRemoved(() => {
+            serverEvents.unContentUpdated(updatedHandler);
+            serverEvents.unContentDeleted(deletedHandler);
+        });
+    }
+
+    private notifyListChanged() {
+        this.listChangedListeners.forEach(listener => {
+            listener();
+        });
+    }
+
 }
 
 export function isContentSummaryValid(item: ContentSummaryAndCompareStatus): boolean {
